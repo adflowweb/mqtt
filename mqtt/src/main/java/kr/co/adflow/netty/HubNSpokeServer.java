@@ -28,6 +28,7 @@ public class HubNSpokeServer {
 		EventLoopGroup workerGroup = new NioEventLoopGroup();
 
 		try {
+			System.out.println("HubNSpokeServer starting...");
 			ChannelFuture f = null;
 			for (int i = 0; i < port.length; i++) {
 				ServerBootstrap boot = new ServerBootstrap();
@@ -40,7 +41,7 @@ public class HubNSpokeServer {
 							public void initChannel(SocketChannel ch)
 									throws Exception {
 								ch.pipeline().addLast(
-								 new LoggingHandler(LogLevel.INFO),
+										new LoggingHandler(LogLevel.INFO),
 										new BroadCastHandler());
 							}
 						});
