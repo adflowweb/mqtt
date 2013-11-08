@@ -10,6 +10,11 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
+
 import kr.co.adflow.netty.handler.BroadCastHandler;
 
 /**
@@ -29,6 +34,17 @@ public class HubNSpokeServer {
 
 		try {
 			System.out.println("HubNSpokeServer starting...");
+
+			File file = new File("HubNSpokeServer.log");
+			PrintStream printStream = new PrintStream(
+					new FileOutputStream(file));
+
+			PrintStream sysout = System.out;
+
+			// standard out과 err을 file로 변경
+			System.setOut(printStream);
+			System.setErr(printStream);
+
 			ChannelFuture f = null;
 			for (int i = 0; i < port.length; i++) {
 				ServerBootstrap boot = new ServerBootstrap();
