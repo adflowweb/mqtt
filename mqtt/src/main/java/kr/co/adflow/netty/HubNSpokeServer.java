@@ -35,15 +35,15 @@ public class HubNSpokeServer {
 		try {
 			System.out.println("HubNSpokeServer starting...");
 
-			File file = new File("HubNSpokeServer.log");
-			PrintStream printStream = new PrintStream(
-					new FileOutputStream(file));
-
-			PrintStream sysout = System.out;
-
-			// standard out과 err을 file로 변경
-			System.setOut(printStream);
-			System.setErr(printStream);
+			// File file = new File("HubNSpokeServer.log");
+			// PrintStream printStream = new PrintStream(
+			// new FileOutputStream(file));
+			//
+			// PrintStream sysout = System.out;
+			//
+			// // standard out과 err을 file로 변경
+			// System.setOut(printStream);
+			// System.setErr(printStream);
 
 			ChannelFuture f = null;
 			for (int i = 0; i < port.length; i++) {
