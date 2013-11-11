@@ -46,13 +46,13 @@ public class EchoServer {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
              .channel(NioServerSocketChannel.class)
-             .option(ChannelOption.SO_BACKLOG, 100)
-             .handler(new LoggingHandler(LogLevel.INFO))
+             .option(ChannelOption.SO_BACKLOG, 500)
+             //.handler(new LoggingHandler(LogLevel.ERROR))
              .childHandler(new ChannelInitializer<SocketChannel>() {
                  @Override
                  public void initChannel(SocketChannel ch) throws Exception {
                      ch.pipeline().addLast(
-                             //new LoggingHandler(LogLevel.INFO),
+							// new LoggingHandler(LogLevel.INFO),
                              new EchoServerHandler());
                  }
              });
