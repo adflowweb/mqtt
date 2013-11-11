@@ -22,6 +22,5 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="ApacheJMeter_tcp.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
