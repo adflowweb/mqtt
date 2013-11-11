@@ -53,7 +53,7 @@ public class BroadCastHandler extends ChannelInboundHandlerAdapter {
 		// Close the connection when an exception is raised.
 		logger.log(Level.WARNING, "Unexpected exception from downstream.",
 				cause);
-		ctx.close();
+		//ctx.close();
 	}
 
 	@Override
