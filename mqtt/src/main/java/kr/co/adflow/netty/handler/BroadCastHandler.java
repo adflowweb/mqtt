@@ -7,6 +7,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.ReferenceCountUtil;
 
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -30,14 +31,23 @@ public class BroadCastHandler extends ChannelInboundHandlerAdapter {
 	public void channelRead(ChannelHandlerContext ctx, Object msg)
 			throws Exception {
 		try {
-			Iterator it = v.iterator();
-			for (; it.hasNext();) {
-				ChannelHandlerContext c = (ChannelHandlerContext) it.next();
+			Enumeration e = v.elements();
+			while (e.hasMoreElements()) {
+				ChannelHandlerContext c = (ChannelHandlerContext) e
+						.nextElement();
 				if (c != ctx) {
 					ByteBuf b = Unpooled.copiedBuffer((ByteBuf) msg);
 					c.writeAndFlush(b);
 				}
 			}
+			// Iterator it = v.iterator();
+			// for (; it.hasNext();) {
+			// ChannelHandlerContext c = (ChannelHandlerContext) it.next();
+			// if (c != ctx) {
+			// ByteBuf b = Unpooled.copiedBuffer((ByteBuf) msg);
+			// c.writeAndFlush(b);
+			// }
+			// }
 		} finally {
 			ReferenceCountUtil.release(msg);
 		}
@@ -49,11 +59,12 @@ public class BroadCastHandler extends ChannelInboundHandlerAdapter {
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-		System.out.println("=========================================================");
+		System.out
+				.println("=========================================================");
 		// Close the connection when an exception is raised.
 		logger.log(Level.WARNING, "Unexpected exception from downstream.",
 				cause);
-		//ctx.close();
+		// ctx.close();
 	}
 
 	@Override
