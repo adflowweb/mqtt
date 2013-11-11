@@ -58,11 +58,7 @@ public class EchoClientHandler extends ChannelInboundHandlerAdapter {
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg)
 			throws Exception {
-		try {
-			ctx.writeAndFlush(msg);
-		} finally {
-			ReferenceCountUtil.release(msg);
-		}
+		ctx.writeAndFlush(msg);
 	}
 
 	@Override
@@ -74,6 +70,6 @@ public class EchoClientHandler extends ChannelInboundHandlerAdapter {
 		// Close the connection when an exception is raised.
 		logger.log(Level.WARNING, "Unexpected exception from downstream.",
 				cause);
-		//ctx.close();
+		ctx.close();
 	}
 }
