@@ -30,13 +30,14 @@ public class BroadCastHandler extends ChannelInboundHandlerAdapter {
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg)
 			throws Exception {
+		ByteBuf b = null;
 		try {
 			Enumeration e = v.elements();
 			while (e.hasMoreElements()) {
 				ChannelHandlerContext c = (ChannelHandlerContext) e
 						.nextElement();
 				if (c != ctx) {
-					ByteBuf b = Unpooled.copiedBuffer((ByteBuf) msg);
+					b = Unpooled.copiedBuffer((ByteBuf) msg);
 					c.writeAndFlush(b);
 				}
 			}
@@ -50,6 +51,7 @@ public class BroadCastHandler extends ChannelInboundHandlerAdapter {
 			// }
 		} finally {
 			ReferenceCountUtil.release(msg);
+			ReferenceCountUtil.release(b);
 		}
 	}
 
