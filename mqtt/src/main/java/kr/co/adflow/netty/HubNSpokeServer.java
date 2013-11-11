@@ -51,13 +51,13 @@ public class HubNSpokeServer {
 				boot.group(bossGroup, workerGroup)
 						.channel(NioServerSocketChannel.class)
 						.option(ChannelOption.SO_BACKLOG, 100)
-						.handler(new LoggingHandler(LogLevel.INFO))
+						.handler(new LoggingHandler(LogLevel.ERROR))
 						.childHandler(new ChannelInitializer<SocketChannel>() {
 							@Override
 							public void initChannel(SocketChannel ch)
 									throws Exception {
 								ch.pipeline().addLast(
-										new LoggingHandler(LogLevel.INFO),
+										new LoggingHandler(LogLevel.ERROR),
 										new BroadCastHandler());
 							}
 						});
