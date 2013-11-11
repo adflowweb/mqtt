@@ -49,6 +49,7 @@ public class BroadCastHandler extends ChannelInboundHandlerAdapter {
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+		System.out.println("=========================================================");
 		// Close the connection when an exception is raised.
 		logger.log(Level.WARNING, "Unexpected exception from downstream.",
 				cause);
