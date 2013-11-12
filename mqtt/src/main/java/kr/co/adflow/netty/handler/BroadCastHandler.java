@@ -51,12 +51,13 @@ public class BroadCastHandler extends ChannelInboundHandlerAdapter {
 			// }
 		} finally {
 			ReferenceCountUtil.release(msg);
-			ReferenceCountUtil.release(b);
+			// ReferenceCountUtil.release(b);
 		}
 	}
 
 	@Override
 	public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+		ctx.flush();
 	}
 
 	@Override

@@ -25,12 +25,12 @@ import kr.co.adflow.netty.handler.BroadCastHandler;
  */
 public class HubNSpokeServer {
 
-	private int[] port = { 3883, 4883 };
+	private int port = 3883;
 
 	public void run() throws Exception {
 		// Configure the server.
 		EventLoopGroup bossGroup = new NioEventLoopGroup();
-		EventLoopGroup workerGroup = new NioEventLoopGroup();
+		EventLoopGroup workerGroup = new NioEventLoopGroup(25);
 
 		try {
 			System.out.println("HubNSpokeServer starting...");
@@ -46,25 +46,24 @@ public class HubNSpokeServer {
 			// System.setErr(printStream);
 
 			ChannelFuture f = null;
-			for (int i = 0; i < port.length; i++) {
-				ServerBootstrap boot = new ServerBootstrap();
-				boot.group(bossGroup, workerGroup)
-						.channel(NioServerSocketChannel.class)
-						.option(ChannelOption.SO_BACKLOG, 100)
-						.handler(new LoggingHandler(LogLevel.ERROR))
-						.childHandler(new ChannelInitializer<SocketChannel>() {
-							@Override
-							public void initChannel(SocketChannel ch)
-									throws Exception {
-								ch.pipeline().addLast(
-										new LoggingHandler(LogLevel.ERROR),
-										new BroadCastHandler());
-							}
-						});
+			ServerBootstrap boot = new ServerBootstrap();
+			boot.group(bossGroup, workerGroup)
+					.channel(NioServerSocketChannel.class)
+					.option(ChannelOption.SO_BACKLOG, 500)
+					// .handler(new LoggingHandler(LogLevel.ERROR))
+					.childHandler(new ChannelInitializer<SocketChannel>() {
+						@Override
+						public void initChannel(SocketChannel ch)
+								throws Exception {
+							ch.pipeline().addLast(
+							// new LoggingHandler(LogLevel.ERROR),
+									new BroadCastHandler());
+						}
+					});
 
-				// Start the server.
-				f = boot.bind(port[i]).sync();
-			}
+			// Start the server.
+			f = boot.bind(port).sync();
+
 			// Wait until the server socket is closed.
 			f.channel().closeFuture().sync();
 		} finally {
