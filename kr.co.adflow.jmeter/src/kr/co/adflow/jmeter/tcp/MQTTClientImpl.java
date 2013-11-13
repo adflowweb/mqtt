@@ -1,5 +1,6 @@
 package kr.co.adflow.jmeter.tcp;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -15,34 +16,36 @@ public class MQTTClientImpl extends TCPClientImpl {
 	public String read(InputStream is) throws ReadException {
 		// System.out.println("called read");
 
-		// ByteArrayOutputStream w = new ByteArrayOutputStream();
-		// try {
-		// byte[] buffer = new byte[4096];
-		// int x = 0;
-		// while ((x = is.read(buffer)) > -1) {
-		// w.write(buffer, 0, x);
-		// if (true) {
-		// break;
-		// }
-		// }
-		// return w.toString("euc-kr");
-		// } catch (IOException e) {
-		// throw new ReadException("", e, w.toString());
-		// }
-
-		StringBuffer sb = new StringBuffer();
+		// 15000 tps
+		ByteArrayOutputStream w = new ByteArrayOutputStream();
 		try {
-			int c;
-			while ((c = is.read()) != -1) {
-				sb.append((char) c);
-				if (c == breakCharacter) {
+			byte[] buffer = new byte[4096];
+			int x = 0;
+			while ((x = is.read(buffer)) > -1) {
+				w.write(buffer, 0, x);
+				if (true) {
 					break;
 				}
 			}
-			return sb.toString();
-		} catch (Exception e) {
-			throw new ReadException("", e, sb.toString());
+			return w.toString("euc-kr");
+		} catch (IOException e) {
+			throw new ReadException("", e, w.toString());
 		}
+
+		// 7000 tps
+		// StringBuffer sb = new StringBuffer();
+		// try {
+		// int c;
+		// while ((c = is.read()) != -1) {
+		// sb.append((char) c);
+		// if (c == breakCharacter) {
+		// break;
+		// }
+		// }
+		// return sb.toString();
+		// } catch (Exception e) {
+		// throw new ReadException("", e, sb.toString());
+		// }
 	}
 
 	@Override
