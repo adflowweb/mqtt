@@ -8,13 +8,6 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.logging.LogLevel;
-import io.netty.handler.logging.LoggingHandler;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
-
 import kr.co.adflow.netty.handler.BroadCastHandler;
 
 /**
@@ -33,7 +26,8 @@ public class HubNSpokeServer {
 		EventLoopGroup workerGroup = new NioEventLoopGroup(25);
 
 		try {
-			System.out.println("HubNSpokeServer starting...");
+			System.out.println("HubNSpokeServer starting... with port : "
+					+ port);
 
 			// File file = new File("HubNSpokeServer.log");
 			// PrintStream printStream = new PrintStream(

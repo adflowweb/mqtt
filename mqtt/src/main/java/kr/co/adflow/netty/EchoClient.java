@@ -46,6 +46,7 @@ public class EchoClient {
 	}
 
 	public void run() throws Exception {
+		System.out.println("EchoClient starting... with port : " + port);
 		// Configure the client.
 		EventLoopGroup group = new NioEventLoopGroup(25);
 		try {
@@ -74,7 +75,7 @@ public class EchoClient {
 	}
 
 	public static void main(String[] args) throws Exception {
-		System.out.println("EchoClient starting...");
+
 		// Print usage if no argument is specified.
 		if (args.length < 2 || args.length > 3) {
 			System.err.println("Usage: " + EchoClient.class.getSimpleName()
