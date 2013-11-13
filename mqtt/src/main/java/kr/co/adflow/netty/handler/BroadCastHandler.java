@@ -57,7 +57,7 @@ public class BroadCastHandler extends ChannelInboundHandlerAdapter {
 
 	@Override
 	public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
-		ctx.flush();
+		//ctx.flush();
 	}
 
 	@Override

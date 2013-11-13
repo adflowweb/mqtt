@@ -58,12 +58,12 @@ public class EchoClientHandler extends ChannelInboundHandlerAdapter {
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg)
 			throws Exception {
-		ctx.write(msg);
+		ctx.writeAndFlush(msg);
 	}
 
 	@Override
 	public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
-		ctx.flush();
+		//ctx.flush();
 	}
 
 	@Override
