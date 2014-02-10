@@ -1,0 +1,15 @@
+{
+  "name": "mqttjsTest",
+  "version": "0.0.0",
+  "description": "",
+  "main": "messageSender.js",
+  "dependencies": {
+    "mqtt": "~0.3.7"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "@nadir93",
+  "license": "BSD"
+}
