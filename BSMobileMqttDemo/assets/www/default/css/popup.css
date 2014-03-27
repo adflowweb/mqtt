@@ -1,0 +1,85 @@
+
+/* Stylesheet content from css/popup.css in folder common */
+@CHARSET "UTF-8";
+
+.popupBL {
+	width: 100% !important;
+	padding: 10px !important;
+	background-color: rgba(0,0,0,0.7) !important;
+	border-top-width: 0px !important;
+	border-left-width: 0px !important;
+	border-right-width: 0px !important;
+	border-bottom-width: 0px !important;
+	border-radius: 5px !important;
+}
+
+.popupNV {
+	width: 100% !important;
+	padding: 10px !important;
+	background-color: rgba(3,66,135,0.7) !important;
+	border-top-width: 0px !important;
+	border-left-width: 0px !important;
+	border-right-width: 0px !important;
+	border-bottom-width: 0px !important;
+	border-radius: 5px !important;
+}
+
+.fontWH {
+	color: #FFFFFF !important;
+}
+
+.popupFormHldr {
+	/* This gives sort of padding space at both sides. */
+	width: 100%;
+	height: 30px;
+	background-color: #FFFFFF !important;
+	border-width: 1px !important;
+	border-color: #DDDDDD !important;
+	/* Someone inherits 'border-style: none'. For overriding it. */
+	border-style: solid !important;
+	border-radius: 4px !important;
+}
+
+.topMargin10 {
+	position: relative;
+	margin-top: 10px;
+}
+
+.topMargin20 {
+	position: relative;
+	margin-top: 20px;
+}
+
+.popupFormUser {
+	background-image: url('../images/user.png');
+	background-repeat:no-repeat;
+	background-position:96% center;
+	background-size: 16px 16px;
+}
+
+.hvCenter {
+	display: -webkit-box;
+    -webkit-box-pack: center;
+    -webkit-box-align: center;
+}
+
+.popupFormInputs {
+	height: 30px !important;
+	width: 100% !important;
+	border-width: 0px !important;
+	border-style: none !important;
+	padding-left: 5px !important;
+	padding-right: 5px !important;
+	padding-top: 0px !important;
+	padding-bottom: 0px !important;
+	line-height: 30px !important;
+	font-size: 14px !important;
+	background-color: transparent !important;
+}
+
+.popupFormPw {
+	background-image: url('../images/password.png');
+	background-repeat:no-repeat;
+	background-position:96% center;
+	background-size: 16px 16px;
+}

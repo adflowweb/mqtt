@@ -1,0 +1,215 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="UTF-8">
+<title>index</title>
+<meta
+	content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0"
+	name="viewport">
+<link href="worklight/worklight.css" rel="stylesheet">
+<link href="images/favicon.png" rel="shortcut icon">
+<link href="images/apple-touch-icon.png" rel="apple-touch-icon">
+<!-- link href="jqueryMobile/jquery.mobile-1.4.2.css" rel="stylesheet"-->
+<link href="jqueryMobile/jquery.mobile.icons-1.4.2.css" rel="stylesheet">
+<link href="jqueryMobile/BS-Themes.css" rel="stylesheet">
+<link href="jqueryMobile/jquery.mobile.structure-1.4.2.css"
+	rel="stylesheet">
+<link href="jqueryMobile/jquery-mobile-fluid960.css" rel="stylesheet">
+<link href="css/main.css" rel="stylesheet">
+<link href="css/popup.css" rel="stylesheet">
+<script>
+	// Define WL namespace.
+	var WL = WL ? WL : {};
+	/**
+	 * WLClient configuration variables.
+	 * Values are injected by the deployer that packs the gadget.
+	 */
+	WL.StaticAppProps = {
+		"APP_DISPLAY_NAME" : "BSMobile",
+		"APP_ID" : "BSMobile",
+		"APP_SERVICES_URL" : "\/apps\/services\/",
+		"APP_VERSION" : "1.0",
+		"ENVIRONMENT" : "android",
+		"LOGIN_DISPLAY_TYPE" : "embedded",
+		"WORKLIGHT_NATIVE_VERSION" : "null",
+		"WORKLIGHT_PLATFORM_VERSION" : "6.1.0.00.20140123-1934",
+		"WORKLIGHT_ROOT_URL" : "\/apps\/services\/api\/BSMobile\/android\/"
+	};
+</script>
+<script src="worklight/cordova.js"></script>
+<script src="worklight/wljq.js"></script>
+<script src="worklight/worklight.js"></script>
+<script src="worklight/checksum.js"></script>
+<script>
+	window.$ = window.jQuery = WLJQ;
+</script>
+<script src="jqueryMobile/jquery.mobile-1.4.2.js"></script>
+</head>
+<body style="display: none;">
+	<!-- 시작 페이지 -->
+	<div data-role="page" data-theme="a" id="mainMenu">
+		<div id="logoDiv">
+			<img height="100%" src="images/bs-logo-big.png">
+		</div>
+		<div data-role="content" data-theme="a">
+			<!-- Main Menu Items -->
+			<ul data-inset="false" data-role="listview" id="mainMenuLV">
+				<li data-icon="false" id="listitem01"><a data-prefetch="true"
+					data-transition="slide" href="#empLookup"><img
+						src="images/employees.png" width="80px">
+						<h1 class="menuLabels">직원조회</h1> </a></li>
+				<li data-icon="false" id="listitem02"><a data-prefetch="true"
+					data-transition="slide" href="#mailBox"><img
+						src="images/mail.png" width="80px">
+						<h1 class="menuLabels">메일</h1> </a></li>
+				<li data-icon="false" id="listitem03"><a data-prefetch="true"
+					data-transition="slide" href="#education"><img
+						src="images/education.png" width="80px">
+						<h1 class="menuLabels">교육</h1> </a></li>
+				<li data-icon="false" id="listitem04"><a data-prefetch="true"
+					data-transition="slide" href="#todoList"><img
+						src="images/todo.png" width="80px">
+						<h1 class="menuLabels">할일관리</h1> </a></li>
+				<li data-icon="false" id="listitem05"><a data-prefetch="true"
+					data-transition="slide" href="#infoCenter"><img
+						src="images/info.png" width="80px">
+						<h1 class="menuLabels">도움말</h1> </a></li>
+			</ul>
+			<!-- Main Menu Items -->
+		</div>
+	</div>
+	<!-- 시작 페이지 -->
+	<!-- 직원 찾기 페이지 -->
+	<div data-role="page" data-theme="a" id="empLookup">
+		<div class="subLogoDivs" id="empLogoDiv">
+			<img height="100%" src="images/employees.png">
+		</div>
+		<div class="topBordered" data-role="content" style="padding: 10px">
+			<!-- 사번 입력 폼 -->
+			<div class="centered">
+				<div style="width: 90%; text-align: center;">
+					<label for="inEmpLU">사원번호 입력</label> <input data-clear-btn="true"
+						id="inEmpLU" name="inEmpLU" type="search" value="000001">
+					<a data-icon="check" data-inline="true" data-role="button" href="#"
+						id="btnEmpLU" onclick="findEmployee()"> 직원 조회 </a>
+				</div>
+			</div>
+			<!-- 사번 입력 폼 -->
+		</div>
+		<!-- 인증 팝업창 -->
+		<div class="popupNV" data-dismissible="false" data-role="popup"
+			data-shadow="false" data-theme="none" id="popupLogin">
+			<div>
+				<h1 class="fontWH">사용자 로그인</h1>
+				<div class="popupFormHldr topMargin10">
+					<div class="popupFormUser hvCenter">
+						<input class="popupFormInputs" data-role="none"
+							id="usernameInputField" name="usernameInputField"
+							placeholder="사용자 ID" type="text" value="">
+					</div>
+				</div>
+				<div class="popupFormHldr topMargin10">
+					<div class="popupFormPw hvCenter">
+						<input class="popupFormInputs" data-role="none"
+							id="passwordInputField" name="passwordInputField"
+							placeholder="패스워드" type="password" value="">
+					</div>
+				</div>
+			</div>
+			<div class="topMargin20">
+				<a data-role="button" data-theme="a" href="#" id="loginButton">로그인</a>
+				<a data-role="button" data-theme="a" href="#" id="cancelButton">취소</a>
+			</div>
+		</div>
+		<!-- 인증 팝업창 -->
+	</div>
+	<!-- 직원 찾기 페이지 -->
+	<!-- 직원 찾기 결과 페이지 -->
+	<div data-close-btn="right" data-role="page" id="empResult">
+		<div class="subLogoDivs" id="resultLogoDiv">
+			<img height="100%" src="images/check.png">
+		</div>
+		<div class="topBordered titleSpacers">
+			<p>사원 정보</p>
+		</div>
+		<div class="topBordered" data-role="content" style="padding: 10px">
+			<div id="empResultDiv"></div>
+		</div>
+	</div>
+	<!-- 직원 찾기 결과 페이지 -->
+	<!-- RSS 피드/뉴스 페이지 -->
+	<div data-role="page" data-theme="a" id="mailBox">
+		<div class="subLogoDivs" id="mailLogoDiv">
+			<img height="100%" src="images/mail.png">
+		</div>
+		<div class="topBordered" data-role="content" style="padding: 10px">
+			<div id="newsFeedDiv"></div>
+			<div class="guides" id="newsGuide">
+				<br>
+				<p>피드를 새로 고치려면 터치하세요.</p>
+				<br>
+			</div>
+		</div>
+	</div>
+	<!-- RSS 피드/뉴스 페이지 -->
+	<!-- 교육 동영상 페이지 -->
+	<div data-role="page" data-theme="a" id="education">
+		<div class="subLogoDivs" id="eduLogoDiv">
+			<img height="100%" src="images/education.png">
+		</div>
+		<div data-role="header" id="educationDetail"></div>
+	</div>
+	<!-- 교육 동영상 페이지 -->
+	<!-- 할일 관리 페이지 -->
+	<div data-role="page" data-theme="a" id="todoList">
+		<div class="subLogoDivs" id="todoLogoDiv">
+			<img height="100%" src="images/todo.png">
+		</div>
+		<div class="topBordered" data-role="content" style="padding: 10px">
+			<!-- 할일 추가 버튼 -->
+			<!-- a href="#addTask" id="btnAddTask" data-role="button" data-icon="plus" data-rel="dialog" data-transition="slideup"
+    					data-iconpos="right">타스크 추가</a-->
+			<!-- 할일 추가 버튼 -->
+			<!-- 할일 리스트 -->
+			<ul data-inset="true" data-role="listview" data-split-icon="delete"
+				id="lvTodo">
+			</ul>
+			<!-- 할일 리스트 -->
+		</div>
+	</div>
+	<!-- 할일 관리 페이지 -->
+	<!-- 할일 추가 페이지 -->
+	<div data-role="page" data-theme="a" id="addTask">
+		<div class="subLogoDivs" id="taskLogoDiv">
+			<img height="100%" src="images/write.png">
+		</div>
+		<!-- 할일 입력 폼 -->
+		<div class="topBordered" data-role="content" style="padding: 10px">
+			<label for="taskTitle">제목</label> <input data-clear-btn="true"
+				id="taskTitle" name="taskTitle" type="text"> <label
+				for="taskDesc">상세 내용</label> <input data-clear-btn="true"
+				id="taskDesc" name="taskDesc" type="text"> <label
+				for="taskCat">분류</label> <input data-clear-btn="true" id="taskCat"
+				name="taskCat" type="text"> <label for="taskDue">기한</label>
+			<input data-clear-btn="false" id="taskDue" name="taskDue"
+				type="datetime-local"> <a data-icon="check"
+				data-role="button" href="#" id="btnSubmitTask">확인</a>
+		</div>
+		<!-- 할일 입력 폼 -->
+	</div>
+	<!-- 할일 추가 페이지 -->
+	<!-- 도움말 페이지 -->
+	<div data-role="page" data-theme="a" id="infoCenter">
+		<div class="subLogoDivs" id="infoLogoDiv">
+			<img height="100%" src="images/info.png">
+		</div>
+	</div>
+	<!-- 도움말 페이지 -->
+	<script src="js/initOptions.js"></script>
+	<script src="js/main.js"></script>
+	<script src="js/LDAPRealmChallengeHandler.js"></script>
+	<script src="js/toDo.js"></script>
+	<script src="js/messages.js"></script>
+</body>
+</html>
