@@ -18,7 +18,7 @@ var topic = 'user/nadir93';
 var images = new Array();
 
 for (i = 0; i < 12; i++) {
-  var data = fs.readFileSync('./pushFortune/resources/icon_12stars_' + leadingZeros((i + 1), 2) + '.gif');
+  var data = fs.readFileSync('./resources/icon_12stars_' + leadingZeros((i + 1), 2) + '.gif');
   var imageString = new Buffer(data).toString('base64');
   images.push(imageString);
 }
