@@ -16,7 +16,7 @@ var mqtt = require('mqtt')
 var serverIP = '175.209.8.188';
 var port = 1883;
 //추후 개인데이타는 암호화 하던가 또는 파일이나 디비에서 가져오도록..
-var users = {"df33406434de552faf60efa": {"name": "이은영", "birth": {"year": 1978, "month": 3, "day": 8}},
+var users = {/*"df33406434de552faf60efa": {"name": "이은영", "birth": {"year": 1978, "month": 3, "day": 8}},  */
   "1c45de7cc1daa896bfd32dc": {"name": "박택영", "birth": {"year": 1974, "month": 12, "day": 27}}};
 var start = new Date(2014, 2, 29, 07, 00, 00);
 var images = new Array();
@@ -46,13 +46,13 @@ client.on('message', function (topic, message) {
 console.log('푸시목표시간=' + start);
 var remain = remaining(start);
 console.log('남은시간(초)=' + remain);
-setTimeout(repeatPush, remain);
+setTimeout(repeatPush, remain * 1000);
 
 /**
  * 하루에한번씩 별자리운세를 푸시한다.
  */
 function repeatPush() {
-  setInterval(process, 86400);
+  setInterval(process, 86400 * 1000);
 }
 
 /**
