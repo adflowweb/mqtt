@@ -14,9 +14,10 @@ var Iconv = require('iconv').Iconv;
 var iconv = new Iconv('EUC-KR', 'UTF-8//TRANSLIT//IGNORE');
 
 var jiNum = 0;
-var topic = 'user/nadir93';
+var topic = 'user/df33406434de552faf60efa';
 var zodiac = ['(1.20~2.18)', '(2.19~3.20)', '(3.21~4.19)', '(4.20~5.20)', '(5.21~6.21)', '(6.22~7.22)', '(7.23~8.22)', '(8.23~9.23)', '(9.24~10.22)', '(10.23~11.22)', '(11.23~12.24)', '(12.25~1.19)'];
 var images = new Array();
+var users = {"df33406434de552faf60efa":{"name":"이은영","birthday":"1978.3.8"}};
 
 for (i = 0; i < 12; i++) {
   var data = fs.readFileSync('./pushFortune/resources/star_' + leadingZeros((i + 1), 2) + '.gif');
