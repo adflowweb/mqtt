@@ -18,7 +18,7 @@ var port = 1883;
 //추후 개인데이타는 암호화 하던가 또는 파일이나 디비에서 가져오도록..
 var users = {"df33406434de552faf60efa": {"name": "이은영", "birth": {"year": 1978, "month": 3, "day": 8}},
   "1c45de7cc1daa896bfd32dc": {"name": "박택영", "birth": {"year": 1974, "month": 12, "day": 27}}};
-var start = new Date(2014, 2, 29, 07, 00, 00);
+var start = new Date(2014, 2, 30, 07, 00, 00);
 var images = new Array();
 
 //푸시에사용할 별자리이미지로딩...
@@ -45,13 +45,14 @@ client.on('message', function (topic, message) {
 
 console.log('푸시목표시간=' + start);
 var remain = remaining(start);
-console.log('남은시간(초)=' + remain);
-setTimeout(repeatPush, remain * 1000);
+console.log('남은시간(밀리초)=' + remain);
+setTimeout(repeatPush, remain);
 
 /**
  * 하루에한번씩 별자리운세를 푸시한다.
  */
 function repeatPush() {
+  process();
   setInterval(process, 86400 * 1000);
 }
 
@@ -173,7 +174,7 @@ function getZodiacSign(day, month) {
 }
 
 /**
- * 목표시간까지의 남은시간을 반환(초)
+ * 목표시간까지의 남은시간을 반환(밀리초)
  * @param target
  * @returns {number}
  */
@@ -181,7 +182,7 @@ function remaining(target) {
   var now = new Date();
   var nt = now.getTime();
   var et = target.getTime();
-  return parseInt(et - nt) / 1000
+  return parseInt(et - nt) 
 }
 
 
