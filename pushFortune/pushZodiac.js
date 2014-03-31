@@ -19,7 +19,7 @@ var port = 1883;
 var users = {"ba54e5ed3b8aace5e1ce833": {"name": "이찬호", "birth": {"year": 1982, "month": 10, "day": 20}},
   "df33406434de552faf60efa": {"name": "이은영", "birth": {"year": 1978, "month": 3, "day": 8}},
   "1c45de7cc1daa896bfd32dc": {"name": "박택영", "birth": {"year": 1974, "month": 12, "day": 27}}};
-var start = new Date(2014, 4, 1, 07, 00, 00);
+var start = new Date(2014, 3, 1, 07, 00, 00);
 var images = new Array();
 
 //푸시에사용할 별자리이미지로딩...
