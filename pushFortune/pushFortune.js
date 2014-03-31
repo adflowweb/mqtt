@@ -53,6 +53,7 @@ function sendMessage() {
       normalizeWhitespace: true,
       xmlMode: true
     });
+
     //var result = $('.result_jiji').text();
     //var result = $('td').text();
     //var result2 = $('td');
@@ -74,17 +75,12 @@ function sendMessage() {
             removeCnt = 0;
             result += str;
           }
-
-
         } else if (removeCnt == cnt) {
-
         }
         else {
           result += str;
         }
-
       }
-
     });
 
 
