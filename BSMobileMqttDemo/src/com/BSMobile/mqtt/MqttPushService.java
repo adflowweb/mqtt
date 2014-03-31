@@ -2,6 +2,8 @@ package com.BSMobile.mqtt;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.GregorianCalendar;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
@@ -47,10 +49,10 @@ public class MqttPushService extends Service implements MqttCallback {
 
 	// Debug TAG
 	public static final String DEBUGTAG = "Mqtt푸시서비스";
-	public static String deviceID = android.os.Build.SERIAL;
+	public static String deviceID;
 	public static final String MQTT_PACKAGE = "org.eclipse.paho.client.mqttv3";
-	private static final String TOPIC = "user/nadir93";
-	// private static final String TOPIC = "testTopic";
+	// private static final String TOPIC = "user/nadir93";
+	private static final String TOPIC = "testTopic";
 	// private static final String SERVERURL = "tcp://adflow.net:1883";
 	private static final String SERVERURL = "tcp://175.209.8.188:1883";
 	// private static final byte[] MQTT_KEEP_ALIVE_MESSAGE = { 123 };
@@ -58,6 +60,8 @@ public class MqttPushService extends Service implements MqttCallback {
 	private static final String DETAILVIEW = "자세히보기";
 	private static final int BIG_PICTURE_STYLE = 0;
 	private static final int BIG_TEXT_STYLE = 1;
+	private static final int CLIENT_ID_LENGTH = 23; // mqtt 3.1 스펙에 clientid
+													// 23 character 로 제한됨
 
 	public static PowerManager.WakeLock wakeLock;
 
@@ -77,12 +81,26 @@ public class MqttPushService extends Service implements MqttCallback {
 	public MqttPushService() {
 		Log.d(DEBUGTAG, "MqttPushService생성자시작() this=" + this);
 		try {
+
+			MessageDigest md = MessageDigest.getInstance("MD5");
+			md.update(android.os.Build.SERIAL.getBytes());
+			byte[] mdbytes = md.digest();
+
+			// convert the byte to hex format method 1
+			StringBuffer sb = new StringBuffer();
+			Log.d(DEBUGTAG, "mdbytes.length=" + mdbytes.length);
+			for (int i = 0; i < mdbytes.length; i++) {
+				sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16)
+						.substring(1));
+			}
+			Log.d(DEBUGTAG, "deviceIDHexString=" + sb);
+			deviceID = sb.toString().substring(0, CLIENT_ID_LENGTH);
 			Log.d(DEBUGTAG, "deviceID=" + deviceID);
 			mqttClient = new MqttClientWithPing(SERVERURL, deviceID,
 					new MemoryPersistence());
 			Log.d(DEBUGTAG, "mqttClient가초기화되었습니다");
-		} catch (MqttException e) {
-			Log.e(DEBUGTAG, "예외상황발생(MqttException)", e);
+		} catch (Exception e) {
+			Log.e(DEBUGTAG, "예외상황발생", e);
 		}
 		Log.d(DEBUGTAG, "MqttPushService생성자종료");
 	}
@@ -225,6 +243,14 @@ public class MqttPushService extends Service implements MqttCallback {
 	public void connectionLost(Throwable th) {
 		Log.d(DEBUGTAG, "connectionLost시작(에러=" + th + ")");
 		Log.e(DEBUGTAG, "mqttTCP세션연결이끊겼습니다", th);
+		try {
+			if (!mqttClient.isConnected()) {
+				connectAndSubscribe();
+				Log.d(DEBUGTAG, "mqttClient가접속되었습니다.");
+			}
+		} catch (MqttException e) {
+			Log.e(DEBUGTAG, "예외상황발생(MqttException)", e);
+		}
 		Log.d(DEBUGTAG, "connectionLost종료()");
 	}
 
@@ -302,14 +328,14 @@ public class MqttPushService extends Service implements MqttCallback {
 				data.length);
 
 		int notificationStyle = noti.getInt("notificationStyle");
+		Uri alarmSound = RingtoneManager
+				.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
 		switch (notificationStyle) {
 		case BIG_PICTURE_STYLE:
 			// bmBigPicture = BitmapFactory.decodeResource(getResources(),
 			// R.drawable.android_jellybean);
 			// byte[] data = message.getPayload();
-			Uri alarmSound = RingtoneManager
-					.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
 			// bigPictureStyle
 			notification = new Notification.BigPictureStyle(
@@ -335,11 +361,15 @@ public class MqttPushService extends Service implements MqttCallback {
 			// bigTextStyle
 			notification = new Notification.BigTextStyle(
 					new Notification.Builder(getApplicationContext())
+							.setSound(alarmSound)
+							.setLights(Color.BLUE, 500, 500)
 							.setContentTitle(noti.getString("contentTitle"))
 							.setContentText(noti.getString("contentText"))
-							.setSmallIcon(R.drawable.ic_action_event)
+							.setSmallIcon(R.drawable.icon)
+							.setTicker(noti.getString("ticker"))
+							.setLargeIcon(bmBigPicture)
 							.setLargeIcon(bmBigPicture)).bigText(
-					noti.getString("ticker")).build();
+					noti.getString("contentText")).build();
 			break;
 		default:
 		}
@@ -379,8 +409,14 @@ public class MqttPushService extends Service implements MqttCallback {
 		return addCalIntent;
 	}
 
-	protected void connectAndSubscribe() throws MqttException {
+	protected synchronized void connectAndSubscribe() throws MqttException {
 		Log.d(DEBUGTAG, "connectAndSubscribe시작");
+
+		if (mqttClient.isConnected()) {
+			Log.d(DEBUGTAG, "이미세션이미연결되었습니다");
+			return;
+		}
+
 		MqttConnectOptions mOpts = new MqttConnectOptions();
 		mOpts.setConnectionTimeout(connectionTimeout);
 		mOpts.setKeepAliveInterval(keepAliveInterval);
@@ -391,6 +427,7 @@ public class MqttPushService extends Service implements MqttCallback {
 		mqttClient.setCallback(this);
 		mqttClient.connect(mOpts);
 		mqttClient.subscribe(TOPIC, 2);
+		mqttClient.subscribe("user/" + deviceID, 2);
 		Log.d(DEBUGTAG, "세션연결및토픽구독을완료하였습니다.");
 		Log.d(DEBUGTAG, "connectAndSubscribe종료()");
 	}
