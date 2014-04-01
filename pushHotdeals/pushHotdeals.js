@@ -19,7 +19,7 @@ var images = [];
 var hotdeals = JSON.parse(fs.readFileSync('./pushHotdeals/resources/hotdeals', 'utf8'));
 console.log('hotdeals=' + util.inspect(hotdeals));
 
-//푸시에사용할 별자리이미지로딩...
+//푸시에사용할 이미지로딩...
 //for (var i = 0; i < 12; i++) {
 var data = fs.readFileSync('./pushHotdeals/resources/hot-deal-icon.png');
 var imageString = new Buffer(data).toString('base64');
