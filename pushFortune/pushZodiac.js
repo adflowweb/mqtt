@@ -86,7 +86,14 @@ function process() {
 function pushZodiac(userID, zodiac) {
   console.log('pushZodiac시작(userID=' + userID + '|zodiac=' + JSON.stringify(zodiac) + ')');
   //별자리운세를 웹에서 가져온다.
-  request({uri: 'http://fortune.daum.net/external/2/star/star_today.asp?sid=' + zodiac.index, encoding: 'binary'}, function (err, response, body) {
+  //http://image.fortune.daum-img.net/external/2/star/star_today.asp?sid=
+  //ban당한거같음
+  //http://fortune.daum.net/external/2/star/star_today.asp?sid=
+  request({uri: 'http://image.fortune.daum-img.net/external/2/star/star_today.asp?sid=' + zodiac.index, encoding: 'binary', headers: {
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.74.9 (KHTML, like Gecko) Version/7.0.2 Safari/537.74.9',
+    'Accept-Encoding': 'gzip, deflate',
+    'Referer': 'http://fortune.daum.net/external/2/star/star_today.asp'
+  }}, function (err, response, body) {
     console.log('response.statusCode=' + response.statusCode);
     if (err) {
       console.error('웹스크래핑중에러발생', e);
