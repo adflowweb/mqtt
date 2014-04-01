@@ -16,10 +16,14 @@ var mqtt = require('mqtt')
 var serverIP = '175.209.8.188';
 var port = 1883;
 //추후 개인데이타는 암호화 하던가 또는 파일이나 디비에서 가져오도록..
-var users = {"ba54e5ed3b8aace5e1ce833": {"name": "이찬호", "birth": {"year": 1982, "month": 10, "day": 20}},
-  "df33406434de552faf60efa": {"name": "이은영", "birth": {"year": 1978, "month": 3, "day": 8}},
+var users = {/*"ba54e5ed3b8aace5e1ce833": {"name": "이찬호", "birth": {"year": 1982, "month": 10, "day": 20}},
+ "df33406434de552faf60efa": {"name": "이은영", "birth": {"year": 1978, "month": 3, "day": 8}}, */
   "1c45de7cc1daa896bfd32dc": {"name": "박택영", "birth": {"year": 1974, "month": 12, "day": 27}}};
-var start = new Date(2014, 3, 1, 07, 00, 00);
+//알람시간은 오늘날짜를 구하고 오전7시 이전이면 그냥 세팅, 오늘 7시 이후이면 다음날 7시로 세팅
+var start = new Date();
+start.setHours(07);
+start.setMinutes(0);
+start.setSeconds(0);
 var images = new Array();
 
 //푸시에사용할 별자리이미지로딩...
@@ -47,8 +51,14 @@ client.on('message', function (topic, message) {
   console.log('메시지=' + message);
 });
 
-console.log('푸시목표시간=' + start);
+
 var remain = remaining(start);
+if (remain < 0) {
+  start.setDate(start.getDate() + 1);
+  remain = remaining(start);
+}
+
+console.log('푸시목표시간=' + start);
 console.log('남은시간(밀리초)=' + remain);
 setTimeout(repeatPush, remain);
 
