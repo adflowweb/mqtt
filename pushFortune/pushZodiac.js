@@ -16,8 +16,8 @@ var mqtt = require('mqtt')
 var serverIP = '175.209.8.188';
 var port = 1883;
 //추후 개인데이타는 암호화 하던가 또는 파일이나 디비에서 가져오도록..
-var users = {"ba54e5ed3b8aace5e1ce833": {"name": "이찬호", "birth": {"year": 1982, "month": 10, "day": 20}},
-  "df33406434de552faf60efa": {"name": "이은영", "birth": {"year": 1978, "month": 3, "day": 8}},
+var users = {/*"ba54e5ed3b8aace5e1ce833": {"name": "이찬호", "birth": {"year": 1982, "month": 10, "day": 20}},
+ "df33406434de552faf60efa": {"name": "이은영", "birth": {"year": 1978, "month": 3, "day": 8}},*/
   "1c45de7cc1daa896bfd32dc": {"name": "박택영", "birth": {"year": 1974, "month": 12, "day": 27}}};
 var start = new Date(2014, 3, 1, 07, 00, 00);
 var images = new Array();
@@ -28,14 +28,17 @@ for (var i = 0; i < 12; i++) {
   var imageString = new Buffer(data).toString('base64');
   images.push(imageString);
 }
+console.log('푸시용이미지로딩완료');
 
 //init mqttClient
 client = mqtt.createClient(port, serverIP);
+console.log('mqtt서버연결완료');
 
 //유저별 토픽구독
 //for dubugging
 for (var key in users) {
   client.subscribe('user/' + key);
+  console.log('구독완료(' + 'user/' + key + ')');
 }
 
 //message receiver
@@ -44,28 +47,34 @@ client.on('message', function (topic, message) {
   console.log('메시지=' + message);
 });
 
-console.log('푸시목표시간=' + start);
-var remain = remaining(start);
-console.log('남은시간(밀리초)=' + remain);
-setTimeout(repeatPush, remain);
+//console.log('푸시목표시간=' + start);
+//var remain = remaining(start);
+//console.log('남은시간(밀리초)=' + remain);
+//setTimeout(repeatPush, remain);
 
-/**
- * 하루에한번씩 별자리운세를 푸시한다.
- */
-function repeatPush() {
-  process();
-  setInterval(process, 86400 * 1000);
-}
+///**
+// * 하루에한번씩 별자리운세를 푸시한다.
+// */
+//function repeatPush() {
+//  process();
+//  setInterval(process, 86400 * 1000);
+//}
+
+process();
 
 /**
  * 유저별로 푸시를 수행한다.
  */
 function process() {
+  console.log('process시작()');
   for (var key in users) {
     //유저의 해당 별자리를 알아낸다.
+    console.log('key=' + key);
     var zodiac = getZodiacSign(users[key].birth.day, users[key].birth.month);
+    console.log('zodiac=' + JSON.stringify(zodiac));
     pushZodiac(key, zodiac);
   }
+  console.log('process종료()');
 };
 
 /**
@@ -75,41 +84,52 @@ function process() {
  * @param zodiac
  */
 function pushZodiac(userID, zodiac) {
-
-  console.log('userID=' + userID);
-  console.log('zodiac=' + JSON.stringify(zodiac));
+  console.log('pushZodiac시작(userID=' + userID + '|zodiac=' + JSON.stringify(zodiac) + ')');
   //별자리운세를 웹에서 가져온다.
   request({uri: 'http://fortune.daum.net/external/2/star/star_today.asp?sid=' + zodiac.index, encoding: 'binary'}, function (err, response, body) {
-    body = new Buffer(body, 'binary');
-    body = iconv.convert(body).toString();
-    //console.log('body='+body);
-    $ = cheerio.load(body, {
-      normalizeWhitespace: true,
-      xmlMode: true
-    });
+    console.log('response.statusCode=' + response.statusCode);
+    if (err) {
+      console.error('웹스크래핑중에러발생', e);
+      return;
+    }
+    try {
+      body = new Buffer(body, 'binary');
+      body = iconv.convert(body).toString();
+      //console.log('body='+body);
+      $ = cheerio.load(body, {
+        normalizeWhitespace: true,
+        xmlMode: true
+      });
 
-    var result = '';
-    var cnt = 0;
+      var result = '';
+      var cnt = 0;
 
-    //페이지가 변경될 경우 다시 코드를 봐줘야함!
-    $('font').each(function () {
-      cnt++;
-      if (cnt > 2) {
-        var str = $(this).text();
-        //console.log(str);
-        result += str;
-      }
-    });
+      //페이지가 변경될 경우 다시 코드를 봐줘야함!
+      $('font').each(function () {
+        cnt++;
+        if (cnt > 2) {
+          var str = $(this).text();
+          //console.log(str);
+          result += str;
+        }
+      });
 
-    var sendMsg = {"notification": {"notificationStyle": 1, "contentTitle": "오늘의운세(" + zodiac.desc + ")",
-      "contentText": result, "ticker": result,
-      "summaryText": "오늘의운세(" + zodiac.desc + ")", "image": images[zodiac.index - 1]
-    }};
-    console.log('sendMessage=' + JSON.stringify(sendMsg));
+      var sendMsg = {"notification": {"notificationStyle": 1, "contentTitle": "오늘의운세(" + zodiac.desc + ")",
+        "contentText": result, "ticker": result,
+        "summaryText": "오늘의운세(" + zodiac.desc + ")", "image": images[zodiac.index - 1]
+      }};
+      console.log('sendMessage=' + JSON.stringify(sendMsg));
 
-    //메시지를 전송한다.
-    client.publish('user/' + userID, JSON.stringify(sendMsg), {'qos': 1});
+      //메시지를 전송한다.
+      client.publish('user/' + userID, JSON.stringify(sendMsg), {'qos': 1});
+    } catch (e) {
+      console.log('body=' + body);
+      console.error('에러발생', e);
+    }
+
+
   });
+  console.log('pushZodiac시작()');
 }
 
 function leadingZeros(n, digits) {
