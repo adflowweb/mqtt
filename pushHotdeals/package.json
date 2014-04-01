@@ -1,0 +1,17 @@
+{
+  "name": "pushHotdeals",
+  "version": "0.0.0",
+  "description": "",
+  "main": "pushHotdeals.js",
+  "dependencies": {
+    "cheerio": "~0.13.1",
+    "mqtt": "~0.3.8",
+    "request": "~2.34.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "@nadir93",
+  "license": "BSD"
+}
