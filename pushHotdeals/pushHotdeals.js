@@ -13,11 +13,13 @@ var mqtt = require('mqtt')
 var serverIP = '175.209.8.188';
 var port = 1883;
 //추후 개인데이타는 암호화 하던가 또는 파일이나 디비에서 가져오도록..
-var users = {"1c45de7cc1daa896bfd32dc": {"name": "박택영", "birth": {"year": 1974, "month": 12, "day": 27}}};
+var users = {"df33406434de552faf60efa": {"name": "이은영", "birth": {"year": 1978, "month": 3, "day": 8}},
+  "1c45de7cc1daa896bfd32dc": {"name": "박택영", "birth": {"year": 1974, "month": 12, "day": 27}}};
 var images = [];
+var hotdealsCheckInterval = 600000;
 
 var hotdeals = JSON.parse(fs.readFileSync('./pushHotdeals/resources/hotdeals', 'utf8'));
-console.log('hotdeals=' + util.inspect(hotdeals));
+console.log('기존파일핫딜데이타=' + util.inspect(hotdeals));
 
 //푸시에사용할 이미지로딩...
 //for (var i = 0; i < 12; i++) {
@@ -26,14 +28,17 @@ var imageString = new Buffer(data).toString('base64');
 images.push(imageString);
 //}
 
+
 //init mqttClient
-client = mqtt.createClient(port, serverIP);
+var client = mqtt.createClient(port, serverIP);
+//</editor-fold>
 
 //유저별 토픽구독
 //for dubugging
 for (var key in users) {
   client.subscribe('user/' + key);
 }
+//endregion
 
 //message receiver
 client.on('message', function (topic, message) {
@@ -41,11 +46,16 @@ client.on('message', function (topic, message) {
   console.log('메시지=' + message);
 });
 
+//주기적으로 핫딜정보 체크
 setInterval(function () {
   checkHotdeals(pushHotdeals);
-}, 600000);
+}, hotdealsCheckInterval);
 
-//핫딜정보를 체크한다.
+
+/**
+ * 핫딜정보를 체크한다.
+ * @param callback
+ */
 function checkHotdeals(callback) {
   console.log('핫딜정보체크시작');
   //잠자는 사간 제외
@@ -141,15 +151,22 @@ function checkHotdeals(callback) {
   console.log('핫딜정보체크종료');
 }
 
-//핫딜정보로 판단되면 유저에게 푸시한다.
+/**
+ * 등록된 사용자에게 핫딜정보를 푸시한다.
+ * @param err
+ * @param response
+ * @param deals
+ */
 function pushHotdeals(err, response, deals) {
   console.log('pushHotdeals시작(err=' + err + '|response=' + response.statusCode + '|deals=' + util.inspect(deals) + ')');
   if (err) {
-    console.error('웹스크래핑중에러발생', err);
+    console.error('에러발생', err);
     return;
   }
 
-  //로직=조회수3000건이상
+  /**
+   * 로직=조회수3000건이상 추후 로직을 적용바람 ex) 단위 시간당 조회수를 기울기로 환산하여 임계치 이상이면 핫딜로 판단..
+   */
   for (var key in deals) {
     console.log('key=' + key);
     if (hotdeals[key].count >= 3000) {
@@ -172,7 +189,7 @@ function pushHotdeals(err, response, deals) {
             }
           });
 
-          //보내지않은사람만 푸시
+          //이미 보낸사용자는 스킵
           if (!sent) {
             console.log('메시지를전송합니다.');
             client.publish('user/' + userKey, JSON.stringify(sendMsg), {'qos': 1});
