@@ -32,7 +32,8 @@ public class TestPushController extends AbstractTestNGSpringContextTests {
 	@BeforeClass
 	void bfterclass() throws Exception {
 
-		FileInputStream fis = new FileInputStream("mt_location.jpg");
+		FileInputStream fis = new FileInputStream(
+				"src/test/resources/mt_location.jpg");
 		data = IOUtils.toByteArray(fis);
 		String encodedStr = Base64.encodeBase64String(data);
 		// System.out.println("encodedBytes::" + encodedStr);
