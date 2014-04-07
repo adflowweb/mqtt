@@ -24,7 +24,7 @@ public class LoggingAspect {
 	public void logBefore(JoinPoint joinPoint) {
 		logger = LoggerFactory.getLogger(joinPoint.getSignature()
 				.getDeclaringTypeName());
-		logger.debug(joinPoint.getSignature().getName() + "::entry");
+		logger.debug(joinPoint.getSignature().getName() + "시작");
 	}
 
 	/**
@@ -34,7 +34,7 @@ public class LoggingAspect {
 	public void logAfter(JoinPoint joinPoint) {
 		logger = LoggerFactory.getLogger(joinPoint.getSignature()
 				.getDeclaringTypeName());
-		logger.debug(joinPoint.getSignature().getName() + "::exit");
+		logger.debug(joinPoint.getSignature().getName() + "종료");
 	}
 
 }

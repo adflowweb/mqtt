@@ -8,7 +8,6 @@ import javax.annotation.Resource;
 import kr.co.adflow.push.domain.GroupMessage;
 import kr.co.adflow.push.domain.PersonalMessage;
 import kr.co.adflow.push.domain.Response;
-import kr.co.adflow.push.domain.ResponseData;
 import kr.co.adflow.push.domain.Result;
 import kr.co.adflow.push.service.PushService;
 
@@ -34,7 +33,6 @@ public class PushController {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(PushController.class);
-	private ResponseData qwer;
 
 	/**
 	 * 푸시서비스동작여부확인
@@ -53,7 +51,7 @@ public class PushController {
 		result.setSuccess(true);
 		result.setData(pushService.isAvailable());
 		Response res = new Response(result);
-		logger.debug("response::" + res);
+		logger.debug("response=" + res);
 		return res;
 	}
 
@@ -62,15 +60,15 @@ public class PushController {
 	 * @param topicName
 	 * @return
 	 */
-	@RequestMapping(value = "topic/{topicName}", method = RequestMethod.POST)
+	@RequestMapping(value = "topics/{topicName}", method = RequestMethod.POST)
 	@ResponseBody
 	public Response sendTopic(@RequestBody GroupMessage msg,
 			@PathVariable String topicName) {
-		// logger.debug("그룹메시지::" + msg);
+		logger.debug("그룹메시지=" + msg);
 		Result result = new Result();
 		result.setSuccess(true);
 		Response res = new Response(result);
-		// logger.debug("response::" + res);
+		logger.debug("response=" + res);
 		return res;
 	}
 
@@ -80,16 +78,16 @@ public class PushController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "user/{userName}", method = RequestMethod.POST)
+	@RequestMapping(value = "users/{userName}", method = RequestMethod.POST)
 	@ResponseBody
 	public Response sendMessage(@RequestBody PersonalMessage msg,
 			@PathVariable String userName) throws Exception {
-		// logger.debug("개인메시지::" + msg);
+		logger.debug("개인메시지=" + msg);
 		pushService.sendMessage(msg);
 		Result result = new Result();
 		result.setSuccess(true);
 		Response res = new Response(result);
-		// logger.debug("response::" + res);
+		logger.debug("response=" + res);
 		return res;
 	}
 
@@ -98,7 +96,7 @@ public class PushController {
 	 * @param userName
 	 * @return
 	 */
-	@RequestMapping(value = "user", method = RequestMethod.POST)
+	@RequestMapping(value = "users", method = RequestMethod.POST)
 	@ResponseBody
 	public Response sendMessageAll(@RequestBody PersonalMessage msg) {
 		Result result = new Result();
