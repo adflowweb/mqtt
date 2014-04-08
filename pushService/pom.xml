@@ -213,6 +213,43 @@
 			</plugin>
 		</plugins>
 	</build>
+	<!-- Profiles start here -->
+	<profiles>
+		<!-- Development environment @ my laptop -->
+		<profile>
+			<id>dev</id>
+			<properties>
+				<!-- subscribe 해야하는 토픽 -->
+				<topic>testTopic</topic>
+				<!-- ibm mq 서버주소 -->
+				<mq.server.url>tcp://adflow.net:1883</mq.server.url>
+				<!-- 유니크한 클라이언트아이디 -->
+				<clientid>uniqueclientid</clientid>
+				<!-- 헬스체크주기(second) -->
+				<health.check.interval>10</health.check.interval>
+				<!-- 소켓연결제한시간(second) -->
+				<connection.timeout>10</connection.timeout>
+				<!-- 핑체크주기(second) -->
+				<keep.alive.interval>5</keep.alive.interval>
+				<!-- 세션초기화설정 -->
+				<clean.session>false</clean.session>
+				<!-- paho logging level설정 -->
+				<paho.log.level>SEVERE</paho.log.level>
+				<!-- application log level 설정 -->
+				<log.level>debug</log.level>
+			</properties>
+		</profile>
+		<!-- Production environment @ production server -->
+		<profile>
+			<id>production</id>
+			<properties>
+				<!-- <db.driverClass>oracle.jdbc.driver.OracleDriver</db.driverClass> 
+					<db.connectionURL>jdbc:oracle:thin:@10.0.1.14:1521:APPS</db.connectionURL> 
+					<db.username>productionuser</db.username> <db.password>productionpassword</db.password> 
+					<logo.image>production_logo.png</logo.image> -->
+			</properties>
+		</profile>
+	</profiles>
 	<repositories>
 		<repository>
 			<id>repo.eclipse.org</id>

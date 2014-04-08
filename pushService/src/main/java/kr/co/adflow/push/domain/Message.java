@@ -4,9 +4,12 @@ package kr.co.adflow.push.domain;
  * @author nadir93
  * @date 2014. 3. 20.
  */
-abstract public class Message {
+public class Message {
 	private String message;
 	private String sender;
+	private String receiver;
+	private int qos;
+	private boolean retained;
 
 	/**
 	 * @return
@@ -36,9 +39,34 @@ abstract public class Message {
 		this.sender = sender;
 	}
 
-	// @Override
-	// public String toString() {
-	// return "Message [message=" + message + ", sender=" + sender + "]";
-	// }
+	public String getReceiver() {
+		return receiver;
+	}
 
+	public void setReceiver(String receiver) {
+		this.receiver = receiver;
+	}
+
+	public int getQos() {
+		return qos;
+	}
+
+	public void setQos(int qos) {
+		this.qos = qos;
+	}
+
+	public boolean isRetained() {
+		return retained;
+	}
+
+	public void setRetained(boolean retained) {
+		this.retained = retained;
+	}
+
+	@Override
+	public String toString() {
+		return "Message [message=" + message + ", sender=" + sender
+				+ ", receiver=" + receiver + ", qos=" + qos + ", retained="
+				+ retained + "]";
+	}
 }

@@ -1,5 +1,7 @@
 package kr.co.adflow.push.service.impl;
 
+import java.io.IOException;
+import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -22,7 +24,6 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.eclipse.paho.client.mqttv3.MqttTopic;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
@@ -37,20 +38,36 @@ public class MqttConnectionServiceImpl implements Runnable, MqttCallback,
 	private static final org.slf4j.Logger logger = LoggerFactory
 			.getLogger(MqttConnectionServiceImpl.class);
 
+	private static Properties prop = new Properties();
+
+	static {
+		try {
+			prop.load(MqttConnectionServiceImpl.class
+					.getResourceAsStream("/config.properties"));
+			logger.debug("properties=" + prop);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 	public static final String MQTT_PACKAGE = "org.eclipse.paho.client.mqttv3";
 	private static final String TOPIC = "testTopic";
-	private static final String SERVERURL = "tcp://adflow.net:1883";
-	private static final String DEVICEID = "ADFlowPushServer";
+	private static final String SERVERURL = prop.getProperty("mq.server.url");
+	private static final String CLIENTID = prop.getProperty("clientid");
 	private ScheduledExecutorService scheduledExecutorService;
 	private MqttClient mqttClient;
-	private int healthCheckInterval = 10; // second
-	private int connectionTimeout = 10; // second
-	private int keepAliveInterval = 5; // second
-	private boolean cleanSession = false;
+	private int healthCheckInterval = Integer.parseInt(prop
+			.getProperty("health.check.interval"));
+	private int connectionTimeout = Integer.parseInt(prop
+			.getProperty("connection.timeout"));
+	private int keepAliveInterval = Integer.parseInt(prop
+			.getProperty("keep.alive.interval"));
+	private boolean cleanSession = Boolean.parseBoolean(prop
+			.getProperty("clean.session"));
 	private MqttConnectOptions mOpts;
 	private String errorMsg;
 
-	private Level logLevel = Level.SEVERE;
+	private Level logLevel = Level.parse(prop.getProperty("paho.log.level"));
 
 	/**
 	 * @throws Exception
@@ -150,7 +167,7 @@ public class MqttConnectionServiceImpl implements Runnable, MqttCallback,
 	 */
 	private synchronized void connect() throws MqttException {
 		logger.debug("connect시작()");
-		mqttClient = new MqttClient(SERVERURL, DEVICEID);
+		mqttClient = new MqttClient(SERVERURL, CLIENTID);
 		logger.debug("mqttClient인스턴스가생성되었습니다.::" + mqttClient);
 		mqttClient.setCallback(this);
 		mqttClient.connect(mOpts);
@@ -257,10 +274,9 @@ public class MqttConnectionServiceImpl implements Runnable, MqttCallback,
 			return false;
 		}
 
-		MqttMessage message = new MqttMessage(msg.getMessage().getBytes());
-		message.setQos(2);
-		MqttTopic topic = mqttClient.getTopic(TOPIC);
-		topic.publish(message);
+		mqttClient.publish(msg.getReceiver(), msg.getMessage().getBytes(),
+				msg.getQos(), /* retained */
+				false);
 		logger.debug("publish종료(true)");
 		return true;
 	}

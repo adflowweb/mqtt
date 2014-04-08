@@ -5,10 +5,10 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import kr.co.adflow.push.domain.GroupMessage;
-import kr.co.adflow.push.domain.PersonalMessage;
+import kr.co.adflow.push.domain.Message;
 import kr.co.adflow.push.domain.Response;
 import kr.co.adflow.push.domain.Result;
+import kr.co.adflow.push.domain.SendMessageResponseData;
 import kr.co.adflow.push.service.PushService;
 
 import org.slf4j.Logger;
@@ -60,13 +60,15 @@ public class PushController {
 	 * @param topicName
 	 * @return
 	 */
-	@RequestMapping(value = "topics/{topicName}", method = RequestMethod.POST)
+	@RequestMapping(value = "groups/{groupID}", method = RequestMethod.POST)
 	@ResponseBody
-	public Response sendTopic(@RequestBody GroupMessage msg,
-			@PathVariable String topicName) {
+	public Response sendGroupMessage(@RequestBody Message msg,
+			@PathVariable String groupID) throws Exception {
+		msg.setReceiver("groups/" + groupID);
 		logger.debug("그룹메시지=" + msg);
 		Result result = new Result();
 		result.setSuccess(true);
+		result.setData(new SendMessageResponseData(pushService.sendMessage(msg)));
 		Response res = new Response(result);
 		logger.debug("response=" + res);
 		return res;
@@ -78,14 +80,15 @@ public class PushController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "users/{userName}", method = RequestMethod.POST)
+	@RequestMapping(value = "users/{userID}", method = RequestMethod.POST)
 	@ResponseBody
-	public Response sendMessage(@RequestBody PersonalMessage msg,
-			@PathVariable String userName) throws Exception {
+	public Response sendPersonalMessage(@RequestBody Message msg,
+			@PathVariable String userID) throws Exception {
+		msg.setReceiver("users/" + userID);
 		logger.debug("개인메시지=" + msg);
-		pushService.sendMessage(msg);
 		Result result = new Result();
 		result.setSuccess(true);
+		result.setData(new SendMessageResponseData(pushService.sendMessage(msg)));
 		Response res = new Response(result);
 		logger.debug("response=" + res);
 		return res;
@@ -98,10 +101,14 @@ public class PushController {
 	 */
 	@RequestMapping(value = "users", method = RequestMethod.POST)
 	@ResponseBody
-	public Response sendMessageAll(@RequestBody PersonalMessage msg) {
+	public Response sendMessageAll(@RequestBody Message msg) throws Exception {
+		msg.setReceiver("users");
+		logger.debug("전체메시지=" + msg);
 		Result result = new Result();
 		result.setSuccess(true);
+		result.setData(new SendMessageResponseData(pushService.sendMessage(msg)));
 		Response res = new Response(result);
+		logger.debug("response=" + res);
 		return res;
 	}
 
