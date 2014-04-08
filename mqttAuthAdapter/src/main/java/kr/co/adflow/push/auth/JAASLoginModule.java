@@ -171,7 +171,7 @@ public class JAASLoginModule implements LoginModule {
 				ClientConfig clientConfig = new DefaultClientConfig();
 				Client client = Client.create();
 				WebResource webResource = client.resource(
-						"http://192.168.0.60:8080/users/" + username)
+						"http://192.168.0.60:8080/push/users/" + username)
 						.queryParam("clientID", new String(password));
 
 				ClientResponse response = webResource
