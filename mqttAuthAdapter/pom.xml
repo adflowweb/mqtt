@@ -103,9 +103,12 @@
 		<profile>
 			<id>dev</id>
 			<properties>
+				<!-- 푸시서버주소 -->
 				<server.ip>127.0.0.1</server.ip>
+				<!-- 푸시서버포트 -->
 				<server.port>8080</server.port>
-				<debug.level>debug</debug.level>
+				<!-- 어플리케이션 로깅레벨 -->
+				<log.level>debug</log.level>
 			</properties>
 		</profile>
 		<!-- Production environment @ production server -->

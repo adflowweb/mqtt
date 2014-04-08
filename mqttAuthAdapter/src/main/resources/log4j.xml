@@ -12,7 +12,7 @@
 
 	<!-- Application Loggers -->
 	<logger name="kr.co.adflow.push.auth">
-		<level value="${debug.level}" />
+		<level value="${log.level}" />
 	</logger>
 
 	<!-- 3rdparty Loggers -->
