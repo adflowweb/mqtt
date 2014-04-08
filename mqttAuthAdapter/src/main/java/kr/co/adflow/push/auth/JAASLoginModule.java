@@ -6,6 +6,7 @@ import java.util.Properties;
 
 import javax.net.ssl.SSLSession;
 import javax.security.auth.Subject;
+import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
@@ -107,8 +108,8 @@ public class JAASLoginModule implements LoginModule {
 		AuthCallback xrCallback = new AuthCallback();
 
 		try {
-			callbackHandler.handle(new javax.security.auth.callback.Callback[] {
-					nameCallback, passwordCallback, validPromptsCallback,
+			callbackHandler.handle(new Callback[] { nameCallback,
+					passwordCallback, validPromptsCallback,
 					clientIdentifierCallback, networkAddressCallback,
 					channelNameCallback, xrCallback });
 			String username = nameCallback.getName();
@@ -117,9 +118,13 @@ public class JAASLoginModule implements LoginModule {
 			logger.debug("password="
 					+ (password != null ? new String(password) : password));
 			String validPrompts = validPromptsCallback.getText();
+			logger.debug("validPrompts=" + validPrompts);
 			String clientId = clientIdentifierCallback.getText();
+			logger.debug("clientId=" + clientId);
 			String networkAddress = networkAddressCallback.getText();
+			logger.debug("networkAddress=" + networkAddress);
 			String channelName = channelNameCallback.getText();
+			logger.debug("channelName=" + channelName);
 			SSLSession sslSession = xrCallback.getSSLSession();
 			// Note that if multiple nameCallBack or clientIdentifierCallback
 			// callback's

@@ -101,10 +101,11 @@
 	<profiles>
 		<!-- Development environment @ my laptop -->
 		<profile>
-			<id>development</id>
+			<id>dev</id>
 			<properties>
 				<server.ip>127.0.0.1</server.ip>
 				<server.port>8080</server.port>
+				<debug.level>dbug</debug.level>
 			</properties>
 		</profile>
 		<!-- Production environment @ production server -->
