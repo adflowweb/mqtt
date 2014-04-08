@@ -2,8 +2,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>kr.co.adflow</groupId>
-	<artifactId>push</artifactId>
+	<groupId>kr.co.adflow.push</groupId>
+	<artifactId>pushServer</artifactId>
 	<name>pushService</name>
 	<packaging>war</packaging>
 	<version>1.0.0-BUILD-SNAPSHOT</version>
@@ -197,6 +197,18 @@
 				<version>1.2.1</version>
 				<configuration>
 					<mainClass>org.test.int1.Main</mainClass>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.tomcat.maven</groupId>
+				<artifactId>tomcat7-maven-plugin</artifactId>
+				<version>2.2</version>
+				<configuration>
+					<path>/</path>
+					<url>http://192.168.0.21:8080/manager/text</url>
+					<username>root</username>
+					<password>!ADFlow@</password>
+					<warFile>target/pushServer-1.0.0-BUILD-SNAPSHOT.war</warFile>
 				</configuration>
 			</plugin>
 		</plugins>
