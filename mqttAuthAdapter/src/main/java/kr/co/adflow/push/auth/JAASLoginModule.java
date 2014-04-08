@@ -1,6 +1,8 @@
 package kr.co.adflow.push.auth;
 
+import java.io.IOException;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.net.ssl.SSLSession;
 import javax.security.auth.Subject;
@@ -27,13 +29,25 @@ import com.sun.jersey.api.client.config.DefaultClientConfig;
  */
 
 /**
- * @author nadir93
+ * IBM JAAS 인증모듈
  * 
+ * @author nadir93
  */
 public class JAASLoginModule implements LoginModule {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(JAASLoginModule.class);
+
+	private static Properties prop = new Properties();
+
+	static {
+		try {
+			prop.load(JAASLoginModule.class
+					.getResourceAsStream("/config.properties"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 	private Subject subject;
 	private CallbackHandler callbackHandler;
@@ -138,8 +152,10 @@ public class JAASLoginModule implements LoginModule {
 			ClientConfig clientConfig = new DefaultClientConfig();
 			Client client = Client.create();
 			WebResource webResource = client.resource(
-					"http://192.168.0.60:8080/push/users/" + username)
-					.queryParam("clientID", new String(password));
+					"http://" + prop.getProperty("server") + ":"
+							+ prop.getProperty("server.port") + "/push/users/"
+							+ username).queryParam("clientID",
+					new String(password));
 
 			ClientResponse response = webResource.accept("application/json")
 					.get(ClientResponse.class);
