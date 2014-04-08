@@ -17,6 +17,11 @@ import javax.security.auth.spi.LoginModule;
 import javax.security.auth.x500.X500Principal;
 
 import com.ibm.mq.mqxr.AuthCallback;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.config.ClientConfig;
+import com.sun.jersey.api.client.config.DefaultClientConfig;
 
 /* @start_prolog@
  * -----------------------------------------------------------------
@@ -145,24 +150,24 @@ public class JAASLoginModule implements LoginModule {
 			// Accept everything.
 			if (true) {
 				// todo 푸시서버에 인증요청을 보내고 결과를 리턴한다.
-				// ClientConfig clientConfig = new DefaultClientConfig();
-				// Client client = Client.create();
-				// WebResource webResource = client.resource(
-				// "http://localhost:8080/users/").queryParam("clientID",
-				// new String(password));
-				//
-				// ClientResponse response = webResource
-				// .accept("application/json").get(ClientResponse.class);
-				//
-				// if (response.getStatus() != 200) {
-				// throw new RuntimeException("Failed : HTTP error code : "
-				// + response.getStatus());
-				// }
-				//
-				// String output = response.getEntity(String.class);
-				//
-				// System.out.println("Output from Server .... \n");
-				// System.out.println(output);
+				ClientConfig clientConfig = new DefaultClientConfig();
+				Client client = Client.create();
+				WebResource webResource = client.resource(
+						"http://192.168.0.60:8080/users/").queryParam(
+						"clientID", new String(password));
+
+				ClientResponse response = webResource
+						.accept("application/json").get(ClientResponse.class);
+
+				if (response.getStatus() != 200) {
+					throw new RuntimeException("Failed : HTTP error code : "
+							+ response.getStatus());
+				}
+
+				String output = response.getEntity(String.class);
+
+				System.out.println("Output from Server .... \n");
+				System.out.println(output);
 
 				loggedIn = true;
 			} else
