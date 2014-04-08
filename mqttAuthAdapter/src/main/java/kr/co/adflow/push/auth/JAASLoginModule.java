@@ -1,8 +1,12 @@
 package kr.co.adflow.push.auth;
 
-import java.io.IOException;
 import java.util.Map;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import javax.net.ssl.SSLSession;
 import javax.security.auth.Subject;
@@ -10,7 +14,6 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.TextInputCallback;
-import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
@@ -51,6 +54,7 @@ import com.sun.jersey.api.client.config.DefaultClientConfig;
 public class JAASLoginModule implements LoginModule {
 
 	private static Logger logger = Logger.getLogger("JAASLoginModule");
+	private Level logLevel = Level.SEVERE;
 
 	private Subject subject;
 	private CallbackHandler callbackHandler;
@@ -63,6 +67,19 @@ public class JAASLoginModule implements LoginModule {
 	public JAASLoginModule() {
 		logger.info("JAASLoginModule초기화되었습니다." + this);
 		logger.info("thread=" + Thread.currentThread());
+	}
+
+	private void setMqttClientLog() {
+		// logger.debug("setMqttClientLog시작()");
+		Handler defaultHandler = new ConsoleHandler();
+		LogManager logManager = LogManager.getLogManager();
+		Logger rootLogger = Logger.getLogger("kr.co.adflow.push.auth");
+		defaultHandler.setFormatter(new SimpleFormatter());
+		defaultHandler.setLevel(logLevel);
+		rootLogger.setLevel(logLevel);
+		rootLogger.addHandler(defaultHandler);
+		logManager.addLogger(rootLogger);
+		// logger.debug("setMqttClientLog종료()");
 	}
 
 	/*
@@ -150,6 +167,7 @@ public class JAASLoginModule implements LoginModule {
 			// Accept everything.
 			if (true) {
 				// todo 푸시서버에 인증요청을 보내고 결과를 리턴한다.
+				logger.info("푸시서버에 인증요청을 보내고 결과를 리턴한다.");
 				ClientConfig clientConfig = new DefaultClientConfig();
 				Client client = Client.create();
 				WebResource webResource = client.resource(
@@ -168,16 +186,15 @@ public class JAASLoginModule implements LoginModule {
 
 				System.out.println("Output from Server .... \n");
 				System.out.println(output);
-
+				logger.info("rest호출종료");
 				loggedIn = true;
 			} else
 				throw new FailedLoginException("Login failed");
 
 			principal = new JAASPrincipal(username);
 
-		} catch (IOException exception) {
-			throw new LoginException(exception.toString());
-		} catch (UnsupportedCallbackException exception) {
+		} catch (Exception exception) {
+			logger.log(Level.SEVERE, exception.getMessage(), exception);
 			throw new LoginException(exception.toString());
 		}
 
