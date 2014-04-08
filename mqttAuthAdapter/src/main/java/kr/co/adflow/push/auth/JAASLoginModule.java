@@ -61,6 +61,7 @@ public class JAASLoginModule implements LoginModule {
 	public JAASLoginModule() {
 		logger.debug("JAASLoginModule초기화되었습니다." + this);
 		logger.debug("thread=" + Thread.currentThread());
+		logger.debug("properties=" + prop);
 	}
 
 	/*
