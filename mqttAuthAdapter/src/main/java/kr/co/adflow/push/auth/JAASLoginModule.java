@@ -44,6 +44,7 @@ public class JAASLoginModule implements LoginModule {
 		try {
 			prop.load(JAASLoginModule.class
 					.getResourceAsStream("/config.properties"));
+			logger.debug("properties=" + prop);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

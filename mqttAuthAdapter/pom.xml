@@ -13,9 +13,18 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<org.slf4j-version>1.6.6</org.slf4j-version>
+		<testng.version>6.8.7</testng.version>
 	</properties>
 
 	<dependencies>
+		<!-- Test -->
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>${testng.version}</version>
+			<scope>test</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -80,5 +89,33 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		<!-- Instructing the resources plugin to filter certain directories -->
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
 	</build>
+	<!-- Profiles start here -->
+	<profiles>
+		<!-- Development environment @ my laptop -->
+		<profile>
+			<id>development</id>
+			<properties>
+				<server.ip>127.0.0.1</server.ip>
+				<server.port>8080</server.port>
+			</properties>
+		</profile>
+		<!-- Production environment @ production server -->
+		<profile>
+			<id>production</id>
+			<properties>
+				<!-- <db.driverClass>oracle.jdbc.driver.OracleDriver</db.driverClass> 
+					<db.connectionURL>jdbc:oracle:thin:@10.0.1.14:1521:APPS</db.connectionURL> 
+					<db.username>productionuser</db.username> <db.password>productionpassword</db.password> 
+					<logo.image>production_logo.png</logo.image> -->
+			</properties>
+		</profile>
+	</profiles>
 </project>
