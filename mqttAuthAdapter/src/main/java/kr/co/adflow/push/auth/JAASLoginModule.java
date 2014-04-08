@@ -154,7 +154,7 @@ public class JAASLoginModule implements LoginModule {
 			ClientConfig clientConfig = new DefaultClientConfig();
 			Client client = Client.create();
 			WebResource webResource = client.resource(
-					"http://" + prop.getProperty("server") + ":"
+					"http://" + prop.getProperty("server.ip") + ":"
 							+ prop.getProperty("server.port") + "/push/users/"
 							+ username).queryParam("clientID",
 					new String(password));
