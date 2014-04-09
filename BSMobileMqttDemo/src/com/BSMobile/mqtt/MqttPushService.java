@@ -3,7 +3,6 @@ package com.BSMobile.mqtt;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.GregorianCalendar;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
@@ -53,15 +52,18 @@ public class MqttPushService extends Service implements MqttCallback {
 	public static final String MQTT_PACKAGE = "org.eclipse.paho.client.mqttv3";
 	// private static final String TOPIC = "user/nadir93";
 	private static final String TOPIC = "testTopic";
+	// private static final String SERVERURL = "tcp://192.168.0.20:1883";
 	// private static final String SERVERURL = "tcp://adflow.net:1883";
-	private static final String SERVERURL = "tcp://175.209.8.188:1883";
+	private static final String SERVERURL = "tcp://175.209.8.188:1883"; // raspberryPI
 	// private static final byte[] MQTT_KEEP_ALIVE_MESSAGE = { 123 };
 	private static final String ADDCALENDAR = "캘린더추가";
 	private static final String DETAILVIEW = "자세히보기";
 	private static final int BIG_PICTURE_STYLE = 0;
 	private static final int BIG_TEXT_STYLE = 1;
-	private static final int CLIENT_ID_LENGTH = 23; // mqtt 3.1 스펙에 clientid
-													// 23 character 로 제한됨
+	private static final int NORMAL_STYLE = 2;
+	// mqtt 3.1 스펙에 clientid
+	// 23 character 로 제한됨
+	private static final int CLIENT_ID_LENGTH = 23;
 
 	public static PowerManager.WakeLock wakeLock;
 
@@ -112,6 +114,9 @@ public class MqttPushService extends Service implements MqttCallback {
 		Log.d(DEBUGTAG, "onCreate종료()");
 	}
 
+	/**
+	 * eclipse paho client용 로거
+	 */
 	private void setMqttClientLog() {
 		Log.d(DEBUGTAG, "setMqttClientLog시작()");
 		Handler defaultHandler = new ConsoleHandler();
@@ -371,7 +376,28 @@ public class MqttPushService extends Service implements MqttCallback {
 							.setLargeIcon(bmBigPicture)).bigText(
 					noti.getString("contentText")).build();
 			break;
+		case NORMAL_STYLE:
+
+			String contentUri = noti.getString("contentUri");
+
+			PendingIntent detailIntent = null;
+
+			if (contentUri != null) {
+				detailIntent = PendingIntent.getActivity(
+						getApplicationContext(), 0, new Intent(
+								Intent.ACTION_VIEW).setData(Uri
+								.parse(contentUri)), 0);
+			}
+
+			notification = new Notification.Builder(getApplicationContext())
+					.setSound(alarmSound).setLights(Color.BLUE, 500, 500)
+					.setContentTitle(noti.getString("contentTitle"))
+					.setContentText(noti.getString("contentText"))
+					.setLargeIcon(bmBigPicture).setContentIntent(detailIntent)
+					.setTicker(noti.getString("ticker"))
+					.setSmallIcon(R.drawable.icon).build();
 		default:
+
 		}
 
 		// notification.ledARGB = Color.YELLOW;
@@ -418,6 +444,8 @@ public class MqttPushService extends Service implements MqttCallback {
 		}
 
 		MqttConnectOptions mOpts = new MqttConnectOptions();
+		mOpts.setUserName("testUser");
+		mOpts.setPassword("testPasswd".toCharArray());
 		mOpts.setConnectionTimeout(connectionTimeout);
 		mOpts.setKeepAliveInterval(keepAliveInterval);
 		mOpts.setCleanSession(false);
@@ -426,6 +454,10 @@ public class MqttPushService extends Service implements MqttCallback {
 		Log.d(DEBUGTAG, "콜백인스턴스=" + this);
 		mqttClient.setCallback(this);
 		mqttClient.connect(mOpts);
+
+		// todo 최초접속시 클라이언트 정보를 서버에 보내줘야함
+
+		// 토픽구독
 		mqttClient.subscribe(TOPIC, 2);
 		mqttClient.subscribe("user/" + deviceID, 2);
 		Log.d(DEBUGTAG, "세션연결및토픽구독을완료하였습니다.");
