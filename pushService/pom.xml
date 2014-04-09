@@ -212,6 +212,13 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		<!-- Instructing the resources plugin to filter certain directories -->
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
 	</build>
 	<!-- Profiles start here -->
 	<profiles>

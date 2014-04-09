@@ -35,6 +35,8 @@ import org.springframework.stereotype.Service;
 public class MqttConnectionServiceImpl implements Runnable, MqttCallback,
 		ConnectionService {
 
+	private static final String CONFIG_PROPERTIES = "/config.properties";
+
 	private static final org.slf4j.Logger logger = LoggerFactory
 			.getLogger(MqttConnectionServiceImpl.class);
 
@@ -43,7 +45,7 @@ public class MqttConnectionServiceImpl implements Runnable, MqttCallback,
 	static {
 		try {
 			prop.load(MqttConnectionServiceImpl.class
-					.getResourceAsStream("/config.properties"));
+					.getResourceAsStream(CONFIG_PROPERTIES));
 			logger.debug("properties=" + prop);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -51,7 +53,7 @@ public class MqttConnectionServiceImpl implements Runnable, MqttCallback,
 	}
 
 	public static final String MQTT_PACKAGE = "org.eclipse.paho.client.mqttv3";
-	private static final String TOPIC = "testTopic";
+	private static final String TOPIC = prop.getProperty("topic");
 	private static final String SERVERURL = prop.getProperty("mq.server.url");
 	private static final String CLIENTID = prop.getProperty("clientid");
 	private ScheduledExecutorService scheduledExecutorService;
