@@ -154,15 +154,18 @@ public class JAASLoginModule implements LoginModule {
 
 			// Accept everything.
 			// if (true) {
+
 			// todo 푸시서버에 인증요청을 보내고 결과를 리턴한다.
+			// id/password validation check 추가해야함.
 			logger.debug("인증요청을전송합니다.");
 			ClientConfig clientConfig = new DefaultClientConfig();
 			Client client = Client.create();
-			WebResource webResource = client.resource(
-					"http://" + prop.getProperty("server.ip") + ":"
-							+ prop.getProperty("server.port") + "/push/users/"
-							+ username).queryParam("clientID",
-					new String(password));
+			WebResource webResource = client.resource("http://"
+					+ prop.getProperty("server.ip") + ":"
+					+ prop.getProperty("server.port") + "/push/auth/tockens/"
+					+ clientId);
+			// .queryParam("clientID",
+			// new String(password));
 
 			ClientResponse response = webResource.accept("application/json")
 					.get(ClientResponse.class);
