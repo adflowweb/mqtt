@@ -5,8 +5,6 @@ import java.util.Properties;
 
 import javax.ws.rs.core.MediaType;
 
-import kr.co.adflow.push.auth.JAASLoginModule;
-import kr.co.adflow.push.domain.AuthResponseData;
 import kr.co.adflow.push.domain.Response;
 
 import org.slf4j.Logger;
@@ -26,7 +24,7 @@ public class RestClient {
 
 	static {
 		try {
-			prop.load(JAASLoginModule.class
+			prop.load(RestClient.class
 					.getResourceAsStream("/config.properties"));
 			logger.debug("properties=" + prop);
 		} catch (IOException e) {

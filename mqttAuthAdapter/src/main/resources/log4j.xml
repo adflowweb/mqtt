@@ -11,7 +11,7 @@
 	</appender>
 
 	<!-- Application Loggers -->
-	<logger name="kr.co.adflow.push.auth">
+	<logger name="kr.co.adflow">
 		<level value="${log.level}" />
 	</logger>
 
