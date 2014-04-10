@@ -3,7 +3,7 @@ package kr.co.adflow.push.service.impl;
 import javax.annotation.Resource;
 
 import kr.co.adflow.push.dao.PushDAO;
-import kr.co.adflow.push.domain.IsAvailableResponseData;
+import kr.co.adflow.push.domain.AvailableResponseData;
 import kr.co.adflow.push.domain.Message;
 import kr.co.adflow.push.service.PushService;
 
@@ -28,7 +28,7 @@ public class PushServiceImpl implements PushService {
 	 * @see kr.co.adflow.push.service.PushService#isAvailable()
 	 */
 	@Override
-	public IsAvailableResponseData isAvailable() throws Exception {
+	public AvailableResponseData isAvailable() throws Exception {
 		// if (true) {
 		// throw new Exception("이것은예외테스트입니다.");
 		// }

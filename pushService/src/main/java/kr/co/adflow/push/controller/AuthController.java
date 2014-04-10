@@ -40,16 +40,13 @@ public class AuthController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "users/{userID}", method = RequestMethod.GET)
+	@RequestMapping(value = "auth/tockens/{tocken}", method = RequestMethod.GET)
 	@ResponseBody
-	public Response authencate(@PathVariable String userID,
-			@RequestParam("clientID") String clientID) throws Exception {
-		logger.debug("userID=" + userID);
-		logger.debug("clientID=" + clientID);
+	public Response authencate(@PathVariable String tocken) throws Exception {
+		logger.debug("tocken=" + tocken);
 		Result result = new Result();
 		result.setSuccess(true);
-		result.setData(new AuthResponseData(authService.authencate(userID,
-				clientID), userID, clientID));
+		result.setData(authService.authencate(tocken));
 		Response res = new Response(result);
 		logger.debug("response=" + res);
 		return res;

@@ -11,13 +11,12 @@ public class AuthResponseData extends ResponseData {
 
 	private boolean auth;
 	private String userID;
-	private String clientID;
+	private String tocken;
 
-	public AuthResponseData(boolean auth, String userID, String clientID) {
+	public AuthResponseData(boolean auth, String userID) {
 		super();
 		this.auth = auth;
 		this.userID = userID;
-		this.clientID = clientID;
 	}
 
 	public String getUserID() {
@@ -28,14 +27,6 @@ public class AuthResponseData extends ResponseData {
 		this.userID = userID;
 	}
 
-	public String getClientID() {
-		return clientID;
-	}
-
-	public void setClientID(String clientID) {
-		this.clientID = clientID;
-	}
-
 	public boolean isAuth() {
 		return auth;
 	}
@@ -44,9 +35,17 @@ public class AuthResponseData extends ResponseData {
 		this.auth = auth;
 	}
 
+	public String getTocken() {
+		return tocken;
+	}
+
+	public void setTocken(String tocken) {
+		this.tocken = tocken;
+	}
+
 	@Override
 	public String toString() {
 		return "AuthResponseData [auth=" + auth + ", userID=" + userID
-				+ ", clientID=" + clientID + "]";
+				+ ", tocken=" + tocken + "]";
 	}
 }

@@ -1,6 +1,6 @@
 package kr.co.adflow.push.service;
 
-import kr.co.adflow.push.domain.IsAvailableResponseData;
+import kr.co.adflow.push.domain.AvailableResponseData;
 import kr.co.adflow.push.domain.Message;
 
 /**
@@ -13,7 +13,7 @@ public interface PushService {
 	 * @return
 	 * @throws Exception
 	 */
-	IsAvailableResponseData isAvailable() throws Exception;
+	AvailableResponseData isAvailable() throws Exception;
 
 	/**
 	 * @param msg

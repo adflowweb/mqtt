@@ -1,6 +1,8 @@
 package kr.co.adflow.push.service;
 
+import kr.co.adflow.push.domain.AuthResponseData;
+
 public interface AuthService {
 
-	boolean authencate(String userID, String clientID) throws Exception;
+	AuthResponseData authencate(String tocken) throws Exception;
 }

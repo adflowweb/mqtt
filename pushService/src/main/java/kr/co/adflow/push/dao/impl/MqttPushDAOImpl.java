@@ -3,7 +3,7 @@ package kr.co.adflow.push.dao.impl;
 import javax.annotation.Resource;
 
 import kr.co.adflow.push.dao.PushDAO;
-import kr.co.adflow.push.domain.IsAvailableResponseData;
+import kr.co.adflow.push.domain.AvailableResponseData;
 import kr.co.adflow.push.domain.Message;
 import kr.co.adflow.push.service.ConnectionService;
 
@@ -29,8 +29,8 @@ public class MqttPushDAOImpl implements PushDAO {
 	 * @see kr.co.adflow.push.dao.PushDAO#isAvailable()
 	 */
 	@Override
-	public IsAvailableResponseData isAvailable() throws Exception {
-		IsAvailableResponseData res = new IsAvailableResponseData(
+	public AvailableResponseData isAvailable() throws Exception {
+		AvailableResponseData res = new AvailableResponseData(
 				connService.isConnected(), connService.getErrorMsg());
 		return res;
 	}

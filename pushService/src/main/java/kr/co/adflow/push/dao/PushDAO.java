@@ -1,6 +1,6 @@
 package kr.co.adflow.push.dao;
 
-import kr.co.adflow.push.domain.IsAvailableResponseData;
+import kr.co.adflow.push.domain.AvailableResponseData;
 import kr.co.adflow.push.domain.Message;
 
 /**
@@ -12,7 +12,7 @@ public interface PushDAO {
 	 * @return
 	 * @throws Exception
 	 */
-	IsAvailableResponseData isAvailable() throws Exception;
+	AvailableResponseData isAvailable() throws Exception;
 
 	/**
 	 * @param msg

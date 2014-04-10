@@ -7,19 +7,15 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
  * @date 2014. 3. 20.
  */
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-public class IsAvailableResponseData extends ResponseData {
+public class AvailableResponseData extends ResponseData {
 	private boolean available;
 	private String message;
-
-	public IsAvailableResponseData() {
-		super();
-	}
 
 	/**
 	 * @param available
 	 * @param message
 	 */
-	public IsAvailableResponseData(boolean available, String message) {
+	public AvailableResponseData(boolean available, String message) {
 		this.available = available;
 		this.message = message;
 	}

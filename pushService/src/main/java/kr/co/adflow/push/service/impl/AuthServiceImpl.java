@@ -1,5 +1,6 @@
 package kr.co.adflow.push.service.impl;
 
+import kr.co.adflow.push.domain.AuthResponseData;
 import kr.co.adflow.push.service.AuthService;
 
 import org.slf4j.LoggerFactory;
@@ -15,12 +16,13 @@ public class AuthServiceImpl implements AuthService {
 			.getLogger(AuthServiceImpl.class);
 
 	@Override
-	public boolean authencate(String userID, String clientID) throws Exception {
-		logger.debug("authencate시작(userID=" + userID + "|clientID=" + clientID
-				+ ")");
+	public AuthResponseData authencate(String tocken) throws Exception {
+		logger.debug("authencate시작(tocken=" + tocken + ")");
 		// todo 인증구현
-		// 디비에 userID 와 clientID가 존재하는지
+		// 디비에 토큰이 존재하는지
+		// userID 와 clientID가 존재하는지
+		AuthResponseData res = new AuthResponseData(true, "testUser");
 		logger.debug("authencate종료()");
-		return true;
+		return res;
 	}
 }
