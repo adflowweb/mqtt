@@ -21,7 +21,11 @@ public class RestClientTest {
 
 	@Test
 	public void getAuth() {
-		Response response = client.getAuth("testTocken");
-		logger.debug("response=" + response);
+		try {
+			Response response = client.getAuth("testTocken");
+			logger.debug("response=" + response);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

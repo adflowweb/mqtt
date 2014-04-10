@@ -54,7 +54,7 @@ public class RestClient {
 	public Response getAuth(String tocken) {
 		logger.debug("getAuth시작(tocken=" + tocken + ")");
 		Response data = webResource.path("auth").path("tockens").path(tocken)
-				.accept(MediaType.APPLICATION_JSON).get(Response.class);
+				.accept(MediaType.APPLICATION_JSON_TYPE).get(Response.class);
 		logger.debug("getAuth종료()");
 		return data;
 	}
