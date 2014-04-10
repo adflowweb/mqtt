@@ -1,8 +1,6 @@
 package kr.co.adflow.push.auth;
 
-import java.io.IOException;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.net.ssl.SSLSession;
 import javax.security.auth.Subject;
@@ -15,15 +13,13 @@ import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 import javax.security.auth.x500.X500Principal;
 
+import kr.co.adflow.jersey.RestClient;
+import kr.co.adflow.push.domain.AuthResponseData;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ibm.mq.mqxr.AuthCallback;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.config.ClientConfig;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
 
 /**
  * Requires .../SDK/MQServer/MQXR.jar on the classpath to build.
@@ -39,22 +35,11 @@ public class JAASLoginModule implements LoginModule {
 	private static final Logger logger = LoggerFactory
 			.getLogger(JAASLoginModule.class);
 
-	private static Properties prop = new Properties();
-
-	static {
-		try {
-			prop.load(JAASLoginModule.class
-					.getResourceAsStream("/config.properties"));
-			logger.debug("properties=" + prop);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
 	private Subject subject;
 	private CallbackHandler callbackHandler;
 	private Map<String, ?> sharedState;
 	private Map<String, ?> options;
+	private static RestClient client = new RestClient();
 
 	JAASPrincipal principal;
 	boolean loggedIn = false;
@@ -62,7 +47,6 @@ public class JAASLoginModule implements LoginModule {
 	public JAASLoginModule() {
 		logger.debug("JAASLoginModule초기화되었습니다." + this);
 		logger.debug("thread=" + Thread.currentThread());
-		logger.debug("properties=" + prop);
 	}
 
 	/*
@@ -157,28 +141,9 @@ public class JAASLoginModule implements LoginModule {
 
 			// todo 푸시서버에 인증요청을 보내고 결과를 리턴한다.
 			// id/password validation check 추가해야함.
-			logger.debug("인증요청을전송합니다.");
-			ClientConfig clientConfig = new DefaultClientConfig();
-			Client client = Client.create();
-			WebResource webResource = client.resource("http://"
-					+ prop.getProperty("server.ip") + ":"
-					+ prop.getProperty("server.port") + "/push/auth/tockens/"
-					+ clientId);
-			// .queryParam("clientID",
-			// new String(password));
-
-			ClientResponse response = webResource.accept("application/json")
-					.get(ClientResponse.class);
-
-			if (response.getStatus() != 200) {
-				throw new RuntimeException("Failed : HTTP error code : "
-						+ response.getStatus());
-			}
-
-			String output = response.getEntity(String.class);
-
+			AuthResponseData response = client.getAuth(clientId);
 			logger.debug("Output from Server .... \n");
-			logger.debug(output);
+			logger.debug("response=" + response);
 			loggedIn = true;
 			// } else
 			// throw new FailedLoginException("Login failed");
