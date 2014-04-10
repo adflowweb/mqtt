@@ -14,7 +14,7 @@ import javax.security.auth.spi.LoginModule;
 import javax.security.auth.x500.X500Principal;
 
 import kr.co.adflow.jersey.RestClient;
-import kr.co.adflow.push.domain.AuthResponseData;
+import kr.co.adflow.push.domain.Response;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -141,7 +141,7 @@ public class JAASLoginModule implements LoginModule {
 
 			// todo 푸시서버에 인증요청을 보내고 결과를 리턴한다.
 			// id/password validation check 추가해야함.
-			AuthResponseData response = client.getAuth(clientId);
+			Response response = client.getAuth(clientId);
 			logger.debug("Output from Server .... \n");
 			logger.debug("response=" + response);
 			loggedIn = true;

@@ -10,6 +10,9 @@ public class AuthResponseData extends ResponseData {
 	private String userID;
 	private String tocken;
 
+	public AuthResponseData() {
+	}
+
 	public AuthResponseData(boolean auth, String userID) {
 		super();
 		this.auth = auth;

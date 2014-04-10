@@ -7,6 +7,7 @@ import javax.ws.rs.core.MediaType;
 
 import kr.co.adflow.push.auth.JAASLoginModule;
 import kr.co.adflow.push.domain.AuthResponseData;
+import kr.co.adflow.push.domain.Response;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,11 +51,10 @@ public class RestClient {
 		logger.debug("RestClient생성자종료()");
 	}
 
-	public AuthResponseData getAuth(String tocken) {
+	public Response getAuth(String tocken) {
 		logger.debug("getAuth시작(tocken=" + tocken + ")");
-		AuthResponseData data = webResource.path("auth").path("tokens")
-				.path(tocken).accept(MediaType.APPLICATION_JSON)
-				.get(AuthResponseData.class);
+		Response data = webResource.path("auth").path("tockens").path(tocken)
+				.accept(MediaType.APPLICATION_JSON).get(Response.class);
 		logger.debug("getAuth종료()");
 		return data;
 	}
