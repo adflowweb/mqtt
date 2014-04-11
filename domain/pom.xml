@@ -4,6 +4,7 @@
 	<groupId>kr.co.adflow.push</groupId>
 	<artifactId>domain</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
 	<dependencies>
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
