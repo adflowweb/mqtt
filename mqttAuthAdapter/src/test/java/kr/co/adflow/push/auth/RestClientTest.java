@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 import kr.co.adflow.jersey.RestClient;
+import kr.co.adflow.push.auth.wmq.JAASLoginModule;
 import kr.co.adflow.push.domain.Response;
 
 import org.slf4j.Logger;

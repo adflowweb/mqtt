@@ -1,4 +1,4 @@
-package kr.co.adflow.push.auth;
+package kr.co.adflow.push.auth.wmq;
 
 import java.util.Map;
 

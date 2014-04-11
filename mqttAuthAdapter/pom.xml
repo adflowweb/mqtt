@@ -3,11 +3,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>kr.co.adflow.push</groupId>
-	<artifactId>mqttAuthAdapter</artifactId>
+	<artifactId>authAdapter</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>mqttAuthAdapter</name>
+	<name>authAdapter</name>
 	<url>http://maven.apache.org</url>
 
 	<properties>
