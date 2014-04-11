@@ -6,12 +6,10 @@ import javax.net.ssl.SSLSession;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.callback.NameCallback;
-import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.TextInputCallback;
+import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
-import javax.security.auth.x500.X500Principal;
 
 import kr.co.adflow.jersey.RestClient;
 import kr.co.adflow.push.domain.Response;
@@ -78,83 +76,79 @@ public class JAASLoginModule implements LoginModule {
 	public boolean login() throws LoginException {
 		logger.debug("login시작()");
 		logger.debug("thread=" + Thread.currentThread());
-		NameCallback nameCallback = new NameCallback("NameCallback");
-		PasswordCallback passwordCallback = new PasswordCallback(
-				"PasswordCallback", false);
+
 		TextInputCallback validPromptsCallback = new TextInputCallback(
 				"ValidPrompts");
 		TextInputCallback clientIdentifierCallback = new TextInputCallback(
 				"ClientIdentifier");
-		TextInputCallback networkAddressCallback = new TextInputCallback(
-				"NetworkAddress");
-		TextInputCallback channelNameCallback = new TextInputCallback(
-				"ChannelName");
 		AuthCallback xrCallback = new AuthCallback();
 
+		// NameCallback nameCallback = new NameCallback("NameCallback");
+		// PasswordCallback passwordCallback = new PasswordCallback(
+		// "PasswordCallback", false);
+
+		//
+		// TextInputCallback networkAddressCallback = new TextInputCallback(
+		// "NetworkAddress");
+		// TextInputCallback channelNameCallback = new TextInputCallback(
+		// "ChannelName");
+
 		try {
-			callbackHandler.handle(new Callback[] { nameCallback,
-					passwordCallback, validPromptsCallback,
-					clientIdentifierCallback, networkAddressCallback,
-					channelNameCallback, xrCallback });
-			String username = nameCallback.getName();
-			logger.debug("username=" + username);
-			char[] password = passwordCallback.getPassword();
-			logger.debug("password="
-					+ (password != null ? new String(password) : password));
+			callbackHandler.handle(new Callback[] { validPromptsCallback,
+					clientIdentifierCallback, xrCallback
+			// ,nameCallback,
+			// passwordCallback, ,
+			// networkAddressCallback,
+			// channelNameCallback
+					});
 			String validPrompts = validPromptsCallback.getText();
 			logger.debug("validPrompts=" + validPrompts);
 			String clientId = clientIdentifierCallback.getText();
 			logger.debug("clientId=" + clientId);
-			String networkAddress = networkAddressCallback.getText();
-			logger.debug("networkAddress=" + networkAddress);
-			String channelName = channelNameCallback.getText();
-			logger.debug("channelName=" + channelName);
 			SSLSession sslSession = xrCallback.getSSLSession();
-			// Note that if multiple nameCallBack or clientIdentifierCallback
-			// callback's
-			// are used callbackHandler.handle will throw
-			// UnsupportedCallbackException.
-
 			logger.debug("sslSession=" + sslSession);
-			if (sslSession != null) {
-				// Assuming the clients certificate was created with a
-				// distinguished name of the form:
-				// "CN=ClientId:userName, OU=MQ, O=IBM, C=UK"
-				X500Principal peerPrincipal = (X500Principal) sslSession
-						.getPeerPrincipal();
-				String[] dnFields = peerPrincipal.getName().split(",");
-				String[] cn = dnFields[0].substring(3, dnFields[0].length())
-						.split(":");
-				// ClientIdentifier used by the connecting client.
-				clientIdentifierCallback.setText(cn[0]);
-				// User name to be used by the connecting client.
-				nameCallback.setName(cn[1]);
-				// The channel definitions, MCAUSER( ) and USECLTID(NO) are
-				// applied using the new clientIdentifier and userNname.
-				principal = new JAASPrincipal(cn[1]);
-			} else {
-				principal = new JAASPrincipal(username);
-			}
 
-			// Accept everything.
-			// if (true) {
+			// String username = nameCallback.getName();
+			// logger.debug("username=" + username);
+			// char[] password = passwordCallback.getPassword();
+			// logger.debug("password="
+			// + (password != null ? new String(password) : password));
+			// String networkAddress = networkAddressCallback.getText();
+			// logger.debug("networkAddress=" + networkAddress);
+			// String channelName = channelNameCallback.getText();
+			// logger.debug("channelName=" + channelName);
+			// if (sslSession != null) {
+			// // Assuming the clients certificate was created with a
+			// // distinguished name of the form:
+			// // "CN=ClientId:userName, OU=MQ, O=IBM, C=UK"
+			// X500Principal peerPrincipal = (X500Principal) sslSession
+			// .getPeerPrincipal();
+			// String[] dnFields = peerPrincipal.getName().split(",");
+			// String[] cn = dnFields[0].substring(3, dnFields[0].length())
+			// .split(":");
+			// // ClientIdentifier used by the connecting client.
+			// clientIdentifierCallback.setText(cn[0]);
+			// // User name to be used by the connecting client.
+			// nameCallback.setName(cn[1]);
+			// // The channel definitions, MCAUSER( ) and USECLTID(NO) are
+			// // applied using the new clientIdentifier and userNname.
+			// principal = new JAASPrincipal(cn[1]);
+			// } else {
+			// principal = new JAASPrincipal(username);
+			// }
 
-			// todo 푸시서버에 인증요청을 보내고 결과를 리턴한다.
-			// id/password validation check 추가해야함.
+			// 인증요청
 			Response response = client.getAuth(clientId);
-			logger.debug("Output from Server .... \n");
-			logger.debug("response=" + response);
-			loggedIn = true;
-			// } else
-			// throw new FailedLoginException("Login failed");
-
-			principal = new JAASPrincipal(username);
-
+			logger.debug("인증결과=" + response);
+			if (response.getResult().isSuccess()) {
+				loggedIn = true;
+			} else
+				throw new FailedLoginException("Login failed");
+			// principal = new JAASPrincipal(username);
 		} catch (Exception e) {
 			logger.error("에러발생", e);
 			throw new LoginException(e.toString());
 		}
-
 		logger.debug("login종료(loggedIn=" + loggedIn + ")");
 		return loggedIn;
 	}
@@ -180,9 +174,11 @@ public class JAASLoginModule implements LoginModule {
 	public boolean commit() throws LoginException {
 		logger.debug("commit시작()");
 		logger.debug("thread=" + Thread.currentThread());
-		if (loggedIn) {
-			if (!subject.getPrincipals().contains(principal))
+		if (loggedIn && principal != null) {
+			if (!subject.getPrincipals().contains(principal)) {
 				subject.getPrincipals().add(principal);
+				logger.debug("principal이추가되었습니다");
+			}
 		}
 		logger.debug("commit종료(true)");
 		return true;
@@ -196,8 +192,11 @@ public class JAASLoginModule implements LoginModule {
 	public boolean logout() throws LoginException {
 		logger.debug("logout시작()");
 		logger.debug("thread=" + Thread.currentThread());
-		subject.getPrincipals().remove(principal);
-		principal = null;
+		if (principal != null) {
+			subject.getPrincipals().remove(principal);
+			logger.debug("principal이제거되었습니다");
+			principal = null;
+		}
 		loggedIn = false;
 		logger.debug("logout종료()");
 		return true;
