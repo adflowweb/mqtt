@@ -82,6 +82,11 @@
 			<version>1.18.1</version>
 		</dependency>
 
+		<dependency>
+			<groupId>kr.co.adflow.push</groupId>
+			<artifactId>domain</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

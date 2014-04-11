@@ -1,9 +1,12 @@
 package kr.co.adflow.push.domain;
 
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+
 /**
  * @author nadir93
  * 
  */
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class AuthResponseData extends ResponseData {
 
 	private boolean auth;

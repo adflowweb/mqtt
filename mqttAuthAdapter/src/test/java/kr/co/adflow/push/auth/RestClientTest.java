@@ -1,5 +1,8 @@
 package kr.co.adflow.push.auth;
 
+import java.io.IOException;
+import java.util.Properties;
+
 import kr.co.adflow.jersey.RestClient;
 import kr.co.adflow.push.domain.Response;
 
@@ -17,6 +20,18 @@ public class RestClientTest {
 	@BeforeClass
 	void bfterclass() throws Exception {
 		client = new RestClient();
+	}
+
+	@Test
+	public void loadPropertiesFile() {
+		Properties prop = new Properties();
+		try {
+			prop.load(JAASLoginModule.class
+					.getResourceAsStream("/config.properties"));
+			logger.debug("properties=" + prop);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Test

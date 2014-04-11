@@ -2,10 +2,13 @@ package kr.co.adflow.push.domain;
 
 import java.util.List;
 
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+
 /**
  * @author nadir93
  * @date 2014. 3. 20.
  */
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class Result {
 	private boolean success;
 	private ResponseData data;

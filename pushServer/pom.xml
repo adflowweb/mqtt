@@ -4,11 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>kr.co.adflow.push</groupId>
 	<artifactId>pushServer</artifactId>
-	<name>pushService</name>
+	<name>pushServer</name>
 	<packaging>war</packaging>
 	<version>1.0.0-BUILD-SNAPSHOT</version>
 	<properties>
-		<java-version>1.7</java-version>
+		<java-version>1.6</java-version>
 		<org.springframework-version>3.2.3.RELEASE</org.springframework-version>
 		<testng.version>6.8.7</testng.version>
 		<org.aspectj-version>1.7.1</org.aspectj-version>
@@ -161,6 +161,11 @@
 			<artifactId>org.apache.commons.codec</artifactId>
 			<version>1.8</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>kr.co.adflow.push</groupId>
+			<artifactId>domain</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 	<build>
