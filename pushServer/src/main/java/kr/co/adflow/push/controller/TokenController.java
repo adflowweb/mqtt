@@ -7,7 +7,7 @@ import javax.annotation.Resource;
 
 import kr.co.adflow.push.domain.Response;
 import kr.co.adflow.push.domain.Result;
-import kr.co.adflow.push.service.AuthService;
+import kr.co.adflow.push.service.TokenService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,28 +23,48 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @date 2014. 3. 21.
  */
 @Controller
-public class AuthController {
+public class TokenController {
 	private static final Logger logger = LoggerFactory
-			.getLogger(AuthController.class);
+			.getLogger(TokenController.class);
 
 	@Resource
-	private AuthService authService;
+	private TokenService tokenService;
 
 	/**
-	 * mqtt 사용자 인증
+	 * 토큰정보가져오기
 	 * 
 	 * @param userID
 	 * @param clientID
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "auth/tockens/{tocken}", method = RequestMethod.GET)
+	@RequestMapping(value = "tokens/{token}", method = RequestMethod.GET)
 	@ResponseBody
-	public Response authencate(@PathVariable String tocken) throws Exception {
-		logger.debug("tocken=" + tocken);
+	public Response get(@PathVariable String token) throws Exception {
+		logger.debug("token=" + token);
 		Result result = new Result();
 		result.setSuccess(true);
-		result.setData(authService.authencate(tocken));
+		result.setData(tokenService.get(token));
+		Response res = new Response(result);
+		logger.debug("response=" + res);
+		return res;
+	}
+
+	/**
+	 * 토큰 유효성 체크
+	 * 
+	 * @param userID
+	 * @param clientID
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "validate/{token}", method = RequestMethod.GET)
+	@ResponseBody
+	public Response validate(@PathVariable String token) throws Exception {
+		logger.debug("token=" + token);
+		Result result = new Result();
+		result.setSuccess(true);
+		result.setData(tokenService.validate(token));
 		Response res = new Response(result);
 		logger.debug("response=" + res);
 		return res;

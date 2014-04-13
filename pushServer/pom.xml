@@ -209,7 +209,7 @@
 				<artifactId>tomcat7-maven-plugin</artifactId>
 				<version>2.2</version>
 				<configuration>
-					<path>/push</path>
+					<path>v1</path>
 					<url>http://192.168.0.21:8080/manager/text</url>
 					<username>root</username>
 					<password>!ADFlow@</password>

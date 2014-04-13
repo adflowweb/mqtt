@@ -1,5 +1,5 @@
 package kr.co.adflow.push.dao;
 
-public interface AuthDAO {
+public interface UserDAO {
 
 }

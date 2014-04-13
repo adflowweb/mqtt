@@ -7,18 +7,18 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
  * 
  */
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-public class AuthResponseData extends ResponseData {
+public class TokenResponseData extends ResponseData {
 
-	private boolean auth;
+	private boolean validation;
 	private String userID;
 	private String tocken;
 
-	public AuthResponseData() {
+	public TokenResponseData() {
 	}
 
-	public AuthResponseData(boolean auth, String userID) {
+	public TokenResponseData(boolean validation, String userID) {
 		super();
-		this.auth = auth;
+		this.validation = validation;
 		this.userID = userID;
 	}
 
@@ -30,12 +30,12 @@ public class AuthResponseData extends ResponseData {
 		this.userID = userID;
 	}
 
-	public boolean isAuth() {
-		return auth;
+	public boolean isValidation() {
+		return validation;
 	}
 
-	public void setAuth(boolean auth) {
-		this.auth = auth;
+	public void setValidation(boolean validation) {
+		this.validation = validation;
 	}
 
 	public String getTocken() {
@@ -48,7 +48,7 @@ public class AuthResponseData extends ResponseData {
 
 	@Override
 	public String toString() {
-		return "AuthResponseData [auth=" + auth + ", userID=" + userID
-				+ ", tocken=" + tocken + "]";
+		return "TokenResponseData [validation=" + validation + ", userID="
+				+ userID + ", tocken=" + tocken + "]";
 	}
 }
