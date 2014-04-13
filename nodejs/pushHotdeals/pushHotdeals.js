@@ -75,7 +75,6 @@ function checkHotdeals(callback) {
     console.log('response.statusCode=' + response.statusCode);
     if (err) {
       console.error('웹스크래핑중에러발생', err);
-      callback(err, response);
       return;
     }
 
@@ -130,7 +129,7 @@ function checkHotdeals(callback) {
                 //이미있는항목일경우 조회수 업데이트
                 hotdeals[key].count = count;
               } else {
-                hotdeals[key] = {category: category, uri: uri, title: title, writer: writer, time: time, count: count};
+                hotdeals[key] = {category: category, uri: uri, title: title, writer: writer, time: time, count: count, date: now.getDate()};
               }
             } else {
               //  날짜가 지난 아이템 삭제
@@ -147,36 +146,38 @@ function checkHotdeals(callback) {
       });
     });
     console.log('핫딜정보=' + util.inspect(hotdeals));
-    callback(err, response, hotdeals);
+    callback(response, hotdeals);
   });
   console.log('핫딜정보체크종료');
 }
 
 /**
  * 등록된 사용자에게 핫딜정보를 푸시한다.
- * @param err
  * @param response
  * @param deals
  */
-function pushHotdeals(err, response, deals) {
-  console.log('pushHotdeals시작(err=' + err + '|response=' + response.statusCode + '|deals=' + util.inspect(deals) + ')');
-  if (err) {
-    console.error('에러발생', err);
-    return;
-  }
+function pushHotdeals(response, deals) {
+  console.log('pushHotdeals시작(response=' + response.statusCode + '|deals=' + util.inspect(deals) + ')');
+  var now = new Date();
 
   /**
    * 로직=조회수3000건이상 추후 로직을 적용바람 ex) 단위 시간당 조회수를 기울기로 환산하여 임계치 이상이면 핫딜로 판단..
    */
   for (var key in deals) {
     console.log('key=' + key);
+
+    //가비지 삭제
+    if (hotdeals[key].date != now.getDate()) {
+      //delete hotdeals[key];
+      console.log('비정상데이타가삭제되었습니다.키=' + key);
+    }
+
     if (hotdeals[key].count >= 3000) {
       //보낼 메시지 조립
       var sendMsg = {"notification": {"notificationStyle": 2, "contentTitle": "오늘의핫딜" + hotdeals[key].category,
         "contentText": hotdeals[key].title, "ticker": hotdeals[key].title,
         "summaryText": "오늘의핫딜" + hotdeals[key].category, "image": images[0], contentUri: hotdeals[key].uri
       }};
-      console.log('sendMessage=' + JSON.stringify(sendMsg));
 
       for (var userKey in users) {
         //전송정보업데이트
@@ -193,12 +194,13 @@ function pushHotdeals(err, response, deals) {
           //이미 보낸사용자는 스킵
           if (!sent) {
             console.log('메시지를전송합니다.');
-            client.publish('user/' + userKey, JSON.stringify(sendMsg), {'qos': 1});
+            client.publish('user/' + userKey, JSON.stringify(sendMsg), {'qos': 2});
             hotdeals[key].pushed.push(userKey);
           }
         } else {
           //최초메시지푸시
-          client.publish('user/' + userKey, JSON.stringify(sendMsg), {'qos': 1});
+          console.log('sendMessage=' + JSON.stringify(sendMsg));
+          client.publish('user/' + userKey, JSON.stringify(sendMsg), {'qos': 2});
           hotdeals[key].pushed = [userKey];
         }
       }
