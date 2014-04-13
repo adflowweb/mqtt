@@ -68,7 +68,6 @@ function checkHotdeals(callback) {
     return;
   }
 
-
   //오늘날짜의 딜정보를 가져온다.
   request({uri: 'http://www.clien.net/cs2/bbs/board.php?bo_table=jirum'}, function (err, response, body) {
     //console.log('body=' + body);
@@ -166,24 +165,18 @@ function pushHotdeals(response, deals) {
   for (var key in deals) {
     console.log('key=' + key);
 
-    //가비지 삭제
-    if (hotdeals[key].date != now.getDate()) {
-      //delete hotdeals[key];
-      console.log('비정상데이타가삭제되었습니다.키=' + key);
-    }
-
-    if (hotdeals[key].count >= 3000) {
+    if (deals[key].count >= 3000) {
       //보낼 메시지 조립
-      var sendMsg = {"notification": {"notificationStyle": 2, "contentTitle": "오늘의핫딜" + hotdeals[key].category,
-        "contentText": hotdeals[key].title, "ticker": hotdeals[key].title,
-        "summaryText": "오늘의핫딜" + hotdeals[key].category, "image": images[0], contentUri: hotdeals[key].uri
+      var sendMsg = {"notification": {"notificationStyle": 2, "contentTitle": "오늘의핫딜" + deals[key].category,
+        "contentText": deals[key].title, "ticker": deals[key].title,
+        "summaryText": "오늘의핫딜" + deals[key].category, "image": images[0], contentUri: deals[key].uri
       }};
 
       for (var userKey in users) {
         //전송정보업데이트
-        if (hotdeals[key].hasOwnProperty('pushed')) {
+        if (deals[key].hasOwnProperty('pushed')) {
           var sent = false;
-          hotdeals[key].pushed.forEach(function (element) {
+          deals[key].pushed.forEach(function (element) {
             console.log('element=' + element);
             if (userKey == element) {
               console.log('이미전송하였습니다');
@@ -195,19 +188,24 @@ function pushHotdeals(response, deals) {
           if (!sent) {
             console.log('메시지를전송합니다.');
             client.publish('user/' + userKey, JSON.stringify(sendMsg), {'qos': 2});
-            hotdeals[key].pushed.push(userKey);
+            deals[key].pushed.push(userKey);
           }
         } else {
           //최초메시지푸시
           console.log('sendMessage=' + JSON.stringify(sendMsg));
           client.publish('user/' + userKey, JSON.stringify(sendMsg), {'qos': 2});
-          hotdeals[key].pushed = [userKey];
+          deals[key].pushed = [userKey];
         }
       }
+    }
+    //가비지 삭제
+    if (deals[key].date != now.getDate()) {
+      delete hotdeals[key];
+      console.log('비정상데이타가삭제되었습니다.키=' + key);
     }
   }
   //파일에저장한다.
   fs.writeFileSync('./nodejs/pushHotdeals/resources/hotdeals', JSON.stringify(deals));
-  console.log('핫딜저장정보=' + util.inspect(hotdeals));
+  console.log('핫딜저장정보=' + util.inspect(deals));
   console.log('pushHotdeals종료()');
 }
