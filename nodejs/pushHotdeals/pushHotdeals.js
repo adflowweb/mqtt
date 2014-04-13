@@ -10,7 +10,7 @@ var mqtt = require('mqtt')
   , fs = require('fs')
   , cheerio = require('cheerio');
 
-var serverIP = '175.209.8.188';
+var serverIP = '127.0.0.1';
 var port = 1883;
 //추후 개인데이타는 암호화 하던가 또는 파일이나 디비에서 가져오도록..
 var users = {"ba54e5ed3b8aace5e1ce833": {"name": "이찬호", "birth": {"year": 1982, "month": 10, "day": 20}},
@@ -19,12 +19,12 @@ var users = {"ba54e5ed3b8aace5e1ce833": {"name": "이찬호", "birth": {"year": 
 var images = [];
 var hotdealsCheckInterval = 600000;
 
-var hotdeals = JSON.parse(fs.readFileSync('./pushHotdeals/resources/hotdeals', 'utf8'));
+var hotdeals = JSON.parse(fs.readFileSync('./nodejs/pushHotdeals/resources/hotdeals', 'utf8'));
 console.log('기존파일핫딜데이타=' + util.inspect(hotdeals));
 
 //푸시에사용할 이미지로딩...
 //for (var i = 0; i < 12; i++) {
-var data = fs.readFileSync('./pushHotdeals/resources/hot-deal-icon.png');
+var data = fs.readFileSync('./nodejs/pushHotdeals/resources/hot-deal-icon.png');
 var imageString = new Buffer(data).toString('base64');
 images.push(imageString);
 //}
@@ -205,7 +205,7 @@ function pushHotdeals(err, response, deals) {
     }
   }
   //파일에저장한다.
-  fs.writeFileSync('./pushHotdeals/resources/hotdeals', JSON.stringify(deals));
+  fs.writeFileSync('./nodejs/pushHotdeals/resources/hotdeals', JSON.stringify(deals));
   console.log('핫딜저장정보=' + util.inspect(hotdeals));
   console.log('pushHotdeals종료()');
 }

@@ -13,7 +13,7 @@ var mqtt = require('mqtt')
   , fs = require('fs'), Iconv = require('iconv').Iconv
   , iconv = new Iconv('EUC-KR', 'UTF-8//TRANSLIT//IGNORE');
 
-var serverIP = '175.209.8.188';
+var serverIP = '127.0.0.1';
 var port = 1883;
 //추후 개인데이타는 암호화 하던가 또는 파일이나 디비에서 가져오도록..
 var users = {"ba54e5ed3b8aace5e1ce833": {"name": "이찬호", "birth": {"year": 1982, "month": 10, "day": 20}},
@@ -28,7 +28,7 @@ var images = [];
 
 //푸시에사용할 별자리이미지로딩...
 for (var i = 0; i < 12; i++) {
-  var data = fs.readFileSync('./pushFortune/resources/star_' + leadingZeros((i + 1), 2) + '.gif');
+  var data = fs.readFileSync('./nodejs/pushFortune/resources/star_' + leadingZeros((i + 1), 2) + '.gif');
   var imageString = new Buffer(data).toString('base64');
   images.push(imageString);
 }

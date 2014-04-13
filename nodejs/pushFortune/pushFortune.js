@@ -23,7 +23,7 @@ for (i = 0; i < 12; i++) {
   images.push(imageString);
 }
 
-client = mqtt.createClient(1883, '175.209.8.188');
+client = mqtt.createClient(1883, '127.0.0.1');
 
 client.subscribe(topic);
 
