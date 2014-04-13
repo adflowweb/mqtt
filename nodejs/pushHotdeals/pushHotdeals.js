@@ -200,7 +200,7 @@ function pushHotdeals(response, deals) {
     }
     //가비지 삭제
     if (deals[key].date != now.getDate()) {
-      delete hotdeals[key];
+      delete deals[key];
       console.log('비정상데이타가삭제되었습니다.키=' + key);
     }
   }
