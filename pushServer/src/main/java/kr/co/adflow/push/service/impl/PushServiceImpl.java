@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class PushServiceImpl implements PushService {
+
 	private static final org.slf4j.Logger logger = LoggerFactory
 			.getLogger(PushServiceImpl.class);
 

@@ -1,10 +1,9 @@
-package kr.co.adflow.push.testng;
+package kr.co.adflow.push.controller;
 
 import static org.testng.AssertJUnit.assertTrue;
 
 import java.io.FileInputStream;
 
-import kr.co.adflow.push.controller.PushController;
 import kr.co.adflow.push.domain.Message;
 import kr.co.adflow.push.domain.Response;
 
@@ -17,15 +16,20 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+/**
+ * @author nadir93
+ * @date 2014. 4. 14.
+ * 
+ */
 @Test
 @ContextConfiguration("file:src/main/webapp/WEB-INF/spring/appServlet/servlet-context.xml")
-public class PushControllerTest extends AbstractTestNGSpringContextTests {
+public class MessageControllerTest extends AbstractTestNGSpringContextTests {
 
 	private byte[] data;
 	private String jsonString;
 
 	@Autowired
-	PushController pushController;
+	MessageController messageController;
 
 	@BeforeClass
 	void bfterclass() throws Exception {
@@ -54,40 +58,14 @@ public class PushControllerTest extends AbstractTestNGSpringContextTests {
 	}
 
 	@Test()
-	void isAvailable() {
-		try {
-			Response res = pushController.isAvailable();
-			System.out.println("pushServiceAvailable=" + res);
-			assertTrue(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-			assertTrue(false);
-		}
-	}
-
-	@Test()
-	void sendGroupMessage() {
-		try {
-			Message msg = new Message();
-			msg.setSender("@nadir93");
-			msg.setMessage("그룹메시지테스트.");
-			Response res = pushController.sendGroupMessage(msg, "개발1팀");
-			System.out.println("sendGroupMessage=" + res);
-			assertTrue(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-			assertTrue(false);
-		}
-	}
-
-	@Test()
 	void sendPersonalMessage() {
 		try {
 			Message msg = new Message();
 			msg.setSender("@nadir93");
+			msg.setReceiver("users/nadir93");
 			msg.setMessage(jsonString);
-			Response res = pushController.sendPersonalMessage(msg, "개발사원1");
-			System.out.println("sendPersonalMessage=" + res);
+			Response res = messageController.post(msg);
+			System.out.println("res=" + res);
 			assertTrue(true);
 		} catch (Exception e) {
 			e.printStackTrace();

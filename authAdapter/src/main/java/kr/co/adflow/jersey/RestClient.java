@@ -44,16 +44,17 @@ public class RestClient {
 		client = Client.create(clientConfig);
 		webResource = client.resource(
 				"http://" + prop.getProperty("server.ip") + ":"
-						+ prop.getProperty("server.port")).path("push");
+						+ prop.getProperty("server.port")).path(
+				prop.getProperty("api.version"));
 		logger.debug("webResource=" + webResource);
 		logger.debug("RestClient생성자종료()");
 	}
 
-	public Response getAuth(String tocken) {
-		logger.debug("getAuth시작(tocken=" + tocken + ")");
-		Response data = webResource.path("auth").path("tockens").path(tocken)
+	public Response validate(String token) {
+		logger.debug("validate시작(token=" + token + ")");
+		Response data = webResource.path("validate").path(token)
 				.accept(MediaType.APPLICATION_JSON).get(Response.class);
-		logger.debug("getAuth종료()");
+		logger.debug("validate종료()");
 		return data;
 	}
 }

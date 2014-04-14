@@ -6,7 +6,7 @@ import kr.co.adflow.push.domain.Message;
  * @author nadir93
  * @date 2014. 3. 21.
  */
-public interface ConnectionService {
+public interface MqttService {
 
 	void destroy() throws Exception;
 

@@ -139,7 +139,7 @@ public class JAASLoginModule implements LoginModule {
 			// }
 
 			// 인증요청
-			Response response = client.getAuth(clientId);
+			Response response = client.validate(clientId);
 			logger.debug("인증결과=" + response);
 			TokenResponseData data = (TokenResponseData) response.getResult()
 					.getData();

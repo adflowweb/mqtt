@@ -53,8 +53,7 @@ public class TokenController {
 	/**
 	 * 토큰 유효성 체크
 	 * 
-	 * @param userID
-	 * @param clientID
+	 * @param token
 	 * @return
 	 * @throws Exception
 	 */

@@ -5,7 +5,7 @@ import javax.annotation.Resource;
 import kr.co.adflow.push.dao.PushDAO;
 import kr.co.adflow.push.domain.AvailableResponseData;
 import kr.co.adflow.push.domain.Message;
-import kr.co.adflow.push.service.ConnectionService;
+import kr.co.adflow.push.service.MqttService;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -15,13 +15,13 @@ import org.springframework.stereotype.Component;
  * @date 2014. 3. 20.
  */
 @Component
-public class MqttPushDAOImpl implements PushDAO {
+public class PushDAOImpl implements PushDAO {
 
 	private static final org.slf4j.Logger logger = LoggerFactory
-			.getLogger(MqttPushDAOImpl.class);
+			.getLogger(PushDAOImpl.class);
 
 	@Resource
-	ConnectionService connService;
+	MqttService mqttService;
 
 	/*
 	 * (non-Javadoc)
@@ -31,7 +31,7 @@ public class MqttPushDAOImpl implements PushDAO {
 	@Override
 	public AvailableResponseData isAvailable() throws Exception {
 		AvailableResponseData res = new AvailableResponseData(
-				connService.isConnected(), connService.getErrorMsg());
+				mqttService.isConnected(), mqttService.getErrorMsg());
 		return res;
 	}
 
@@ -42,7 +42,7 @@ public class MqttPushDAOImpl implements PushDAO {
 	 */
 	@Override
 	public void shutdown() throws Exception {
-		connService.destroy();
+		mqttService.destroy();
 	}
 
 	/*
@@ -54,6 +54,6 @@ public class MqttPushDAOImpl implements PushDAO {
 	 */
 	@Override
 	public boolean sendMessage(Message msg) throws Exception {
-		return connService.publish(msg);
+		return mqttService.publish(msg);
 	}
 }

@@ -16,7 +16,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
 import kr.co.adflow.push.domain.Message;
-import kr.co.adflow.push.service.ConnectionService;
+import kr.co.adflow.push.service.MqttService;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
@@ -32,19 +32,18 @@ import org.springframework.stereotype.Service;
  * @date 2014. 3. 21.
  */
 @Service
-public class MqttConnectionServiceImpl implements Runnable, MqttCallback,
-		ConnectionService {
+public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 
 	private static final String CONFIG_PROPERTIES = "/config.properties";
 
 	private static final org.slf4j.Logger logger = LoggerFactory
-			.getLogger(MqttConnectionServiceImpl.class);
+			.getLogger(MqttServiceImpl.class);
 
 	private static Properties prop = new Properties();
 
 	static {
 		try {
-			prop.load(MqttConnectionServiceImpl.class
+			prop.load(MqttServiceImpl.class
 					.getResourceAsStream(CONFIG_PROPERTIES));
 			logger.debug("properties=" + prop);
 		} catch (IOException e) {
@@ -158,8 +157,8 @@ public class MqttConnectionServiceImpl implements Runnable, MqttCallback,
 		mOpts.setConnectionTimeout(connectionTimeout);
 		mOpts.setKeepAliveInterval(keepAliveInterval);
 		mOpts.setCleanSession(cleanSession);
-		mOpts.setUserName("mqttPushServer");
-		mOpts.setPassword("password".toCharArray());
+		// mOpts.setUserName("mqttPushServer");
+		// mOpts.setPassword("password".toCharArray());
 		logger.debug("makeMqttOpts종료(mOpts=" + mOpts + ")");
 		return mOpts;
 	}

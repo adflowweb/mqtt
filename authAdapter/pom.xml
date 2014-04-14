@@ -120,6 +120,8 @@
 				<server.port>8080</server.port>
 				<!-- 어플리케이션 로깅레벨 -->
 				<log.level>debug</log.level>
+				<!-- rest api version -->
+				<api.version>v1</api.version>
 			</properties>
 		</profile>
 		<!-- Production environment @ production server -->

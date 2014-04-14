@@ -1,8 +1,16 @@
 package kr.co.adflow.push.service.impl;
 
+import org.springframework.stereotype.Service;
+
 import kr.co.adflow.push.domain.ResponseData;
 import kr.co.adflow.push.service.GroupService;
 
+/**
+ * @author nadir93
+ * @date 2014. 4. 14.
+ * 
+ */
+@Service
 public class GroupServiceImpl implements GroupService {
 
 	@Override
