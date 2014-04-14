@@ -13,6 +13,7 @@ import javax.security.auth.spi.LoginModule;
 
 import kr.co.adflow.jersey.RestClient;
 import kr.co.adflow.push.domain.Response;
+import kr.co.adflow.push.domain.TokenResponseData;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -140,7 +141,9 @@ public class JAASLoginModule implements LoginModule {
 			// 인증요청
 			Response response = client.getAuth(clientId);
 			logger.debug("인증결과=" + response);
-			if (response.getResult().isSuccess()) {
+			TokenResponseData data = (TokenResponseData) response.getResult()
+					.getData();
+			if (data.isValidation()) {
 				loggedIn = true;
 			} else
 				throw new FailedLoginException("Login failed");
