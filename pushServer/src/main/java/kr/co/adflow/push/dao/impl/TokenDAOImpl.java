@@ -1,5 +1,6 @@
 package kr.co.adflow.push.dao.impl;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import kr.co.adflow.push.dao.TokenDAO;
@@ -13,7 +14,12 @@ import kr.co.adflow.push.domain.ResponseData;
 @Component
 public class TokenDAOImpl implements TokenDAO {
 
-	/* (non-Javadoc)
+	private static final org.slf4j.Logger logger = LoggerFactory
+			.getLogger(TokenDAOImpl.class);
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see kr.co.adflow.push.dao.TokenDAO#get(java.lang.String)
 	 */
 	@Override
@@ -21,7 +27,9 @@ public class TokenDAOImpl implements TokenDAO {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see kr.co.adflow.push.dao.TokenDAO#post(java.lang.String)
 	 */
 	@Override
@@ -29,7 +37,9 @@ public class TokenDAOImpl implements TokenDAO {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see kr.co.adflow.push.dao.TokenDAO#put(java.lang.String)
 	 */
 	@Override
@@ -37,7 +47,9 @@ public class TokenDAOImpl implements TokenDAO {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see kr.co.adflow.push.dao.TokenDAO#delete(java.lang.String)
 	 */
 	@Override
@@ -45,11 +57,15 @@ public class TokenDAOImpl implements TokenDAO {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see kr.co.adflow.push.dao.TokenDAO#validate(java.lang.String)
 	 */
 	@Override
 	public boolean validate(String token) throws Exception {
+		logger.debug("validate시작(token=" + token + ")");
+		logger.debug("validate종료(true)");
 		return true;
 	}
 }

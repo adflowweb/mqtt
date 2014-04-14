@@ -11,7 +11,7 @@ public class TokenResponseData extends ResponseData {
 
 	private boolean validation;
 	private String userID;
-	private String tocken;
+	private String token;
 
 	public TokenResponseData() {
 	}
@@ -38,17 +38,17 @@ public class TokenResponseData extends ResponseData {
 		this.validation = validation;
 	}
 
-	public String getTocken() {
-		return tocken;
+	public String getToken() {
+		return token;
 	}
 
-	public void setTocken(String tocken) {
-		this.tocken = tocken;
+	public void setToken(String token) {
+		this.token = token;
 	}
 
 	@Override
 	public String toString() {
 		return "TokenResponseData [validation=" + validation + ", userID="
-				+ userID + ", tocken=" + tocken + "]";
+				+ userID + ", token=" + token + "]";
 	}
 }

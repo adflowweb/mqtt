@@ -20,10 +20,14 @@ public class TokenControllerTest extends AbstractTestNGSpringContextTests {
 	@Autowired
 	TokenController tokenController;
 
+	/**
+	 * access token 유효성 체크 테스트
+	 */
 	@Test()
 	void validate() {
 		try {
-			Response res = tokenController.validate("accessToken");
+			Response res = tokenController
+					.validate("63D31762A50F937B535746C9E31FA33E");
 			System.out.println("res=" + res);
 			assertTrue(true);
 		} catch (Exception e) {

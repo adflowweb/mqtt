@@ -36,6 +36,7 @@ public class TokenServiceImpl implements TokenService {
 		// userID 와 clientID가 존재하는지
 		TokenResponseData res = new TokenResponseData(tokenDao.validate(token),
 				"testUser");
+		res.setToken(token);
 		logger.debug("validate종료()");
 		return res;
 	}

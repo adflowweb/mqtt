@@ -235,7 +235,7 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * mqttClient를 종료하는 메소드 mqttClient가 재활용되기때문에 최후에 정리하고 종료되어야합니다.
+	 * mqttClient를 종료하는 메소드. mqttClient가 재활용되기때문에 최후에 정리하고 종료되어야합니다.
 	 * 
 	 * @see kr.co.adflow.push.service.ConnectionService#destroy()
 	 */

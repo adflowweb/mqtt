@@ -51,7 +51,7 @@ public class TokenController {
 	}
 
 	/**
-	 * 토큰 유효성 체크
+	 * 토큰유효성체크
 	 * 
 	 * @param token
 	 * @return
@@ -70,6 +70,8 @@ public class TokenController {
 	}
 
 	/**
+	 * 예외처리
+	 * 
 	 * @param e
 	 * @return
 	 */

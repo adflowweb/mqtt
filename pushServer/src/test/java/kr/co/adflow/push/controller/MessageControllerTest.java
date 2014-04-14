@@ -57,8 +57,11 @@ public class MessageControllerTest extends AbstractTestNGSpringContextTests {
 		// pushController.shutdown();
 	}
 
+	/**
+	 * 메시지 전송 테스트
+	 */
 	@Test()
-	void sendPersonalMessage() {
+	void post() {
 		try {
 			Message msg = new Message();
 			msg.setSender("@nadir93");
