@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class ServerController {
 	private static final Logger logger = LoggerFactory
-			.getLogger(ServerControllerTest.class);
+			.getLogger(ServerController.class);
 
 	@Resource
 	private ServerService serverService;
