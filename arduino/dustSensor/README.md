@@ -39,6 +39,8 @@
 
 ###코드
 - 먼지센서 
+
+> [*먼지센서모듈*](https://github.com/Trefex/arduino-airquality/tree/master/Module_Dust-Sensor) 
 ```cpp
   digitalWrite(ledPower,LOW); // LED 전원인가, 측정시작
   delayMicroseconds(samplingTime); // 0.28ms 기다림 
@@ -46,11 +48,9 @@
   delayMicroseconds(deltaTime); // 0.04ms 기다림 
   digitalWrite(ledPower,HIGH); // LED 전원중지  
   delayMicroseconds(sleepTime); // 최소 측정 주기가 10ms 이므로 9680microSeconds를 기다린다(측정에 320us사용함)
-
   // 0 - 5.0V mapped to 0 - 1023 integer values
   // recover voltage
   calcVoltage = voMeasured * (5.0 / 1024.0);
-
   // 먼지센서 스펙상 전압이 0.58 이상되어야함 
   if(calcVoltage > 0.58823529)
   {
@@ -60,7 +60,13 @@
   }
 ```
 
-- mqtt
+- mqtt client
+
+> [*mqtt 아두이노 라이브러리*](https://github.com/knolleary/pubsubclient)
+>
+>*기본 메시지크기가 128bytes라 1024bytes로 변경함*
+>
+> *default keepalive interval : 15초*
 ```cpp
 // 먼지 측정 데이터를 푸시한다. 
 client.publish((char*)"users/1c45de7cc1daa896bfd32dc", msg);
