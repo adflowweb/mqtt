@@ -64,7 +64,7 @@
 
 > [*mqtt 아두이노 라이브러리*](https://github.com/knolleary/pubsubclient)
 >
->*기본 메시지크기가 128bytes라 1024bytes로 변경함*
+>*기본 메시지크기: 128bytes*
 >
 > *default keepalive interval : 15초*
 ```cpp
@@ -73,7 +73,7 @@ client.publish((char*)"users/1c45de7cc1daa896bfd32dc", msg);
 ```
   
 ###문제점
-- 현재 push 메시지길이가 255 를 넘어가면 메시지 전송이 안됨.(현재는 메시지 크기가 255이하임)
+- 현재 push 메시지크기가 255 를 넘어가면 메시지 전송이 안됨.(현재는 메시지 크기가 255이하임)
 
 ###참고 
 - *http://www.howmuchsnow.com/arduino/airquality/*
