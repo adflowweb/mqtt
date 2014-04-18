@@ -64,9 +64,9 @@
 
 > [*mqtt 아두이노 라이브러리*](https://github.com/knolleary/pubsubclient)
 >
->*기본 메시지크기: 128bytes*
+> **default message size : 128bytes**
 >
-> *default keepalive interval : 15초*
+> **default keepalive interval : 15초**
 ```cpp
 // 먼지 측정 데이터를 푸시한다. 
 client.publish((char*)"users/1c45de7cc1daa896bfd32dc", msg);
@@ -74,6 +74,12 @@ client.publish((char*)"users/1c45de7cc1daa896bfd32dc", msg);
   
 ###문제점
 - 현재 push 메시지크기가 255 를 넘어가면 메시지 전송이 안됨.(현재는 메시지 크기가 255이하임)
+
+###추후작업
+- cosm 연동
+- node.js 연동 
+
+> *arduino* <--> *node.js* --> *mosquitto* --> *androidClient*
 
 ###참고 
 - *http://www.howmuchsnow.com/arduino/airquality/*
