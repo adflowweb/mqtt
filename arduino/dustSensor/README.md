@@ -74,6 +74,7 @@ client.publish((char*)"users/1c45de7cc1daa896bfd32dc", msg);
 - *http://sensorapp.net/?p=479*
 - *http://arduinodev.woofex.net/2012/12/01/standalone-sharp-dust-sensor/*
 - *https://www.sparkfun.com/datasheets/Sensors/gp2y1010au_e.pdf*
+- *http://knolleary.net/arduino-client-for-mqtt/*
 
 
 
