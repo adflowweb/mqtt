@@ -28,14 +28,14 @@
 
 - 핀연결 
 	 
->| Sharp Dust Sensor  | Attached To |
+>| Sharp Dust Sensor | Attached To |
 | -------------      | ------------- |
 | 1 (V-LED)          | 5V Pin (150 Ohm in between)  |
 | 2 (LED-GND)        | GND Pin |
-| 3 (LED)	           | Digital Pin 2
-| 4 (S-GND)	         | GND Pin
+| 3 (LED)	     | Digital Pin 2
+| 4 (S-GND)	     | GND Pin
 | 5 (Vo)             | Analog Pin A0
-| 6 (Vcc)	           | 5V Pin (Direct)
+| 6 (Vcc)	     | 5V Pin (Direct)
 
 ###코드
 - 먼지센서 
