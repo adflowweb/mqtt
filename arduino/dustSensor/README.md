@@ -17,7 +17,7 @@
 - dustSensor [GP2Y1010AU0F](http://www.aliexpress.com/item/GP2Y1010AU0F-100-NEW-SHARP-Optical-Dust-Sensor-GP2Y1010/1347390254.html) - *USD 7.38*
 - [220 uF Capacitor](http://www.aliexpress.com/item/50-pcs-Aluminum-Radial-Electrolytic-Capacitor-220uF-25V/1143386595.html)
 - 150 Ω Resistor
-- push server - [mosquitto](http://mosquitto.org)
+- push server - [mosquitto](http://mosquitto.org) on [raspberryPI](http://www.raspberrypi.org/)
 - push client - [android](https://github.com/adflowweb/mqtt/tree/master/pushClient)
 
 ###설치 
