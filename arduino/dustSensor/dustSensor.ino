@@ -56,6 +56,9 @@ void setup()
 
 void loop()
 {
+  //먼지 밀도 초기화 
+  dustDensity = 0.0;
+
   digitalWrite(ledPower,LOW); // power on the LED
   delayMicroseconds(samplingTime);
 
@@ -69,15 +72,11 @@ void loop()
   // recover voltage
   calcVoltage = voMeasured * (5.0 / 1024.0);
 
-  // linear eqaution taken from http://www.howmuchsnow.com/arduino/airquality/
-  // Chris Nafis (c) 2012
-
-  if(calcVoltage <= 0.58823529)
+  // 먼지센서 스펙상 전압이 0.58823529 이상되어야함 
+  if(calcVoltage > 0.58823529)
   {
-    dustDensity = 0.0;
-  }
-  else
-  {
+    // linear eqaution taken from http://www.howmuchsnow.com/arduino/airquality/
+    // Chris Nafis (c) 2012
     dustDensity = 0.17 * calcVoltage - 0.1;
   }
 
