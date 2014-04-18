@@ -82,9 +82,9 @@ client.publish((char*)"users/1c45de7cc1daa896bfd32dc", msg);
 - cosm 연동
 - node.js 연동 
 
-> *arduino* <--> *node.js(publisher)* --> *mqttServer(mosquitto)* --> *androidClient(subscriber)*
+> *arduino <--> node.js(publisher) --> mqttServer(mosquitto) --> androidClient(subscriber)*
 >
-> *arduino* --> *cosm*
+> *node.js --> cosm*
 
 ###참고 
 - *http://www.howmuchsnow.com/arduino/airquality/*
