@@ -72,8 +72,13 @@
 client.publish((char*)"users/1c45de7cc1daa896bfd32dc", msg);
 ```
   
-###문제점
-- 현재 push 메시지크기가 255 를 넘어가면 메시지 전송이 안됨.(현재는 메시지 크기가 255이하임)
+###문제
+- *push message 크기가 230 바이트 넘어가면  오버플로우발생* 
+
+###해결방안 
+- *최소한의 raw data만 만들어서 node.js로 넘기고 푸시 로직은 node.js 에서 처리한다*
+
+> *arduino는 먼지센싱만하고 푸시는 직접 하지않는다*
 
 ###추후작업
 - cosm 연동
