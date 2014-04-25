@@ -3,7 +3,7 @@ package kr.co.adflow.push.service.impl;
 import javax.annotation.Resource;
 
 import kr.co.adflow.push.dao.ServerDAO;
-import kr.co.adflow.push.domain.ResponseData;
+import kr.co.adflow.push.domain.ServerInfo;
 import kr.co.adflow.push.service.ServerService;
 
 import org.slf4j.LoggerFactory;
@@ -24,22 +24,19 @@ public class ServerServiceImpl implements ServerService {
 	ServerDAO serverDao;
 
 	@Override
-	public ResponseData get() throws Exception {
+	public ServerInfo get() throws Exception {
 		return serverDao.get();
 	}
 
 	@Override
-	public ResponseData post() throws Exception {
-		return null;
+	public void post() throws Exception {
 	}
 
 	@Override
-	public ResponseData put() throws Exception {
-		return null;
+	public void put() throws Exception {
 	}
 
 	@Override
-	public ResponseData delete() throws Exception {
-		return null;
+	public void delete() throws Exception {
 	}
 }

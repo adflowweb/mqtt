@@ -2,12 +2,11 @@ package kr.co.adflow.jersey;
 
 import static org.testng.AssertJUnit.assertTrue;
 
-import java.io.IOException;
 import java.util.Properties;
 
 import kr.co.adflow.push.auth.wmq.JAASLoginModule;
 import kr.co.adflow.push.domain.Response;
-import kr.co.adflow.push.domain.TokenResponseData;
+import kr.co.adflow.push.domain.Validation;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,8 +50,7 @@ public class RestClientTest {
 	@Test
 	public void validate() throws Exception {
 		Response response = client.validate("63D31762A50F937B535746C9E31FA33E");
-		TokenResponseData data = (TokenResponseData) response.getResult()
-				.getData();
+		Validation data = (Validation) response.getResult().getData();
 		logger.debug("response=" + response);
 		assertTrue(data.isValidation());
 	}

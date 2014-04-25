@@ -1,6 +1,7 @@
 package kr.co.adflow.push.service;
 
-import kr.co.adflow.push.domain.ResponseData;
+import kr.co.adflow.push.domain.Response;
+import kr.co.adflow.push.domain.Token;
 
 /**
  * @author nadir93
@@ -14,33 +15,33 @@ public interface TokenService {
 	 * @return
 	 * @throws Exception
 	 */
-	ResponseData get(String token) throws Exception;
+	Token get(String token) throws Exception;
 
 	/**
 	 * @param token
 	 * @return
 	 * @throws Exception
 	 */
-	ResponseData post(String token) throws Exception;
+	void post(Token token) throws Exception;
 
 	/**
 	 * @param token
 	 * @return
 	 * @throws Exception
 	 */
-	ResponseData put(String token) throws Exception;
+	void put(Token token) throws Exception;
 
 	/**
 	 * @param token
 	 * @return
 	 * @throws Exception
 	 */
-	ResponseData delete(String token) throws Exception;
+	void delete(String token) throws Exception;
 
 	/**
 	 * @param token
 	 * @return
 	 * @throws Exception
 	 */
-	ResponseData validate(String token) throws Exception;
+	boolean validate(String token) throws Exception;
 }

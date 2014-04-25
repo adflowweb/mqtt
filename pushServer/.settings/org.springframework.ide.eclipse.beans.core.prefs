@@ -1,9 +1,13 @@
-#Mon Oct 18 12:37:52 EDT 2010
 //org.springframework.ide.eclipse.beans.core.default.version.http\://www.osgi.org/xmlns/blueprint/v1.0.0=
 //org.springframework.ide.eclipse.beans.core.default.version.http\://www.springframework.org/schema/aop=
 //org.springframework.ide.eclipse.beans.core.default.version.http\://www.springframework.org/schema/batch=
 //org.springframework.ide.eclipse.beans.core.default.version.http\://www.springframework.org/schema/beans=
+//org.springframework.ide.eclipse.beans.core.default.version.http\://www.springframework.org/schema/c=
+//org.springframework.ide.eclipse.beans.core.default.version.http\://www.springframework.org/schema/cache=
 //org.springframework.ide.eclipse.beans.core.default.version.http\://www.springframework.org/schema/context=
+//org.springframework.ide.eclipse.beans.core.default.version.http\://www.springframework.org/schema/data/jpa=
+//org.springframework.ide.eclipse.beans.core.default.version.http\://www.springframework.org/schema/data/mongo=
+//org.springframework.ide.eclipse.beans.core.default.version.http\://www.springframework.org/schema/data/repository=
 //org.springframework.ide.eclipse.beans.core.default.version.http\://www.springframework.org/schema/faces=
 //org.springframework.ide.eclipse.beans.core.default.version.http\://www.springframework.org/schema/flex=
 //org.springframework.ide.eclipse.beans.core.default.version.http\://www.springframework.org/schema/integration=
@@ -39,7 +43,12 @@
 //org.springframework.ide.eclipse.beans.core.prefix.http\://www.springframework.org/schema/aop=aop
 //org.springframework.ide.eclipse.beans.core.prefix.http\://www.springframework.org/schema/batch=batch
 //org.springframework.ide.eclipse.beans.core.prefix.http\://www.springframework.org/schema/beans=beans
+//org.springframework.ide.eclipse.beans.core.prefix.http\://www.springframework.org/schema/c=c
+//org.springframework.ide.eclipse.beans.core.prefix.http\://www.springframework.org/schema/cache=cache
 //org.springframework.ide.eclipse.beans.core.prefix.http\://www.springframework.org/schema/context=context
+//org.springframework.ide.eclipse.beans.core.prefix.http\://www.springframework.org/schema/data/jpa=jpa
+//org.springframework.ide.eclipse.beans.core.prefix.http\://www.springframework.org/schema/data/mongo=mongo
+//org.springframework.ide.eclipse.beans.core.prefix.http\://www.springframework.org/schema/data/repository=repository
 //org.springframework.ide.eclipse.beans.core.prefix.http\://www.springframework.org/schema/faces=faces
 //org.springframework.ide.eclipse.beans.core.prefix.http\://www.springframework.org/schema/flex=flex
 //org.springframework.ide.eclipse.beans.core.prefix.http\://www.springframework.org/schema/integration=int
@@ -73,6 +82,7 @@
 //org.springframework.ide.eclipse.beans.core.prefix.http\://www.springframework.org/schema/webflow-config=flow
 eclipse.preferences.version=1
 org.springframework.ide.eclipse.beans.core.default.version.check.classpath=true
+org.springframework.ide.eclipse.beans.core.disableCachingForNamespaceLoadingFromClasspath=false
 org.springframework.ide.eclipse.beans.core.enable.project.preferences=false
 org.springframework.ide.eclipse.beans.core.ignoreMissingNamespaceHandler=false
 org.springframework.ide.eclipse.beans.core.loadNamespaceHandlerFromClasspath=false

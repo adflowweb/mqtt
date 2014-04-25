@@ -3,11 +3,11 @@ package kr.co.adflow.push.domain;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-public class SendMessageResponseData extends ResponseData {
+public class SendMessage {
 
 	private boolean sendMessage;
 
-	public SendMessageResponseData(boolean sendMessage) {
+	public SendMessage(boolean sendMessage) {
 		super();
 		this.sendMessage = sendMessage;
 	}

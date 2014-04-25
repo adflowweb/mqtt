@@ -1,6 +1,6 @@
 package kr.co.adflow.push.service;
 
-import kr.co.adflow.push.domain.ResponseData;
+import kr.co.adflow.push.domain.Group;
 
 /**
  * @author nadir93
@@ -9,12 +9,12 @@ import kr.co.adflow.push.domain.ResponseData;
  */
 public interface GroupService {
 
-	ResponseData get(String groupID) throws Exception;
+	Group get(String groupID) throws Exception;
 
-	ResponseData post() throws Exception;
+	void post() throws Exception;
 
-	ResponseData put() throws Exception;
+	void put() throws Exception;
 
-	ResponseData delete() throws Exception;
+	void delete() throws Exception;
 
 }

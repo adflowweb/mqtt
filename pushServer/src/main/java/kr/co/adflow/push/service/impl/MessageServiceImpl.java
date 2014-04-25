@@ -2,14 +2,12 @@ package kr.co.adflow.push.service.impl;
 
 import javax.annotation.Resource;
 
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-
 import kr.co.adflow.push.dao.MessageDAO;
 import kr.co.adflow.push.domain.Message;
-import kr.co.adflow.push.domain.ResponseData;
-import kr.co.adflow.push.domain.SendMessageResponseData;
 import kr.co.adflow.push.service.MessageService;
+
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 /**
  * @author nadir93
@@ -26,7 +24,7 @@ public class MessageServiceImpl implements MessageService {
 	MessageDAO messageDao;
 
 	@Override
-	public ResponseData get(String messageID) throws Exception {
+	public Message get(String messageID) throws Exception {
 		return null;
 	}
 
@@ -38,17 +36,17 @@ public class MessageServiceImpl implements MessageService {
 	 * .Message)
 	 */
 	@Override
-	public ResponseData post(Message msg) throws Exception {
-		return new SendMessageResponseData(messageDao.post(msg));
+	public void post(Message msg) throws Exception {
+		messageDao.post(msg);
 	}
 
 	@Override
-	public ResponseData put(Message msg) throws Exception {
-		return null;
+	public void put(Message msg) throws Exception {
+		// return null;
 	}
 
 	@Override
-	public ResponseData delete(String messageID) throws Exception {
-		return null;
+	public void delete(String messageID) throws Exception {
+		// return null;
 	}
 }

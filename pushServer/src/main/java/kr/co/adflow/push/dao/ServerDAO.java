@@ -1,6 +1,6 @@
 package kr.co.adflow.push.dao;
 
-import kr.co.adflow.push.domain.ResponseData;
+import kr.co.adflow.push.domain.ServerInfo;
 
 /**
  * @author nadir93
@@ -8,11 +8,11 @@ import kr.co.adflow.push.domain.ResponseData;
  * 
  */
 public interface ServerDAO {
-	ResponseData get() throws Exception;
+	ServerInfo get() throws Exception;
 
-	ResponseData post() throws Exception;
+	void post() throws Exception;
 
-	ResponseData put() throws Exception;
+	void put() throws Exception;
 
-	ResponseData delete() throws Exception;
+	void delete() throws Exception;
 }

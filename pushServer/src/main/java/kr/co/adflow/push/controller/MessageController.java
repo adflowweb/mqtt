@@ -31,7 +31,7 @@ public class MessageController {
 			.getLogger(MessageController.class);
 
 	@Resource
-	private MessageService messageService;
+	private MessageService msgService;
 
 	/**
 	 * 메시지 전송하기
@@ -44,9 +44,9 @@ public class MessageController {
 	@ResponseBody
 	public Response post(@RequestBody Message msg) throws Exception {
 		logger.debug("메시지=" + msg);
+		msgService.post(msg);
 		Result result = new Result();
 		result.setSuccess(true);
-		result.setData(messageService.post(msg));
 		Response res = new Response(result);
 		logger.debug("response=" + res);
 		return res;

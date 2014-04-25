@@ -2,7 +2,7 @@ package kr.co.adflow.push.controller;
 
 import static org.testng.AssertJUnit.assertTrue;
 import kr.co.adflow.push.domain.Response;
-import kr.co.adflow.push.domain.ServerInfoResponseData;
+import kr.co.adflow.push.domain.ServerInfo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -32,7 +32,7 @@ public class ServerControllerTest extends AbstractTestNGSpringContextTests {
 
 		Response res = serverController.get();
 		System.out.println("res=" + res);
-		ServerInfoResponseData data = (ServerInfoResponseData) res.getResult()
+		ServerInfo data = (ServerInfo) res.getResult()
 				.getData();
 		assertTrue(data.isAvailable());
 

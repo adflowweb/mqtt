@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 여기는 매핑할 MemberMapper.java의 풀패키지명을 적어준다 -->
+<mapper namespace="kr.co.adflow.push.test.MemberMapper">
+
+	<resultMap type="Member" id="MemberResultMap">
+		<result property="_name" column="NAME" />
+		<result property="_email" column="EMAIL" />
+		<result property="_phone" column="PHONE" />
+	</resultMap>
+
+	<!-- id의 경우에는 Mapper.java에 동일하게 사용해야된다. -->
+	<select id="getMembers" resultMap="MemberResultMap">
+		SELECT * FROM tab_mybatis
+	</select>
+
+	<!-- parameterType 에는 구문에 전달될 파라미터의 패키지 경로를 포함한 전체 클래명이나 별칭이 들어간다 -->
+	<insert id="insertMember" parameterType="kr.co.adflow.push.test.Member">
+		INSERT INTO tab_mybatis
+		values(#{_name},#{_email},#{_phone})
+	</insert>
+
+	<!-- update와 delete는 생략한다. -->
+	<update id=""></update>
+
+	<delete id="deleteMember" parameterType="kr.co.adflow.push.test.Member">
+		DELTE tab_mybatis
+		WHERE(name=#{_name})
+	</delete>
+
+</mapper>

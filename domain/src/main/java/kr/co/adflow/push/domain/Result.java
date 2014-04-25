@@ -11,7 +11,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class Result {
 	private boolean success;
-	private ResponseData data;
+	private Object data;
 	private List<String> errors;
 	private List<String> warnings;
 	private List<String> info;
@@ -61,14 +61,14 @@ public class Result {
 	/**
 	 * @return
 	 */
-	public ResponseData getData() {
+	public Object getData() {
 		return data;
 	}
 
 	/**
 	 * @param data
 	 */
-	public void setData(ResponseData data) {
+	public void setData(Object data) {
 		this.data = data;
 	}
 

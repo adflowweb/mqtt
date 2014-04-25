@@ -16,6 +16,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
 import kr.co.adflow.push.domain.Message;
+import kr.co.adflow.push.exception.PushException;
 import kr.co.adflow.push.service.MqttService;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
@@ -268,18 +269,16 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 	}
 
 	@Override
-	public synchronized boolean publish(Message msg) throws Exception {
+	public synchronized void publish(Message msg) throws Exception {
 		logger.debug("publish시작()");
 		if (mqttClient == null || !mqttClient.isConnected()) {
-			logger.debug("publish종료(false)");
-			return false;
+			logger.debug("message전송실패");
+			throw new PushException("메시지전송실패");
 		}
 
 		mqttClient.publish(msg.getReceiver(), msg.getMessage().getBytes(),
-				msg.getQos(), /* retained */
-				false);
-		logger.debug("publish종료(true)");
-		return true;
+				msg.getQos(), msg.isRetained());
+		logger.debug("publish종료()");
 	}
 
 	@Override

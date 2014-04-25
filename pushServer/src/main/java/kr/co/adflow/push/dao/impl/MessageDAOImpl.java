@@ -4,7 +4,6 @@ import javax.annotation.Resource;
 
 import kr.co.adflow.push.dao.MessageDAO;
 import kr.co.adflow.push.domain.Message;
-import kr.co.adflow.push.domain.ResponseData;
 import kr.co.adflow.push.service.MqttService;
 
 import org.slf4j.LoggerFactory;
@@ -30,7 +29,7 @@ public class MessageDAOImpl implements MessageDAO {
 	 * @see kr.co.adflow.push.dao.MessageDAO#get(java.lang.String)
 	 */
 	@Override
-	public ResponseData get(String messageID) throws Exception {
+	public Message get(String messageID) throws Exception {
 		return null;
 	}
 
@@ -41,8 +40,8 @@ public class MessageDAOImpl implements MessageDAO {
 	 * kr.co.adflow.push.dao.MessageDAO#post(kr.co.adflow.push.domain.Message)
 	 */
 	@Override
-	public boolean post(Message msg) throws Exception {
-		return mqttService.publish(msg);
+	public void post(Message msg) throws Exception {
+		mqttService.publish(msg);
 	}
 
 	/*
@@ -52,8 +51,8 @@ public class MessageDAOImpl implements MessageDAO {
 	 * kr.co.adflow.push.dao.MessageDAO#put(kr.co.adflow.push.domain.Message)
 	 */
 	@Override
-	public ResponseData put(Message msg) throws Exception {
-		return null;
+	public void put(Message msg) throws Exception {
+		// return null;
 	}
 
 	/*
@@ -62,7 +61,7 @@ public class MessageDAOImpl implements MessageDAO {
 	 * @see kr.co.adflow.push.dao.MessageDAO#delete(java.lang.String)
 	 */
 	@Override
-	public ResponseData delete(String messageID) throws Exception {
-		return null;
+	public void delete(String messageID) throws Exception {
+		// return null;
 	}
 }

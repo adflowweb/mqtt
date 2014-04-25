@@ -1,9 +1,9 @@
 package kr.co.adflow.push.service.impl;
 
-import org.springframework.stereotype.Service;
-
-import kr.co.adflow.push.domain.ResponseData;
+import kr.co.adflow.push.domain.Group;
 import kr.co.adflow.push.service.GroupService;
+
+import org.springframework.stereotype.Service;
 
 /**
  * @author nadir93
@@ -14,23 +14,23 @@ import kr.co.adflow.push.service.GroupService;
 public class GroupServiceImpl implements GroupService {
 
 	@Override
-	public ResponseData get(String groupID) throws Exception {
+	public Group get(String groupID) throws Exception {
 		return null;
 	}
 
 	@Override
-	public ResponseData post() throws Exception {
-		return null;
+	public void post() throws Exception {
+		// return null;
 	}
 
 	@Override
-	public ResponseData put() throws Exception {
-		return null;
+	public void put() throws Exception {
+		// return null;
 	}
 
 	@Override
-	public ResponseData delete() throws Exception {
-		return null;
+	public void delete() throws Exception {
+		// return null;
 	}
 
 }

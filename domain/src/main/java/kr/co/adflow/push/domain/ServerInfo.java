@@ -8,7 +8,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
  * 
  */
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-public class ServerInfoResponseData extends ResponseData {
+public class ServerInfo {
 
 	private int cpu;
 	private int memory;
@@ -23,7 +23,7 @@ public class ServerInfoResponseData extends ResponseData {
 	 * @param available
 	 * @param message
 	 */
-	public ServerInfoResponseData(boolean available, String message) {
+	public ServerInfo(boolean available, String message) {
 		this.available = available;
 		this.message = message;
 	}

@@ -7,6 +7,8 @@ import javax.annotation.Resource;
 
 import kr.co.adflow.push.domain.Response;
 import kr.co.adflow.push.domain.Result;
+import kr.co.adflow.push.domain.Token;
+import kr.co.adflow.push.domain.Validation;
 import kr.co.adflow.push.service.TokenService;
 
 import org.slf4j.Logger;
@@ -14,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -42,9 +45,33 @@ public class TokenController {
 	@ResponseBody
 	public Response get(@PathVariable String token) throws Exception {
 		logger.debug("token=" + token);
+
 		Result result = new Result();
 		result.setSuccess(true);
 		result.setData(tokenService.get(token));
+
+		Response res = new Response(result);
+		logger.debug("response=" + res);
+		return res;
+	}
+
+	/**
+	 * 토큰 발행하기
+	 * 
+	 * @param token
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "tokens", method = RequestMethod.POST)
+	@ResponseBody
+	public Response post(@RequestBody Token token) throws Exception {
+		logger.debug("token=" + token);
+
+		// todo validation check (userID, deviceID)
+
+		Result result = new Result();
+		result.setSuccess(true);
+		// result.setData(tokenService.post(token));
 		Response res = new Response(result);
 		logger.debug("response=" + res);
 		return res;
@@ -63,7 +90,7 @@ public class TokenController {
 		logger.debug("token=" + token);
 		Result result = new Result();
 		result.setSuccess(true);
-		result.setData(tokenService.validate(token));
+		result.setData(new Validation(tokenService.validate(token)));
 		Response res = new Response(result);
 		logger.debug("response=" + res);
 		return res;

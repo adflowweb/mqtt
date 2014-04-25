@@ -1,7 +1,6 @@
 package kr.co.adflow.push.service;
 
 import kr.co.adflow.push.domain.Message;
-import kr.co.adflow.push.domain.ResponseData;
 
 /**
  * @author nadir93
@@ -10,11 +9,11 @@ import kr.co.adflow.push.domain.ResponseData;
  */
 public interface MessageService {
 
-	ResponseData get(String messageID) throws Exception;
+	Message get(String messageID) throws Exception;
 
-	ResponseData post(Message msg) throws Exception;
+	void post(Message msg) throws Exception;
 
-	ResponseData put(Message msg) throws Exception;
+	void put(Message msg) throws Exception;
 
-	ResponseData delete(String messageID) throws Exception;
+	void delete(String messageID) throws Exception;
 }
