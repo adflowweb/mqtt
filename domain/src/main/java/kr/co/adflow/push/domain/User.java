@@ -17,6 +17,20 @@ public class User {
 	private String email;
 	private String phone;
 
+	public User() {
+	}
+
+	public User(String userID, String name, String title, String dept,
+			String email, String phone) {
+		super();
+		this.userID = userID;
+		this.name = name;
+		this.title = title;
+		this.dept = dept;
+		this.email = email;
+		this.phone = phone;
+	}
+
 	public String getUserID() {
 		return userID;
 	}

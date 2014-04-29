@@ -37,7 +37,9 @@ public class MessageServiceImpl implements MessageService {
 	 */
 	@Override
 	public void post(Message msg) throws Exception {
+		logger.debug("post시작(msg=" + msg + ")");
 		messageDao.post(msg);
+		logger.debug("post종료()");
 	}
 
 	@Override

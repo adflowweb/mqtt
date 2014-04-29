@@ -4,9 +4,9 @@ package kr.co.adflow.push.domain;
  * @author nadir93
  * @date 2014. 3. 20.
  */
-public class Response {
+public class Response<T> {
 
-	private Result result;
+	private Result<T> result;
 
 	public Response() {
 	}
@@ -14,21 +14,21 @@ public class Response {
 	/**
 	 * @param result
 	 */
-	public Response(Result result) {
+	public Response(Result<T> result) {
 		this.result = result;
 	}
 
 	/**
 	 * @return
 	 */
-	public Result getResult() {
+	public Result<T> getResult() {
 		return result;
 	}
 
 	/**
 	 * @param result
 	 */
-	public void setResult(Result result) {
+	public void setResult(Result<T> result) {
 		this.result = result;
 	}
 

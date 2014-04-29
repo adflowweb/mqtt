@@ -47,14 +47,25 @@ public class UserController {
 		logger.debug("userID=" + userID);
 		Result result = new Result();
 		result.setSuccess(true);
-		result.setData(userService.get(userID));
+		User user = userService.get(userID);
+		if (user == null) {
+			List<String> messages = new ArrayList<String>() {
+				{
+					add("user not found");
+				}
+			};
+			result.setInfo(messages);
+		} else {
+			result.setData(user);
+		}
+
 		Response res = new Response(result);
 		logger.debug("response=" + res);
 		return res;
 	}
 
 	/**
-	 * 유저정보 가져오기
+	 * 유저정보 삭제하기
 	 * 
 	 * @param userID
 	 * @param clientID
@@ -65,28 +76,40 @@ public class UserController {
 	@ResponseBody
 	public Response delete(@PathVariable String userID) throws Exception {
 		logger.debug("userID=" + userID);
-		userService.delete(userID);
+		final int count = userService.delete(userID);
 		Result result = new Result();
 		result.setSuccess(true);
+		List<String> messages = new ArrayList<String>() {
+			{
+				add("updates=" + count);
+			}
+		};
+		result.setInfo(messages);
 		Response res = new Response(result);
 		logger.debug("response=" + res);
 		return res;
 	}
 
 	/**
-	 * 유저정보 입
+	 * 유저정보 입력
 	 * 
 	 * @param msg
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "users", method = RequestMethod.POST)
+	@RequestMapping(value = "users", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
 	public Response post(@RequestBody User user) throws Exception {
-		logger.debug("메시지=" + user);
-		userService.post(user);
+		logger.debug("유저=" + user);
+		final int count = userService.post(user);
 		Result result = new Result();
 		result.setSuccess(true);
+		List<String> messages = new ArrayList<String>() {
+			{
+				add("updates=" + count);
+			}
+		};
+		result.setInfo(messages);
 		Response res = new Response(result);
 		logger.debug("response=" + res);
 		return res;

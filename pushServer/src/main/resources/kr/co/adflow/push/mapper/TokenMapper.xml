@@ -9,9 +9,22 @@
 		#{token}
 	</select>
 
+	<insert id="post" parameterType="kr.co.adflow.push.domain.Token">
+		INSERT INTO
+		token
+		values(#{tokenID}, #{userID}, #{deviceID}, now())
+	</insert>
+
 	<select id="validate" resultType="boolean">
 		SELECT CASE WHEN count(*) > 0
 		THEN 1 ELSE 0 END From token where tokenid = #{token}
 	</select>
+
+	<delete id="delete" parameterType="java.lang.String">
+		DELETE from
+		token
+		WHERE
+		tokenid=#{token}
+	</delete>
 
 </mapper>

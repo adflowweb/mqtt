@@ -1,14 +1,18 @@
 package kr.co.adflow.push.controller;
 
+import static org.testng.AssertJUnit.assertNull;
+import static org.testng.AssertJUnit.assertNotNull;
 import static org.testng.AssertJUnit.assertTrue;
 
 import java.io.FileInputStream;
+import java.util.List;
 
 import kr.co.adflow.push.domain.Message;
 import kr.co.adflow.push.domain.Response;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
@@ -22,8 +26,12 @@ import org.testng.annotations.Test;
  * 
  */
 @Test
-@ContextConfiguration("file:src/main/webapp/WEB-INF/spring/appServlet/servlet-context.xml")
+// @ContextConfiguration("file:src/main/webapp/WEB-INF/spring/appServlet/servlet-context.xml")
+@ContextConfiguration("file:src/test/resources/applicationContext.xml")
 public class MessageControllerTest extends AbstractTestNGSpringContextTests {
+
+	private static final org.slf4j.Logger logger = LoggerFactory
+			.getLogger(MessageControllerTest.class);
 
 	private byte[] data;
 	private String jsonString;
@@ -32,8 +40,8 @@ public class MessageControllerTest extends AbstractTestNGSpringContextTests {
 	MessageController messageController;
 
 	@BeforeClass
-	void bfterclass() throws Exception {
-
+	void beforeclass() throws Exception {
+		logger.debug("==========테스트전처리작업시작()==========");
 		FileInputStream fis = new FileInputStream(
 				"src/test/resources/mt_location.jpg");
 		data = IOUtils.toByteArray(fis);
@@ -50,6 +58,7 @@ public class MessageControllerTest extends AbstractTestNGSpringContextTests {
 
 		// mqttClient 초기연결시간 기다림
 		Thread.sleep(1000);
+		logger.debug("==========테스트전처리작업종료()==========");
 	}
 
 	@AfterClass
@@ -59,20 +68,21 @@ public class MessageControllerTest extends AbstractTestNGSpringContextTests {
 
 	/**
 	 * 메시지 전송 테스트
+	 * 
+	 * @throws Exception
 	 */
 	@Test()
-	void post() {
-		try {
-			Message msg = new Message();
-			msg.setSender("@nadir93");
-			msg.setReceiver("users/nadir93");
-			msg.setMessage(jsonString);
-			Response res = messageController.post(msg);
-			System.out.println("res=" + res);
-			assertTrue(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-			assertTrue(false);
-		}
+	void 메시지전송테스트() throws Exception {
+		logger.debug("==========메시지전송테스트()==========");
+		Message msg = new Message();
+		msg.setSender("@nadir93");
+		msg.setReceiver("users/nadir93");
+		msg.setMessage(jsonString);
+		Response res = messageController.post(msg);
+		logger.debug("호출결과=" + res);
+		List<String> errors = res.getResult().getErrors();
+		logger.debug("errors=" + errors);
+		assertNull(errors);
+		logger.debug("==========메시지전송테스트종료()==========");
 	}
 }

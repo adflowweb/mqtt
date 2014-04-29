@@ -6,12 +6,11 @@ import org.testng.annotations.Test;
 
 /**
  * @author nadir93
- * @date 2014. 4. 14.
+ * @date 2014. 4. 28.
  * 
  */
 @Test
 @ContextConfiguration("file:src/test/resources/applicationContext.xml")
-// @ContextConfiguration("file:src/main/webapp/WEB-INF/spring/appServlet/servlet-context.xml")
-public class GroupControllerTest extends AbstractTestNGSpringContextTests {
+public class DeviceControllerTest extends AbstractTestNGSpringContextTests {
 
 }

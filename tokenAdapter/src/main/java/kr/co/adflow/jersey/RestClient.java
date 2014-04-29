@@ -6,11 +6,14 @@ import java.util.Properties;
 import javax.ws.rs.core.MediaType;
 
 import kr.co.adflow.push.domain.Response;
+import kr.co.adflow.push.domain.Token;
+import kr.co.adflow.push.domain.Validation;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
@@ -37,7 +40,6 @@ public class RestClient {
 
 	public RestClient() {
 		logger.debug("RestClient생성자시작()");
-		logger.debug("properties=" + prop);
 		ClientConfig clientConfig = new DefaultClientConfig();
 		clientConfig.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING,
 				Boolean.TRUE);
@@ -50,11 +52,26 @@ public class RestClient {
 		logger.debug("RestClient생성자종료()");
 	}
 
-	public Response validate(String token) {
+	public Validation validate(String token) {
 		logger.debug("validate시작(token=" + token + ")");
-		Response data = webResource.path("validate").path(token)
-				.accept(MediaType.APPLICATION_JSON).get(Response.class);
-		logger.debug("validate종료()");
-		return data;
+		logger.debug("webResource=" + webResource);
+		Validation valid = null;
+		try {
+			Response<Validation> data = webResource.path("validate")
+					.path(token).accept(MediaType.APPLICATION_JSON)
+					.get(new GenericType<Response<Validation>>() {
+					});
+			logger.debug("data=" + data + ")");
+			valid = data.getResult().getData();
+			logger.debug("validate종료(valid=" + valid + ")");
+		} catch (Exception e) {
+			logger.error("에러발생", e);
+		}
+		return valid;
 	}
+
+	public WebResource getWebResource() {
+		return webResource;
+	}
+
 }

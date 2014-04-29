@@ -11,11 +11,11 @@ public interface TokenDAO {
 
 	Token get(String token) throws Exception;
 
-	void post(Token token) throws Exception;
+	Token post(Token token) throws Exception;
 
-	void put(Token token) throws Exception;
+	int put(Token token) throws Exception;
 
-	void delete(String token) throws Exception;
+	int delete(String token) throws Exception;
 
 	// boolean validate(String token) throws Exception;
 

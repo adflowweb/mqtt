@@ -139,10 +139,10 @@ public class JAASLoginModule implements LoginModule {
 			// }
 
 			// 인증요청
-			Response response = client.validate(clientId);
+			Validation response = client.validate(clientId);
 			logger.debug("토큰유효성체크결과=" + response);
-			Validation data = (Validation) response.getResult().getData();
-			if (data.isValidation()) {
+			// Validation data = (Validation) response.getResult().getData();
+			if (response != null && response.isValidation()) {
 				loggedIn = true;
 			} else
 				throw new FailedLoginException("Login failed");

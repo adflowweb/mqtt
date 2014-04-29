@@ -41,7 +41,9 @@ public class MessageDAOImpl implements MessageDAO {
 	 */
 	@Override
 	public void post(Message msg) throws Exception {
+		logger.debug("post시작(msg=" + msg + ")");
 		mqttService.publish(msg);
+		logger.debug("post종료()");
 	}
 
 	/*

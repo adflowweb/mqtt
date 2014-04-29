@@ -41,7 +41,12 @@ public class TokenDAOImpl implements TokenDAO {
 	 * @see kr.co.adflow.push.dao.TokenDAO#post(java.lang.String)
 	 */
 	@Override
-	public void post(Token token) throws Exception {
+	public Token post(Token token) throws Exception {
+		logger.debug("post시작(token=" + token + ")");
+		TokenMapper tokenMapper = sqlSession.getMapper(TokenMapper.class);
+		int result = tokenMapper.post(token);
+		logger.debug("post종료(result=" + result + ")");
+		return token;
 	}
 
 	/*
@@ -50,7 +55,12 @@ public class TokenDAOImpl implements TokenDAO {
 	 * @see kr.co.adflow.push.dao.TokenDAO#put(java.lang.String)
 	 */
 	@Override
-	public void put(Token token) throws Exception {
+	public int put(Token token) throws Exception {
+		logger.debug("put시작(token=" + token + ")");
+		TokenMapper tokenMapper = sqlSession.getMapper(TokenMapper.class);
+		int result = tokenMapper.put(token);
+		logger.debug("put종료(result=" + result + ")");
+		return result;
 	}
 
 	/*
@@ -59,7 +69,12 @@ public class TokenDAOImpl implements TokenDAO {
 	 * @see kr.co.adflow.push.dao.TokenDAO#delete(java.lang.String)
 	 */
 	@Override
-	public void delete(String token) throws Exception {
+	public int delete(String token) throws Exception {
+		logger.debug("delete시작(token=" + token + ")");
+		TokenMapper tokenMapper = sqlSession.getMapper(TokenMapper.class);
+		int result = tokenMapper.delete(token);
+		logger.debug("delete종료(result=" + result + ")");
+		return result;
 	}
 
 	/*

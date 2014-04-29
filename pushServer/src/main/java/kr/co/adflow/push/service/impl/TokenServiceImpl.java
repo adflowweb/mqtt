@@ -2,12 +2,19 @@ package kr.co.adflow.push.service.impl;
 
 import javax.annotation.Resource;
 
+import kr.co.adflow.push.dao.DeviceDAO;
 import kr.co.adflow.push.dao.TokenDAO;
+import kr.co.adflow.push.dao.UserDAO;
+import kr.co.adflow.push.domain.Device;
 import kr.co.adflow.push.domain.Token;
+import kr.co.adflow.push.domain.User;
 import kr.co.adflow.push.service.TokenService;
+import kr.co.adflow.util.TokenGenerator;
 
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author nadir93
@@ -21,6 +28,12 @@ public class TokenServiceImpl implements TokenService {
 
 	@Resource
 	TokenDAO tokenDao;
+
+	@Resource
+	UserDAO userDao;
+
+	@Resource
+	DeviceDAO deviceDao;
 
 	/*
 	 * (non-Javadoc)
@@ -51,19 +64,57 @@ public class TokenServiceImpl implements TokenService {
 		return data;
 	}
 
+	/*
+	 * 토큰 발행하기
+	 * 
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * kr.co.adflow.push.service.TokenService#post(kr.co.adflow.push.domain.
+	 * Token)
+	 */
+	// @Transactional
 	@Override
-	public void post(Token token) throws Exception {
-		tokenDao.post(token);
+	public Token post(Token token) throws Exception {
+		logger.debug("post시작(token=" + token + ")");
+		// generate tokenID
+		String tokenID = TokenGenerator.generate();
+		logger.debug("tokenID=" + tokenID);
+		token.setTokenID(tokenID);
+		// insert user
+		User user = new User();
+		user.setUserID(token.getUserID());
+		try {
+			userDao.post(user);
+		} catch (DuplicateKeyException e) {
+			logger.debug(e.getMessage());
+		}
+
+		// insert device
+		Device device = new Device();
+		device.setDeviceID(token.getDeviceID());
+		try {
+			deviceDao.post(device);
+		} catch (DuplicateKeyException e) {
+			logger.debug(e.getMessage());
+		}
+
+		Token rst = tokenDao.post(token);
+		logger.debug("post종료(token=" + rst + ")");
+		return rst;
 	}
 
 	@Override
-	public void put(Token token) throws Exception {
-		tokenDao.put(token);
+	public int put(Token token) throws Exception {
+		return tokenDao.put(token);
 	}
 
 	@Override
-	public void delete(String token) throws Exception {
-		tokenDao.delete(token);
+	public int delete(String token) throws Exception {
+		logger.debug("delete시작(token=" + token + ")");
+		int count = tokenDao.delete(token);
+		logger.debug("delete종료(updates=" + count + ")");
+		return count;
 	}
 
 }

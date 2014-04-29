@@ -24,7 +24,7 @@
 		scope="singleton"> <property name="jndiName"> <value>java:comp/env/jdbc/push</value> 
 		</property> <property name="resourceRef" value="true" /> </bean> -->
 
-
+	<tx:annotation-driven />
 	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
 		<property name="driverClass" value="com.mysql.jdbc.Driver" />

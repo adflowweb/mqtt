@@ -45,11 +45,9 @@ public class TokenController {
 	@ResponseBody
 	public Response get(@PathVariable String token) throws Exception {
 		logger.debug("token=" + token);
-
-		Result result = new Result();
+		Result<Token> result = new Result<Token>();
 		result.setSuccess(true);
 		result.setData(tokenService.get(token));
-
 		Response res = new Response(result);
 		logger.debug("response=" + res);
 		return res;
@@ -62,16 +60,27 @@ public class TokenController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "tokens", method = RequestMethod.POST)
+	@RequestMapping(value = "tokens", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
 	public Response post(@RequestBody Token token) throws Exception {
 		logger.debug("token=" + token);
-
-		// todo validation check (userID, deviceID)
-
-		Result result = new Result();
+		if (token.getUserID() == null || token.getDeviceID() == null
+				|| token.getUserID().equals("")
+				|| token.getDeviceID().equals("")) {
+			Result<Object> result = new Result<Object>();
+			result.setSuccess(true);
+			List<String> messages = new ArrayList<String>() {
+				{
+					add("userID 또는 deviceID 값이 없습니다.");
+				}
+			};
+			result.setErrors(messages);
+			return new Response(result);
+		}
+		Token rst = tokenService.post(token);
+		Result<Token> result = new Result<Token>();
 		result.setSuccess(true);
-		// result.setData(tokenService.post(token));
+		result.setData(rst);
 		Response res = new Response(result);
 		logger.debug("response=" + res);
 		return res;
@@ -88,9 +97,36 @@ public class TokenController {
 	@ResponseBody
 	public Response validate(@PathVariable String token) throws Exception {
 		logger.debug("token=" + token);
+		Result<Validation> result = new Result<Validation>();
+		result.setSuccess(true);
+		Validation valid = new Validation(tokenService.validate(token));
+		result.setData(valid);
+		Response res = new Response(result);
+		logger.debug("response=" + res);
+		return res;
+	}
+
+	/**
+	 * 토큰정보 삭제하기
+	 * 
+	 * 
+	 * @param token
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "tokens/{token}", method = RequestMethod.DELETE)
+	@ResponseBody
+	public Response delete(@PathVariable String token) throws Exception {
+		logger.debug("token=" + token);
+		final int count = tokenService.delete(token);
 		Result result = new Result();
 		result.setSuccess(true);
-		result.setData(new Validation(tokenService.validate(token)));
+		List<String> messages = new ArrayList<String>() {
+			{
+				add("updates=" + count);
+			}
+		};
+		result.setInfo(messages);
 		Response res = new Response(result);
 		logger.debug("response=" + res);
 		return res;

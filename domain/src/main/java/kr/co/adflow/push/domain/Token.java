@@ -1,5 +1,8 @@
 package kr.co.adflow.push.domain;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 /**
@@ -10,9 +13,16 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class Token {
 
+	private static SimpleDateFormat sdf = new java.text.SimpleDateFormat(
+			"yyyy-MM-dd HH:mm:ss");
+
 	private String tokenID;
 	private String userID;
 	private String deviceID;
+	private Date issue;
+
+	public Token() {
+	}
 
 	public String getTokenID() {
 		return tokenID;
@@ -38,10 +48,19 @@ public class Token {
 		this.deviceID = deviceID;
 	}
 
+	public Date getIssue() {
+		// return sdf.format(issue);
+		return issue;
+	}
+
+	public void setIssue(Date issue) {
+		this.issue = issue;
+	}
+
 	@Override
 	public String toString() {
 		return "Token [tokenID=" + tokenID + ", userID=" + userID
-				+ ", deviceID=" + deviceID + "]";
+				+ ", deviceID=" + deviceID + ", issue=" + issue + "]";
 	}
 
 }

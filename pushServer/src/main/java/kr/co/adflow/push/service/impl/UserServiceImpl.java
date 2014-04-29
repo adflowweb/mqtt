@@ -37,24 +37,27 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void post(User user) throws Exception {
+	public int post(User user) throws Exception {
 		logger.debug("post시작(user=" + user + ")");
-		userDao.post(user);
-		logger.debug("post종료()");
+		int result = userDao.post(user);
+		logger.debug("post종료(result=" + result + ")");
+		return result;
 	}
 
 	@Override
-	public void put(User user) throws Exception {
+	public int put(User user) throws Exception {
 		logger.debug("put시작(user=" + user + ")");
-		userDao.put(user);
-		logger.debug("put종료()");
+		int result = userDao.put(user);
+		logger.debug("put종료(result=" + result + ")");
+		return result;
 	}
 
 	@Override
-	public void delete(String userID) throws Exception {
+	public int delete(String userID) throws Exception {
 		logger.debug("delete시작(userID=" + userID + ")");
-		userDao.delete(userID);
-		logger.debug("delete종료()");
+		int result = userDao.delete(userID);
+		logger.debug("delete종료(result=" + result + ")");
+		return result;
 	}
 
 }

@@ -9,9 +9,9 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
  * @date 2014. 3. 20.
  */
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-public class Result {
+public class Result<T> {
 	private boolean success;
-	private Object data;
+	private T data;
 	private List<String> errors;
 	private List<String> warnings;
 	private List<String> info;
@@ -61,14 +61,14 @@ public class Result {
 	/**
 	 * @return
 	 */
-	public Object getData() {
+	public T getData() {
 		return data;
 	}
 
 	/**
 	 * @param data
 	 */
-	public void setData(Object data) {
+	public void setData(T data) {
 		this.data = data;
 	}
 

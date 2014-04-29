@@ -1,12 +1,18 @@
 package kr.co.adflow.push.domain;
 
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+
 /**
  * @author nadir93
  * @date 2014. 4. 23.
  * 
  */
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class Validation {
 	private boolean validation;
+
+	public Validation() {
+	}
 
 	public Validation(boolean validation) {
 		this.validation = validation;

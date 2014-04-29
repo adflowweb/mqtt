@@ -23,30 +23,54 @@ public class UserDAOImpl implements UserDAO {
 	@Autowired
 	private SqlSession sqlSession;
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see kr.co.adflow.push.dao.UserDAO#get(java.lang.String)
+	 */
 	@Override
 	public User get(String userID) throws Exception {
 		UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
 		return userMapper.get(userID);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see kr.co.adflow.push.dao.UserDAO#post(kr.co.adflow.push.domain.User)
+	 */
 	@Override
-	public void post(User user) throws Exception {
+	public int post(User user) throws Exception {
 		logger.debug("post시작(user=" + user + ")");
 		UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
-		userMapper.post(user);
-		logger.debug("post종료()");
+		int result = userMapper.post(user);
+		logger.debug("post종료(result=" + result + ")");
+		return result;
+
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see kr.co.adflow.push.dao.UserDAO#put(kr.co.adflow.push.domain.User)
+	 */
 	@Override
-	public void put(User user) throws Exception {
+	public int put(User user) throws Exception {
+		return 0;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see kr.co.adflow.push.dao.UserDAO#delete(java.lang.String)
+	 */
 	@Override
-	public void delete(String userID) throws Exception {
+	public int delete(String userID) throws Exception {
 		logger.debug("delete시작(userID=" + userID + ")");
 		UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
-		userMapper.delete(userID);
-		logger.debug("delete종료()");
+		int result = userMapper.delete(userID);
+		logger.debug("delete종료(result=" + result + ")");
+		return result;
 	}
 
 }
