@@ -3,5 +3,5 @@
 	<Resource type="javax.sql.DataSource" name="jdbc/push"
 		factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
 		driverClassName="com.mysql.jdbc.Driver" url="jdbc:mysql://localhost:3306/push"
-		username="root" password="!ADFlow@" />
+		username="root" password="passw0rd" />
 </Context>
