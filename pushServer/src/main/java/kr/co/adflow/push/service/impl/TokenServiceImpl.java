@@ -90,6 +90,7 @@ public class TokenServiceImpl implements TokenService {
 		// insert device
 		Device device = new Device();
 		device.setDeviceID(token.getDeviceID());
+		device.setUserID(token.getUserID());
 		try {
 			deviceDao.post(device);
 		} catch (DuplicateKeyException e) {
