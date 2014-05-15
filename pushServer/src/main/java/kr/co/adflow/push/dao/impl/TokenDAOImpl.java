@@ -77,6 +77,12 @@ public class TokenDAOImpl implements TokenDAO {
 		return result;
 	}
 
+	@Override
+	public Token getLatest(Token token) throws Exception {
+		TokenMapper tokenMapper = sqlSession.getMapper(TokenMapper.class);
+		return tokenMapper.getLatest(token);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 

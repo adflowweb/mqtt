@@ -77,10 +77,7 @@ public class TokenServiceImpl implements TokenService {
 	@Override
 	public Token post(Token token) throws Exception {
 		logger.debug("post시작(token=" + token + ")");
-		// generate tokenID
-		String tokenID = TokenGenerator.generate();
-		logger.debug("tokenID=" + tokenID);
-		token.setTokenID(tokenID);
+
 		// insert user
 		User user = new User();
 		user.setUserID(token.getUserID());
@@ -99,7 +96,25 @@ public class TokenServiceImpl implements TokenService {
 			logger.debug(e.getMessage());
 		}
 
-		Token rst = tokenDao.post(token);
+		// select 최신 token
+		// select * from token where userid='kicho' and deviceid='test' order by
+		// issue desc limit 1;
+		Token rst = tokenDao.getLatest(token);
+
+		// 발급시간에 따른 토큰 재발급로직... 추가해야함
+
+		if (rst != null) {
+			// 존재하면 발급시간 업데이트
+		} else {
+			// 없으면 인서트
+			// generate tokenID
+			String tokenID = TokenGenerator.generate();
+			logger.debug("tokenID=" + tokenID);
+			token.setTokenID(tokenID);
+
+			rst = tokenDao.post(token);
+		}
+
 		logger.debug("post종료(token=" + rst + ")");
 		return rst;
 	}

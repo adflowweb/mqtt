@@ -10,6 +10,8 @@ import kr.co.adflow.push.domain.Token;
 public interface TokenMapper {
 	Token get(String token) throws Exception;
 
+	Token getLatest(Token token) throws Exception;
+
 	int post(Token token) throws Exception;
 
 	int put(Token token) throws Exception;
