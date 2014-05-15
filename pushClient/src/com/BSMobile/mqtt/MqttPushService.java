@@ -2,7 +2,6 @@ package com.BSMobile.mqtt;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
-import java.security.MessageDigest;
 import java.util.GregorianCalendar;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
@@ -28,6 +27,8 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -82,28 +83,28 @@ public class MqttPushService extends Service implements MqttCallback {
 
 	public MqttPushService() {
 		Log.d(DEBUGTAG, "MqttPushService생성자시작() this=" + this);
-		try {
-
-			MessageDigest md = MessageDigest.getInstance("MD5");
-			md.update(android.os.Build.SERIAL.getBytes());
-			byte[] mdbytes = md.digest();
-
-			// convert the byte to hex format method 1
-			StringBuffer sb = new StringBuffer();
-			Log.d(DEBUGTAG, "mdbytes.length=" + mdbytes.length);
-			for (int i = 0; i < mdbytes.length; i++) {
-				sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16)
-						.substring(1));
-			}
-			Log.d(DEBUGTAG, "deviceIDHexString=" + sb);
-			deviceID = sb.toString().substring(0, CLIENT_ID_LENGTH);
-			Log.d(DEBUGTAG, "deviceID=" + deviceID);
-			mqttClient = new MqttClientWithPing(SERVERURL, deviceID,
-					new MemoryPersistence());
-			Log.d(DEBUGTAG, "mqttClient가초기화되었습니다");
-		} catch (Exception e) {
-			Log.e(DEBUGTAG, "예외상황발생", e);
-		}
+		// try {
+		//
+		// MessageDigest md = MessageDigest.getInstance("MD5");
+		// md.update(android.os.Build.SERIAL.getBytes());
+		// byte[] mdbytes = md.digest();
+		//
+		// // convert the byte to hex format method 1
+		// StringBuffer sb = new StringBuffer();
+		// Log.d(DEBUGTAG, "mdbytes.length=" + mdbytes.length);
+		// for (int i = 0; i < mdbytes.length; i++) {
+		// sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16)
+		// .substring(1));
+		// }
+		// Log.d(DEBUGTAG, "deviceIDHexString=" + sb);
+		// deviceID = sb.toString().substring(0, CLIENT_ID_LENGTH);
+		// Log.d(DEBUGTAG, "deviceID=" + deviceID);
+		// mqttClient = new MqttClientWithPing(SERVERURL, deviceID,
+		// new MemoryPersistence());
+		// Log.d(DEBUGTAG, "mqttClient가초기화되었습니다");
+		// } catch (Exception e) {
+		// Log.e(DEBUGTAG, "예외상황발생", e);
+		// }
 		Log.d(DEBUGTAG, "MqttPushService생성자종료");
 	}
 
@@ -172,42 +173,117 @@ public class MqttPushService extends Service implements MqttCallback {
 
 	@Override
 	public void onStart(Intent intent, int startId) {
-		Log.d(DEBUGTAG, "onStart시작(intent=" + intent + "||startId=" + startId
+		Log.d(DEBUGTAG, "onStart시작(intent=" + intent + ",startId=" + startId
 				+ ")");
 		Log.d(DEBUGTAG, "onStart종료()");
 	}
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		Log.d(DEBUGTAG, "onStartCommand시작(intent=" + intent + "||flags="
-				+ flags + "||startID=" + startId + ")");
+		Log.d(DEBUGTAG, "onStartCommand시작(intent=" + intent + ",flags=" + flags
+				+ ",startID=" + startId + ")");
 
-		// intent에 따른 분기필요
-
-		//
-		try {
-			Log.d(DEBUGTAG, "mqttClient=" + mqttClient);
-			Log.d(DEBUGTAG, "mqttClient연결상태="
-					+ ((mqttClient.isConnected()) ? "연결됨" : "끊어짐"));
-			if (!mqttClient.isConnected()) {
-				connectAndSubscribe();
-				Log.d(DEBUGTAG, "mqttClient가접속되었습니다.");
+		// intent에 따른 분기
+		if (intent.getAction() != null
+				&& intent.getAction().equals("adflow.push.action.login")) {
+			// 토큰 가져오기
+			String tokenID = intent.getExtras().getString("tokenID");
+			// 유저아이디 가져오기
+			String userID = intent.getExtras().getString("userID");
+			Log.d(DEBUGTAG, "token=" + tokenID);
+			if (tokenID == null) {
+				// 로그인 호출인데 토큰아이디가 없음
+				Log.e(DEBUGTAG, "토큰아이디가없습니다.");
+				return 1;
 			}
 
-			// publish alivemsg
-			// MqttMessage message = new MqttMessage(MQTT_KEEP_ALIVE_MESSAGE);
-			// message.setQos(0);
-			// mqttClient.publish("/users/nadir93/keepalive", message);
-			// Log.d(DEBUGTAG, "PING메시지가전송되었습니다.메시지=" + message);
+			SharedPreferences sp = this.getSharedPreferences("token",
+					MODE_PRIVATE);
+			String oldTokenID = sp.getString("tokeID", null);
 
-			// ping
-			MqttDeliveryToken tocken = mqttClient.sendPING();
-			// 테스트필요 ???
-			// tocken.waitForCompletion(5000);
-			Log.d(DEBUGTAG, "PINGReq메시지가전송되었습니다.토큰=" + tocken);
-		} catch (Exception e) {
-			Log.e(DEBUGTAG, "예외상황발생", e);
+			if (oldTokenID == null || !tokenID.equals(oldTokenID)) {
+				// 기존 토큰이 없을때 (최초시작) or 토큰이 다를때
+				if (mqttClient != null) {
+					try {
+						mqttClient.close();
+					} catch (MqttException e) {
+						Log.e(DEBUGTAG, "예외상황발생", e);
+					}
+				}
+				try {
+					mqttClient = new MqttClientWithPing(SERVERURL, tokenID,
+							new MemoryPersistence());
+					Log.d(DEBUGTAG, "mqttClient가초기화되었습니다");
+					connect();
+					subscribe(userID);
+					Log.d(DEBUGTAG, "mqttClient가접속되었습니다.");
+				} catch (MqttException e) {
+					Log.e(DEBUGTAG, "예외상황발생", e);
+				}
+				// 토큰 저장
+				Editor editor = sp.edit();
+				editor.putString("tokeID", tokenID);
+				boolean result = editor.commit();
+				Log.d(DEBUGTAG, "토큰저장결과=" + result);
+
+				// 알람 설정
+
+			} else {
+				// 토큰이 같을때
+				// skip
+			}
+		} else if (intent.getAction() != null
+				&& intent.getAction().equals(
+						"adflow.push.action.checkMqttClient")) {
+
+			// 주기적 알람 체크
+			try {
+				Log.d(DEBUGTAG, "mqttClient=" + mqttClient);
+
+				if (mqttClient == null) {
+
+					SharedPreferences sp = this.getSharedPreferences("token",
+							MODE_PRIVATE);
+					String tokenID = sp.getString("tokeID", null);
+
+					if (tokenID == null) {
+						Log.d(DEBUGTAG, "토큰아이디가없습니다.");
+						return 1;
+					}
+
+					mqttClient = new MqttClientWithPing(SERVERURL, tokenID,
+							new MemoryPersistence());
+					connect();
+
+				} else {
+					Log.d(DEBUGTAG,
+							"mqttClient연결상태="
+									+ ((mqttClient.isConnected()) ? "연결됨"
+											: "끊어짐"));
+					if (!mqttClient.isConnected()) {
+						connect();
+						Log.d(DEBUGTAG, "mqttClient가접속되었습니다.");
+					}
+				}
+
+				// publish alivemsg
+				// MqttMessage message = new
+				// MqttMessage(MQTT_KEEP_ALIVE_MESSAGE);
+				// message.setQos(0);
+				// mqttClient.publish("/users/nadir93/keepalive", message);
+				// Log.d(DEBUGTAG, "PING메시지가전송되었습니다.메시지=" + message);
+
+				// ping
+				MqttDeliveryToken tocken = mqttClient.sendPING();
+				// 테스트필요 ???
+				// tocken.waitForCompletion(5000);
+				Log.d(DEBUGTAG, "PINGReq메시지가전송되었습니다.토큰=" + tocken);
+			} catch (Exception e) {
+				Log.e(DEBUGTAG, "예외상황발생", e);
+			}
+
 		}
+
 		int ret = super.onStartCommand(intent, flags, startId);
 		Log.d(DEBUGTAG, "onStartCommand종료(리턴=" + ret + ")");
 		return ret;
@@ -250,7 +326,8 @@ public class MqttPushService extends Service implements MqttCallback {
 		Log.e(DEBUGTAG, "mqttTCP세션연결이끊겼습니다", th);
 		try {
 			if (!mqttClient.isConnected()) {
-				connectAndSubscribe();
+				connect();
+				subscribe("userID");
 				Log.d(DEBUGTAG, "mqttClient가접속되었습니다.");
 			}
 		} catch (MqttException e) {
@@ -435,8 +512,8 @@ public class MqttPushService extends Service implements MqttCallback {
 		return addCalIntent;
 	}
 
-	protected synchronized void connectAndSubscribe() throws MqttException {
-		Log.d(DEBUGTAG, "connectAndSubscribe시작");
+	protected synchronized void connect() throws MqttException {
+		Log.d(DEBUGTAG, "connect시작");
 
 		if (mqttClient.isConnected()) {
 			Log.d(DEBUGTAG, "이미세션이미연결되었습니다");
@@ -444,8 +521,8 @@ public class MqttPushService extends Service implements MqttCallback {
 		}
 
 		MqttConnectOptions mOpts = new MqttConnectOptions();
-		mOpts.setUserName("testUser");
-		mOpts.setPassword("testPasswd".toCharArray());
+		// mOpts.setUserName("testUser");
+		// mOpts.setPassword("testPasswd".toCharArray());
 		mOpts.setConnectionTimeout(connectionTimeout);
 		mOpts.setKeepAliveInterval(keepAliveInterval);
 		mOpts.setCleanSession(false);
@@ -454,13 +531,21 @@ public class MqttPushService extends Service implements MqttCallback {
 		Log.d(DEBUGTAG, "콜백인스턴스=" + this);
 		mqttClient.setCallback(this);
 		mqttClient.connect(mOpts);
+		Log.d(DEBUGTAG, "connect종료");
+	}
 
+	protected synchronized void subscribe(String topic) throws MqttException {
+		Log.d(DEBUGTAG, "subScribe시작(토픽=" + topic + ")");
 		// todo 최초접속시 클라이언트 정보를 서버에 보내줘야함
 
+		if (mqttClient == null) {
+			return;
+		}
+
 		// 토픽구독
-		mqttClient.subscribe(TOPIC, 2);
-		mqttClient.subscribe("user/" + deviceID, 2);
+		mqttClient.subscribe("users/" + topic, 2);
 		Log.d(DEBUGTAG, "세션연결및토픽구독을완료하였습니다.");
-		Log.d(DEBUGTAG, "connectAndSubscribe종료()");
+		Log.d(DEBUGTAG, "subscribe종료()");
 	}
+
 }
