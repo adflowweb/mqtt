@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Context docBase="pushServer" path="/v1" reloadable="true">
 	<Resource type="javax.sql.DataSource" name="jdbc/push"
-	factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
-	driverClassName="com.mysql.jdbc.Driver" url="jdbc:mysql://localhost:3306/push"
-	username="root" password="passw0rd" maxActive="20" maxIdle="10"
-	maxWait="-1" />
+		factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
+		driverClassName="com.mysql.jdbc.Driver" url="jdbc:mysql://localhost:3306/push"
+		username="root" password="passw0rd" maxActive="20" maxIdle="10"
+		maxWait="10000" validationQuery="SELECT 1" validationInterval="30000"
+		testWhileIdle="true" />
 </Context>
