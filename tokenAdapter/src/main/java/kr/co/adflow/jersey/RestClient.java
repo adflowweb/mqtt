@@ -21,6 +21,7 @@ import com.sun.jersey.api.json.JSONConfiguration;
 
 public class RestClient {
 
+	private static final String API_KEY = "devServer2";
 	private static Properties prop = new Properties();
 	private static final Logger logger = LoggerFactory
 			.getLogger(RestClient.class);
@@ -59,6 +60,7 @@ public class RestClient {
 		try {
 			Response<Validation> data = webResource.path("validate")
 					.path(token).accept(MediaType.APPLICATION_JSON)
+					.header("X-ApiKey", API_KEY)
 					.get(new GenericType<Response<Validation>>() {
 					});
 			logger.debug("data=" + data + ")");
