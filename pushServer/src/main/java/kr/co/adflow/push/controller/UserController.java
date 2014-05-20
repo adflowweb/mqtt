@@ -41,7 +41,7 @@ public class UserController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "users/{userID}", method = RequestMethod.GET)
+	@RequestMapping(value = "users/{userID:.+}", method = RequestMethod.GET)
 	@ResponseBody
 	public Response get(@PathVariable String userID) throws Exception {
 		logger.debug("userID=" + userID);
