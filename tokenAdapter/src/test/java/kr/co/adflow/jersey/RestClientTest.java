@@ -33,6 +33,8 @@ public class RestClientTest {
 	private static final Logger logger = LoggerFactory
 			.getLogger(RestClientTest.class);
 
+	private static final String API_KEY = "devServer2";
+
 	private WebResource webResource;
 	private RestClient client;
 	private String userID = "RestClientTest";
@@ -44,13 +46,14 @@ public class RestClientTest {
 		logger.debug("==========테스트전처리작업시작()==========");
 		client = new RestClient();
 		webResource = client.getWebResource();
+		// webResource.setProperty("X-ApiKey", API_KEY);
 
 		Token token = new Token();
 		token.setDeviceID(deviceID);
 		token.setUserID(userID);
 		token.setIssue(new Date());
 		Response<Token> data = webResource.path("tokens")
-				.type(MediaType.APPLICATION_JSON)
+				.header("X-ApiKey", API_KEY).type(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.post(new GenericType<Response<Token>>() {
 				}, token);
@@ -68,27 +71,27 @@ public class RestClientTest {
 
 		// delete token
 		Response<?> res = webResource.path("tokens").path(tokenID)
-				.type(MediaType.APPLICATION_JSON)
+				.header("X-ApiKey", API_KEY).type(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON).delete(Response.class);
 		logger.debug("토큰삭제결과=" + res);
 		List<String> infos = res.getResult().getInfo();
 		logger.debug("infos=" + infos);
 		assertEquals(infos.get(0), "updates=1");
 
-		// delete user
-		res = webResource.path("users").path(userID)
-				.type(MediaType.APPLICATION_JSON)
+		// delete device
+		res = webResource.path("devices").path(deviceID)
+				.header("X-ApiKey", API_KEY).type(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON).delete(Response.class);
-		logger.debug("유저삭제결과=" + res);
+		logger.debug("디바이스삭제결과=" + res);
 		infos = res.getResult().getInfo();
 		logger.debug("infos=" + infos);
 		assertEquals(infos.get(0), "updates=1");
 
-		// delete device
-		res = webResource.path("devices").path(deviceID)
-				.type(MediaType.APPLICATION_JSON)
+		// delete user
+		res = webResource.path("users").path(userID)
+				.header("X-ApiKey", API_KEY).type(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON).delete(Response.class);
-		logger.debug("디바이스삭제결과=" + res);
+		logger.debug("유저삭제결과=" + res);
 		infos = res.getResult().getInfo();
 		logger.debug("infos=" + infos);
 		assertEquals(infos.get(0), "updates=1");
