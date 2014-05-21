@@ -116,6 +116,37 @@ public class UserController {
 	}
 
 	/**
+	 * 유저인증
+	 * 
+	 * @param msg
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "auth", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	@ResponseBody
+	public Response auth(@RequestBody User user) throws Exception {
+		logger.debug("유저=" + user);
+		
+		Boolean data = userService.auth(user);
+		Result result = new Result();
+		result.setSuccess(true);
+		if (data) {
+			List<String> messages = new ArrayList<String>() {
+				{
+					add("user not found");
+				}
+			};
+			result.setInfo(messages);
+		} else {
+			result.setData(user);
+		}
+
+		Response res = new Response(result);
+		logger.debug("response=" + res);
+		return res;
+	}
+
+	/**
 	 * 예외처리
 	 * 
 	 * @param e

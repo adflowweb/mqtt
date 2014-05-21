@@ -16,6 +16,7 @@ public class User {
 	private String dept;
 	private String email;
 	private String phone;
+	private String password;
 
 	public User() {
 	}
@@ -79,11 +80,19 @@ public class User {
 		this.phone = phone;
 	}
 
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
 	@Override
 	public String toString() {
 		return "User [userID=" + userID + ", name=" + name + ", title=" + title
 				+ ", dept=" + dept + ", email=" + email + ", phone=" + phone
-				+ "]";
+				+ ", password=" + password + "]";
 	}
 
 }

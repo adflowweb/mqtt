@@ -79,6 +79,7 @@ public class APIKeyFilter implements Filter {
 					.executeQuery("SELECT * FROM token WHERE tokenid ='" + auth
 							+ "'");
 			if (!rs.next()) {
+				logger.debug("해당토큰이존재하지않습니다.");
 				httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 				long stop = System.currentTimeMillis();
 				logger.debug("걸린시간=" + (stop - start) + " ms");

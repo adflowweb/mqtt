@@ -15,4 +15,6 @@ public interface UserDAO {
 	int put(User user) throws Exception;
 
 	int delete(String userID) throws Exception;
+
+	User auth(User user) throws Exception;
 }

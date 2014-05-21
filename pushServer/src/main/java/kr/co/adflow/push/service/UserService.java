@@ -15,4 +15,6 @@ public interface UserService {
 	int put(User user) throws Exception;
 
 	int delete(String userID) throws Exception;
+
+	boolean auth(User user) throws Exception;;
 }

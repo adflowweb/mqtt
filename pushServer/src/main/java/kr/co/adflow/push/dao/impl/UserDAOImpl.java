@@ -46,7 +46,6 @@ public class UserDAOImpl implements UserDAO {
 		int result = userMapper.post(user);
 		logger.debug("post종료(result=" + result + ")");
 		return result;
-
 	}
 
 	/*
@@ -71,6 +70,15 @@ public class UserDAOImpl implements UserDAO {
 		int result = userMapper.delete(userID);
 		logger.debug("delete종료(result=" + result + ")");
 		return result;
+	}
+
+	@Override
+	public User auth(User user) throws Exception {
+		logger.debug("auth시작(user=" + user + ")");
+		UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+		User rst = userMapper.auth(user);
+		logger.debug("auth종료(result=" + rst + ")");
+		return rst;
 	}
 
 }
