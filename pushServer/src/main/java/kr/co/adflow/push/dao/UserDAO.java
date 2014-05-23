@@ -16,5 +16,5 @@ public interface UserDAO {
 
 	int delete(String userID) throws Exception;
 
-	User auth(User user) throws Exception;
+	boolean auth(User user) throws Exception;
 }

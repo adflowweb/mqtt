@@ -73,10 +73,10 @@ public class UserDAOImpl implements UserDAO {
 	}
 
 	@Override
-	public User auth(User user) throws Exception {
+	public boolean auth(User user) throws Exception {
 		logger.debug("auth시작(user=" + user + ")");
 		UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
-		User rst = userMapper.auth(user);
+		boolean rst = userMapper.auth(user);
 		logger.debug("auth종료(result=" + rst + ")");
 		return rst;
 	}

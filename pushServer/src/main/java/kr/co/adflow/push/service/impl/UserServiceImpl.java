@@ -69,14 +69,8 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public boolean auth(User user) throws Exception {
 		logger.debug("auth시작(user=" + user + ")");
-		User rst = userDao.auth(user);
+		boolean rst = userDao.auth(user);
 		logger.debug("auth종료(result=" + rst + ")");
-		if (rst != null) {
-			logger.debug("auth종료(true)");
-			return true;
-		} else {
-			logger.debug("auth종료(false)");
-			return false;
-		}
+		return rst;
 	}
 }

@@ -62,7 +62,7 @@ public class APIKeyFilter implements Filter {
 		final HttpServletResponse httpResponse = (HttpServletResponse) response;
 
 		final String auth = httpRequest.getHeader("X-ApiKey");
-		logger.debug("auth=" + auth);
+		logger.debug("X-ApiKey=" + auth);
 
 		if (auth == null) {
 			httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);

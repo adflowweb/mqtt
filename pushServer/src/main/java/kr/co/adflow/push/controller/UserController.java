@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import kr.co.adflow.push.domain.Response;
 import kr.co.adflow.push.domain.Result;
+import kr.co.adflow.push.domain.Token;
 import kr.co.adflow.push.domain.User;
+import kr.co.adflow.push.service.TokenService;
 import kr.co.adflow.push.service.UserService;
 
 import org.slf4j.Logger;
@@ -16,6 +19,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -33,6 +37,9 @@ public class UserController {
 	@Resource
 	private UserService userService;
 
+	@Resource
+	private TokenService tokenService;
+
 	/**
 	 * 유저정보 가져오기
 	 * 
@@ -43,9 +50,9 @@ public class UserController {
 	 */
 	@RequestMapping(value = "users/{userID:.+}", method = RequestMethod.GET)
 	@ResponseBody
-	public Response get(@PathVariable String userID) throws Exception {
+	public Response<User> get(@PathVariable String userID) throws Exception {
 		logger.debug("userID=" + userID);
-		Result result = new Result();
+		Result<User> result = new Result<User>();
 		result.setSuccess(true);
 		User user = userService.get(userID);
 		if (user == null) {
@@ -59,7 +66,7 @@ public class UserController {
 			result.setData(user);
 		}
 
-		Response res = new Response(result);
+		Response<User> res = new Response<User>(result);
 		logger.debug("response=" + res);
 		return res;
 	}
@@ -124,24 +131,34 @@ public class UserController {
 	 */
 	@RequestMapping(value = "auth", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
-	public Response auth(@RequestBody User user) throws Exception {
+	public Response<Token> auth(@RequestBody User user,
+			HttpServletRequest request,
+			@RequestHeader("User-Agent") String userAgent) throws Exception {
 		logger.debug("유저=" + user);
-		
+
 		Boolean data = userService.auth(user);
-		Result result = new Result();
+		Result<Token> result = new Result<Token>();
 		result.setSuccess(true);
-		if (data) {
+		if (!data) {
 			List<String> messages = new ArrayList<String>() {
 				{
-					add("user not found");
+					add("user not found or invalid password");
 				}
 			};
 			result.setInfo(messages);
 		} else {
-			result.setData(user);
+			// token 발급
+			Token token = new Token();
+			token.setUserID(user.getUserID());
+			final String userIpAddress = request.getRemoteAddr();
+			token.setDeviceID(userIpAddress);
+			Token rst = tokenService.post(token);
+			// Result<Token> result = new Result<Token>();
+			result.setSuccess(true);
+			result.setData(rst);
 		}
 
-		Response res = new Response(result);
+		Response<Token> res = new Response<Token>(result);
 		logger.debug("response=" + res);
 		return res;
 	}
