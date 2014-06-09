@@ -138,7 +138,7 @@ public class UserController {
 
 		Boolean data = userService.auth(user);
 		Result<Token> result = new Result<Token>();
-		result.setSuccess(true);
+		result.setSuccess(false);
 		if (!data) {
 			List<String> messages = new ArrayList<String>() {
 				{
