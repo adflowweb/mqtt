@@ -1,10 +1,13 @@
 package kr.co.adflow.push.domain;
 
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+
 /**
  * @author nadir93
  * @date 2014. 4. 28.
  * 
  */
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class Device {
 
 	private String deviceID;

@@ -1,5 +1,7 @@
 package kr.co.adflow.push.domain;
 
+import java.util.Arrays;
+
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 /**
@@ -10,9 +12,10 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ServerInfo {
 
-	private int cpu;
-	private int memory;
-	private int heap;
+	private CPU cpu;
+	private Memory memory;
+	private Heap heap;
+	private Disk[] disk;
 	private String hostName;
 	private String ipAddress;
 
@@ -28,27 +31,27 @@ public class ServerInfo {
 		this.message = message;
 	}
 
-	public int getCpu() {
+	public CPU getCpu() {
 		return cpu;
 	}
 
-	public void setCpu(int cpu) {
+	public void setCpu(CPU cpu) {
 		this.cpu = cpu;
 	}
 
-	public int getMemory() {
+	public Memory getMemory() {
 		return memory;
 	}
 
-	public void setMemory(int memory) {
+	public void setMemory(Memory memory) {
 		this.memory = memory;
 	}
 
-	public int getHeap() {
+	public Heap getHeap() {
 		return heap;
 	}
 
-	public void setHeap(int heap) {
+	public void setHeap(Heap heap) {
 		this.heap = heap;
 	}
 
@@ -96,12 +99,26 @@ public class ServerInfo {
 		this.message = message;
 	}
 
+	/**
+	 * @return
+	 */
+	public Disk[] getDisk() {
+		return disk;
+	}
+
+	/**
+	 * @param disk
+	 */
+	public void setDisk(Disk[] disk) {
+		this.disk = disk;
+	}
+
 	@Override
 	public String toString() {
-		return "ServerInfoResponseData [cpu=" + cpu + ", memory=" + memory
-				+ ", heap=" + heap + ", hostName=" + hostName + ", ipAddress="
-				+ ipAddress + ", available=" + available + ", message="
-				+ message + "]";
+		return "ServerInfo [cpu=" + cpu + ", memory=" + memory + ", heap="
+				+ heap + ", disk=" + Arrays.toString(disk) + ", hostName="
+				+ hostName + ", ipAddress=" + ipAddress + ", available="
+				+ available + ", message=" + message + "]";
 	}
 
 }

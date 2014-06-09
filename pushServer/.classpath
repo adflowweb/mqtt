@@ -22,8 +22,9 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6">
 		<attributes>
-			<attribute name="owner.project.facets" value="java"/>
+			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="/Users/nadir93/Doc/Digital/Dev/apache-tomcat-7.0.42/lib/sigar.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

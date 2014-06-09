@@ -51,6 +51,7 @@ public class UserControllerTest extends AbstractTestNGSpringContextTests {
 		logger.debug("==========유저정보입력테스트시작()==========");
 		User user = new User();
 		user.setUserID(userID);
+		user.setPassword("passw0rd");
 		user.setName("testName");
 		user.setDept("webSVC");
 		user.setEmail("typark@adflow.co.kr");
