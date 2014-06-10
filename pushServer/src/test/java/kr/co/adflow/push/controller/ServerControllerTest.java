@@ -1,6 +1,6 @@
 package kr.co.adflow.push.controller;
 
-import static org.testng.AssertJUnit.assertTrue;
+import static org.testng.AssertJUnit.assertNotNull;
 import kr.co.adflow.push.domain.Response;
 import kr.co.adflow.push.domain.ServerInfo;
 
@@ -39,7 +39,9 @@ public class ServerControllerTest extends AbstractTestNGSpringContextTests {
 		Response res = serverController.get();
 		logger.debug("호출결과=" + res);
 		ServerInfo data = (ServerInfo) res.getResult().getData();
-		assertTrue(data.isAvailable());
+		assertNotNull(data.getCpu());
+		// data.getCpu().
+		// assertTrue(data.isAvailable());
 		logger.debug("==========서버정보가져오기테스트종료()==========");
 	}
 }

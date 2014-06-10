@@ -16,6 +16,7 @@ public class ServerInfo {
 	private Memory memory;
 	private Heap heap;
 	private Disk[] disk;
+	private double tps;
 	private String hostName;
 	private String ipAddress;
 
@@ -113,12 +114,20 @@ public class ServerInfo {
 		this.disk = disk;
 	}
 
+	public double getTps() {
+		return tps;
+	}
+
+	public void setTps(double tps) {
+		this.tps = tps;
+	}
+
 	@Override
 	public String toString() {
 		return "ServerInfo [cpu=" + cpu + ", memory=" + memory + ", heap="
-				+ heap + ", disk=" + Arrays.toString(disk) + ", hostName="
-				+ hostName + ", ipAddress=" + ipAddress + ", available="
-				+ available + ", message=" + message + "]";
+				+ heap + ", disk=" + Arrays.toString(disk) + ", tps=" + tps
+				+ ", hostName=" + hostName + ", ipAddress=" + ipAddress
+				+ ", available=" + available + ", message=" + message + "]";
 	}
 
 }

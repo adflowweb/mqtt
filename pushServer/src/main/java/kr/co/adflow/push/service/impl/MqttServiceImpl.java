@@ -1,6 +1,9 @@
 package kr.co.adflow.push.service.impl;
 
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.security.MessageDigest;
 import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -39,7 +42,8 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 
 	private static final org.slf4j.Logger logger = LoggerFactory
 			.getLogger(MqttServiceImpl.class);
-
+	// 23 character 로 제한됨
+	private static final int CLIENT_ID_LENGTH = 23;
 	private static Properties prop = new Properties();
 
 	static {
@@ -53,9 +57,36 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 	}
 
 	public static final String MQTT_PACKAGE = "org.eclipse.paho.client.mqttv3";
-	private static final String TOPIC = prop.getProperty("topic");
+	private static final String[] TOPIC = prop.getProperty("topic").split(",");
 	private static final String SERVERURL = prop.getProperty("mq.server.url");
-	private static final String CLIENTID = prop.getProperty("clientid");
+	private static String CLIENTID;// prop.getProperty("clientid");
+	static {
+		if (prop.getProperty("clientid") == null) {
+			try {
+				MessageDigest md = MessageDigest.getInstance("MD5");
+				md.update(InetAddress.getLocalHost().getHostName().getBytes());
+				byte[] mdbytes = md.digest();
+
+				// convert the byte to hex format method 1
+				StringBuffer sb = new StringBuffer();
+				logger.debug("mdbytes.length=" + mdbytes.length);
+				for (int i = 0; i < mdbytes.length; i++) {
+					sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16)
+							.substring(1));
+				}
+				logger.debug("deviceIDHexString=" + sb);
+				CLIENTID = sb.toString().substring(0, CLIENT_ID_LENGTH);
+				logger.debug("clientID=" + CLIENTID);
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else {
+			CLIENTID = prop.getProperty("clientid");
+		}
+
+	}
+
 	private ScheduledExecutorService scheduledExecutorService;
 	private MqttClient mqttClient;
 	private int healthCheckInterval = Integer.parseInt(prop
@@ -68,6 +99,8 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 			.getProperty("clean.session"));
 	private MqttConnectOptions mOpts;
 	private String errorMsg;
+	private double reqCnt; // receive message count
+	private double tps; // 10초 평균 tps
 
 	private Level logLevel = Level.parse(prop.getProperty("paho.log.level"));
 
@@ -123,17 +156,29 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 			if (mqttClient == null) {
 				logger.debug("mqtt연결을처음시도합니다.");
 				connect();
-				subscribe(TOPIC, 2);
+				logger.debug("topic.length=" + TOPIC.length);
+				for (int i = 0; i < TOPIC.length; i++) {
+					subscribe(TOPIC[i], 2);
+				}
+
 			} else if (!mqttClient.isConnected()) {
 				logger.debug("서버와연결되어있지않으므로접속을시도합니다.");
 				reconnect();
-				subscribe(TOPIC, 2);
+				for (int i = 0; i < TOPIC.length; i++) {
+					subscribe(TOPIC[i], 2);
+				}
 			}
 			errorMsg = null;
 		} catch (Exception e) {
 			errorMsg = e.toString();
 			logger.error("에러발생", e);
 		}
+
+		// tps 계산
+		tps = reqCnt / (double) 10;
+		logger.debug("reqCnt=" + reqCnt);
+		logger.debug("tps=" + tps);
+		reqCnt = 0; // 초기화
 		logger.debug("run종료()");
 	}
 
@@ -142,6 +187,8 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 	 */
 	private synchronized void reconnect() throws MqttException {
 		logger.debug("reconnect시작()");
+		logger.debug("serverURL=" + SERVERURL);
+		logger.debug("clientID=" + CLIENTID);
 		mqttClient.connect(mOpts);
 		// 리커넥트시에 초기시도했던 상태값들이 정상적으로 되어있는지
 		// 커넥트옵션이나 서브스크라이브가 정확히 되어있는지 상태 체크바람
@@ -169,6 +216,8 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 	 */
 	private synchronized void connect() throws MqttException {
 		logger.debug("connect시작()");
+		logger.debug("serverURL=" + SERVERURL);
+		logger.debug("clientID=" + CLIENTID);
 		mqttClient = new MqttClient(SERVERURL, CLIENTID);
 		logger.debug("mqttClient인스턴스가생성되었습니다.::" + mqttClient);
 		mqttClient.setCallback(this);
@@ -184,7 +233,7 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 	 */
 	private synchronized void subscribe(String topic, int qos)
 			throws MqttException {
-		logger.debug("subscribe시작(topic=" + topic + "|qos=" + qos + ")");
+		logger.debug("subscribe시작(topic=" + topic + ",qos=" + qos + ")");
 		mqttClient.subscribe(topic, qos);
 		logger.debug("토픽구독을완료하였습니다");
 		logger.debug("subscribe종료()");
@@ -228,8 +277,9 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 	@Override
 	public void messageArrived(String topic, MqttMessage message)
 			throws Exception {
-		logger.debug("messageArrived시작(topic=" + topic + "|message=" + message
-				+ ")");
+		logger.debug("messageArrived시작(topic=" + topic + ",message=" + message
+				+ ",qos=" + message.getQos() + ")");
+		reqCnt++;
 		logger.debug("messageArrived종료()");
 	}
 
@@ -287,4 +337,15 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 		logger.debug("isConnected종료(" + mqttClient.isConnected() + ")");
 		return mqttClient.isConnected();
 	}
+
+	/*
+	 * 푸시서버 초당 받은 메시지 건수
+	 * 
+	 * @see kr.co.adflow.push.service.MqttService#getTps()
+	 */
+	@Override
+	public double getTps() throws Exception {
+		return tps;
+	}
+
 }

@@ -15,4 +15,6 @@ public interface MqttService {
 	String getErrorMsg() throws Exception;
 
 	void publish(Message msg) throws Exception;
+
+	double getTps() throws Exception;
 }

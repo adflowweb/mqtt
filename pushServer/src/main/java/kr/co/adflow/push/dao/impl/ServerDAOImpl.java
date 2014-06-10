@@ -178,6 +178,15 @@ public class ServerDAOImpl implements ServerDAO {
 		}
 
 		res.setDisk(disk);
+
+		// get tps
+		double tps = mqttService.getTps();
+		res.setTps(tps);
+		logger.debug("tps=" + tps);
+
+		logger.debug("canonicalHostName="
+				+ InetAddress.getLocalHost().getCanonicalHostName());
+
 		res.setHostName(InetAddress.getLocalHost().getHostName());
 		res.setIpAddress(InetAddress.getLocalHost().getHostAddress());
 
