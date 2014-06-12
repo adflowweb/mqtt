@@ -64,7 +64,9 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 		if (prop.getProperty("clientid") == null) {
 			try {
 				MessageDigest md = MessageDigest.getInstance("MD5");
-				md.update(InetAddress.getLocalHost().getHostName().getBytes());
+				String hostName = InetAddress.getLocalHost().getHostName();
+				logger.debug("hostName=" + hostName);
+				md.update(hostName.getBytes());
 				byte[] mdbytes = md.digest();
 
 				// convert the byte to hex format method 1
@@ -87,7 +89,8 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 
 	}
 
-	private ScheduledExecutorService scheduledExecutorService;
+	private ScheduledExecutorService healthCheckLooper;
+
 	private MqttClient mqttClient;
 	private int healthCheckInterval = Integer.parseInt(prop
 			.getProperty("health.check.interval"));
@@ -105,28 +108,33 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 	private Level logLevel = Level.parse(prop.getProperty("paho.log.level"));
 
 	/**
+	 * initialize
+	 * 
 	 * @throws Exception
 	 */
 	@PostConstruct
 	public void initIt() throws Exception {
-		logger.info("initIt시작()");
+		logger.info("mqttService초기화시작()");
 		setMqttClientLog();
-		scheduledExecutorService = Executors.newScheduledThreadPool(1);
-		scheduledExecutorService.scheduleWithFixedDelay(this, 0,
-				healthCheckInterval, TimeUnit.SECONDS);
-		logger.info("excutorService가시작되었습니다.");
+		healthCheckLooper = Executors.newScheduledThreadPool(1);
+		healthCheckLooper.scheduleWithFixedDelay(this, 0, healthCheckInterval,
+				TimeUnit.SECONDS);
+
+		logger.info("healthCheckLooper가시작되었습니다.");
 		mOpts = makeMqttOpts();
-		logger.info("initIt종료()");
+		logger.info("mqttService초기화종료()");
 	}
 
 	/**
+	 * 모든리소스정리
+	 * 
 	 * @throws Exception
 	 */
 	@PreDestroy
 	public void cleanUp() throws Exception {
 		logger.info("cleanUp시작()");
-		scheduledExecutorService.shutdown();
-		logger.info("excutorService가종료되었습니다.");
+		healthCheckLooper.shutdown();
+		logger.info("healthCheckLooper가종료되었습니다.");
 		destroy();
 		logger.info("cleanUp종료()");
 	}
@@ -151,35 +159,44 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 	 */
 	@Override
 	public void run() {
-		logger.debug("run시작()");
+		logger.debug("healthCheck시작()");
 		try {
-			if (mqttClient == null) {
-				logger.debug("mqtt연결을처음시도합니다.");
-				connect();
-				logger.debug("topic.length=" + TOPIC.length);
-				for (int i = 0; i < TOPIC.length; i++) {
-					subscribe(TOPIC[i], 2);
-				}
-
-			} else if (!mqttClient.isConnected()) {
-				logger.debug("서버와연결되어있지않으므로접속을시도합니다.");
-				reconnect();
-				for (int i = 0; i < TOPIC.length; i++) {
-					subscribe(TOPIC[i], 2);
-				}
-			}
-			errorMsg = null;
+			// mqtt connection 헬스체크
+			healthCheck();
+			// 모니터링용 메시지 처리건수 계산
+			generateTPS();
 		} catch (Exception e) {
 			errorMsg = e.toString();
 			logger.error("에러발생", e);
 		}
+		logger.debug("healthCheck종료()");
+	}
 
+	private void generateTPS() {
 		// tps 계산
 		tps = reqCnt / (double) 10;
 		logger.debug("reqCnt=" + reqCnt);
 		logger.debug("tps=" + tps);
 		reqCnt = 0; // 초기화
-		logger.debug("run종료()");
+	}
+
+	private void healthCheck() throws Exception {
+		if (mqttClient == null) {
+			logger.debug("mqtt연결을처음시도합니다.");
+			connect();
+			logger.debug("topic.length=" + TOPIC.length);
+			for (int i = 0; i < TOPIC.length; i++) {
+				subscribe(TOPIC[i], 2);
+			}
+
+		} else if (!mqttClient.isConnected()) {
+			logger.debug("서버와연결되어있지않으므로접속을시도합니다.");
+			reconnect();
+			for (int i = 0; i < TOPIC.length; i++) {
+				subscribe(TOPIC[i], 2);
+			}
+		}
+		errorMsg = null;
 	}
 
 	/**
@@ -320,13 +337,13 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 
 	@Override
 	public synchronized void publish(Message msg) throws Exception {
-		logger.debug("publish시작()");
+		logger.debug("publish시작(msg=" + msg + ")");
 		if (mqttClient == null || !mqttClient.isConnected()) {
 			logger.debug("message전송실패");
 			throw new PushException("메시지전송실패");
 		}
 
-		mqttClient.publish(msg.getReceiver(), msg.getMessage().getBytes(),
+		mqttClient.publish(msg.getReceiver(), msg.getContent().getBytes(),
 				msg.getQos(), msg.isRetained());
 		logger.debug("publish종료()");
 	}

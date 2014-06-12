@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.adflow.push.mapper.MessageMapper">
+	<select id="get" parameterType="int"
+		resultType="kr.co.adflow.push.domain.Message">
+		SELECT * FROM message a, content b WHERE a.id = b.id
+		and
+		a.id = #{id}
+	</select>
+
+	<resultMap id="MessageResult" type="kr.co.adflow.push.domain.Message">
+		<result property="id" column="id" />
+		<result property="sender" column="sender" />
+		<result property="receiver" column="receiver" />
+		<result property="issue" column="issue" />
+		<result property="issueSms" column="issueSms" />
+		<result property="qos" column="qos" />
+		<result property="retained" column="retained" />
+		<result property="sms" column="sms" />
+		<result property="sender" column="sender" />
+		<result property="timeOut" column="timeOut" />
+	</resultMap>
+
+	<select id="getReservation" resultMap="MessageResult">
+		select * from message
+		where issue is null and reservation is not null;
+	</select>
+
+	<select id="getID" resultType="java.lang.Integer" parameterType="kr.co.adflow.push.domain.Message">
+		SELECT id FROM message
+		WHERE
+		sender= #{sender} and receiver=
+		#{receiver}
+		order
+		by id desc limit 1
+	</select>
+
+	<insert id="post" parameterType="kr.co.adflow.push.domain.Message">
+		INSERT INTO
+		message values(
+		#{id}, #{sender}, #{receiver}, #{issue}, #{issueSms}, #{sms},
+		#{timeOut},
+		#{qos},
+		#{retained}, #{reservation}
+		)
+	</insert>
+
+	<update id="put" parameterType="kr.co.adflow.push.domain.Message">
+		UPDATE message set issue =
+		#{issue} where id = #{id}
+	</update>
+
+	<insert id="postContent" parameterType="kr.co.adflow.push.domain.Message">
+		INSERT INTO
+		content
+		values(
+		#{id}, #{content}
+		)
+	</insert>
+
+	<delete id="delete" parameterType="java.lang.String">
+		DELETE from
+		message
+		WHERE
+		id=#{id}
+	</delete>
+</mapper>	

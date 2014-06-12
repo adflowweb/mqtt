@@ -1,28 +1,61 @@
 package kr.co.adflow.push.domain;
 
+import java.util.Date;
+
 /**
  * @author nadir93
  * @date 2014. 3. 20.
  */
 public class Message {
-	private String message;
+	private int id;
+	private String content;
 	private String sender;
 	private String receiver;
+	private Date issue;
+	private Date issueSms;
+
+	/**
+	 * quality of service qos0 : at most once qos1 : at least once qos2 :
+	 * exactly once
+	 */
 	private int qos;
+
+	/**
+	 * mqtt retained
+	 */
 	private boolean retained;
 
 	/**
-	 * @return
+	 * sms 발송 여부
 	 */
-	public String getMessage() {
-		return message;
-	}
+	private boolean sms;
 
 	/**
-	 * @param message
+	 * 메시지 전송실패 여부 판단시간
+	 * 
+	 * sms 발송여부가 true인 경우 pushClient에서 ack 메시지가 timeOut 시간까지 안올경우 sms전송
 	 */
-	public void setMessage(String message) {
-		this.message = message;
+	private int timeOut;
+
+	/**
+	 * 예약발송시간
+	 */
+	private Date reservation;
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
 	}
 
 	/**
@@ -63,10 +96,53 @@ public class Message {
 		this.retained = retained;
 	}
 
+	public boolean isSms() {
+		return sms;
+	}
+
+	public void setSms(boolean sms) {
+		this.sms = sms;
+	}
+
+	public int getTimeOut() {
+		return timeOut;
+	}
+
+	public void setTimeOut(int timeOut) {
+		this.timeOut = timeOut;
+	}
+
+	public Date getReservation() {
+		return reservation;
+	}
+
+	public void setReservation(Date reservation) {
+		this.reservation = reservation;
+	}
+
+	public Date getIssue() {
+		return issue;
+	}
+
+	public void setIssue(Date issue) {
+		this.issue = issue;
+	}
+
+	public Date getIssueSms() {
+		return issueSms;
+	}
+
+	public void setIssueSms(Date issueSms) {
+		this.issueSms = issueSms;
+	}
+
 	@Override
 	public String toString() {
-		return "Message [message=" + message + ", sender=" + sender
-				+ ", receiver=" + receiver + ", qos=" + qos + ", retained="
-				+ retained + "]";
+		return "Message [id=" + id + ", content=" + content + ", sender="
+				+ sender + ", receiver=" + receiver + ", issue=" + issue
+				+ ", issueSms=" + issueSms + ", qos=" + qos + ", retained="
+				+ retained + ", sms=" + sms + ", timeOut=" + timeOut
+				+ ", reservation=" + reservation + "]";
 	}
+
 }

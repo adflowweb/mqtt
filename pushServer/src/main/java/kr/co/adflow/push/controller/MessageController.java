@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -47,6 +48,27 @@ public class MessageController {
 		msgService.post(msg);
 		Result result = new Result();
 		result.setSuccess(true);
+		Response res = new Response(result);
+		logger.debug("response=" + res);
+		return res;
+	}
+
+	/**
+	 * 메시지 가져오기
+	 * 
+	 * @param msg
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "messages/{msgID}", method = RequestMethod.GET)
+	@ResponseBody
+	public Response get(@PathVariable int msgID) throws Exception {
+		logger.debug("msgID=" + msgID);
+		Message msg = msgService.get(msgID);
+		logger.debug("메시지=" + msg);
+		Result<Message> result = new Result<Message>();
+		result.setSuccess(true);
+		result.setData(msg);
 		Response res = new Response(result);
 		logger.debug("response=" + res);
 		return res;

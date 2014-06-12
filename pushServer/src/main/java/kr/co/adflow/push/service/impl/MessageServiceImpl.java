@@ -24,8 +24,11 @@ public class MessageServiceImpl implements MessageService {
 	MessageDAO messageDao;
 
 	@Override
-	public Message get(String messageID) throws Exception {
-		return null;
+	public Message get(int messageID) throws Exception {
+		logger.debug("get시작(msg=" + messageID + ")");
+		Message msg = messageDao.get(messageID);
+		logger.debug("get종료(msg=" + msg + ")");
+		return msg;
 	}
 
 	/*
@@ -48,7 +51,7 @@ public class MessageServiceImpl implements MessageService {
 	}
 
 	@Override
-	public void delete(String messageID) throws Exception {
+	public void delete(int messageID) throws Exception {
 		// return null;
 	}
 }
