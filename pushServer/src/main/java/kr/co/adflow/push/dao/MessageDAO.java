@@ -8,11 +8,11 @@ import kr.co.adflow.push.domain.Message;
  * 
  */
 public interface MessageDAO {
-	Message get(int messageID) throws Exception;
+	Message get(int msgID) throws Exception;
 
 	void post(Message msg) throws Exception;
 
 	void put(Message msg) throws Exception;
 
-	void delete(int messageID) throws Exception;
+	void delete(int msgID) throws Exception;
 }

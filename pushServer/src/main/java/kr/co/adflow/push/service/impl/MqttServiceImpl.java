@@ -2,7 +2,6 @@ package kr.co.adflow.push.service.impl;
 
 import java.io.IOException;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.security.MessageDigest;
 import java.util.Properties;
 import java.util.concurrent.Executors;
@@ -18,10 +17,16 @@ import java.util.logging.SimpleFormatter;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
+import kr.co.adflow.push.domain.Acknowledge;
 import kr.co.adflow.push.domain.Message;
 import kr.co.adflow.push.exception.PushException;
+import kr.co.adflow.push.mapper.MessageMapper;
 import kr.co.adflow.push.service.MqttService;
 
+import org.apache.ibatis.session.SqlSession;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ObjectNode;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -29,6 +34,7 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -42,6 +48,7 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 
 	private static final org.slf4j.Logger logger = LoggerFactory
 			.getLogger(MqttServiceImpl.class);
+
 	// 23 character 로 제한됨
 	private static final int CLIENT_ID_LENGTH = 23;
 	private static Properties prop = new Properties();
@@ -89,7 +96,11 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 
 	}
 
+	@Autowired
+	private SqlSession sqlSession;
+
 	private ScheduledExecutorService healthCheckLooper;
+	private ObjectMapper objectMapper = new ObjectMapper();
 
 	private MqttClient mqttClient;
 	private int healthCheckInterval = Integer.parseInt(prop
@@ -297,6 +308,40 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 		logger.debug("messageArrived시작(topic=" + topic + ",message=" + message
 				+ ",qos=" + message.getQos() + ")");
 		reqCnt++;
+
+		if (topic.equals("/push/acknowledge")) {
+			try {
+				// db insert acknowledge
+				MessageMapper msgMapper = sqlSession
+						.getMapper(MessageMapper.class);
+				Acknowledge ack = new Acknowledge();
+				// ack.setId(id);
+				JsonNode rootNode = objectMapper.readTree(new String(message
+						.getPayload()));
+
+				JsonNode node = rootNode.get("msgID");
+				if (node != null) {
+					ack.setId(node.asInt());
+				}
+
+				node = rootNode.get("userID");
+
+				if (node != null) {
+					ack.setUserID(node.asText());
+				}
+
+				node = rootNode.get("deviceID");
+
+				if (node != null) {
+					ack.setDeviceID(node.asText());
+				}
+
+				msgMapper.postAcknowledge(ack);
+				logger.debug("ack메시지업데이트했습니다.");
+			} catch (Exception e) {
+				logger.error("에러발생", e);
+			}
+		}
 		logger.debug("messageArrived종료()");
 	}
 
@@ -339,12 +384,19 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 	public synchronized void publish(Message msg) throws Exception {
 		logger.debug("publish시작(msg=" + msg + ")");
 		if (mqttClient == null || !mqttClient.isConnected()) {
-			logger.debug("message전송실패");
-			throw new PushException("메시지전송실패");
+			logger.error("메시지전송실패(mqtt연결없음)");
+			throw new PushException("메시지전송실패(mqtt연결없음)");
 		}
 
-		mqttClient.publish(msg.getReceiver(), msg.getContent().getBytes(),
-				msg.getQos(), msg.isRetained());
+		// json parse
+		JsonNode rootNode = objectMapper.readTree(msg.getContent());
+		// update JSON data
+		((ObjectNode) rootNode).put("id", msg.getId());
+		String rst = objectMapper.writeValueAsString(rootNode);
+		logger.debug("rst=" + rst);
+
+		mqttClient.publish(msg.getReceiver(), /* msg.getContent() */
+				rst.getBytes(), msg.getQos(), msg.isRetained());
 		logger.debug("publish종료()");
 	}
 

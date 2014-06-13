@@ -2,6 +2,7 @@ package kr.co.adflow.push.mapper;
 
 import java.util.List;
 
+import kr.co.adflow.push.domain.Acknowledge;
 import kr.co.adflow.push.domain.Message;
 
 /**
@@ -11,13 +12,15 @@ import kr.co.adflow.push.domain.Message;
 public interface MessageMapper {
 	Message get(int id) throws Exception;
 
-	List<Message> getReservation() throws Exception;
+	List<Message> getMessage() throws Exception;
 
-	int getID(Message msg) throws Exception;
+	// int getID(Message msg) throws Exception;
 
 	int post(Message msg) throws Exception;
 
 	int put(Message msg) throws Exception;
+
+	int postAcknowledge(Acknowledge ack) throws Exception;
 
 	int delete(int id) throws Exception;
 

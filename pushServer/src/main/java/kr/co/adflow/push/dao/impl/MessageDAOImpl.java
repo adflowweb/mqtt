@@ -54,10 +54,10 @@ public class MessageDAOImpl implements MessageDAO {
 	private SqlSession sqlSession;
 
 	private ScheduledExecutorService smsLooper;
-	private ScheduledExecutorService reservationLooper;
+	private ScheduledExecutorService messageLooper;
 
-	private int reservationInterval = Integer.parseInt(prop
-			.getProperty("reservation.process.interval"));
+	private int messageInterval = Integer.parseInt(prop
+			.getProperty("message.process.interval"));
 	private int smsInterval = Integer.parseInt(prop
 			.getProperty("sms.process.interval"));
 
@@ -69,14 +69,14 @@ public class MessageDAOImpl implements MessageDAO {
 	@PostConstruct
 	public void initIt() throws Exception {
 		logger.info("MessageDAOImpl초기화시작()");
-
-		reservationLooper = Executors.newScheduledThreadPool(1);
-		reservationLooper.scheduleWithFixedDelay(new ReservationHandler(), 60,
-				reservationInterval, TimeUnit.SECONDS);
+		messageLooper = Executors.newScheduledThreadPool(1);
+		messageLooper.scheduleWithFixedDelay(new MessageHandler(),
+				messageInterval, messageInterval, TimeUnit.SECONDS);
 		smsLooper = Executors.newScheduledThreadPool(1);
-		smsLooper.scheduleWithFixedDelay(new SMSHandler(), 60, smsInterval,
-				TimeUnit.SECONDS);
-		logger.info("예약&SMSLooper가시작되었습니다.");
+		smsLooper.scheduleWithFixedDelay(new SMSHandler(), smsInterval,
+				smsInterval, TimeUnit.SECONDS);
+		logger.info("메시지핸들러가시작되었습니다.");
+		logger.info("SMS핸들러가시작되었습니다.");
 		logger.info("MessageDAOImpl초기화종료()");
 	}
 
@@ -88,9 +88,10 @@ public class MessageDAOImpl implements MessageDAO {
 	@PreDestroy
 	public void cleanUp() throws Exception {
 		logger.info("cleanUp시작()");
-		reservationLooper.shutdown();
+		messageLooper.shutdown();
+		logger.info("메시지핸들러가종료되었습니다.");
 		smsLooper.shutdown();
-		logger.info("예약&SMSLooper가종료되었습니다.");
+		logger.info("SMS핸들러가종료되었습니다.");
 		logger.info("cleanUp종료()");
 	}
 
@@ -100,12 +101,10 @@ public class MessageDAOImpl implements MessageDAO {
 	 * @see kr.co.adflow.push.dao.MessageDAO#get(java.lang.String)
 	 */
 	@Override
-	public Message get(int messageID) throws Exception {
-		logger.debug("get시작(messageID=" + messageID + ")");
-
+	public Message get(int msgID) throws Exception {
+		logger.debug("get시작(msgID=" + msgID + ")");
 		MessageMapper msgMapper = sqlSession.getMapper(MessageMapper.class);
-		Message msg = msgMapper.get(messageID);
-
+		Message msg = msgMapper.get(msgID);
 		logger.debug("get종료(" + msg + ")");
 		return msg;
 	}
@@ -119,23 +118,11 @@ public class MessageDAOImpl implements MessageDAO {
 	@Override
 	public void post(Message msg) throws Exception {
 		logger.debug("post시작(msg=" + msg + ")");
-
-		// 트랜잭션 처리 필요함
-
-		// 예약전송이 아닐경우 바로 전송
-		if (msg.getReservation() == null) {
-			// 전송
-			mqttService.publish(msg);
-			// 전송시간세팅
-			msg.setIssue(new Date());
-		}
-
+		// db 저장
 		MessageMapper msgMapper = sqlSession.getMapper(MessageMapper.class);
 		msgMapper.post(msg);
-		msg.setId(msgMapper.getID(msg));
 		logger.debug("msg=" + msg);
 		msgMapper.postContent(msg);
-
 		logger.debug("post종료()");
 	}
 
@@ -156,17 +143,17 @@ public class MessageDAOImpl implements MessageDAO {
 	 * @see kr.co.adflow.push.dao.MessageDAO#delete(java.lang.String)
 	 */
 	@Override
-	public void delete(int messageID) throws Exception {
+	public void delete(int msgID) throws Exception {
 		// return null;
 	}
 
 	/**
-	 * 예약메시지처리
+	 * 메시지처리
 	 * 
 	 * @author nadir93
 	 * @date 2014. 6. 12.
 	 */
-	class ReservationHandler implements Runnable {
+	class MessageHandler implements Runnable {
 
 		/*
 		 * (non-Javadoc)
@@ -175,41 +162,48 @@ public class MessageDAOImpl implements MessageDAO {
 		 */
 		@Override
 		public void run() {
-			logger.debug("예약메시지처리시작()");
+			logger.debug("메시지처리시작()");
 
 			try {
-				if (mqttService.getErrorMsg() == null) {
+				String errMsg = mqttService.getErrorMsg();
+				if (errMsg == null) {
 					// mqtt connection이 정상일때만 처리함
 					MessageMapper msgMapper = sqlSession
 							.getMapper(MessageMapper.class);
-					List<Message> list = (List<Message>) msgMapper
-							.getReservation();
+					List<Message> list = (List<Message>) msgMapper.getMessage();
 					for (Message msg : list) {
 						logger.debug("msg=" + msg);
-						// 시간이 맞으면 전송
-						if (msg.getReservation().before(new Date())) {
-							logger.debug("전송대상입니다.");
-							Message message = msgMapper.get(msg.getId());
-							mqttService.publish(message);
-							// 전송후 db(issue) update
-							msg.setIssue(new Date());
-							msgMapper.put(msg);
+						if (msg.getReservation() == null) {
+							// 즉시전송메시지
+							logger.debug("즉시전송대상입니다.");
+							publish(msgMapper, msg);
+						} else {
+							// 예약메시지
+							if (msg.getReservation().before(new Date())) {
+								logger.debug("예약전송대상입니다.");
+								publish(msgMapper, msg);
+							}
 						}
-
 					}
+				} else {
+					logger.error("mqtt서비스에문제가있어메시지처리를skip합니다.errMsg=" + errMsg);
 				}
 			} catch (Exception e) {
 				logger.error("에러발생", e);
 			}
-
-			// msgMapper.post(msg);
-			// msg.setId(msgMapper.getID(msg));
-			// logger.debug("msg=" + msg);
-			// msgMapper.postContent(msg);
-
-			logger.debug("예약메시지처리종료()");
+			logger.debug("메시지처리종료()");
 		}
 
+		private void publish(MessageMapper msgMapper, Message msg)
+				throws Exception {
+			Message message = msgMapper.get(msg.getId());
+			mqttService.publish(message);
+			logger.debug("메시지를전송하였습니다.");
+			// 전송후 db(issue) update
+			msg.setIssue(new Date());
+			msgMapper.put(msg);
+			logger.debug("db정보를업데이트했습니다.");
+		}
 	}
 
 	/**

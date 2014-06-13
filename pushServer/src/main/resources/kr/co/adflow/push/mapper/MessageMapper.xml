@@ -23,28 +23,31 @@
 		<result property="timeOut" column="timeOut" />
 	</resultMap>
 
-	<select id="getReservation" resultMap="MessageResult">
+	<select id="getMessage" resultMap="MessageResult">
 		select * from message
-		where issue is null and reservation is not null;
+		where
+		issue is null
+		<!-- and reservation is not null -->
 	</select>
 
-	<select id="getID" resultType="java.lang.Integer" parameterType="kr.co.adflow.push.domain.Message">
-		SELECT id FROM message
-		WHERE
-		sender= #{sender} and receiver=
-		#{receiver}
-		order
-		by id desc limit 1
-	</select>
+	<!-- <select id="getID" resultType="java.lang.Integer" parameterType="kr.co.adflow.push.domain.Message"> 
+		SELECT id FROM message WHERE sender= #{sender} and receiver= #{receiver} 
+		and insertDate = #{insertDate} // order by id desc limit 1 </select> -->
+
 
 	<insert id="post" parameterType="kr.co.adflow.push.domain.Message">
 		INSERT INTO
 		message values(
-		#{id}, #{sender}, #{receiver}, #{issue}, #{issueSms}, #{sms},
+		#{id}, #{sender}, #{receiver}, #{issue},
+		#{issueSms}, #{sms},
 		#{timeOut},
 		#{qos},
 		#{retained}, #{reservation}
 		)
+		<selectKey keyProperty="id" resultType="Integer" order="AFTER">
+			SELECT
+			LAST_INSERT_ID()
+		</selectKey>
 	</insert>
 
 	<update id="put" parameterType="kr.co.adflow.push.domain.Message">
@@ -57,6 +60,14 @@
 		content
 		values(
 		#{id}, #{content}
+		)
+	</insert>
+
+	<insert id="postAcknowledge" parameterType="kr.co.adflow.push.domain.Acknowledge">
+		INSERT INTO
+		acknowledge
+		values(
+		#{id}, #{userID}, #{deviceID}
 		)
 	</insert>
 

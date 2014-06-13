@@ -18,6 +18,7 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.json.JSONObject;
 
@@ -54,8 +55,9 @@ public class MqttPushService extends Service implements MqttCallback {
 	// private static final String TOPIC = "user/nadir93";
 	private static final String TOPIC = "testTopic";
 	// private static final String SERVERURL = "tcp://192.168.0.20:1883";
-	// private static final String SERVERURL = "tcp://adflow.net:1883";
-	private static final String SERVERURL = "tcp://175.209.8.188:1883"; // raspberryPI
+	private static final String SERVERURL = "tcp://adflow.net:1883";
+	// private static final String SERVERURL = "tcp://175.209.8.188:1883"; //
+	// raspberryPI
 	// private static final byte[] MQTT_KEEP_ALIVE_MESSAGE = { 123 };
 	private static final String ADDCALENDAR = "캘린더추가";
 	private static final String DETAILVIEW = "자세히보기";
@@ -215,7 +217,8 @@ public class MqttPushService extends Service implements MqttCallback {
 							new MemoryPersistence());
 					Log.d(DEBUGTAG, "mqttClient가초기화되었습니다");
 					connect();
-					subscribe(userID);
+					subscribe("/users");
+					subscribe("/users/" + userID);
 					Log.d(DEBUGTAG, "mqttClient가접속되었습니다.");
 				} catch (MqttException e) {
 					Log.e(DEBUGTAG, "예외상황발생", e);
@@ -246,6 +249,11 @@ public class MqttPushService extends Service implements MqttCallback {
 							MODE_PRIVATE);
 					String tokenID = sp.getString("tokeID", null);
 
+					Log.d(DEBUGTAG, "tokenID=" + tokenID);
+					// 임시코드
+					tokenID = "08be01ba2e1f4e2e8216725";
+					Log.d(DEBUGTAG, "임시tokenID=" + tokenID);
+					// 임시end
 					if (tokenID == null) {
 						Log.d(DEBUGTAG, "토큰아이디가없습니다.");
 						return 1;
@@ -254,6 +262,10 @@ public class MqttPushService extends Service implements MqttCallback {
 					mqttClient = new MqttClientWithPing(SERVERURL, tokenID,
 							new MemoryPersistence());
 					connect();
+					// 임시코드
+					subscribe("/users");
+					subscribe("/users/nadir93");
+					// 임시코드 end
 
 				} else {
 					Log.d(DEBUGTAG,
@@ -274,10 +286,10 @@ public class MqttPushService extends Service implements MqttCallback {
 				// Log.d(DEBUGTAG, "PING메시지가전송되었습니다.메시지=" + message);
 
 				// ping
-				MqttDeliveryToken tocken = mqttClient.sendPING();
+				MqttDeliveryToken token = mqttClient.sendPING();
 				// 테스트필요 ???
 				// tocken.waitForCompletion(5000);
-				Log.d(DEBUGTAG, "PINGReq메시지가전송되었습니다.토큰=" + tocken);
+				Log.d(DEBUGTAG, "PINGReq메시지가전송되었습니다.토큰=" + token);
 			} catch (Exception e) {
 				Log.e(DEBUGTAG, "예외상황발생", e);
 			}
@@ -327,7 +339,7 @@ public class MqttPushService extends Service implements MqttCallback {
 		try {
 			if (!mqttClient.isConnected()) {
 				connect();
-				subscribe("userID");
+				// subscribe("userID");
 				Log.d(DEBUGTAG, "mqttClient가접속되었습니다.");
 			}
 		} catch (MqttException e) {
@@ -356,18 +368,49 @@ public class MqttPushService extends Service implements MqttCallback {
 	@Override
 	public void messageArrived(String topic, MqttMessage message)
 			throws Exception {
-		Log.d(DEBUGTAG, "messageArrived시작(토픽=" + topic + "||메시지=" + message
-				+ "||qos=" + message.getQos() + ")");
+		Log.d(DEBUGTAG, "messageArrived시작(토픽=" + topic + ",메시지=" + message
+				+ ",qos=" + message.getQos() + ")");
 		try {
-			showNotification(message);
+			JSONObject jsonObj = new JSONObject(
+					new String(message.getPayload()));
+
+			// ack message
+			final int msgID = (Integer) jsonObj.get("id");
+			// publish alivemsg
+			// MqttMessage msg = new MqttMessage(MQTT_KEEP_ALIVE_MESSAGE);
+			// message.setQos(0);
+			// mqttClient.publish("/users/nadir93/keepalive", message);
+			// Log.d(DEBUGTAG, "PING메시지가전송되었습니다.메시지=" + message);
+
+			new Thread() {
+				@Override
+				public void run() {
+					String msg = "{\"userID\":\"nadir93\",\"msgID\":" + msgID
+							+ "}";
+					try {
+						mqttClient.publish("/push/acknowledge", msg.getBytes(),
+								1, false);
+						Log.d(DEBUGTAG, "ack메시지를전송하였습니다. 메시지=" + msg);
+					} catch (MqttPersistenceException e) {
+						// 예외상황발생시 큐에저장하고 알람이 깨어났을때 다시 시도 하도록 코드 추가요망
+						Log.e(DEBUGTAG, "예외상황발생", e);
+					} catch (MqttException e) {
+						// 예외상황발생시 큐에저장하고 알람이 깨어났을때 다시 시도 하도록 코드 추가요망
+						Log.e(DEBUGTAG, "예외상황발생", e);
+					}
+				}
+			}.start();
+
+			// showNotify
+			showNotification(jsonObj);
 		} catch (Exception e) {
 			Log.e(DEBUGTAG, "예외상황발생", e);
 		}
 		Log.d(DEBUGTAG, "messageArrived종료()");
 	}
 
-	private void showNotification(MqttMessage message) throws Exception {
-		JSONObject jsonObj = new JSONObject(new String(message.getPayload()));
+	private void showNotification(JSONObject jsonObj) throws Exception {
+
 		JSONObject noti = jsonObj.getJSONObject("notification");
 
 		NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -513,7 +556,7 @@ public class MqttPushService extends Service implements MqttCallback {
 	}
 
 	protected synchronized void connect() throws MqttException {
-		Log.d(DEBUGTAG, "connect시작");
+		Log.d(DEBUGTAG, "connect시작()");
 
 		if (mqttClient.isConnected()) {
 			Log.d(DEBUGTAG, "이미세션이미연결되었습니다");
@@ -531,7 +574,7 @@ public class MqttPushService extends Service implements MqttCallback {
 		Log.d(DEBUGTAG, "콜백인스턴스=" + this);
 		mqttClient.setCallback(this);
 		mqttClient.connect(mOpts);
-		Log.d(DEBUGTAG, "connect종료");
+		Log.d(DEBUGTAG, "connect종료()");
 	}
 
 	protected synchronized void subscribe(String topic) throws MqttException {
@@ -543,7 +586,7 @@ public class MqttPushService extends Service implements MqttCallback {
 		}
 
 		// 토픽구독
-		mqttClient.subscribe("users/" + topic, 2);
+		mqttClient.subscribe(topic, 2);
 		Log.d(DEBUGTAG, "세션연결및토픽구독을완료하였습니다.");
 		Log.d(DEBUGTAG, "subscribe종료()");
 	}
