@@ -202,7 +202,7 @@ public class MessageDAOImpl implements MessageDAO {
 			// 전송후 db(issue) update
 			msg.setIssue(new Date());
 			msgMapper.put(msg);
-			logger.debug("db정보를업데이트했습니다.");
+			logger.debug("전송시간정보를업데이트했습니다.");
 		}
 	}
 

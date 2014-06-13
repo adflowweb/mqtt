@@ -337,7 +337,7 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 				}
 
 				msgMapper.postAcknowledge(ack);
-				logger.debug("ack메시지업데이트했습니다.");
+				logger.debug("ack메시지를등록하였습니다.");
 			} catch (Exception e) {
 				logger.error("에러발생", e);
 			}
@@ -390,13 +390,15 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 
 		// json parse
 		JsonNode rootNode = objectMapper.readTree(msg.getContent());
-		// update JSON data
+		// set message id
 		((ObjectNode) rootNode).put("id", msg.getId());
-		String rst = objectMapper.writeValueAsString(rootNode);
-		logger.debug("rst=" + rst);
+		// set ack
+		((ObjectNode) rootNode).put("ack", msg.isSms());
+		String pushMsg = objectMapper.writeValueAsString(rootNode);
+		logger.debug("pushMsg=" + pushMsg);
 
 		mqttClient.publish(msg.getReceiver(), /* msg.getContent() */
-				rst.getBytes(), msg.getQos(), msg.isRetained());
+				pushMsg.getBytes(), msg.getQos(), msg.isRetained());
 		logger.debug("publish종료()");
 	}
 

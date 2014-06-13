@@ -371,35 +371,38 @@ public class MqttPushService extends Service implements MqttCallback {
 		Log.d(DEBUGTAG, "messageArrived시작(토픽=" + topic + ",메시지=" + message
 				+ ",qos=" + message.getQos() + ")");
 		try {
+
 			JSONObject jsonObj = new JSONObject(
 					new String(message.getPayload()));
 
-			// ack message
-			final int msgID = (Integer) jsonObj.get("id");
-			// publish alivemsg
-			// MqttMessage msg = new MqttMessage(MQTT_KEEP_ALIVE_MESSAGE);
-			// message.setQos(0);
-			// mqttClient.publish("/users/nadir93/keepalive", message);
-			// Log.d(DEBUGTAG, "PING메시지가전송되었습니다.메시지=" + message);
+			if (jsonObj.getBoolean("ack")) {
+				// ack message
+				final int msgID = jsonObj.getInt("id");
+				// publish alivemsg
+				// MqttMessage msg = new MqttMessage(MQTT_KEEP_ALIVE_MESSAGE);
+				// message.setQos(0);
+				// mqttClient.publish("/users/nadir93/keepalive", message);
+				// Log.d(DEBUGTAG, "PING메시지가전송되었습니다.메시지=" + message);
 
-			new Thread() {
-				@Override
-				public void run() {
-					String msg = "{\"userID\":\"nadir93\",\"msgID\":" + msgID
-							+ "}";
-					try {
-						mqttClient.publish("/push/acknowledge", msg.getBytes(),
-								1, false);
-						Log.d(DEBUGTAG, "ack메시지를전송하였습니다. 메시지=" + msg);
-					} catch (MqttPersistenceException e) {
-						// 예외상황발생시 큐에저장하고 알람이 깨어났을때 다시 시도 하도록 코드 추가요망
-						Log.e(DEBUGTAG, "예외상황발생", e);
-					} catch (MqttException e) {
-						// 예외상황발생시 큐에저장하고 알람이 깨어났을때 다시 시도 하도록 코드 추가요망
-						Log.e(DEBUGTAG, "예외상황발생", e);
+				new Thread() {
+					@Override
+					public void run() {
+						String msg = "{\"userID\":\"nadir93\",\"msgID\":"
+								+ msgID + "}";
+						try {
+							mqttClient.publish("/push/acknowledge",
+									msg.getBytes(), 1, false);
+							Log.d(DEBUGTAG, "ack메시지를전송하였습니다. 메시지=" + msg);
+						} catch (MqttPersistenceException e) {
+							// 예외상황발생시 큐에저장하고 알람이 깨어났을때 다시 시도 하도록 코드 추가요망
+							Log.e(DEBUGTAG, "예외상황발생", e);
+						} catch (MqttException e) {
+							// 예외상황발생시 큐에저장하고 알람이 깨어났을때 다시 시도 하도록 코드 추가요망
+							Log.e(DEBUGTAG, "예외상황발생", e);
+						}
 					}
-				}
-			}.start();
+				}.start();
+			}
 
 			// showNotify
 			showNotification(jsonObj);

@@ -50,6 +50,7 @@ public class MessageController {
 		result.setSuccess(true);
 		Response res = new Response(result);
 		logger.debug("response=" + res);
+
 		return res;
 	}
 
