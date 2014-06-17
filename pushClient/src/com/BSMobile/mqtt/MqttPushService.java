@@ -2,6 +2,8 @@ package com.BSMobile.mqtt;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.GregorianCalendar;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
@@ -9,6 +11,11 @@ import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import org.apache.commons.codec.binary.Base64;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
@@ -20,6 +27,8 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Notification;
@@ -55,7 +64,8 @@ public class MqttPushService extends Service implements MqttCallback {
 	// private static final String TOPIC = "user/nadir93";
 	private static final String TOPIC = "testTopic";
 	// private static final String SERVERURL = "tcp://192.168.0.20:1883";
-	private static final String SERVERURL = "tcp://adflow.net:1883";
+	// private static final String SERVERURL = "tcp://adflow.net:1883";
+	private static final String SERVERURL = "ssl://adflow.net:8883";
 	// private static final String SERVERURL = "tcp://175.209.8.188:1883"; //
 	// raspberryPI
 	// private static final byte[] MQTT_KEEP_ALIVE_MESSAGE = { 123 };
@@ -69,6 +79,40 @@ public class MqttPushService extends Service implements MqttCallback {
 	private static final int CLIENT_ID_LENGTH = 23;
 
 	public static PowerManager.WakeLock wakeLock;
+
+	static SSLSocketFactory sslSocketFactory;
+
+	static {
+		// Imports: javax.net.ssl.TrustManager, javax.net.ssl.X509TrustManager
+		try {
+			// Create a trust manager that does not validate certificate chains
+			final TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
+				@Override
+				public void checkClientTrusted(final X509Certificate[] chain,
+						final String authType) throws CertificateException {
+				}
+
+				@Override
+				public void checkServerTrusted(final X509Certificate[] chain,
+						final String authType) throws CertificateException {
+				}
+
+				@Override
+				public X509Certificate[] getAcceptedIssuers() {
+					return null;
+				}
+			} };
+
+			// Install the all-trusting trust manager
+			final SSLContext sslContext = SSLContext.getInstance("SSL");
+			sslContext.init(null, trustAllCerts,
+					new java.security.SecureRandom());
+			// Create an ssl socket factory with our all-trusting manager
+			sslSocketFactory = sslContext.getSocketFactory();
+		} catch (Exception e) {
+			Log.e(DEBUGTAG, "에러발생", e);
+		}
+	}
 
 	private MqttClientWithPing mqttClient;
 	private int connectionTimeout = 10; // second
@@ -217,9 +261,13 @@ public class MqttPushService extends Service implements MqttCallback {
 							new MemoryPersistence());
 					Log.d(DEBUGTAG, "mqttClient가초기화되었습니다");
 					connect();
-					subscribe("/users");
-					subscribe("/users/" + userID);
+
+					// 그룹정보요청후 구독하여야함
+					// 임시코드
+					subscribe("/users", 2);
+					subscribe("/users/" + userID, 2);
 					Log.d(DEBUGTAG, "mqttClient가접속되었습니다.");
+					// 임시코드끝
 				} catch (MqttException e) {
 					Log.e(DEBUGTAG, "예외상황발생", e);
 				}
@@ -263,8 +311,8 @@ public class MqttPushService extends Service implements MqttCallback {
 							new MemoryPersistence());
 					connect();
 					// 임시코드
-					subscribe("/users");
-					subscribe("/users/nadir93");
+					subscribe("/users", 2);
+					subscribe("/users/nadir93", 2);
 					// 임시코드 end
 
 				} else {
@@ -377,7 +425,7 @@ public class MqttPushService extends Service implements MqttCallback {
 
 			if (jsonObj.getBoolean("ack")) {
 				// ack message
-				final int msgID = jsonObj.getInt("id");
+				final int id = jsonObj.getInt("id");
 				// publish alivemsg
 				// MqttMessage msg = new MqttMessage(MQTT_KEEP_ALIVE_MESSAGE);
 				// message.setQos(0);
@@ -387,12 +435,20 @@ public class MqttPushService extends Service implements MqttCallback {
 				new Thread() {
 					@Override
 					public void run() {
-						String msg = "{\"userID\":\"nadir93\",\"msgID\":"
-								+ msgID + "}";
+						String ackMsg = "{\"userID\":\"nadir93\",\"id\":" + id
+								+ "}";
 						try {
-							mqttClient.publish("/push/acknowledge",
-									msg.getBytes(), 1, false);
-							Log.d(DEBUGTAG, "ack메시지를전송하였습니다. 메시지=" + msg);
+							mqttClient.publish("/push/ack", ackMsg.getBytes(),
+									1, false);
+							Log.d(DEBUGTAG, "ack메시지를전송하였습니다. 메시지=" + ackMsg);
+
+							// testCode
+							String grpReqMsg = "{\"userID\":\"nadir93\"}";
+							mqttClient.publish("/push/group",
+									grpReqMsg.getBytes(), 1, false);
+							Log.d(DEBUGTAG, "그룹정보요청메시지를전송하였습니다. 메시지="
+									+ grpReqMsg);
+							// testCodeEnd
 						} catch (MqttPersistenceException e) {
 							// 예외상황발생시 큐에저장하고 알람이 깨어났을때 다시 시도 하도록 코드 추가요망
 							Log.e(DEBUGTAG, "예외상황발생", e);
@@ -403,19 +459,47 @@ public class MqttPushService extends Service implements MqttCallback {
 					}
 				}.start();
 			}
+			final JSONObject content = jsonObj.getJSONObject("content");
+			try {
+				JSONObject noti = content.getJSONObject("notification");
+				// showNotify
+				showNotification(noti);
+			} catch (JSONException e) {
+				// 06-17 17:36:28.059: E/Mqtt푸시서비스(25167):
+				// org.json.JSONException: No value for notification
+				if (e.getMessage().equals("No value for notification")) {
+					// {"id":22,"ack":false,"content":{"userID":"nadir93","groups":["dev","adflow"]}}
+					// 그룹정보구독
+					new Thread() {
+						@Override
+						public void run() {
+							try {
+								// 기존 그룹정보 unsubscribe 하도록 추가바람
 
-			// showNotify
-			showNotification(jsonObj);
+								JSONArray array = content
+										.getJSONArray("groups");
+								for (int i = 0; i < array.length(); i++) {
+									subscribe("/groups/" + array.getString(i),
+											2);
+								}
+							} catch (JSONException e) {
+								Log.e(DEBUGTAG, "예외상황발생", e);
+							} catch (MqttException e) {
+								// 예외상황발생시 큐에저장하고 알람이 깨어났을때 다시 시도 하도록 코드 추가요망
+								Log.e(DEBUGTAG, "예외상황발생", e);
+							}
+						}
+					}.start();
+				}
+			}
+
 		} catch (Exception e) {
 			Log.e(DEBUGTAG, "예외상황발생", e);
 		}
 		Log.d(DEBUGTAG, "messageArrived종료()");
 	}
 
-	private void showNotification(JSONObject jsonObj) throws Exception {
-
-		JSONObject noti = jsonObj.getJSONObject("notification");
-
+	private void showNotification(JSONObject noti) throws Exception {
 		NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 		Notification notification = null;
 		Intent resultIntent = new Intent(this, com.BSMobile.mqtt.BSMobile.class);
@@ -443,9 +527,9 @@ public class MqttPushService extends Service implements MqttCallback {
 		// .setData(CalendarContract.Events.CONTENT_URI), 0);
 
 		PendingIntent addCalPendingIntent = null;
-		Log.d(DEBUGTAG, "event=" + jsonObj.has("event"));
-		if (jsonObj.has("event")) {
-			JSONObject event = jsonObj.getJSONObject("event");
+		Log.d(DEBUGTAG, "event=" + noti.has("event"));
+		if (noti.has("event")) {
+			JSONObject event = noti.getJSONObject("event");
 			addCalPendingIntent = PendingIntent.getActivity(
 					getApplicationContext(), 0, makeAddCalIntent(event),
 					PendingIntent.FLAG_UPDATE_CURRENT);
@@ -572,6 +656,8 @@ public class MqttPushService extends Service implements MqttCallback {
 		mOpts.setConnectionTimeout(connectionTimeout);
 		mOpts.setKeepAliveInterval(keepAliveInterval);
 		mOpts.setCleanSession(false);
+		mOpts.setSocketFactory(sslSocketFactory);
+
 		Log.d(DEBUGTAG, "연결옵션=" + mOpts);
 		Log.d(DEBUGTAG, "mqttClient=" + mqttClient);
 		Log.d(DEBUGTAG, "콜백인스턴스=" + this);
@@ -580,16 +666,18 @@ public class MqttPushService extends Service implements MqttCallback {
 		Log.d(DEBUGTAG, "connect종료()");
 	}
 
-	protected synchronized void subscribe(String topic) throws MqttException {
-		Log.d(DEBUGTAG, "subScribe시작(토픽=" + topic + ")");
+	protected synchronized void subscribe(String topic, int qos)
+			throws MqttException {
+		Log.d(DEBUGTAG, "subScribe시작(토픽=" + topic + ",qos=" + qos + ")");
 		// todo 최초접속시 클라이언트 정보를 서버에 보내줘야함
 
 		if (mqttClient == null) {
+			// persistence 를 이용하여 작업을 계속할 수 있게 하여야 함
 			return;
 		}
 
 		// 토픽구독
-		mqttClient.subscribe(topic, 2);
+		mqttClient.subscribe(topic, qos);
 		Log.d(DEBUGTAG, "세션연결및토픽구독을완료하였습니다.");
 		Log.d(DEBUGTAG, "subscribe종료()");
 	}
