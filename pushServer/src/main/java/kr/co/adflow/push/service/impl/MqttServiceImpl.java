@@ -3,6 +3,8 @@ package kr.co.adflow.push.service.impl;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.security.MessageDigest;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -16,17 +18,24 @@ import java.util.logging.SimpleFormatter;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
+import kr.co.adflow.push.dao.MessageDAO;
 import kr.co.adflow.push.domain.Acknowledge;
+import kr.co.adflow.push.domain.Group;
 import kr.co.adflow.push.domain.Message;
+import kr.co.adflow.push.domain.User;
 import kr.co.adflow.push.exception.PushException;
+import kr.co.adflow.push.mapper.GroupMapper;
 import kr.co.adflow.push.mapper.MessageMapper;
 import kr.co.adflow.push.service.MqttService;
 
 import org.apache.ibatis.session.SqlSession;
-import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.ObjectNode;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -98,6 +107,11 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 
 	@Autowired
 	private SqlSession sqlSession;
+	@Resource
+	private MessageDAO messageDao;
+
+	private MessageMapper msgMapper;
+	private GroupMapper grpMapper;
 
 	private ScheduledExecutorService healthCheckLooper;
 	private ObjectMapper objectMapper = new ObjectMapper();
@@ -133,6 +147,8 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 
 		logger.info("healthCheckLooper가시작되었습니다.");
 		mOpts = makeMqttOpts();
+		msgMapper = sqlSession.getMapper(MessageMapper.class);
+		grpMapper = sqlSession.getMapper(GroupMapper.class);
 		logger.info("mqttService초기화종료()");
 	}
 
@@ -235,6 +251,48 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 		mOpts.setCleanSession(cleanSession);
 		// mOpts.setUserName("mqttPushServer");
 		// mOpts.setPassword("password".toCharArray());
+
+		// java.security.Security.addProvider(new AcceptAllProvider());
+		// java.util.Properties sslClientProperties = new Properties();
+		// sslClientProperties.setProperty("com.ibm.ssl.trustManager",
+		// "TrustAllCertificates");
+		// sslClientProperties.setProperty("com.ibm.ssl.trustStoreProvider",
+		// "AcceptAllProvider");
+		// mOpts.setSSLProperties(sslClientProperties);
+
+		// Imports: javax.net.ssl.TrustManager, javax.net.ssl.X509TrustManager
+		try {
+			// Create a trust manager that does not validate certificate chains
+			final TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
+				@Override
+				public void checkClientTrusted(final X509Certificate[] chain,
+						final String authType) throws CertificateException {
+				}
+
+				@Override
+				public void checkServerTrusted(final X509Certificate[] chain,
+						final String authType) throws CertificateException {
+				}
+
+				@Override
+				public X509Certificate[] getAcceptedIssuers() {
+					return null;
+				}
+			} };
+
+			// Install the all-trusting trust manager
+			final SSLContext sslContext = SSLContext.getInstance("SSL");
+			sslContext.init(null, trustAllCerts,
+					new java.security.SecureRandom());
+			// Create an ssl socket factory with our all-trusting manager
+			final SSLSocketFactory sslSocketFactory = sslContext
+					.getSocketFactory();
+
+			mOpts.setSocketFactory(sslSocketFactory);
+		} catch (Exception e) {
+			logger.error("에러발생", e);
+		}
+
 		logger.debug("makeMqttOpts종료(mOpts=" + mOpts + ")");
 		return mOpts;
 	}
@@ -311,36 +369,44 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 
 		if (topic.equals("/push/acknowledge")) {
 			try {
-				// db insert acknowledge
-				MessageMapper msgMapper = sqlSession
-						.getMapper(MessageMapper.class);
-				Acknowledge ack = new Acknowledge();
-				// ack.setId(id);
-				JsonNode rootNode = objectMapper.readTree(new String(message
-						.getPayload()));
-
-				JsonNode node = rootNode.get("msgID");
-				if (node != null) {
-					ack.setId(node.asInt());
-				}
-
-				node = rootNode.get("userID");
-
-				if (node != null) {
-					ack.setUserID(node.asText());
-				}
-
-				node = rootNode.get("deviceID");
-
-				if (node != null) {
-					ack.setDeviceID(node.asText());
-				}
-
-				msgMapper.postAcknowledge(ack);
+				// db insert ack
+				// convert json string to object
+				Acknowledge ack = objectMapper.readValue(message.getPayload(),
+						Acknowledge.class);
+				msgMapper.postAck(ack);
 				logger.debug("ack메시지를등록하였습니다.");
 			} catch (Exception e) {
 				logger.error("에러발생", e);
 			}
+		} else if (topic.equals("/push/group")) {
+			// db select group info
+			// convert json string to object
+			User user = objectMapper
+					.readValue(message.getPayload(), User.class);
+			Group[] grp = grpMapper.get(user.getUserID());
+			// db insert push
+			Message msg = new Message();
+			msg.setQos(2);
+			msg.setReceiver("/users/" + user.getUserID());
+			msg.setSender("pushServer");
+			StringBuffer content = new StringBuffer();
+			content.append("{\"userID\":");
+			content.append("\"");
+			content.append(user.getUserID());
+			content.append("\",\"groups\":[");
+			for (int i = 0; i < grp.length; i++) {
+				content.append("\"");
+				content.append(grp[i].getTopic());
+				content.append("\"");
+				if (i < grp.length - 1) {
+					content.append(",");
+				}
+			}
+			content.append("]}");
+			msg.setContent(content.toString());
+			logger.debug("msg=" + msg);
+			messageDao.post(msg);
+			logger.debug("그룹동기화메시지를등록하였습니다.");
 		}
 		logger.debug("messageArrived종료()");
 	}
@@ -389,16 +455,22 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 		}
 
 		// json parse
-		JsonNode rootNode = objectMapper.readTree(msg.getContent());
+		// JsonNode rootNode = objectMapper.readTree(msg.getContent());
 		// set message id
-		((ObjectNode) rootNode).put("id", msg.getId());
+		// ((ObjectNode) rootNode).put("id", msg.getId());
 		// set ack
-		((ObjectNode) rootNode).put("ack", msg.isSms());
-		String pushMsg = objectMapper.writeValueAsString(rootNode);
+		// ((ObjectNode) rootNode).put("ack", msg.isSms());
+		// String pushMsg = objectMapper.writeValueAsString(rootNode);
+
+		StringBuffer pushMsg = new StringBuffer();
+		pushMsg.append("{\"id\":").append(msg.getId()).append(",\"ack\":")
+				.append(msg.isSms()).append(",\"content\":")
+				.append(msg.getContent()).append("}");
+
 		logger.debug("pushMsg=" + pushMsg);
 
 		mqttClient.publish(msg.getReceiver(), /* msg.getContent() */
-				pushMsg.getBytes(), msg.getQos(), msg.isRetained());
+				pushMsg.toString().getBytes(), msg.getQos(), msg.isRetained());
 		logger.debug("publish종료()");
 	}
 

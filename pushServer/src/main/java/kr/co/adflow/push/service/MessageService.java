@@ -9,11 +9,13 @@ import kr.co.adflow.push.domain.Message;
  */
 public interface MessageService {
 
-	Message get(int messageID) throws Exception;
+	Message get(int msgID) throws Exception;
 
-	void post(Message msg) throws Exception;
+	Message[] getMsgs() throws Exception;
 
-	void put(Message msg) throws Exception;
+	int post(Message msg) throws Exception;
 
-	void delete(int messageID) throws Exception;
+	int put(Message msg) throws Exception;
+
+	int delete(int msgID) throws Exception;
 }

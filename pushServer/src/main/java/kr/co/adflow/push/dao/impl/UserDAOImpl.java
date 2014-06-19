@@ -74,6 +74,10 @@ public class UserDAOImpl implements UserDAO {
 
 	@Override
 	public boolean auth(User user) throws Exception {
+
+		// ldap 인증으로 바꿔야 하고
+		//
+
 		logger.debug("auth시작(user=" + user + ")");
 		UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
 		boolean rst = userMapper.auth(user);

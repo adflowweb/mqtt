@@ -117,6 +117,7 @@ public class BSMobile extends WLDroidGap {
 		AlarmManager service = (AlarmManager) this
 				.getSystemService(Context.ALARM_SERVICE);
 		Intent i = new Intent(this, MqttPushServiceReceiver.class);
+		i.setAction("kr.co.adflow.mqtt.action.healthCheck");
 		PendingIntent pending = PendingIntent.getBroadcast(this, 0, i,
 				PendingIntent.FLAG_CANCEL_CURRENT);
 		// Calendar cal = Calendar.getInstance();

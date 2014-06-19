@@ -45,12 +45,67 @@ public class MessageController {
 	@ResponseBody
 	public Response post(@RequestBody Message msg) throws Exception {
 		logger.debug("메시지=" + msg);
-		msgService.post(msg);
+		final int count = msgService.post(msg);
 		Result result = new Result();
 		result.setSuccess(true);
+		List<String> messages = new ArrayList<String>() {
+			{
+				add("updates=" + count);
+			}
+		};
+		result.setInfo(messages);
 		Response res = new Response(result);
 		logger.debug("response=" + res);
+		return res;
+	}
 
+	/**
+	 * 메시지 수정하기
+	 * 
+	 * @param msg
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "messages", method = RequestMethod.PUT)
+	@ResponseBody
+	public Response put(@RequestBody Message msg) throws Exception {
+		logger.debug("메시지=" + msg);
+		final int count = msgService.put(msg);
+		Result result = new Result();
+		result.setSuccess(true);
+		List<String> messages = new ArrayList<String>() {
+			{
+				add("updates=" + count);
+			}
+		};
+		result.setInfo(messages);
+		Response res = new Response(result);
+		logger.debug("response=" + res);
+		return res;
+	}
+
+	/**
+	 * 메시지 삭제하기
+	 * 
+	 * @param msg
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "messages/{msgID}", method = RequestMethod.DELETE)
+	@ResponseBody
+	public Response delete(@PathVariable int msgID) throws Exception {
+		logger.debug("메시지번호=" + msgID);
+		final int count = msgService.delete(msgID);
+		Result result = new Result();
+		result.setSuccess(true);
+		List<String> messages = new ArrayList<String>() {
+			{
+				add("updates=" + count);
+			}
+		};
+		result.setInfo(messages);
+		Response res = new Response(result);
+		logger.debug("response=" + res);
 		return res;
 	}
 
@@ -63,14 +118,34 @@ public class MessageController {
 	 */
 	@RequestMapping(value = "messages/{msgID}", method = RequestMethod.GET)
 	@ResponseBody
-	public Response get(@PathVariable int msgID) throws Exception {
+	public Response<Message> get(@PathVariable int msgID) throws Exception {
 		logger.debug("msgID=" + msgID);
 		Message msg = msgService.get(msgID);
 		logger.debug("메시지=" + msg);
 		Result<Message> result = new Result<Message>();
 		result.setSuccess(true);
 		result.setData(msg);
-		Response res = new Response(result);
+		Response<Message> res = new Response<Message>(result);
+		logger.debug("response=" + res);
+		return res;
+	}
+
+	/**
+	 * 메시지 가져오기
+	 * 
+	 * @param msg
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "messages", method = RequestMethod.GET)
+	@ResponseBody
+	public Response<Message[]> getMsgs() throws Exception {
+		Message[] msg = msgService.getMsgs();
+		logger.debug("메시지=" + msg);
+		Result<Message[]> result = new Result<Message[]>();
+		result.setSuccess(true);
+		result.setData(msg);
+		Response<Message[]> res = new Response<Message[]>(result);
 		logger.debug("response=" + res);
 		return res;
 	}

@@ -39,19 +39,43 @@ public class MessageServiceImpl implements MessageService {
 	 * .Message)
 	 */
 	@Override
-	public void post(Message msg) throws Exception {
+	public int post(Message msg) throws Exception {
 		logger.debug("post시작(msg=" + msg + ")");
-		messageDao.post(msg);
-		logger.debug("post종료()");
+		int count = messageDao.post(msg);
+		logger.debug("post종료(updates=" + count + ")");
+		return count;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * kr.co.adflow.push.service.MessageService#put(kr.co.adflow.push.domain
+	 * .Message)
+	 */
+	@Override
+	public int put(Message msg) throws Exception {
+		logger.debug("put시작(msg=" + msg + ")");
+		int count = messageDao.put(msg);
+		logger.debug("put종료(updates=" + count + ")");
+		return count;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see kr.co.adflow.push.service.MessageService#delete(int)
+	 */
+	@Override
+	public int delete(int msgID) throws Exception {
+		logger.debug("delete시작(msgID=" + msgID + ")");
+		int count = messageDao.delete(msgID);
+		logger.debug("delete종료(updates=" + count + ")");
+		return count;
 	}
 
 	@Override
-	public void put(Message msg) throws Exception {
-		// return null;
-	}
-
-	@Override
-	public void delete(int messageID) throws Exception {
-		// return null;
+	public Message[] getMsgs() throws Exception {
+		return null;
 	}
 }

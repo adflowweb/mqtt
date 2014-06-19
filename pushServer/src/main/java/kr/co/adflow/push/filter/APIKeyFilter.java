@@ -61,6 +61,18 @@ public class APIKeyFilter implements Filter {
 		final HttpServletRequest httpRequest = (HttpServletRequest) request;
 		final HttpServletResponse httpResponse = (HttpServletResponse) response;
 
+		String appContext = httpRequest.getRequestURI().substring(
+				httpRequest.getRequestURI().lastIndexOf("/") + 1);
+		logger.debug("appContext=" + appContext);
+
+		if (appContext.equals("auth")) {
+			chain.doFilter(httpRequest, httpResponse);
+			long stop = System.currentTimeMillis();
+			logger.debug("걸린시간=" + (stop - start) + " ms");
+			logger.debug("doFilter종료()");
+			return;
+		}
+
 		final String auth = httpRequest.getHeader("X-ApiKey");
 		logger.debug("X-ApiKey=" + auth);
 

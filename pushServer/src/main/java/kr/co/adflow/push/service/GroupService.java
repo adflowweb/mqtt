@@ -9,12 +9,10 @@ import kr.co.adflow.push.domain.Group;
  */
 public interface GroupService {
 
-	Group get(String groupID) throws Exception;
+	Group[] get(String userID) throws Exception;
 
-	void post() throws Exception;
+	int post(Group grp) throws Exception;
 
-	void put() throws Exception;
-
-	void delete() throws Exception;
+	int delete(String userID, String topic) throws Exception;
 
 }

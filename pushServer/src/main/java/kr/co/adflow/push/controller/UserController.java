@@ -150,8 +150,10 @@ public class UserController {
 			// token 발급
 			Token token = new Token();
 			token.setUserID(user.getUserID());
+			// ////임시코드
 			final String userIpAddress = request.getRemoteAddr();
 			token.setDeviceID(userIpAddress);
+			// ////임시코드 end
 			Token rst = tokenService.post(token);
 			// Result<Token> result = new Result<Token>();
 			result.setSuccess(true);

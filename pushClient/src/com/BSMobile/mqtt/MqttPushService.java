@@ -229,6 +229,12 @@ public class MqttPushService extends Service implements MqttCallback {
 		Log.d(DEBUGTAG, "onStartCommand시작(intent=" + intent + ",flags=" + flags
 				+ ",startID=" + startId + ")");
 
+		// for galaxy s3
+		if (intent == null) {
+			Log.e(DEBUGTAG, "intent가 존재하지않습니다.");
+			return 0;
+		}
+
 		// intent에 따른 분기
 		if (intent.getAction() != null
 				&& intent.getAction().equals("adflow.push.action.login")) {

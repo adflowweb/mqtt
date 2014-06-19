@@ -116,14 +116,15 @@ public class MessageDAOImpl implements MessageDAO {
 	 * kr.co.adflow.push.dao.MessageDAO#post(kr.co.adflow.push.domain.Message)
 	 */
 	@Override
-	public void post(Message msg) throws Exception {
+	public int post(Message msg) throws Exception {
 		logger.debug("post시작(msg=" + msg + ")");
 		// db 저장
 		MessageMapper msgMapper = sqlSession.getMapper(MessageMapper.class);
-		msgMapper.post(msg);
+		int count = msgMapper.postMsg(msg);
 		logger.debug("msg=" + msg);
 		msgMapper.postContent(msg);
-		logger.debug("post종료()");
+		logger.debug("post종료(count=" + count + ")");
+		return count;
 	}
 
 	/*
@@ -133,8 +134,15 @@ public class MessageDAOImpl implements MessageDAO {
 	 * kr.co.adflow.push.dao.MessageDAO#put(kr.co.adflow.push.domain.Message)
 	 */
 	@Override
-	public void put(Message msg) throws Exception {
-		// return null;
+	public int put(Message msg) throws Exception {
+		logger.debug("put시작(msg=" + msg + ")");
+		// db 저장
+		MessageMapper msgMapper = sqlSession.getMapper(MessageMapper.class);
+		int count = msgMapper.putMsg(msg);
+		logger.debug("msg=" + msg);
+		msgMapper.putContent(msg);
+		logger.debug("put종료(count=" + count + ")");
+		return count;
 	}
 
 	/*
@@ -143,8 +151,12 @@ public class MessageDAOImpl implements MessageDAO {
 	 * @see kr.co.adflow.push.dao.MessageDAO#delete(java.lang.String)
 	 */
 	@Override
-	public void delete(int msgID) throws Exception {
-		// return null;
+	public int delete(int msgID) throws Exception {
+		logger.debug("delete시작(msgID=" + msgID + ")");
+		MessageMapper messageMapper = sqlSession.getMapper(MessageMapper.class);
+		int result = messageMapper.deleteMsg(msgID);
+		logger.debug("delete종료(result=" + result + ")");
+		return result;
 	}
 
 	/**
@@ -170,7 +182,8 @@ public class MessageDAOImpl implements MessageDAO {
 					// mqtt connection이 정상일때만 처리함
 					MessageMapper msgMapper = sqlSession
 							.getMapper(MessageMapper.class);
-					List<Message> list = (List<Message>) msgMapper.getMessage();
+					List<Message> list = (List<Message>) msgMapper
+							.getUndeliveredMsg();
 					for (Message msg : list) {
 						logger.debug("msg=" + msg);
 						if (msg.getReservation() == null) {
@@ -201,7 +214,7 @@ public class MessageDAOImpl implements MessageDAO {
 			logger.debug("메시지를전송하였습니다.");
 			// 전송후 db(issue) update
 			msg.setIssue(new Date());
-			msgMapper.put(msg);
+			msgMapper.putIssue(msg);
 			logger.debug("전송시간정보를업데이트했습니다.");
 		}
 	}

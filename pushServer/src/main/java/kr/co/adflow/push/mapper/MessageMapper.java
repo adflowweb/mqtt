@@ -12,17 +12,21 @@ import kr.co.adflow.push.domain.Message;
 public interface MessageMapper {
 	Message get(int id) throws Exception;
 
-	List<Message> getMessage() throws Exception;
+	List<Message> getUndeliveredMsg() throws Exception;
 
 	// int getID(Message msg) throws Exception;
 
-	int post(Message msg) throws Exception;
+	int postMsg(Message msg) throws Exception;
 
-	int put(Message msg) throws Exception;
+	int putMsg(Message msg) throws Exception;
 
-	int postAcknowledge(Acknowledge ack) throws Exception;
+	int putIssue(Message msg) throws Exception;
 
-	int delete(int id) throws Exception;
+	int postAck(Acknowledge ack) throws Exception;
+
+	int deleteMsg(int id) throws Exception;
 
 	int postContent(Message msg) throws Exception;
+
+	int putContent(Message msg) throws Exception;
 }
