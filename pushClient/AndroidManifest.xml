@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.BSMobile.mqtt"
+    package="kr.co.adflow.push"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -29,14 +29,13 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
-        android:debuggable="true"
         android:hardwareAccelerated="true"
         android:icon="@drawable/icon"
-        android:label="BSMobileMqtt" >
+        android:label="ADFlosPush" >
         <activity
-            android:name=".BSMobile"
+            android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="BSMobileMqtt"
+            android:label="ADFlosPush"
             android:launchMode="singleTop" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -70,22 +69,22 @@
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
 
-                <category android:name="com.BSMobile.mqtt" />
+                <category android:name="kr.co.adflow.push" />
             </intent-filter>
             <!-- Receive the registration id -->
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
 
-                <category android:name="com.BSMobile.mqtt" />
+                <category android:name="kr.co.adflow.push" />
             </intent-filter>
         </receiver>
 
         <service
-            android:name="com.BSMobile.mqtt.MqttPushService"
+            android:name="kr.co.adflow.service.PushService"
             android:exported="true" />
         <!-- android:exported="false"  android:process=":PushClientService_background" -->
 
-        <receiver android:name="com.BSMobile.mqtt.MqttPushServiceReceiver" >
+        <receiver android:name="kr.co.adflow.receiver.PushBroadcastReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>

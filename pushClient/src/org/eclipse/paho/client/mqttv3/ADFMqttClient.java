@@ -4,12 +4,16 @@ import org.eclipse.paho.client.mqttv3.internal.wire.MqttPingReq;
 
 import android.util.Log;
 
-public class MqttClientWithPing extends MqttClient {
+/**
+ * @author nadir93
+ * @date 2014. 6. 19.
+ */
+public class ADFMqttClient extends MqttClient {
 
 	// Debug TAG
-	public static final String DEBUGTAG = "MqttClient(핑되는버전)";
+	public static final String DEBUGTAG = "ADFMqttClient(핑되는버전)";
 
-	public MqttClientWithPing(String serverURI, String clientId,
+	public ADFMqttClient(String serverURI, String clientId,
 			MqttClientPersistence persistence) throws MqttException {
 		super(serverURI, clientId, persistence);
 	}
