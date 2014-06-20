@@ -7,7 +7,9 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 import kr.co.adflow.service.PushService;
+import kr.co.adflow.sqlite.Message;
 import kr.co.adflow.sqlite.PushDBHelper;
+import kr.co.adflow.sqlite.Request;
 import kr.co.adflow.sqlite.User;
 import kr.co.adflow.ssl.ADFSSLSocketFactory;
 
@@ -121,72 +123,85 @@ public class PushHandler implements MqttCallback {
 		Log.d(TAG, "messageArrived시작(토픽=" + topic + ",메시지=" + message + ",qos="
 				+ message.getQos() + ")");
 		try {
+			JSONObject msg = new JSONObject(new String(message.getPayload()));
+			final JSONObject content = msg.getJSONObject("content");
+			int msgType = msg.getInt("type");
 
-			JSONObject jsonObj = new JSONObject(
-					new String(message.getPayload()));
+			// 메시지 저장 (SQLite)
+			pushdb.addMessage(userID, msg);
+			Message result = pushdb.getMessage(msg.getInt("id"));
+			Log.d(TAG, "저장된메시지=" + result);
 
-			if (jsonObj.getBoolean("ack")) {
-				// ack message
-				final int id = jsonObj.getInt("id");
-				// publish alivemsg
-				// MqttMessage msg = new MqttMessage(MQTT_KEEP_ALIVE_MESSAGE);
-				// message.setQos(0);
-				// mqttClient.publish("/users/nadir93/keepalive", message);
-				// Log.d(DEBUGTAG, "PING메시지가전송되었습니다.메시지=" + message);
+			switch (msgType) {
+			case 0:
+				// notification msg
+				if (msg.getBoolean("ack")) {
+					// ack message
+					final int id = msg.getInt("id");
 
+					final String ackMsg = "{\"userID\":\"" + userID
+							+ "\",\"id\":" + id + "}";
+					// ack 요청메시지이면 request테이블 저장
+					int rst = pushdb.addRequest("/push/ack", ackMsg);
+					Log.d(TAG, "저장된아이디=" + rst);
+
+					Request req = pushdb.getRequest(rst);
+					Log.d(TAG, "저장된리퀘스트=" + req);
+
+					// 전송
+					// new Thread() {
+					// @Override
+					// public void run() {
+					//
+					// try {
+					// client.publish("/push/ack", ackMsg.getBytes(),
+					// 1, false);
+					// Log.d(TAG, "ack메시지를전송하였습니다. 메시지=" + ackMsg);
+					// } catch (MqttPersistenceException e) {
+					// // 예외상황발생시 큐에저장하고 알람이 깨어났을때 다시 시도 하도록 코드 추가요망
+					// Log.e(TAG, "예외상황발생", e);
+					// } catch (MqttException e) {
+					// // 예외상황발생시 큐에저장하고 알람이 깨어났을때 다시 시도 하도록 코드 추가요망
+					// Log.e(TAG, "예외상황발생", e);
+					// }
+					// }
+					// }.start();
+
+					// 디비업데이트 (senddate)
+				}
+
+				JSONObject noti = content.getJSONObject("notification");
+				// showNotify
+				NotificationHandler.notify(context, noti);
+				break;
+			case 1:
+				// command msg
+				// (토픽=/users/nadir93,메시지={"id":5,"ack":false,"type":1,"content":{"userID":"nadir93","groups":["dev","adflow"]}},qos=2)
+
+				// 그룹정보구독
 				new Thread() {
 					@Override
 					public void run() {
-						String ackMsg = "{\"userID\":\"nadir93\",\"id\":" + id
-								+ "}";
 						try {
-							client.publish("/push/ack", ackMsg.getBytes(), 1,
-									false);
-							Log.d(TAG, "ack메시지를전송하였습니다. 메시지=" + ackMsg);
-						} catch (MqttPersistenceException e) {
-							// 예외상황발생시 큐에저장하고 알람이 깨어났을때 다시 시도 하도록 코드 추가요망
+							// 기존 그룹정보 unsubscribe 하도록 추가바람
+							JSONArray array = content.getJSONArray("groups");
+							for (int i = 0; i < array.length(); i++) {
+								subscribe("/groups/" + array.getString(i), 2);
+							}
+						} catch (JSONException e) {
 							Log.e(TAG, "예외상황발생", e);
 						} catch (MqttException e) {
-							// 예외상황발생시 큐에저장하고 알람이 깨어났을때 다시 시도 하도록 코드 추가요망
+							// 예외상황발생시 큐에저장하고 알람이 깨어났을때 다시 시도 하도록 코드
+							// 추가요망
 							Log.e(TAG, "예외상황발생", e);
 						}
 					}
 				}.start();
+				break;
+			default:
+				Log.e(TAG, "메시지타입이없습니다.");
+				break;
 			}
-			final JSONObject content = jsonObj.getJSONObject("content");
-			try {
-				JSONObject noti = content.getJSONObject("notification");
-				// showNotify
-				NotificationHandler.notify(context, noti);
-			} catch (JSONException e) {
-				// 06-17 17:36:28.059: E/Mqtt푸시서비스(25167):
-				// org.json.JSONException: No value for notification
-				if (e.getMessage().equals("No value for notification")) {
-					// {"id":22,"ack":false,"content":{"userID":"nadir93","groups":["dev","adflow"]}}
-					// 그룹정보구독
-					new Thread() {
-						@Override
-						public void run() {
-							try {
-								// 기존 그룹정보 unsubscribe 하도록 추가바람
-
-								JSONArray array = content
-										.getJSONArray("groups");
-								for (int i = 0; i < array.length(); i++) {
-									subscribe("/groups/" + array.getString(i),
-											2);
-								}
-							} catch (JSONException e) {
-								Log.e(TAG, "예외상황발생", e);
-							} catch (MqttException e) {
-								// 예외상황발생시 큐에저장하고 알람이 깨어났을때 다시 시도 하도록 코드 추가요망
-								Log.e(TAG, "예외상황발생", e);
-							}
-						}
-					}.start();
-				}
-			}
-
 		} catch (Exception e) {
 			Log.e(TAG, "예외상황발생", e);
 		}
@@ -225,7 +240,7 @@ public class PushHandler implements MqttCallback {
 				// default subscribe
 				subscribe("/users", 2);
 				subscribe("/users/" + userID, 2);
-				// 그룹정보동기화요청
+				// 그룹정보동기화요청 (여기서 동기화 요청을 해야하나???)
 				String grpReqMsg = "{\"userID\":\"" + userID + "\"}";
 				client.publish("/push/group", grpReqMsg.getBytes(), 2, false);
 				Log.d(TAG, "그룹정보요청메시지를전송하였습니다. 메시지=" + grpReqMsg);
@@ -242,6 +257,20 @@ public class PushHandler implements MqttCallback {
 			token = client.sendPING();
 			// 테스트필요 ???
 			// tocken.waitForCompletion(5000);
+
+			// db 저장된 작업수행
+			// get request
+			Request[] request = pushdb.getJobList();
+			// push
+			for (int i = 0; i < request.length; i++) {
+				client.publish(request[i].getTopic(), request[i].getContent()
+						.getBytes(), 1, false);
+				Log.d(TAG, "메시지를전송하였습니다. 메시지=" + request[i]);
+				// 디비업데이트 (senddate)
+				pushdb.deteletRequest(request[i].getId());
+				Log.d(TAG, "request가삭제되었습니다.id=" + request[i].getId());
+			}
+
 			Log.d(TAG, "PINGReq메시지가전송되었습니다.토큰=" + token);
 		} catch (Exception e) {
 			Log.e(TAG, "예외상황발생", e);

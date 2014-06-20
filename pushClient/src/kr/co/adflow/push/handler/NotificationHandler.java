@@ -2,6 +2,8 @@ package kr.co.adflow.push.handler;
 
 import java.util.GregorianCalendar;
 
+import kr.co.adflow.push.R;
+
 import org.apache.commons.codec.binary.Base64;
 import org.json.JSONObject;
 
@@ -93,13 +95,13 @@ public class NotificationHandler {
 							.setLights(Color.BLUE, 500, 500)
 							.setContentTitle(noti.getString("contentTitle"))
 							.setContentText(noti.getString("contentText"))
-							// .setSmallIcon(R.drawable.ic_action_event)
+							.setSmallIcon(R.drawable.ic_action_event)
 							.setLargeIcon(bmBigPicture)
 							.setTicker(noti.getString("ticker"))
-			// .addAction(R.drawable.ic_action_search, DETAILVIEW,
-			// intent)
-			// .addAction(R.drawable.ic_action_new_event,
-			// ADDCALENDAR, addCalPendingIntent)
+							.addAction(R.drawable.ic_action_search, DETAILVIEW,
+									intent)
+							.addAction(R.drawable.ic_action_new_event,
+									ADDCALENDAR, addCalPendingIntent)
 
 			).bigPicture(bmBigPicture)
 					.setBigContentTitle(noti.getString("contentTitle"))
@@ -109,12 +111,11 @@ public class NotificationHandler {
 		case BIG_TEXT_STYLE:
 			// bigTextStyle
 			notification = new Notification.BigTextStyle(
-					new Notification.Builder(context)
-							.setSound(alarmSound)
+					new Notification.Builder(context).setSound(alarmSound)
 							.setLights(Color.BLUE, 500, 500)
 							.setContentTitle(noti.getString("contentTitle"))
 							.setContentText(noti.getString("contentText"))
-							// .setSmallIcon(R.drawable.icon)
+							.setSmallIcon(R.drawable.icon)
 							.setTicker(noti.getString("ticker"))
 							.setLargeIcon(bmBigPicture)
 							.setLargeIcon(bmBigPicture)).bigText(
@@ -138,8 +139,7 @@ public class NotificationHandler {
 					.setContentText(noti.getString("contentText"))
 					.setLargeIcon(bmBigPicture).setContentIntent(detailIntent)
 					.setTicker(noti.getString("ticker"))
-					// .setSmallIcon(R.drawable.icon)
-					.build();
+					.setSmallIcon(R.drawable.icon).build();
 		default:
 
 		}
