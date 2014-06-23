@@ -7,9 +7,8 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 import kr.co.adflow.service.PushService;
-import kr.co.adflow.sqlite.Message;
+import kr.co.adflow.sqlite.Job;
 import kr.co.adflow.sqlite.PushDBHelper;
-import kr.co.adflow.sqlite.Request;
 import kr.co.adflow.sqlite.User;
 import kr.co.adflow.ssl.ADFSSLSocketFactory;
 
@@ -20,10 +19,8 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
@@ -129,8 +126,8 @@ public class PushHandler implements MqttCallback {
 
 			// 메시지 저장 (SQLite)
 			pushdb.addMessage(userID, msg);
-			Message result = pushdb.getMessage(msg.getInt("id"));
-			Log.d(TAG, "저장된메시지=" + result);
+			// Message result = pushdb.getMessage(msg.getInt("id"));
+			// Log.d(TAG, "저장된메시지=" + result);
 
 			switch (msgType) {
 			case 0:
@@ -142,11 +139,10 @@ public class PushHandler implements MqttCallback {
 					final String ackMsg = "{\"userID\":\"" + userID
 							+ "\",\"id\":" + id + "}";
 					// ack 요청메시지이면 request테이블 저장
-					int rst = pushdb.addRequest("/push/ack", ackMsg);
-					Log.d(TAG, "저장된아이디=" + rst);
+					pushdb.addJob(Job.PUBLISH, "/push/ack", ackMsg);
 
-					Request req = pushdb.getRequest(rst);
-					Log.d(TAG, "저장된리퀘스트=" + req);
+					// Request req = pushdb.getRequest(rst);
+					// Log.d(TAG, "저장된리퀘스트=" + req);
 
 					// 전송
 					// new Thread() {
@@ -166,8 +162,6 @@ public class PushHandler implements MqttCallback {
 					// }
 					// }
 					// }.start();
-
-					// 디비업데이트 (senddate)
 				}
 
 				JSONObject noti = content.getJSONObject("notification");
@@ -178,25 +172,32 @@ public class PushHandler implements MqttCallback {
 				// command msg
 				// (토픽=/users/nadir93,메시지={"id":5,"ack":false,"type":1,"content":{"userID":"nadir93","groups":["dev","adflow"]}},qos=2)
 
+				JSONArray array = content.getJSONArray("groups");
+				for (int i = 0; i < array.length(); i++) {
+					pushdb.addJob(Job.SUBSCRIBE,
+							"/groups/" + array.getString(i), null);
+					// subscribe("/groups/" + array.getString(i), 2);
+				}
+
 				// 그룹정보구독
-				new Thread() {
-					@Override
-					public void run() {
-						try {
-							// 기존 그룹정보 unsubscribe 하도록 추가바람
-							JSONArray array = content.getJSONArray("groups");
-							for (int i = 0; i < array.length(); i++) {
-								subscribe("/groups/" + array.getString(i), 2);
-							}
-						} catch (JSONException e) {
-							Log.e(TAG, "예외상황발생", e);
-						} catch (MqttException e) {
-							// 예외상황발생시 큐에저장하고 알람이 깨어났을때 다시 시도 하도록 코드
-							// 추가요망
-							Log.e(TAG, "예외상황발생", e);
-						}
-					}
-				}.start();
+				// new Thread() {
+				// @Override
+				// public void run() {
+				// try {
+				// // 기존 그룹정보 unsubscribe 하도록 추가바람
+				// JSONArray array = content.getJSONArray("groups");
+				// for (int i = 0; i < array.length(); i++) {
+				// subscribe("/groups/" + array.getString(i), 2);
+				// }
+				// } catch (JSONException e) {
+				// Log.e(TAG, "예외상황발생", e);
+				// } catch (MqttException e) {
+				// // 예외상황발생시 큐에저장하고 알람이 깨어났을때 다시 시도 하도록 코드
+				// // 추가요망
+				// Log.e(TAG, "예외상황발생", e);
+				// }
+				// }
+				// }.start();
 				break;
 			default:
 				Log.e(TAG, "메시지타입이없습니다.");
@@ -240,7 +241,7 @@ public class PushHandler implements MqttCallback {
 				// default subscribe
 				subscribe("/users", 2);
 				subscribe("/users/" + userID, 2);
-				// 그룹정보동기화요청 (여기서 동기화 요청을 해야하나???)
+				// 그룹정보동기화요청 (여기서 동기화 요청을 해야하나??? 아님 디비인서트 ???)
 				String grpReqMsg = "{\"userID\":\"" + userID + "\"}";
 				client.publish("/push/group", grpReqMsg.getBytes(), 2, false);
 				Log.d(TAG, "그룹정보요청메시지를전송하였습니다. 메시지=" + grpReqMsg);
@@ -255,23 +256,43 @@ public class PushHandler implements MqttCallback {
 
 			// ping
 			token = client.sendPING();
+			Log.d(TAG, "PINGReq메시지가전송되었습니다.토큰=" + token);
+
 			// 테스트필요 ???
 			// tocken.waitForCompletion(5000);
 
 			// db 저장된 작업수행
 			// get request
-			Request[] request = pushdb.getJobList();
-			// push
-			for (int i = 0; i < request.length; i++) {
-				client.publish(request[i].getTopic(), request[i].getContent()
-						.getBytes(), 1, false);
-				Log.d(TAG, "메시지를전송하였습니다. 메시지=" + request[i]);
-				// 디비업데이트 (senddate)
-				pushdb.deteletRequest(request[i].getId());
-				Log.d(TAG, "request가삭제되었습니다.id=" + request[i].getId());
+			Job[] job = pushdb.getJobList();
+			if (job != null) {
+				// push
+				for (int i = 0; i < job.length; i++) {
+					int jobType = job[i].getType();
+					switch (jobType) {
+					case 0:
+						// PUBLISH
+						client.publish(job[i].getTopic(), job[i].getContent()
+								.getBytes(), 1, false);
+						Log.d(TAG, "메시지를전송하였습니다. 메시지=" + job[i]);
+						// 디비삭제
+						pushdb.deteletJob(job[i].getId());
+						Log.d(TAG, "작업이수행되었습니다.id=" + job[i].getId());
+						break;
+					case 1:
+						// SUBSCRIBE
+						subscribe(job[i].getTopic(), 2);
+						// 디비삭제
+						pushdb.deteletJob(job[i].getId());
+						Log.d(TAG, "작업이수행되었습니다.id=" + job[i].getId());
+						break;
+					case 2:
+						// UNSUBSCRIBE
+						break;
+					default:
+						break;
+					}
+				}
 			}
-
-			Log.d(TAG, "PINGReq메시지가전송되었습니다.토큰=" + token);
 		} catch (Exception e) {
 			Log.e(TAG, "예외상황발생", e);
 			if (PushService.getWakeLock() != null) {

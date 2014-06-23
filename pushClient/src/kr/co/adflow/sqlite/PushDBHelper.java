@@ -30,7 +30,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
 	private static final String DATABASE_NAME = "PushDB";
 	private static final String TABLE_USER = "user";
 	private static final String TABLE_MESSAGE = "message";
-	private static final String TABLE_REQUEST = "request";
+	private static final String TABLE_JOB = "job";
 	// user Table Columns names
 	private static final String USER_ID = "userid";
 	private static final String PASSWORD = "password";
@@ -41,8 +41,8 @@ public class PushDBHelper extends SQLiteOpenHelper {
 	private static final String[] MESSAGE_COLUMNS = { "id", "userid", "ack",
 			"type", "content", "receivedate" };
 
-	private static final String[] REQUEST_COLUMNS = { "id", "topic", "content",
-			"senddate" };
+	private static final String[] JOB_COLUMNS = { "id", "type", "topic",
+			"content" };
 
 	// create table message ( id int unsigned not null auto_increment, sender
 	// varchar(50), receiver varchar(50), issue datetime, issueSms datetime, sms
@@ -79,8 +79,8 @@ public class PushDBHelper extends SQLiteOpenHelper {
 		// create message table
 		db.execSQL(CREATE_MESSAGE_TABLE);
 
-		String CREATE_REQUEST_TABLE = "CREATE TABLE request ( "
-				+ "id INTEGER PRIMARY KEY AUTOINCREMENT, topic TEXT, content TEXT, senddate TEXT)";
+		String CREATE_REQUEST_TABLE = "CREATE TABLE job ( "
+				+ "id INTEGER PRIMARY KEY AUTOINCREMENT, type INTEGER, topic TEXT, content TEXT)";
 		// create request table
 		db.execSQL(CREATE_REQUEST_TABLE);
 
@@ -102,8 +102,8 @@ public class PushDBHelper extends SQLiteOpenHelper {
 		db.execSQL("DROP TABLE IF EXISTS user");
 		// Drop older message table if existed
 		db.execSQL("DROP TABLE IF EXISTS message");
-		// Drop older request table if existed
-		db.execSQL("DROP TABLE IF EXISTS request");
+		// Drop older job table if existed
+		db.execSQL("DROP TABLE IF EXISTS job");
 
 		// create fresh books table
 		this.onCreate(db);
@@ -250,19 +250,21 @@ public class PushDBHelper extends SQLiteOpenHelper {
 	 * @param msg
 	 * @throws JSONException
 	 */
-	public int addRequest(String topic, String content) throws Exception {
-		Log.d(TAG, "addRequest시작(topic=" + topic + ", content=" + content + ")");
+	public int addJob(int type, String topic, String content) throws Exception {
+		Log.d(TAG, "addJob시작(type=" + type + ", topic=" + topic + ", content="
+				+ content + ")");
 
 		// 1. get reference to writable DB
 		SQLiteDatabase db = this.getWritableDatabase();
 
 		// 2. create ContentValues to add key "column"/value
 		ContentValues values = new ContentValues();
+		values.put("type", type);
 		values.put("topic", topic);
 		values.put("content", content);
 
 		// 3. insert
-		db.insertOrThrow(TABLE_REQUEST, // table
+		db.insertOrThrow(TABLE_JOB, // table
 				null, // nullColumnHack
 				values);
 
@@ -277,7 +279,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
 
 		// 4. close
 		db.close();
-		Log.d(TAG, "addRequest종료(id=" + id + ")");
+		Log.d(TAG, "addJob종료(id=" + id + ")");
 		return id;
 	}
 
@@ -285,13 +287,13 @@ public class PushDBHelper extends SQLiteOpenHelper {
 	 * @param rst
 	 * @return
 	 */
-	public Request getRequest(int id) throws Exception {
-		Log.d(TAG, "getRequest시작()");
+	public Job getJob(int id) throws Exception {
+		Log.d(TAG, "getJob시작()");
 		// 1. get reference to readable DB
 		SQLiteDatabase db = this.getReadableDatabase();
 		// 2. build query
-		Cursor cursor = db.query(TABLE_REQUEST, // a. table
-				REQUEST_COLUMNS, // b. column names
+		Cursor cursor = db.query(TABLE_JOB, // a. table
+				JOB_COLUMNS, // b. column names
 				"id = ?", // c. selections
 				new String[] { String.valueOf(id) }, // d. selections args
 				null, // e. group by
@@ -303,40 +305,40 @@ public class PushDBHelper extends SQLiteOpenHelper {
 			cursor.moveToFirst();
 
 		// 4. build req object
-		Request req = new Request();
-		req.setId(cursor.getInt(0));
-		req.setTopic(cursor.getString(1));
-		req.setContent(cursor.getString(2));
-		req.setSenddate(cursor.getString(3));
+		Job job = new Job();
+		job.setId(cursor.getInt(0));
+		job.setType(cursor.getInt(1));
+		job.setTopic(cursor.getString(2));
+		job.setContent(cursor.getString(3));
 		// log
-		Log.d(TAG, "getRequest종료(req=" + req + ")");
-		// 5. return req
-		return req;
+		Log.d(TAG, "getJob종료(job=" + job + ")");
+		// 5. return job
+		return job;
 	}
 
 	/**
 	 * @param id
 	 */
-	public void deteletRequest(int id) {
-		Log.d(TAG, "deteletRequest시작(id=" + id + ")");
+	public void deteletJob(int id) {
+		Log.d(TAG, "deteletJob시작(id=" + id + ")");
 		// 1. get reference to writable DB
 		SQLiteDatabase db = this.getWritableDatabase();
 		// 2. delete
-		db.delete(TABLE_REQUEST, // table name
+		db.delete(TABLE_JOB, // table name
 				" id = ?", // selections
 				new String[] { String.valueOf(id) }); // selections
 														// args
 		// 3. close
 		db.close();
 		// log
-		Log.d(TAG, "deteletRequest종료()");
+		Log.d(TAG, "deteletJob종료()");
 	}
 
 	/**
 	 * @param rst
 	 * @return
 	 */
-	public Request[] getJobList() throws Exception {
+	public Job[] getJobList() throws Exception {
 		Log.d(TAG, "getJobList시작()");
 		// 1. get reference to readable DB
 		SQLiteDatabase db = this.getReadableDatabase();
@@ -345,9 +347,9 @@ public class PushDBHelper extends SQLiteOpenHelper {
 		// Cursor cursor =
 		// db.rawQuery("select * from request where senddate is null", null);
 
-		Cursor cursor = db.query(TABLE_REQUEST, // a. table
-				REQUEST_COLUMNS, // b. column names
-				"senddate is null", // c. selections
+		Cursor cursor = db.query(TABLE_JOB, // a. table
+				JOB_COLUMNS, // b. column names
+				null, // c. selections
 				null, // d. selections args
 				null, // e. group by
 				null, // f. having
@@ -358,17 +360,23 @@ public class PushDBHelper extends SQLiteOpenHelper {
 			cursor.moveToFirst();
 
 		int count = cursor.getCount();
-		Log.d(TAG, "레코드카운트=" + count);
-		Request[] req = new Request[count];
+		Log.d(TAG, "잡레코드카운트=" + count);
+
+		if (count == 0) {
+			Log.d(TAG, "getJobList종료(req=null)");
+			return null;
+		}
+
+		Job[] req = new Job[count];
 
 		int i = 0;
 		while (cursor.isAfterLast() == false) {
 			// 4. build req object
-			req[i] = new Request();
+			req[i] = new Job();
 			req[i].setId(cursor.getInt(0));
-			req[i].setTopic(cursor.getString(1));
-			req[i].setContent(cursor.getString(2));
-			req[i].setSenddate(cursor.getString(3));
+			req[i].setType(cursor.getInt(1));
+			req[i].setTopic(cursor.getString(2));
+			req[i].setContent(cursor.getString(3));
 			Log.d(TAG, "req[" + i + "]=" + req[i]);
 			i++;
 			cursor.moveToNext();

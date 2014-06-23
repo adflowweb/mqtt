@@ -4,15 +4,18 @@ package kr.co.adflow.sqlite;
  * @author nadir93
  * @date 2014. 6. 20.
  */
-public class Request {
+public class Job {
 
 	// id INTEGER PRIMARY KEY AUTOINCREMENT, topic TEXT, content TEXT, senddate
 	// TEXT
+	public static int PUBLISH = 0;
+	public static int SUBSCRIBE = 1;
+	public static int UNSUBSCRIBE = 2;
 
 	private int id;
+	private int type;
 	private String topic;
 	private String content;
-	private String senddate;
 
 	public int getId() {
 		return id;
@@ -20,6 +23,14 @@ public class Request {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	public int getType() {
+		return type;
+	}
+
+	public void setType(int type) {
+		this.type = type;
 	}
 
 	public String getTopic() {
@@ -38,18 +49,10 @@ public class Request {
 		this.content = content;
 	}
 
-	public String getSenddate() {
-		return senddate;
-	}
-
-	public void setSenddate(String senddate) {
-		this.senddate = senddate;
-	}
-
 	@Override
 	public String toString() {
-		return "Request [id=" + id + ", topic=" + topic + ", content="
-				+ content + ", senddate=" + senddate + "]";
+		return "Request [id=" + id + ", type=" + type + ", topic=" + topic
+				+ ", content=" + content + "]";
 	}
 
 }
