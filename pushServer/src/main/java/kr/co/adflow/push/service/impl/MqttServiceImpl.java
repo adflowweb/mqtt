@@ -367,7 +367,7 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 				+ ",qos=" + message.getQos() + ")");
 		reqCnt++;
 
-		if (topic.equals("/push/acknowledge")) {
+		if (topic.equals("/push/ack")) {
 			try {
 				// db insert ack
 				// convert json string to object
@@ -403,10 +403,13 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 				}
 			}
 			content.append("]}");
+			msg.setType(Message.COMMAND);
 			msg.setContent(content.toString());
 			logger.debug("msg=" + msg);
 			messageDao.post(msg);
 			logger.debug("그룹동기화메시지를등록하였습니다.");
+		} else {
+			logger.error("적절한토픽처리자가없습니다.");
 		}
 		logger.debug("messageArrived종료()");
 	}
@@ -464,8 +467,8 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 
 		StringBuffer pushMsg = new StringBuffer();
 		pushMsg.append("{\"id\":").append(msg.getId()).append(",\"ack\":")
-				.append(msg.isSms()).append(",\"content\":")
-				.append(msg.getContent()).append("}");
+				.append(msg.isSms()).append(",\"type\":").append(msg.getType())
+				.append(",\"content\":").append(msg.getContent()).append("}");
 
 		logger.debug("pushMsg=" + pushMsg);
 

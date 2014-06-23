@@ -138,14 +138,14 @@ public class UserController {
 
 		Boolean data = userService.auth(user);
 		Result<Token> result = new Result<Token>();
-		result.setSuccess(false);
+		result.setSuccess(true);
 		if (!data) {
 			List<String> messages = new ArrayList<String>() {
 				{
 					add("user not found or invalid password");
 				}
 			};
-			result.setInfo(messages);
+			result.setErrors(messages);
 		} else {
 			// token 발급
 			Token token = new Token();
@@ -156,7 +156,6 @@ public class UserController {
 			// ////임시코드 end
 			Token rst = tokenService.post(token);
 			// Result<Token> result = new Result<Token>();
-			result.setSuccess(true);
 			result.setData(rst);
 		}
 

@@ -72,10 +72,10 @@ public class MessageDAOImpl implements MessageDAO {
 		messageLooper = Executors.newScheduledThreadPool(1);
 		messageLooper.scheduleWithFixedDelay(new MessageHandler(),
 				messageInterval, messageInterval, TimeUnit.SECONDS);
+		logger.info("메시지핸들러가시작되었습니다.");
 		smsLooper = Executors.newScheduledThreadPool(1);
 		smsLooper.scheduleWithFixedDelay(new SMSHandler(), smsInterval,
 				smsInterval, TimeUnit.SECONDS);
-		logger.info("메시지핸들러가시작되었습니다.");
 		logger.info("SMS핸들러가시작되었습니다.");
 		logger.info("MessageDAOImpl초기화종료()");
 	}
@@ -234,8 +234,11 @@ public class MessageDAOImpl implements MessageDAO {
 		 */
 		@Override
 		public void run() {
-			logger.debug("SMS메시지처리시작()");
-			logger.debug("SMS메시지처리종료()");
+			logger.debug("SMS핸들러처리시작()");
+			// db query select sms
+			// send sms
+			// db update
+			logger.debug("SMS핸들러처리종료()");
 		}
 	}
 }

@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
+import kr.co.adflow.sms.BSFriendsSmsServer;
+
 public final class LogFormatter extends Formatter {
 
 	@Override

@@ -2,9 +2,7 @@ package kr.co.adflow.ldap;
 
 import java.util.Hashtable;
 
-import javax.naming.AuthenticationException;
 import javax.naming.Context;
-import javax.naming.InvalidNameException;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
@@ -15,11 +13,13 @@ import javax.naming.directory.SearchResult;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 /**
  * @author nadir93
  * @date 2014. 6. 19.
  */
+@Service
 public class LdapAuth {
 
 	private static final Logger logger = LoggerFactory
@@ -40,15 +40,22 @@ public class LdapAuth {
 		boolean isAuth = false;
 		DirContext ctx = null;
 
-		Hashtable<String, String> property = new Hashtable<String, String>();
-		property.put(Context.INITIAL_CONTEXT_FACTORY, ldapFactory);
-		property.put(Context.SECURITY_AUTHENTICATION, ldapSecurity);
-		property.put(Context.PROVIDER_URL, ldapUrl);
-		property.put(Context.SECURITY_PRINCIPAL, id + "@" + domain);
-		property.put(Context.SECURITY_CREDENTIALS, password);
+		Hashtable<String, String> env = new Hashtable<String, String>();
+		env.put(Context.INITIAL_CONTEXT_FACTORY, ldapFactory);
+		env.put(Context.SECURITY_AUTHENTICATION, ldapSecurity);
+		env.put(Context.PROVIDER_URL, ldapUrl);
+		env.put(Context.SECURITY_PRINCIPAL, id + "@" + domain);
+		env.put(Context.SECURITY_CREDENTIALS, password);
+
+		// ////testCode
+		// Enable connection pooling
+		env.put("com.sun.jndi.ldap.connect.pool", "true");
+		// ////testCodeEnd
 
 		try {
-			ctx = new InitialDirContext(property);
+
+			ctx = new InitialDirContext(env);
+			logger.debug("ctx=" + ctx);
 			isAuth = true;
 			// "Login Success";
 		} catch (Exception e) {

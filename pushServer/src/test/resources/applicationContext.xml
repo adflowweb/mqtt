@@ -55,5 +55,5 @@
 		<constructor-arg name="sqlSessionFactory" ref="sqlSessionFactory" />
 	</bean>
 
-	<context:component-scan base-package="kr.co.adflow.push" />
+	<context:component-scan base-package="kr.co.adflow" />
 </beans>

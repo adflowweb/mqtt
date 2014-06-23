@@ -33,6 +33,6 @@
 		<beans:property name="suffix" value=".jsp" />
 	</beans:bean>
 
-	<context:component-scan base-package="kr.co.adflow.push" />
+	<context:component-scan base-package="kr.co.adflow" />
 
 </beans:beans>

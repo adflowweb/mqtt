@@ -7,6 +7,10 @@ import java.util.Date;
  * @date 2014. 3. 20.
  */
 public class Message {
+
+	public static int NOTIFICATION = 0;
+	public static int COMMAND = 1;
+
 	private int id;
 	private String content;
 	private String sender;
@@ -41,6 +45,8 @@ public class Message {
 	 * 예약발송시간
 	 */
 	private Date reservation;
+
+	private int type;
 
 	public int getId() {
 		return id;
@@ -136,13 +142,21 @@ public class Message {
 		this.issueSms = issueSms;
 	}
 
+	public int getType() {
+		return type;
+	}
+
+	public void setType(int type) {
+		this.type = type;
+	}
+
 	@Override
 	public String toString() {
 		return "Message [id=" + id + ", content=" + content + ", sender="
 				+ sender + ", receiver=" + receiver + ", issue=" + issue
 				+ ", issueSms=" + issueSms + ", qos=" + qos + ", retained="
 				+ retained + ", sms=" + sms + ", timeOut=" + timeOut
-				+ ", reservation=" + reservation + "]";
+				+ ", reservation=" + reservation + ", type=" + type + "]";
 	}
 
 }

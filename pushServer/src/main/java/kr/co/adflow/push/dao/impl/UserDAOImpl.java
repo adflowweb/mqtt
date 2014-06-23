@@ -1,5 +1,8 @@
 package kr.co.adflow.push.dao.impl;
 
+import javax.annotation.Resource;
+
+import kr.co.adflow.ldap.LdapAuth;
 import kr.co.adflow.push.dao.UserDAO;
 import kr.co.adflow.push.domain.User;
 import kr.co.adflow.push.mapper.UserMapper;
@@ -22,6 +25,9 @@ public class UserDAOImpl implements UserDAO {
 	// Autowired를 사용하여 sqlSession을 사용할수 있다.
 	@Autowired
 	private SqlSession sqlSession;
+
+	@Resource
+	private LdapAuth ldap;
 
 	/*
 	 * (non-Javadoc)
@@ -74,13 +80,12 @@ public class UserDAOImpl implements UserDAO {
 
 	@Override
 	public boolean auth(User user) throws Exception {
-
-		// ldap 인증으로 바꿔야 하고
-		//
-
 		logger.debug("auth시작(user=" + user + ")");
-		UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
-		boolean rst = userMapper.auth(user);
+		// UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+		// boolean rst = userMapper.auth(user);
+
+		// ldap 인증
+		boolean rst = ldap.ldapAuth(user.getUserID(), user.getPassword());
 		logger.debug("auth종료(result=" + rst + ")");
 		return rst;
 	}

@@ -65,6 +65,8 @@ public class APIKeyFilter implements Filter {
 				httpRequest.getRequestURI().lastIndexOf("/") + 1);
 		logger.debug("appContext=" + appContext);
 
+		// /v1/auth 요청일 경우는 X-ApiKey를 체크하지 않음
+		// 이유는 ApiKey를 발급받는 요청이므로 ...
 		if (appContext.equals("auth")) {
 			chain.doFilter(httpRequest, httpResponse);
 			long stop = System.currentTimeMillis();
