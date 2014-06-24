@@ -8,6 +8,7 @@ import java.util.logging.SimpleFormatter;
 
 import kr.co.adflow.service.PushService;
 import kr.co.adflow.sqlite.Job;
+import kr.co.adflow.sqlite.Message;
 import kr.co.adflow.sqlite.PushDBHelper;
 import kr.co.adflow.sqlite.User;
 import kr.co.adflow.ssl.ADFSSLSocketFactory;
@@ -129,6 +130,10 @@ public class PushHandler implements MqttCallback {
 			// Message result = pushdb.getMessage(msg.getInt("id"));
 			// Log.d(TAG, "저장된메시지=" + result);
 
+			// testCode
+			pushdb.getAllMessages();
+			// end
+
 			switch (msgType) {
 			case 0:
 				// notification msg
@@ -242,6 +247,7 @@ public class PushHandler implements MqttCallback {
 				subscribe("/users", 2);
 				subscribe("/users/" + userID, 2);
 				// 그룹정보동기화요청 (여기서 동기화 요청을 해야하나??? 아님 디비인서트 ???)
+				// 최초로그인시 한번만 요청하도록 변경하여야함
 				String grpReqMsg = "{\"userID\":\"" + userID + "\"}";
 				client.publish("/push/group", grpReqMsg.getBytes(), 2, false);
 				Log.d(TAG, "그룹정보요청메시지를전송하였습니다. 메시지=" + grpReqMsg);

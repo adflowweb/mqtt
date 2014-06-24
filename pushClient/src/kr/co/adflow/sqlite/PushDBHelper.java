@@ -471,4 +471,52 @@ public class PushDBHelper extends SQLiteOpenHelper {
 		return msg;
 	}
 
+	public Message[] getAllMessages() throws Exception {
+		Log.d(TAG, "getAllMessages시작()");
+		// 1. get reference to readable DB
+		SQLiteDatabase db = this.getReadableDatabase();
+		// 2. build query
+		Cursor cursor = db.query(TABLE_MESSAGE, // a. table
+				MESSAGE_COLUMNS, // b. column names
+				null, // c. selections
+				null, // d. selections args
+				null, // e. group by
+				null, // f. having
+				null, // g. order by
+				null); // h. limit
+		// 3. if we got results get the first one
+		if (cursor != null)
+			cursor.moveToFirst();
+
+		int count = cursor.getCount();
+		Log.d(TAG, "메시지레코드카운트=" + count);
+
+		if (count == 0) {
+			Log.d(TAG, "getAllMessages종료(messages=null)");
+			return null;
+		}
+
+		Message[] msg = new Message[count];
+
+		int i = 0;
+		while (cursor.isAfterLast() == false) {
+			// 4. build book object
+			msg[i] = new Message();
+			msg[i].setId(cursor.getInt(0));
+			msg[i].setUserID(cursor.getString(1));
+			msg[i].setAck(cursor.getInt(2) != 0);
+			msg[i].setType(cursor.getInt(3));
+			msg[i].setContent(cursor.getString(4));
+			msg[i].setReceivedate(cursor.getString(5));
+			Log.d(TAG, "msg[" + i + "]=" + msg[i]);
+			i++;
+			cursor.moveToNext();
+		}
+
+		// log
+		Log.d(TAG, "getMessage종료(msg=" + msg + ")");
+		// 5. return user
+		return msg;
+	}
+
 }

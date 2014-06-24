@@ -119,16 +119,35 @@ public class MainActivity extends WLDroidGap {
 			// /////임시코드
 			final PushDBHelper pushdb = new PushDBHelper(this);
 			// pushdb.onUpgrade(pushdb.getWritableDatabase(), 0, 1);
-			User chanUser = pushdb.getUser("chan");
-			Log.d(TAG, "chanUser" + chanUser);
 
-			if (chanUser == null) {
+			// for 이찬호
+			// User user = pushdb.getUser("chan");
+			// Log.d(TAG, "user" + user);
+			//
+			// if (user == null) {
+			// try {
+			// user = new User();
+			// user.setUserID("chan");
+			// // user.setPassword("passw0rd");
+			// // user.setTokenID("chantest");
+			// user.setCurrentUser(true);
+			// pushdb.addUser(user);
+			// Log.d(TAG, "임시유저가등록되었습니다. user=" + user);
+			// } catch (Exception e) {
+			// Log.e(TAG, "예외상황발생", e);
+			// }
+			// }
+			// for 이찬호 end
+
+			// for nadir93
+			User user = pushdb.getUser("nadir93");
+			Log.d(TAG, "user" + user);
+			if (user == null) {
 				try {
-					User user = new User();
-					user.setUserID("chan");
+					user = new User();
+					user.setUserID("nadir93");
 					// user.setPassword("passw0rd");
-					// user.setTokenID("08be01ba2e1f4e2e8216725");
-					user.setTokenID("chantest");
+					user.setTokenID("08be01ba2e1f4e2e8216725");
 					user.setCurrentUser(true);
 					pushdb.addUser(user);
 					Log.d(TAG, "임시유저가등록되었습니다. user=" + user);
@@ -136,6 +155,7 @@ public class MainActivity extends WLDroidGap {
 					Log.e(TAG, "예외상황발생", e);
 				}
 			}
+			// for nadir93 end
 
 			// 알람설정
 			Log.d(TAG, "헬스체크알람을설정합니다.");
