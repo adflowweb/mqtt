@@ -2,7 +2,7 @@ package kr.co.adflow.push.service.impl;
 
 import javax.annotation.Resource;
 
-import kr.co.adflow.push.dao.MessageDAO;
+import kr.co.adflow.push.dao.MessageDao;
 import kr.co.adflow.push.domain.Message;
 import kr.co.adflow.push.service.MessageService;
 
@@ -21,7 +21,7 @@ public class MessageServiceImpl implements MessageService {
 			.getLogger(MessageServiceImpl.class);
 
 	@Resource
-	MessageDAO messageDao;
+	MessageDao messageDao;
 
 	@Override
 	public Message get(int messageID) throws Exception {

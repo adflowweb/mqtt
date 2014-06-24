@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 import javax.annotation.Resource;
 
-import kr.co.adflow.push.dao.ServerDAO;
+import kr.co.adflow.push.dao.ServerDao;
 import kr.co.adflow.push.domain.CPU;
 import kr.co.adflow.push.domain.Disk;
 import kr.co.adflow.push.domain.Heap;
@@ -34,10 +34,10 @@ import org.springframework.stereotype.Repository;
  * 
  */
 @Repository
-public class ServerDAOImpl implements ServerDAO {
+public class ServerDaoImpl implements ServerDao {
 
 	private static final Logger logger = LoggerFactory
-			.getLogger(ServerDAOImpl.class);
+			.getLogger(ServerDaoImpl.class);
 
 	private static final Sigar sigar = new Sigar();
 

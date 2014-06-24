@@ -1,6 +1,6 @@
 package kr.co.adflow.push.dao.impl;
 
-import kr.co.adflow.push.dao.DeviceDAO;
+import kr.co.adflow.push.dao.DeviceDao;
 import kr.co.adflow.push.domain.Device;
 import kr.co.adflow.push.mapper.DeviceMapper;
 
@@ -15,9 +15,9 @@ import org.springframework.stereotype.Repository;
  * 
  */
 @Repository
-public class DeviceDAOImpl implements DeviceDAO {
+public class DeviceDaoImpl implements DeviceDao {
 	private static final org.slf4j.Logger logger = LoggerFactory
-			.getLogger(DeviceDAOImpl.class);
+			.getLogger(DeviceDaoImpl.class);
 	// Autowired를 사용하여 sqlSession을 사용할수 있다.
 	@Autowired
 	private SqlSession sqlSession;

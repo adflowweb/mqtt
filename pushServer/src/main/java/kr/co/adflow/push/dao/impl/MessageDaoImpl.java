@@ -12,7 +12,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 
-import kr.co.adflow.push.dao.MessageDAO;
+import kr.co.adflow.push.dao.MessageDao;
 import kr.co.adflow.push.domain.Message;
 import kr.co.adflow.push.mapper.MessageMapper;
 import kr.co.adflow.push.service.MqttService;
@@ -28,10 +28,10 @@ import org.springframework.stereotype.Component;
  * 
  */
 @Component
-public class MessageDAOImpl implements MessageDAO {
+public class MessageDaoImpl implements MessageDao {
 
 	private static final org.slf4j.Logger logger = LoggerFactory
-			.getLogger(MessageDAOImpl.class);
+			.getLogger(MessageDaoImpl.class);
 
 	private static final String CONFIG_PROPERTIES = "/config.properties";
 
@@ -39,7 +39,7 @@ public class MessageDAOImpl implements MessageDAO {
 
 	static {
 		try {
-			prop.load(MessageDAOImpl.class
+			prop.load(MessageDaoImpl.class
 					.getResourceAsStream(CONFIG_PROPERTIES));
 			logger.debug("properties=" + prop);
 		} catch (IOException e) {

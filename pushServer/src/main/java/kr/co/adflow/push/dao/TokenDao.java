@@ -7,7 +7,7 @@ import kr.co.adflow.push.domain.Token;
  * @date 2014. 4. 14.
  * 
  */
-public interface TokenDAO {
+public interface TokenDao {
 
 	Token get(String token) throws Exception;
 

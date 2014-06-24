@@ -1,6 +1,6 @@
 package kr.co.adflow.push.dao.impl;
 
-import kr.co.adflow.push.dao.TokenDAO;
+import kr.co.adflow.push.dao.TokenDao;
 import kr.co.adflow.push.domain.Token;
 import kr.co.adflow.push.mapper.TokenMapper;
 
@@ -15,10 +15,10 @@ import org.springframework.stereotype.Repository;
  * 
  */
 @Repository
-public class TokenDAOImpl implements TokenDAO {
+public class TokenDaoImpl implements TokenDao {
 
 	private static final org.slf4j.Logger logger = LoggerFactory
-			.getLogger(TokenDAOImpl.class);
+			.getLogger(TokenDaoImpl.class);
 
 	// Autowired를 사용하여 sqlSession을 사용할수 있다.
 	@Autowired

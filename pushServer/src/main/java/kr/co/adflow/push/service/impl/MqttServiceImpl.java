@@ -24,7 +24,7 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import kr.co.adflow.push.dao.MessageDAO;
+import kr.co.adflow.push.dao.MessageDao;
 import kr.co.adflow.push.domain.Acknowledge;
 import kr.co.adflow.push.domain.Group;
 import kr.co.adflow.push.domain.Message;
@@ -108,7 +108,7 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 	@Autowired
 	private SqlSession sqlSession;
 	@Resource
-	private MessageDAO messageDao;
+	private MessageDao messageDao;
 
 	private MessageMapper msgMapper;
 	private GroupMapper grpMapper;

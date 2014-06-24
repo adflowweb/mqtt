@@ -1,6 +1,6 @@
 package kr.co.adflow.push.dao.impl;
 
-import kr.co.adflow.push.dao.GroupDAO;
+import kr.co.adflow.push.dao.GroupDao;
 import kr.co.adflow.push.domain.Group;
 import kr.co.adflow.push.mapper.GroupMapper;
 
@@ -15,10 +15,10 @@ import org.springframework.stereotype.Component;
  * 
  */
 @Component
-public class GroupDAOImpl implements GroupDAO {
+public class GroupDaoImpl implements GroupDao {
 
 	private static final org.slf4j.Logger logger = LoggerFactory
-			.getLogger(GroupDAOImpl.class);
+			.getLogger(GroupDaoImpl.class);
 	// Autowired를 사용하여 sqlSession을 사용할수 있다.
 	@Autowired
 	private SqlSession sqlSession;

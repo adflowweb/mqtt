@@ -2,7 +2,7 @@ package kr.co.adflow.push.service.impl;
 
 import javax.annotation.Resource;
 
-import kr.co.adflow.push.dao.DeviceDAO;
+import kr.co.adflow.push.dao.DeviceDao;
 import kr.co.adflow.push.domain.Device;
 import kr.co.adflow.push.service.DeviceService;
 
@@ -21,7 +21,7 @@ public class DeviceServiceImpl implements DeviceService {
 			.getLogger(UserServiceImpl.class);
 
 	@Resource
-	DeviceDAO deviceDao;
+	DeviceDao deviceDao;
 
 	@Override
 	public Device get(String deviceID) throws Exception {

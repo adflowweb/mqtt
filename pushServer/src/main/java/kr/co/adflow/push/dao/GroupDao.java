@@ -7,7 +7,7 @@ import kr.co.adflow.push.domain.Group;
  * @date 2014. 4. 14.
  * 
  */
-public interface GroupDAO {
+public interface GroupDao {
 
 	Group[] get(String userID) throws Exception;
 

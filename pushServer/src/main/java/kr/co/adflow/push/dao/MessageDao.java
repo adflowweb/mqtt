@@ -7,7 +7,7 @@ import kr.co.adflow.push.domain.Message;
  * @date 2014. 4. 14.
  * 
  */
-public interface MessageDAO {
+public interface MessageDao {
 	Message get(int msgID) throws Exception;
 
 	int post(Message msg) throws Exception;

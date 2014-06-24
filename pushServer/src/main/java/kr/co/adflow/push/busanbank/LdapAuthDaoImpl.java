@@ -1,4 +1,4 @@
-package kr.co.adflow.ldap;
+package kr.co.adflow.push.busanbank;
 
 import java.util.Hashtable;
 
@@ -11,6 +11,8 @@ import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
+import kr.co.adflow.push.dao.LdapAuthDao;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -20,10 +22,10 @@ import org.springframework.stereotype.Service;
  * @date 2014. 6. 19.
  */
 @Service
-public class LdapAuth {
+public class LdapAuthDaoImpl implements LdapAuthDao {
 
 	private static final Logger logger = LoggerFactory
-			.getLogger(LdapAuth.class);
+			.getLogger(LdapAuthDaoImpl.class);
 
 	private String domain = "adpusan.co.kr";
 	private String ldapUrl = "LDAP://" + domain;
@@ -114,5 +116,48 @@ public class LdapAuth {
 
 		} catch (NamingException e) {
 		}
+	}
+
+	@Override
+	public boolean auth(String userID, String password) throws Exception {
+		logger.debug("auth시작(id=" + userID + ", password=" + password + ")");
+		boolean isAuth = false;
+		DirContext ctx = null;
+
+		Hashtable<String, String> env = new Hashtable<String, String>();
+		env.put(Context.INITIAL_CONTEXT_FACTORY, ldapFactory);
+		env.put(Context.SECURITY_AUTHENTICATION, ldapSecurity);
+		env.put(Context.PROVIDER_URL, ldapUrl);
+		env.put(Context.SECURITY_PRINCIPAL, userID + "@" + domain);
+		env.put(Context.SECURITY_CREDENTIALS, password);
+
+		// ////testCode
+		// Enable connection pooling
+		env.put("com.sun.jndi.ldap.connect.pool", "true");
+		// ////testCodeEnd
+
+		try {
+
+			ctx = new InitialDirContext(env);
+			logger.debug("ctx=" + ctx);
+			isAuth = true;
+			// "Login Success";
+		} catch (Exception e) {
+			logger.error("에러발생", e);
+			isAuth = false;
+		} finally {
+			if (ctx != null) {
+				try {
+					ctx.close();
+				} catch (Exception e) {
+					logger.error("에러발생", e);
+				}
+			}
+		}
+		logger.debug("auth종료(결과=" + isAuth + ")");
+		// return isAuth;
+		// //임시
+		return true;
+		// //임시 end
 	}
 }

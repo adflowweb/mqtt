@@ -2,7 +2,7 @@ package kr.co.adflow.push.service.impl;
 
 import javax.annotation.Resource;
 
-import kr.co.adflow.push.dao.GroupDAO;
+import kr.co.adflow.push.dao.GroupDao;
 import kr.co.adflow.push.domain.Group;
 import kr.co.adflow.push.service.GroupService;
 
@@ -21,7 +21,7 @@ public class GroupServiceImpl implements GroupService {
 			.getLogger(GroupServiceImpl.class);
 
 	@Resource
-	GroupDAO grpDao;
+	GroupDao grpDao;
 
 	@Override
 	public Group[] get(String userID) throws Exception {

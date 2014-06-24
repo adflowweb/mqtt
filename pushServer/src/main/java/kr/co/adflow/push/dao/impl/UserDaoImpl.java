@@ -2,8 +2,8 @@ package kr.co.adflow.push.dao.impl;
 
 import javax.annotation.Resource;
 
-import kr.co.adflow.ldap.LdapAuth;
-import kr.co.adflow.push.dao.UserDAO;
+import kr.co.adflow.push.dao.LdapAuthDao;
+import kr.co.adflow.push.dao.UserDao;
 import kr.co.adflow.push.domain.User;
 import kr.co.adflow.push.mapper.UserMapper;
 
@@ -18,16 +18,16 @@ import org.springframework.stereotype.Repository;
  * 
  */
 @Repository
-public class UserDAOImpl implements UserDAO {
+public class UserDaoImpl implements UserDao {
 
 	private static final org.slf4j.Logger logger = LoggerFactory
-			.getLogger(UserDAOImpl.class);
+			.getLogger(UserDaoImpl.class);
 	// Autowired를 사용하여 sqlSession을 사용할수 있다.
 	@Autowired
 	private SqlSession sqlSession;
 
 	@Resource
-	private LdapAuth ldap;
+	private LdapAuthDao ldap;
 
 	/*
 	 * (non-Javadoc)
@@ -85,7 +85,7 @@ public class UserDAOImpl implements UserDAO {
 		// boolean rst = userMapper.auth(user);
 
 		// ldap 인증
-		boolean rst = ldap.ldapAuth(user.getUserID(), user.getPassword());
+		boolean rst = ldap.auth(user.getUserID(), user.getPassword());
 		logger.debug("auth종료(result=" + rst + ")");
 		return rst;
 	}

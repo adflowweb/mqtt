@@ -2,9 +2,9 @@ package kr.co.adflow.push.service.impl;
 
 import javax.annotation.Resource;
 
-import kr.co.adflow.push.dao.DeviceDAO;
-import kr.co.adflow.push.dao.TokenDAO;
-import kr.co.adflow.push.dao.UserDAO;
+import kr.co.adflow.push.dao.DeviceDao;
+import kr.co.adflow.push.dao.TokenDao;
+import kr.co.adflow.push.dao.UserDao;
 import kr.co.adflow.push.domain.Device;
 import kr.co.adflow.push.domain.Token;
 import kr.co.adflow.push.domain.User;
@@ -27,13 +27,13 @@ public class TokenServiceImpl implements TokenService {
 			.getLogger(TokenServiceImpl.class);
 
 	@Resource
-	TokenDAO tokenDao;
+	TokenDao tokenDao;
 
 	@Resource
-	UserDAO userDao;
+	UserDao userDao;
 
 	@Resource
-	DeviceDAO deviceDao;
+	DeviceDao deviceDao;
 
 	/*
 	 * (non-Javadoc)

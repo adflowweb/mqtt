@@ -7,7 +7,7 @@ import kr.co.adflow.push.domain.Device;
  * @date 2014. 4. 28.
  * 
  */
-public interface DeviceDAO {
+public interface DeviceDao {
 	Device get(String deviceID) throws Exception;
 
 	int post(Device device) throws Exception;

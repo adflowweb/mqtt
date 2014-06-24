@@ -2,7 +2,7 @@ package kr.co.adflow.push.service.impl;
 
 import javax.annotation.Resource;
 
-import kr.co.adflow.push.dao.UserDAO;
+import kr.co.adflow.push.dao.UserDao;
 import kr.co.adflow.push.domain.User;
 import kr.co.adflow.push.service.UserService;
 
@@ -21,7 +21,7 @@ public class UserServiceImpl implements UserService {
 			.getLogger(UserServiceImpl.class);
 
 	@Resource
-	UserDAO userDao;
+	UserDao userDao;
 
 	/*
 	 * (non-Javadoc)

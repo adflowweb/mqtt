@@ -7,7 +7,7 @@ import kr.co.adflow.push.domain.ServerInfo;
  * @date 2014. 4. 14.
  * 
  */
-public interface ServerDAO {
+public interface ServerDao {
 	ServerInfo get() throws Exception;
 
 	void post() throws Exception;

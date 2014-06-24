@@ -7,7 +7,7 @@ import kr.co.adflow.push.domain.User;
  * @date 2014. 4. 14.
  * 
  */
-public interface UserDAO {
+public interface UserDao {
 	User get(String userID) throws Exception;
 
 	int post(User user) throws Exception;

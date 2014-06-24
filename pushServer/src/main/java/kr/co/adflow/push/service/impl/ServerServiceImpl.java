@@ -2,7 +2,7 @@ package kr.co.adflow.push.service.impl;
 
 import javax.annotation.Resource;
 
-import kr.co.adflow.push.dao.ServerDAO;
+import kr.co.adflow.push.dao.ServerDao;
 import kr.co.adflow.push.domain.ServerInfo;
 import kr.co.adflow.push.service.ServerService;
 
@@ -21,7 +21,7 @@ public class ServerServiceImpl implements ServerService {
 			.getLogger(ServerServiceImpl.class);
 
 	@Resource
-	ServerDAO serverDao;
+	ServerDao serverDao;
 
 	@Override
 	public ServerInfo get() throws Exception {
