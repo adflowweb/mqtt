@@ -115,34 +115,42 @@ public class MainActivity extends WLDroidGap {
 				+ ")");
 		super.loadUrl(getWebMainFilePath());
 
-		// /////임시코드
-		final PushDBHelper pushdb = new PushDBHelper(this);
-		pushdb.onUpgrade(pushdb.getWritableDatabase(), 0, 1);
-		final User user = new User();
 		try {
+			// /////임시코드
+			final PushDBHelper pushdb = new PushDBHelper(this);
+			// pushdb.onUpgrade(pushdb.getWritableDatabase(), 0, 1);
+			User chanUser = pushdb.getUser("chan");
+			Log.d(TAG, "chanUser" + chanUser);
 
-			user.setUserID("nadir93");
-			user.setPassword("passw0rd");
-			user.setTokenID("08be01ba2e1f4e2e8216725");
-			user.setCurrentUser(true);
-			pushdb.addUser(user);
-			Log.d(TAG, "임시유저가등록되었습니다. user=" + user);
+			if (chanUser == null) {
+				try {
+					User user = new User();
+					user.setUserID("chan");
+					// user.setPassword("passw0rd");
+					// user.setTokenID("08be01ba2e1f4e2e8216725");
+					user.setTokenID("chantest");
+					user.setCurrentUser(true);
+					pushdb.addUser(user);
+					Log.d(TAG, "임시유저가등록되었습니다. user=" + user);
+				} catch (Exception e) {
+					Log.e(TAG, "예외상황발생", e);
+				}
+			}
 
+			// 알람설정
+			Log.d(TAG, "헬스체크알람을설정합니다.");
+			AlarmManager service = (AlarmManager) this
+					.getSystemService(Context.ALARM_SERVICE);
+			Intent i = new Intent(this, PushBroadcastReceiver.class);
+			i.setAction("kr.co.adflow.action.healthCheck");
+			PendingIntent pending = PendingIntent.getBroadcast(this, 0, i,
+					PendingIntent.FLAG_CANCEL_CURRENT);
+			service.setInexactRepeating(AlarmManager.RTC_WAKEUP, 0,
+					1000 * PushHandler.alarmInterval, pending);
+			Log.d(TAG, "헬스체크알람이설정되었습니다");
 		} catch (Exception e) {
-			Log.e(TAG, "예외상황발생", e);
+			Log.e(DEBUGTAG, "에러발생", e);
 		}
-
-		// 알람설정
-		Log.d(TAG, "헬스체크알람을설정합니다.");
-		AlarmManager service = (AlarmManager) this
-				.getSystemService(Context.ALARM_SERVICE);
-		Intent i = new Intent(this, PushBroadcastReceiver.class);
-		i.setAction("kr.co.adflow.action.healthCheck");
-		PendingIntent pending = PendingIntent.getBroadcast(this, 0, i,
-				PendingIntent.FLAG_CANCEL_CURRENT);
-		service.setInexactRepeating(AlarmManager.RTC_WAKEUP, 0,
-				1000 * PushHandler.alarmInterval, pending);
-		Log.d(TAG, "헬스체크알람이설정되었습니다");
 
 		// /////임시코드종료
 		Log.d(DEBUGTAG, "onWLInitCompleted종료()");

@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.CursorIndexOutOfBoundsException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -142,29 +143,39 @@ public class PushDBHelper extends SQLiteOpenHelper {
 	 */
 	public User getUser(String userid) {
 		Log.d(TAG, "getUser시작(userid=" + userid + ")");
-		// 1. get reference to readable DB
-		SQLiteDatabase db = this.getReadableDatabase();
-		// 2. build query
-		Cursor cursor = db.query(TABLE_USER, // a. table
-				USER_COLUMNS, // b. column names
-				" userid = ?", // c. selections
-				new String[] { userid }, // d. selections args
-				null, // e. group by
-				null, // f. having
-				null, // g. order by
-				null); // h. limit
-		// 3. if we got results get the first one
-		if (cursor != null)
-			cursor.moveToFirst();
-		// 4. build book object
-		User user = new User();
-		user.setUserID(cursor.getString(0));
-		user.setPassword(cursor.getString(1));
-		user.setTokenID(cursor.getString(2));
-		user.setCurrentUser(cursor.getInt(3) != 0);
-		// log
-		Log.d(TAG, "getUser종료(user=" + user + ")");
-		// 5. return user
+		User user = null;
+		try {
+			// 1. get reference to readable DB
+			SQLiteDatabase db = this.getReadableDatabase();
+			// 2. build query
+			Cursor cursor = db.query(TABLE_USER, // a. table
+					USER_COLUMNS, // b. column names
+					" userid = ?", // c. selections
+					new String[] { userid }, // d. selections args
+					null, // e. group by
+					null, // f. having
+					null, // g. order by
+					null); // h. limit
+
+			Log.d(TAG, "rowCount=" + cursor.getCount());
+			if (cursor.getCount() == 0) {
+				return null;
+			}
+			// 3. if we got results get the first one
+			if (cursor != null)
+				cursor.moveToFirst();
+			// 4. build book object
+			user = new User();
+			user.setUserID(cursor.getString(0));
+			user.setPassword(cursor.getString(1));
+			user.setTokenID(cursor.getString(2));
+			user.setCurrentUser(cursor.getInt(3) != 0);
+			// log
+			Log.d(TAG, "getUser종료(user=" + user + ")");
+			// 5. return user
+		} catch (CursorIndexOutOfBoundsException e) {
+			Log.e(TAG, "에러발생", e);
+		}
 		return user;
 	}
 
@@ -174,29 +185,39 @@ public class PushDBHelper extends SQLiteOpenHelper {
 	 */
 	public User getCurrentUser() throws Exception {
 		Log.d(TAG, "getCurrentUser시작()");
-		// 1. get reference to readable DB
-		SQLiteDatabase db = this.getReadableDatabase();
-		// 2. build query
-		Cursor cursor = db.query(TABLE_USER, // a. table
-				USER_COLUMNS, // b. column names
-				" currentuser = ?", // c. selections
-				new String[] { "1" }, // d. selections args
-				null, // e. group by
-				null, // f. having
-				null, // g. order by
-				null); // h. limit
-		// 3. if we got results get the first one
-		if (cursor != null)
-			cursor.moveToFirst();
+		User user = null;
+		try {
+			// 1. get reference to readable DB
+			SQLiteDatabase db = this.getReadableDatabase();
+			// 2. build query
+			Cursor cursor = db.query(TABLE_USER, // a. table
+					USER_COLUMNS, // b. column names
+					" currentuser = ?", // c. selections
+					new String[] { "1" }, // d. selections args
+					null, // e. group by
+					null, // f. having
+					null, // g. order by
+					null); // h. limit
+			Log.d(TAG, "rowCount=" + cursor.getCount());
+			if (cursor.getCount() == 0) {
+				return null;
+			}
+			// 3. if we got results get the first one
+			if (cursor != null)
+				cursor.moveToFirst();
 
-		// 4. build book object
-		User user = new User();
-		user.setUserID(cursor.getString(0));
-		user.setPassword(cursor.getString(1));
-		user.setTokenID(cursor.getString(2));
-		user.setCurrentUser(cursor.getInt(3) != 0);
-		// log
-		Log.d(TAG, "getCurrentUser종료(user=" + user + ")");
+			// 4. build book object
+			user = new User();
+			user.setUserID(cursor.getString(0));
+			user.setPassword(cursor.getString(1));
+			user.setTokenID(cursor.getString(2));
+			user.setCurrentUser(cursor.getInt(3) != 0);
+			// log
+			Log.d(TAG, "getCurrentUser종료(user=" + user + ")");
+
+		} catch (CursorIndexOutOfBoundsException e) {
+			Log.e(TAG, "에러발생", e);
+		}
 		// 5. return user
 		return user;
 	}
