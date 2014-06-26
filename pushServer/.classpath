@@ -25,6 +25,5 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/Users/nadir93/Doc/Digital/Dev/apache-tomcat-7.0.42/lib/sigar.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
