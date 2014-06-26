@@ -143,8 +143,8 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 		logger.info("mqttService초기화시작()");
 		setMqttClientLog();
 		healthCheckLooper = Executors.newScheduledThreadPool(1);
-		healthCheckLooper.scheduleWithFixedDelay(this, 0, healthCheckInterval,
-				TimeUnit.SECONDS);
+		// testCode
+		healthCheckLooper.scheduleWithFixedDelay(this, 0, 60, TimeUnit.SECONDS);
 
 		logger.info("healthCheckLooper가시작되었습니다.");
 		mOpts = makeMqttOpts();
