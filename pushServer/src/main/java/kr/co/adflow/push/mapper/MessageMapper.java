@@ -14,6 +14,8 @@ public interface MessageMapper {
 
 	List<Message> getUndeliveredMsg() throws Exception;
 
+	List<Message> getUndeliveredSmsMsg() throws Exception;
+
 	// int getID(Message msg) throws Exception;
 
 	int postMsg(Message msg) throws Exception;
@@ -29,4 +31,7 @@ public interface MessageMapper {
 	int postContent(Message msg) throws Exception;
 
 	int putContent(Message msg) throws Exception;
+
+	int putIssueSms(Message msg) throws Exception;
+
 }

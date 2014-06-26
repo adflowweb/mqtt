@@ -190,7 +190,7 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 		try {
 			// mqtt connection 헬스체크
 			healthCheck();
-			// 모니터링용 메시지 처리건수 계산
+			// 모니터링용 수신 메시지 처리건수 계산
 			generateTPS();
 		} catch (Exception e) {
 			errorMsg = e.toString();
@@ -365,9 +365,11 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 			throws Exception {
 		logger.debug("messageArrived시작(topic=" + topic + ",message=" + message
 				+ ",qos=" + message.getQos() + ")");
+		// 수신 tps 계산용
 		reqCnt++;
 
 		if (topic.equals("/push/ack")) {
+			logger.debug("ack메시지가수신되었습니다.");
 			try {
 				// db insert ack
 				// convert json string to object
@@ -379,6 +381,7 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 				logger.error("에러발생", e);
 			}
 		} else if (topic.equals("/push/group")) {
+			logger.debug("그룹정보요청메시지가수신되었습니다.");
 			// db select group info
 			// convert json string to object
 			User user = objectMapper
@@ -407,7 +410,9 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 			msg.setContent(content.toString());
 			logger.debug("msg=" + msg);
 			messageDao.post(msg);
-			logger.debug("그룹동기화메시지를등록하였습니다.");
+			logger.debug("그룹정보메시지를등록하였습니다.");
+		} else if (topic.equals("/push/poll")) {
+			// 설문조사용
 		} else {
 			logger.error("적절한토픽처리자가없습니다.");
 		}

@@ -118,6 +118,12 @@ public class LdapAuthDaoImpl implements LdapAuthDao {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see kr.co.adflow.push.dao.LdapAuthDao#auth(java.lang.String,
+	 * java.lang.String)
+	 */
 	@Override
 	public boolean auth(String userID, String password) throws Exception {
 		logger.debug("auth시작(id=" + userID + ", password=" + password + ")");

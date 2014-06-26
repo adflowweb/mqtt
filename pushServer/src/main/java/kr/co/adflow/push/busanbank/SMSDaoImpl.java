@@ -58,13 +58,17 @@ public class SMSDaoImpl implements SMSDao {
 	private static final String B_TYPE = "S"; // (BODY)송,수신 타입 S : 송신 , R : 수신
 	private static final String B_VERSION = ""; // (BODY)버전명
 
+	// ACK PARAM
+	private static final String BIND_ACK = "1001";
+	private static final String RESULT_SUCCESS = "0000";
+	private static final int BIND_ACK_LENGTH = 66;
+	private static final int DELIVERY_SMS_LENGTH = 347;
+	private static final int ALIVE_ACK_LENGTH = 38;
+
 	private static final String ENCODING_TYPE = "EUC-KR";
-
 	private static final int RECEIVERPORT = 3000;
-
 	private static final String SERVER_IP = "127.0.0.1";
-
-	private static final int PORT = 3000;
+	private static final int PORT = 4000;
 
 	private int sendChannelInterval = Integer.parseInt(prop
 			.getProperty("sendChannel.process.interval"));
@@ -87,7 +91,7 @@ public class SMSDaoImpl implements SMSDao {
 	public void initIt() throws Exception {
 		logger.info("SMSDAOImpl초기화시작()");
 		sendChannel = Executors.newScheduledThreadPool(1);
-		sendChannel.scheduleWithFixedDelay(new SendChannelHandler(), 10,
+		sendChannel.scheduleWithFixedDelay(new SendChannelHandler(), 0,
 				sendChannelInterval, TimeUnit.SECONDS);
 		logger.info("sendChannel핸들러가시작되었습니다.");
 		recvChannel = Executors.newScheduledThreadPool(1);
@@ -130,7 +134,8 @@ public class SMSDaoImpl implements SMSDao {
 	 * @see kr.co.adflow.push.dao.SMSDAO#post()
 	 */
 	@Override
-	public void post() throws Exception {
+	public void post(String msg) throws Exception {
+		sender.sendMsg(msg);
 	}
 
 	/**
@@ -161,92 +166,6 @@ public class SMSDaoImpl implements SMSDao {
 	}
 
 	/**
-	 * @author nadir93
-	 * @date 2014. 6. 24.
-	 */
-	class Sender extends Thread {
-
-		private Socket socket;
-		private BufferedInputStream bis;
-		private BufferedOutputStream bos;
-
-		public Sender(Socket socket) throws Exception {
-			logger.debug("Sender생성자시작(socket=" + socket + ")");
-			this.socket = socket;
-			bis = new BufferedInputStream(socket.getInputStream());
-			bos = new BufferedOutputStream(socket.getOutputStream());
-
-			// 기간계 시스템은 tcp/ip connect 성공즉시 bind 요청을 수행하여야 한다.
-			// bind 요청은 최초 connect 접속시 한번만 수행하면 된다.
-			setBindServerData(bos);
-			bos.flush();
-			logger.debug("bind메시지가전송되었습니다.");
-			logger.debug("Sender생성자종료(this=" + this + ")");
-		}
-
-		public void sendPING() throws Exception {
-			logger.debug("sendPING시작(샌더)");
-			try {
-				// healthCheck
-				logger.debug("socket=" + socket);
-				if (socket.isConnected()) {
-					setAliveServerData(bos);
-					bos.flush();
-					logger.debug("AliveCheck메시지를전송하였습니다.");
-				}
-			} catch (Exception e) {
-				logger.error("에러발생", e);
-				cleanup();
-			}
-			logger.debug("sendPING종료(샌더)");
-		}
-
-		@Override
-		public void run() {
-			try {
-				while (true) {
-					logger.debug("SenderRun시작(블락킹...)");
-
-					byte[] bindAck = new byte[357];
-					bis.read(bindAck);
-					String msg = new String(bindAck);
-					logger.debug("받은메시지(샌더)=" + msg);
-					if (!msg.trim().equals("")) {
-						// 내용이 있으면 메시지로
-						// new DeliverySMS(msg).start();
-					} else {
-						// 내용이 없으면 소켓 강제로 닫고 다시 시작..
-						logger.error("데이타가존재하지않습니다.");
-						throw new Exception("데이타가존재하지않습니다.");
-					}
-					logger.debug("SenderRun종료()");
-				}
-			} catch (Exception e) {
-				logger.error("에러발생", e);
-				cleanup();
-			}
-		}
-
-		/**
-		 * send소켓종료
-		 */
-		private void cleanup() {
-			logger.debug("cleanup시작()");
-			try {
-				logger.debug("socket=" + socket);
-				if (socket != null && socket.isConnected()) {
-					socket.close();
-					logger.debug("socket을종료하였습니다.");
-				}
-				sender = null;
-			} catch (Exception ex) {
-				logger.error("에러발생", ex);
-			}
-			logger.debug("cleanup종료()");
-		}
-	}
-
-	/**
 	 * socket blocking
 	 * 
 	 * @throws Exception
@@ -262,9 +181,143 @@ public class SMSDaoImpl implements SMSDao {
 		Socket socket = new Socket(SERVER_IP, PORT);
 		logger.debug("소켓이연결되었습니다.socket=" + socket);
 		sender = new Sender(socket);
-		sender.start();
+		sender.connect();
+		// sender.start();
 		logger.debug("샌더가시작되었습니다. sender=" + sender);
 		logger.debug("initSender종료()");
+	}
+
+	/**
+	 * @author nadir93
+	 * @date 2014. 6. 24.
+	 */
+	class Sender {
+
+		private Socket socket;
+		private BufferedInputStream bis;
+		private BufferedOutputStream bos;
+		private boolean available = false;
+
+		public Sender(Socket socket) throws Exception {
+			logger.debug("Sender생성자시작(socket=" + socket + ")");
+			this.socket = socket;
+			bis = new BufferedInputStream(socket.getInputStream());
+			bos = new BufferedOutputStream(socket.getOutputStream());
+
+			// 기간계 시스템은 tcp/ip connect 성공즉시 bind 요청을 수행하여야 한다.
+			// bind 요청은 최초 connect 접속시 한번만 수행하면 된다.
+			setBindServerData(bos);
+			bos.flush();
+			logger.debug("bind메시지가전송되었습니다.");
+			logger.debug("Sender생성자종료(this=" + this + ")");
+		}
+
+		public synchronized void sendPING() throws Exception {
+			logger.debug("sendPING시작(샌더)");
+			try {
+				// healthCheck
+				logger.debug("socket=" + socket);
+				if (socket.isConnected()) {
+					setAliveServerData(bos);
+					bos.flush();
+					logger.debug("AliveCheck메시지를전송하였습니다.");
+					byte[] aliveAck = new byte[ALIVE_ACK_LENGTH];
+					bis.read(aliveAck);
+					String aliveAckString = new String(aliveAck);
+					logger.debug("에크메시지=" + aliveAckString);
+				}
+			} catch (Exception e) {
+				logger.error("에러발생", e);
+				cleanup();
+			}
+			logger.debug("sendPING종료(샌더)");
+		}
+
+		/**
+		 * @param msg
+		 * @throws Exception
+		 */
+		public synchronized void sendMsg(String msg) throws Exception {
+			logger.debug("sendMsg시작(msg=" + msg + ")");
+			try {
+				if (sender == null || !sender.isAvailable()) {
+					throw new Exception("메시지를보낼수없습니다.");
+				}
+
+				byte[] DATA = new byte[357];
+				setData(DATA, msg);
+				bos.write(DATA);
+				bos.flush();
+				logger.debug("메시지를전송하였습니다.DATA=" + new String(DATA));
+				byte[] deliveryAck = new byte[DELIVERY_SMS_LENGTH];
+				bis.read(deliveryAck);
+				String deliveryAckString = new String(deliveryAck);
+				logger.debug("딜리버리에크메시지=" + deliveryAckString);
+			} catch (Exception e) {
+				logger.error("에러발생", e);
+				cleanup();
+				throw e;
+			}
+			logger.debug("sendMsg종료()");
+		}
+
+		/**
+		 * 
+		 */
+		public synchronized void connect() {
+			try {
+				logger.debug("SenderRun시작(블락킹...)");
+				byte[] bindAck = new byte[BIND_ACK_LENGTH];
+				bis.read(bindAck);
+				String bindAckString = new String(bindAck);
+				logger.debug("bindAckString=" + bindAckString);
+				if (bindAckString.length() >= BIND_ACK_LENGTH) {
+					String msgtype = "";
+					msgtype = bindAckString.subSequence(10, 14).toString();
+					logger.debug("msgtype=" + msgtype);
+
+					if (BIND_ACK.equals(msgtype)) {
+						String result = bindAckString.subSequence(14, 18)
+								.toString();
+						logger.debug("result=" + result);
+						if (RESULT_SUCCESS.equals(result)) {
+							available = true;
+							logger.debug("소켓이이용가능하게되었습니다.");
+						} else {
+							throw new Exception("바인드실패로인한종료");
+						}
+					} else {
+						throw new Exception("바인드ACK가아님소켓종료");
+					}
+				}
+				logger.debug("SenderRun종료()");
+			} catch (Exception e) {
+				logger.error("에러발생", e);
+				cleanup();
+			}
+		}
+
+		/**
+		 * send소켓종료
+		 */
+		private synchronized void cleanup() {
+			logger.debug("cleanup시작()");
+			try {
+				logger.debug("socket=" + socket);
+				if (socket != null && socket.isConnected()) {
+					socket.close();
+					logger.debug("socket을종료하였습니다.");
+				}
+				sender = null;
+			} catch (Exception ex) {
+				logger.error("에러발생", ex);
+			}
+			logger.debug("cleanup종료()");
+		}
+
+		public boolean isAvailable() {
+			return available && socket.isConnected();
+		}
 
 	}
 

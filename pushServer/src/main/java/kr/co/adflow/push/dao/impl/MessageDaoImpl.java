@@ -1,6 +1,8 @@
 package kr.co.adflow.push.dao.impl;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -12,6 +14,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 
+import kr.co.adflow.push.busanbank.SMSDao;
 import kr.co.adflow.push.dao.MessageDao;
 import kr.co.adflow.push.domain.Message;
 import kr.co.adflow.push.mapper.MessageMapper;
@@ -33,6 +36,9 @@ public class MessageDaoImpl implements MessageDao {
 	private static final org.slf4j.Logger logger = LoggerFactory
 			.getLogger(MessageDaoImpl.class);
 
+	private static SimpleDateFormat sdf = new java.text.SimpleDateFormat(
+			"yyyy-MM-dd HH:mm:ss");
+
 	private static final String CONFIG_PROPERTIES = "/config.properties";
 
 	private static Properties prop = new Properties();
@@ -52,6 +58,9 @@ public class MessageDaoImpl implements MessageDao {
 
 	@Autowired
 	private SqlSession sqlSession;
+
+	@Autowired
+	private SMSDao smsDao;
 
 	private ScheduledExecutorService smsLooper;
 	private ScheduledExecutorService messageLooper;
@@ -212,6 +221,8 @@ public class MessageDaoImpl implements MessageDao {
 			Message message = msgMapper.get(msg.getId());
 			mqttService.publish(message);
 			logger.debug("메시지를전송하였습니다.");
+			// 모니터링용 송신 메시지 처리건수 계산 추가해야함
+
 			// 전송후 db(issue) update
 			msg.setIssue(new Date());
 			msgMapper.putIssue(msg);
@@ -238,7 +249,49 @@ public class MessageDaoImpl implements MessageDao {
 			// db query select sms
 			// send sms
 			// db update
+
+			try {
+				MessageMapper msgMapper = sqlSession
+						.getMapper(MessageMapper.class);
+				List<Message> list = (List<Message>) msgMapper
+						.getUndeliveredSmsMsg();
+				for (Message msg : list) {
+					logger.debug("msg=" + msg);
+
+					Calendar cal = Calendar.getInstance();
+					cal.setTime(msg.getIssue());
+					cal.add(cal.MINUTE, msg.getTimeOut()); // 2분뒤
+					Date timeOut = cal.getTime();
+					logger.debug("timeOut=" + timeOut);
+					// 발송시간(issue)과 현재시간 그리고 timeOut을 계산하여 대상선정
+					if (timeOut.before(new Date())) {
+						// SMS발송대상인 경우
+						logger.debug("SMS전송대상입니다.");
+						// smsDao.post(msg.getContent());
+						sendSMS(msgMapper, msg);
+						// 개별메시지
+						// 그룹메시지
+						// 전체메시지 처리 요망
+					}
+				}
+
+			} catch (Exception e) {
+				logger.error("에러발생", e);
+			}
 			logger.debug("SMS핸들러처리종료()");
+		}
+
+		private void sendSMS(MessageMapper msgMapper, Message msg)
+				throws Exception {
+			logger.debug("sendSMS시작()");
+			Message message = msgMapper.get(msg.getId());
+			smsDao.post(message.getContent());
+			// mqttService.publish(message);
+			logger.debug("SMS메시지를전송하였습니다.");
+			// 전송후 db(issueSms) update
+			msg.setIssueSms(new Date());
+			msgMapper.putIssueSms(msg);
+			logger.debug("전송시간정보를업데이트했습니다.");
 		}
 	}
 }

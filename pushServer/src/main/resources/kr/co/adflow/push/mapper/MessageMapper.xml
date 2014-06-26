@@ -31,6 +31,16 @@
 		<!-- and reservation is not null -->
 	</select>
 
+	<select id="getUndeliveredSmsMsg" resultMap="MessageResult">
+		select * from message
+		where
+		sms = 1 and issue is not null and issueSms
+		is null and type = 0
+		<!-- and reservation is not null -->
+	</select>
+
+
+
 	<!-- <select id="getID" resultType="java.lang.Integer" parameterType="kr.co.adflow.push.domain.Message"> 
 		SELECT id FROM message WHERE sender= #{sender} and receiver= #{receiver} 
 		and insertDate = #{insertDate} // order by id desc limit 1 </select> -->
@@ -66,6 +76,12 @@
 		UPDATE message set
 		issue =
 		#{issue} where id = #{id}
+	</update>
+
+	<update id="putIssueSms" parameterType="kr.co.adflow.push.domain.Message">
+		UPDATE message set
+		issueSms =
+		#{issueSms} where id = #{id}
 	</update>
 
 	<insert id="putContent" parameterType="kr.co.adflow.push.domain.Message">

@@ -6,6 +6,6 @@ package kr.co.adflow.push.busanbank;
  */
 public interface SMSDao {
 
-	void post() throws Exception;
+	void post(String msg) throws Exception;
 
 }
