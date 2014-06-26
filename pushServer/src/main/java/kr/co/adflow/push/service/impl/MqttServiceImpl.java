@@ -290,7 +290,8 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 			final SSLSocketFactory sslSocketFactory = sslContext
 					.getSocketFactory();
 
-			mOpts.setSocketFactory(sslSocketFactory);
+			// testCode
+			// mOpts.setSocketFactory(sslSocketFactory);
 		} catch (Exception e) {
 			logger.error("에러발생", e);
 		}
@@ -306,6 +307,8 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 		logger.debug("connect시작()");
 		logger.debug("serverURL=" + SERVERURL);
 		logger.debug("clientID=" + CLIENTID);
+
+		// testCode
 		mqttClient = new MqttClient(SERVERURL, CLIENTID,
 				new MemoryPersistence());
 		logger.debug("mqttClient인스턴스가생성되었습니다.::" + mqttClient);
