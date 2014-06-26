@@ -42,6 +42,7 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -142,8 +143,8 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 		logger.info("mqttService초기화시작()");
 		setMqttClientLog();
 		healthCheckLooper = Executors.newScheduledThreadPool(1);
-		// testCode 초를 60초로 픽스
-		healthCheckLooper.scheduleWithFixedDelay(this, 0, 60, TimeUnit.SECONDS);
+		healthCheckLooper.scheduleWithFixedDelay(this, 0, healthCheckInterval,
+				TimeUnit.SECONDS);
 
 		logger.info("healthCheckLooper가시작되었습니다.");
 		mOpts = makeMqttOpts();
@@ -304,7 +305,8 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 		logger.debug("connect시작()");
 		logger.debug("serverURL=" + SERVERURL);
 		logger.debug("clientID=" + CLIENTID);
-		mqttClient = new MqttClient(SERVERURL, CLIENTID);
+		mqttClient = new MqttClient(SERVERURL, CLIENTID,
+				new MemoryPersistence());
 		logger.debug("mqttClient인스턴스가생성되었습니다.::" + mqttClient);
 		mqttClient.setCallback(this);
 		mqttClient.connect(mOpts);
