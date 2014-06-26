@@ -78,13 +78,13 @@ public class MessageDaoImpl implements MessageDao {
 	@PostConstruct
 	public void initIt() throws Exception {
 		logger.info("MessageDAOImpl초기화시작()");
-		messageLooper = Executors.newScheduledThreadPool(1);
-		messageLooper.scheduleWithFixedDelay(new MessageHandler(),
-				messageInterval, messageInterval, TimeUnit.SECONDS);
-		logger.info("메시지핸들러가시작되었습니다.");
-		smsLooper = Executors.newScheduledThreadPool(1);
-		smsLooper.scheduleWithFixedDelay(new SMSHandler(), smsInterval,
-				smsInterval, TimeUnit.SECONDS);
+		// messageLooper = Executors.newScheduledThreadPool(1);
+		// messageLooper.scheduleWithFixedDelay(new MessageHandler(),
+		// messageInterval, messageInterval, TimeUnit.SECONDS);
+		// logger.info("메시지핸들러가시작되었습니다.");
+		// smsLooper = Executors.newScheduledThreadPool(1);
+		// smsLooper.scheduleWithFixedDelay(new SMSHandler(), smsInterval,
+		// smsInterval, TimeUnit.SECONDS);
 		logger.info("SMS핸들러가시작되었습니다.");
 		logger.info("MessageDAOImpl초기화종료()");
 	}
@@ -97,10 +97,10 @@ public class MessageDaoImpl implements MessageDao {
 	@PreDestroy
 	public void cleanUp() throws Exception {
 		logger.info("cleanUp시작()");
-		messageLooper.shutdown();
-		logger.info("메시지핸들러가종료되었습니다.");
-		smsLooper.shutdown();
-		logger.info("SMS핸들러가종료되었습니다.");
+		// messageLooper.shutdown();
+		// logger.info("메시지핸들러가종료되었습니다.");
+		// smsLooper.shutdown();
+		// logger.info("SMS핸들러가종료되었습니다.");
 		logger.info("cleanUp종료()");
 	}
 
