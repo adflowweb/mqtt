@@ -32,6 +32,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
 	private static final String TABLE_USER = "user";
 	private static final String TABLE_MESSAGE = "message";
 	private static final String TABLE_JOB = "job";
+	private static final String TABLE_TOPIC = "topic";
 	// user Table Columns names
 	private static final String USER_ID = "userid";
 	private static final String PASSWORD = "password";
@@ -44,6 +45,8 @@ public class PushDBHelper extends SQLiteOpenHelper {
 
 	private static final String[] JOB_COLUMNS = { "id", "type", "topic",
 			"content" };
+	private static final String[] TOPIC_COLUMNS = { "userid", "topic",
+			"subscribe" };
 
 	// create table message ( id int unsigned not null auto_increment, sender
 	// varchar(50), receiver varchar(50), issue datetime, issueSms datetime, sms
@@ -80,10 +83,15 @@ public class PushDBHelper extends SQLiteOpenHelper {
 		// create message table
 		db.execSQL(CREATE_MESSAGE_TABLE);
 
-		String CREATE_REQUEST_TABLE = "CREATE TABLE job ( "
+		String CREATE_JOB_TABLE = "CREATE TABLE job ( "
 				+ "id INTEGER PRIMARY KEY AUTOINCREMENT, type INTEGER, topic TEXT, content TEXT)";
-		// create request table
-		db.execSQL(CREATE_REQUEST_TABLE);
+		// create job table
+		db.execSQL(CREATE_JOB_TABLE);
+
+		String CREATE_TOPIC_TABLE = "CREATE TABLE topic ( "
+				+ "userid TEXT, topic TEXT, subscribe INTEGER, PRIMARY KEY(userid, topic))";
+		// create topic table
+		db.execSQL(CREATE_TOPIC_TABLE);
 
 		Log.d(TAG, "onCreate종료()");
 	}
@@ -519,4 +527,100 @@ public class PushDBHelper extends SQLiteOpenHelper {
 		return msg;
 	}
 
+	/**
+	 * 
+	 */
+	public Topic[] getTopic(String userid) throws Exception {
+		Log.d(TAG, "getTopic시작(userid=" + userid + ")");
+		// 1. get reference to readable DB
+		SQLiteDatabase db = this.getReadableDatabase();
+		// 2. build query
+		Cursor cursor = db.query(TABLE_TOPIC, // a. table
+				TOPIC_COLUMNS, // b. column names
+				"userid = ?", // c. selections
+				new String[] { String.valueOf(userid) }, // d. selections args
+				null, // e. group by
+				null, // f. having
+				null, // g. order by
+				null); // h. limit
+		// 3. if we got results get the first one
+		if (cursor != null)
+			cursor.moveToFirst();
+
+		int count = cursor.getCount();
+		Log.d(TAG, "토픽레코드카운트=" + count);
+
+		if (count == 0) {
+			Log.d(TAG, "getTopic종료(topic=null)");
+			return null;
+		}
+
+		Topic[] topic = new Topic[count];
+
+		int i = 0;
+		while (cursor.isAfterLast() == false) {
+			// 4. build Topic object
+			topic[i] = new Topic();
+			topic[i].setUserid(cursor.getString(0));
+			topic[i].setTopic(cursor.getString(1));
+			topic[i].setSubscribe(cursor.getInt(2) != 0);
+
+			Log.d(TAG, "topic[" + i + "]=" + topic[i]);
+			i++;
+			cursor.moveToNext();
+		}
+
+		// log
+		Log.d(TAG, "getTopic종료(topic=" + topic + ")");
+		// 5. return user
+		return topic;
+	}
+
+	/**
+	 * @param userID
+	 * @param topic
+	 */
+	public void deleteTopic(String userID, String topic) throws Exception {
+		Log.d(TAG, "deleteTopic시작(userID=" + userID + ", topic=" + topic + ")");
+		// 1. get reference to writable DB
+		SQLiteDatabase db = this.getWritableDatabase();
+		// 2. delete
+		db.delete(TABLE_TOPIC, // table name
+				" userid = ? and topic = ?", // selections
+				new String[] { userID, topic }); // selections
+													// args
+		// 3. close
+		db.close();
+		// log
+		Log.d(TAG, "deleteTopic종료()");
+
+	}
+
+	/**
+	 * @param userID
+	 * @param topic
+	 * @param i
+	 */
+	public void addTopic(String userID, String topic, int subscribe)
+			throws Exception {
+		Log.d(TAG, "addTopic시작(userID=" + userID + ", topic=" + topic + ")");
+
+		// 1. get reference to writable DB
+		SQLiteDatabase db = this.getWritableDatabase();
+
+		// 2. create ContentValues to add key "column"/value
+		ContentValues values = new ContentValues();
+		values.put("userid", userID);
+		values.put("topic", topic);
+		values.put("subscribe", subscribe);
+
+		// 3. insert
+		db.insertOrThrow(TABLE_TOPIC, // table
+				null, // nullColumnHack
+				values);
+
+		// 4. close
+		db.close();
+		Log.d(TAG, "addTopic종료()");
+	}
 }

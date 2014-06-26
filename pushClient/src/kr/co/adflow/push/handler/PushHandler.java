@@ -8,8 +8,8 @@ import java.util.logging.SimpleFormatter;
 
 import kr.co.adflow.service.PushService;
 import kr.co.adflow.sqlite.Job;
-import kr.co.adflow.sqlite.Message;
 import kr.co.adflow.sqlite.PushDBHelper;
+import kr.co.adflow.sqlite.Topic;
 import kr.co.adflow.sqlite.User;
 import kr.co.adflow.ssl.ADFSSLSocketFactory;
 
@@ -20,6 +20,7 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -38,9 +39,12 @@ public class PushHandler implements MqttCallback {
 	public static final String TAG = "푸시핸들러";
 	// public static final int alarmInterval = 240; // 4분
 	public static final int alarmInterval = 60; // 1분 for debug
-	private static final String SERVERURL = "ssl://adflow.net:8883";
+	// private static final String SERVERURL = "ssl://adflow.net:8883";
+	private static final String SERVERURL = "ssl://adflow.net";
 	private static final String MQTT_PACKAGE = "org.eclipse.paho.client.mqttv3";
 	private static final int connectionTimeout = 10; // second
+	// private static final int connectionTimeout = 5; // second
+	// private static final int connectionTimeout = 2; // second
 	private static final int keepAliveInterval = 480; // second 현재의미없음
 	private static final boolean cleanSession = false;
 	private static final boolean clientSessionLog = false;
@@ -99,7 +103,7 @@ public class PushHandler implements MqttCallback {
 		Log.d(TAG, "deliveryComplete시작(토큰=" + tk + ")");
 		try {
 			if (token != null && token.equals(tk)) {
-				// ping message 일때만 웨이크랑 해
+				// ping message 일때만 웨이크락 해재
 				Log.d(TAG, "웨이크락=" + PushService.getWakeLock());
 				if (PushService.getWakeLock() != null
 						&& PushService.getWakeLock().isHeld()) {
@@ -175,9 +179,20 @@ public class PushHandler implements MqttCallback {
 				break;
 			case 1:
 				// command msg
+				// 그룹정보변경 (전체토픽을 구독취소하고 다시 전체토픽구독)
 				// (토픽=/users/nadir93,메시지={"id":5,"ack":false,"type":1,"content":{"userID":"nadir93","groups":["dev","adflow"]}},qos=2)
 
+				// 기존토픽 unsubcribe
+				// 기존토픽 가져오기
+				Topic[] tp = pushdb.getTopic(userID);
+				if (tp != null) {
+					for (int i = 0; i < tp.length; i++) {
+						pushdb.addJob(Job.UNSUBSCRIBE, tp[i].getTopic(), null);
+					}
+				}
+
 				JSONArray array = content.getJSONArray("groups");
+
 				for (int i = 0; i < array.length(); i++) {
 					pushdb.addJob(Job.SUBSCRIBE,
 							"/groups/" + array.getString(i), null);
@@ -249,8 +264,12 @@ public class PushHandler implements MqttCallback {
 				// 그룹정보동기화요청 (여기서 동기화 요청을 해야하나??? 아님 디비인서트 ???)
 				// 최초로그인시 한번만 요청하도록 변경하여야함
 				String grpReqMsg = "{\"userID\":\"" + userID + "\"}";
-				client.publish("/push/group", grpReqMsg.getBytes(), 2, false);
-				Log.d(TAG, "그룹정보요청메시지를전송하였습니다. 메시지=" + grpReqMsg);
+				Topic[] topic = pushdb.getTopic(userID);
+				if (topic == null) {
+					client.publish("/push/group", grpReqMsg.getBytes(), 2,
+							false);
+					Log.d(TAG, "그룹정보요청메시지를전송하였습니다. 메시지=" + grpReqMsg);
+				}
 			} else {
 				// Log.d(TAG, "현재연결시도중이거나연결되어있는토큰=" + client.getClientId());
 				Log.d(TAG, "client연결상태="
@@ -268,37 +287,8 @@ public class PushHandler implements MqttCallback {
 			// tocken.waitForCompletion(5000);
 
 			// db 저장된 작업수행
-			// get request
-			Job[] job = pushdb.getJobList();
-			if (job != null) {
-				// push
-				for (int i = 0; i < job.length; i++) {
-					int jobType = job[i].getType();
-					switch (jobType) {
-					case 0:
-						// PUBLISH
-						client.publish(job[i].getTopic(), job[i].getContent()
-								.getBytes(), 1, false);
-						Log.d(TAG, "메시지를전송하였습니다. 메시지=" + job[i]);
-						// 디비삭제
-						pushdb.deteletJob(job[i].getId());
-						Log.d(TAG, "작업이수행되었습니다.id=" + job[i].getId());
-						break;
-					case 1:
-						// SUBSCRIBE
-						subscribe(job[i].getTopic(), 2);
-						// 디비삭제
-						pushdb.deteletJob(job[i].getId());
-						Log.d(TAG, "작업이수행되었습니다.id=" + job[i].getId());
-						break;
-					case 2:
-						// UNSUBSCRIBE
-						break;
-					default:
-						break;
-					}
-				}
-			}
+			// get jobs
+			processJob();
 		} catch (Exception e) {
 			Log.e(TAG, "예외상황발생", e);
 			if (PushService.getWakeLock() != null) {
@@ -307,6 +297,47 @@ public class PushHandler implements MqttCallback {
 			}
 		}
 		Log.d(TAG, "healthCheck종료()");
+	}
+
+	private void processJob() throws Exception, MqttException,
+			MqttPersistenceException {
+		Job[] job = pushdb.getJobList();
+		if (job != null) {
+			// push
+			for (int i = 0; i < job.length; i++) {
+				int jobType = job[i].getType();
+				switch (jobType) {
+				case 0:
+					// PUBLISH
+					client.publish(job[i].getTopic(), job[i].getContent()
+							.getBytes(), 1, false);
+					Log.d(TAG, "메시지를전송하였습니다. 메시지=" + job[i]);
+					// 디비삭제
+					pushdb.deteletJob(job[i].getId());
+					Log.d(TAG, "작업이수행되었습니다.id=" + job[i].getId());
+					break;
+				case 1:
+					// SUBSCRIBE
+					subscribe(job[i].getTopic(), 2);
+					// 디비인서트
+					pushdb.addTopic(userID, job[i].getTopic(), 1);
+					// 디비삭제
+					pushdb.deteletJob(job[i].getId());
+					Log.d(TAG, "작업이수행되었습니다.id=" + job[i].getId());
+					break;
+				case 2:
+					// UNSUBSCRIBE
+					unsubscribe(job[i].getTopic());
+					// 디비삭제
+					pushdb.deleteTopic(userID, job[i].getTopic());
+					pushdb.deteletJob(job[i].getId());
+					Log.d(TAG, "작업이수행되었습니다.id=" + job[i].getId());
+					break;
+				default:
+					break;
+				}
+			}
+		}
 	}
 
 	protected synchronized void connect() throws MqttException {
@@ -324,6 +355,7 @@ public class PushHandler implements MqttCallback {
 		mOpts.setKeepAliveInterval(keepAliveInterval);
 		mOpts.setCleanSession(cleanSession);
 		mOpts.setSocketFactory(ADFSSLSocketFactory.getSSLSokcetFactory());
+		// mOpts.setServerURIs(new String[] { "ssl://adflow.net" });
 
 		Log.d(TAG, "연결옵션=" + mOpts);
 		Log.d(TAG, "client=" + client);
@@ -337,12 +369,10 @@ public class PushHandler implements MqttCallback {
 	protected synchronized void subscribe(String topic, int qos)
 			throws MqttException {
 		Log.d(TAG, "subScribe시작(토픽=" + topic + ", qos=" + qos + ")");
-		// todo 최초접속시 클라이언트 정보를 서버에 보내줘야함
 
 		if (client == null || !client.isConnected()) {
 			Log.e(TAG, "토픽구독에실패하였습니다.");
 			Log.d(TAG, "subscribe종료()");
-			// persistence 를 이용하여 작업을 계속할 수 있게 하여야 함
 			return;
 		}
 
@@ -350,5 +380,20 @@ public class PushHandler implements MqttCallback {
 		client.subscribe(topic, qos);
 		Log.d(TAG, "토픽구독을완료하였습니다.");
 		Log.d(TAG, "subscribe종료()");
+	}
+
+	protected synchronized void unsubscribe(String topic) throws MqttException {
+		Log.d(TAG, "unsubscribe시작(토픽=" + topic + ")");
+
+		if (client == null || !client.isConnected()) {
+			Log.e(TAG, "토픽구독취소에실패하였습니다.");
+			Log.d(TAG, "unsubscribe종료()");
+			return;
+		}
+
+		// 토픽구독
+		client.unsubscribe("/groups/" + topic);
+		Log.d(TAG, "토픽구독을취소하였습니다.");
+		Log.d(TAG, "unsubscribe종료()");
 	}
 }
