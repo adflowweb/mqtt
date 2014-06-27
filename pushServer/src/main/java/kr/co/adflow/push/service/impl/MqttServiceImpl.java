@@ -67,7 +67,7 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 		try {
 			prop.load(MqttServiceImpl.class
 					.getResourceAsStream(CONFIG_PROPERTIES));
-			logger.debug("properties=" + prop);
+			logger.debug("속성값=" + prop);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -118,14 +118,22 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 	private ObjectMapper objectMapper = new ObjectMapper();
 
 	private MqttClient mqttClient;
+
+	private boolean healthCheck = Boolean.parseBoolean(prop
+			.getProperty("health.enable"));
+
 	private int healthCheckInterval = Integer.parseInt(prop
 			.getProperty("health.check.interval"));
+
 	private int connectionTimeout = Integer.parseInt(prop
 			.getProperty("connection.timeout"));
+
 	private int keepAliveInterval = Integer.parseInt(prop
 			.getProperty("keep.alive.interval"));
+
 	private boolean cleanSession = Boolean.parseBoolean(prop
 			.getProperty("clean.session"));
+
 	private MqttConnectOptions mOpts;
 	private String errorMsg;
 	private double reqCnt; // receive message count
@@ -142,12 +150,15 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 	public void initIt() throws Exception {
 		logger.info("mqttService초기화시작()");
 		setMqttClientLog();
-		healthCheckLooper = Executors.newScheduledThreadPool(1);
-		// testCode
-		healthCheckLooper
-				.scheduleWithFixedDelay(this, 60, 60, TimeUnit.SECONDS);
 
-		logger.info("healthCheckLooper가시작되었습니다.");
+		logger.info("헬스체크처리유무=" + healthCheck);
+		if (healthCheck) {
+			healthCheckLooper = Executors.newScheduledThreadPool(1);
+			healthCheckLooper.scheduleWithFixedDelay(this, 0,
+					healthCheckInterval, TimeUnit.SECONDS);
+			logger.info("healthCheckLooper가시작되었습니다.");
+		}
+
 		mOpts = makeMqttOpts();
 		msgMapper = sqlSession.getMapper(MessageMapper.class);
 		grpMapper = sqlSession.getMapper(GroupMapper.class);
@@ -162,8 +173,11 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 	@PreDestroy
 	public void cleanUp() throws Exception {
 		logger.info("cleanUp시작()");
-		healthCheckLooper.shutdown();
-		logger.info("healthCheckLooper가종료되었습니다.");
+
+		if (healthCheck) {
+			healthCheckLooper.shutdown();
+			logger.info("healthCheckLooper가종료되었습니다.");
+		}
 		destroy();
 		logger.info("cleanUp종료()");
 	}
@@ -289,9 +303,7 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 			// Create an ssl socket factory with our all-trusting manager
 			final SSLSocketFactory sslSocketFactory = sslContext
 					.getSocketFactory();
-
-			// testCode
-			// mOpts.setSocketFactory(sslSocketFactory);
+			mOpts.setSocketFactory(sslSocketFactory);
 		} catch (Exception e) {
 			logger.error("에러발생", e);
 		}
@@ -388,35 +400,39 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 			}
 		} else if (topic.equals("/push/group")) {
 			logger.debug("그룹정보요청메시지가수신되었습니다.");
-			// db select group info
-			// convert json string to object
-			User user = objectMapper
-					.readValue(message.getPayload(), User.class);
-			Group[] grp = grpMapper.get(user.getUserID());
-			// db insert push
-			Message msg = new Message();
-			msg.setQos(2);
-			msg.setReceiver("/users/" + user.getUserID());
-			msg.setSender("pushServer");
-			StringBuffer content = new StringBuffer();
-			content.append("{\"userID\":");
-			content.append("\"");
-			content.append(user.getUserID());
-			content.append("\",\"groups\":[");
-			for (int i = 0; i < grp.length; i++) {
+			try {
+				// db select group info
+				// convert json string to object
+				User user = objectMapper.readValue(message.getPayload(),
+						User.class);
+				Group[] grp = grpMapper.get(user.getUserID());
+				// db insert push
+				Message msg = new Message();
+				msg.setQos(2);
+				msg.setReceiver("/users/" + user.getUserID());
+				msg.setSender("pushServer");
+				StringBuffer content = new StringBuffer();
+				content.append("{\"userID\":");
 				content.append("\"");
-				content.append(grp[i].getTopic());
-				content.append("\"");
-				if (i < grp.length - 1) {
-					content.append(",");
+				content.append(user.getUserID());
+				content.append("\",\"groups\":[");
+				for (int i = 0; i < grp.length; i++) {
+					content.append("\"");
+					content.append(grp[i].getTopic());
+					content.append("\"");
+					if (i < grp.length - 1) {
+						content.append(",");
+					}
 				}
+				content.append("]}");
+				msg.setType(Message.COMMAND);
+				msg.setContent(content.toString());
+				logger.debug("msg=" + msg);
+				messageDao.post(msg);
+				logger.debug("그룹정보메시지를등록하였습니다.");
+			} catch (Exception e) {
+				logger.error("에러발생", e);
 			}
-			content.append("]}");
-			msg.setType(Message.COMMAND);
-			msg.setContent(content.toString());
-			logger.debug("msg=" + msg);
-			messageDao.post(msg);
-			logger.debug("그룹정보메시지를등록하였습니다.");
 		} else if (topic.equals("/push/poll")) {
 			// 설문조사용
 		} else {

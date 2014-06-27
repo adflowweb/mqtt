@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
@@ -161,6 +162,52 @@ public class UserController {
 
 		Response<Token> res = new Response<Token>(result);
 		logger.debug("response=" + res);
+		return res;
+	}
+
+	/**
+	 * 유저인증
+	 * 
+	 * @param msg
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "auth", method = RequestMethod.GET)
+	@ResponseBody
+	public Response<Token> auth(HttpServletRequest request,
+			@RequestParam(value = "userid") String userID,
+			@RequestParam(value = "pw") String password,
+			@RequestHeader("User-Agent") String userAgent) throws Exception {
+		logger.debug("LDAP테스트시작");
+		User user = new User();
+		user.setUserID(userID);
+		user.setPassword(password);
+		Boolean data = userService.auth(user);
+		Result<Token> result = new Result<Token>();
+		result.setSuccess(true);
+		if (!data) {
+			List<String> messages = new ArrayList<String>() {
+				{
+					add("user not found or invalid password");
+				}
+			};
+			result.setErrors(messages);
+		} else {
+			// token 발급
+			Token token = new Token();
+			token.setUserID(user.getUserID());
+			// ////임시코드
+			final String userIpAddress = request.getRemoteAddr();
+			token.setDeviceID(userIpAddress);
+			// ////임시코드 end
+			Token rst = tokenService.post(token);
+			// Result<Token> result = new Result<Token>();
+			result.setData(rst);
+		}
+
+		Response<Token> res = new Response<Token>(result);
+		logger.debug("response=" + res);
+		logger.debug("LDAP테스트종료");
 		return res;
 	}
 

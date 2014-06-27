@@ -37,7 +37,7 @@ public class SMSDaoImpl implements SMSDao {
 		try {
 			prop.load(MessageDaoImpl.class
 					.getResourceAsStream(CONFIG_PROPERTIES));
-			logger.debug("properties=" + prop);
+			logger.debug("속성값=" + prop);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -74,6 +74,7 @@ public class SMSDaoImpl implements SMSDao {
 			.getProperty("sendChannel.process.interval"));
 	private int recvChannelInterval = Integer.parseInt(prop
 			.getProperty("recvChannel.process.interval"));
+	private boolean sms = Boolean.parseBoolean(prop.getProperty("sms.enable"));
 
 	private ScheduledExecutorService sendChannel;
 	private ScheduledExecutorService recvChannel;
@@ -90,16 +91,16 @@ public class SMSDaoImpl implements SMSDao {
 	@PostConstruct
 	public void initIt() throws Exception {
 		logger.info("SMSDAOImpl초기화시작()");
-		// sendChannel = Executors.newScheduledThreadPool(1);
-		// sendChannel.scheduleWithFixedDelay(new SendChannelHandler(), 0,
-		// sendChannelInterval, TimeUnit.SECONDS);
-		// logger.info("sendChannel핸들러가시작되었습니다.");
-		// recvChannel = Executors.newScheduledThreadPool(1);
-		// recvChannel.scheduleWithFixedDelay(new RecvChannelHandler(), 0,
-		// recvChannelInterval, TimeUnit.SECONDS);
-		// logger.info("recvChannel핸들러가시작되었습니다.");
-		// initRecvServer();
-		logger.info("ReceiveServer가시작되었습니다.");
+		if (sms) {
+			sendChannel = Executors.newScheduledThreadPool(1);
+			sendChannel.scheduleWithFixedDelay(new SendChannelHandler(), 0,
+					sendChannelInterval, TimeUnit.SECONDS);
+			logger.info("sendChannel핸들러가시작되었습니다.");
+			recvChannel = Executors.newScheduledThreadPool(1);
+			recvChannel.scheduleWithFixedDelay(new RecvChannelHandler(), 0,
+					recvChannelInterval, TimeUnit.SECONDS);
+			logger.info("recvChannel핸들러가시작되었습니다.");
+		}
 		logger.info("SMSDAOImpl초기화종료()");
 	}
 
@@ -112,10 +113,13 @@ public class SMSDaoImpl implements SMSDao {
 	public void cleanUp() throws Exception {
 		try {
 			logger.info("cleanUp시작()");
-			// sendChannel.shutdown();
-			// logger.info("sendChannel핸들러가종료되었습니다.");
-			// recvChannel.shutdown();
-			// logger.info("recvChannel핸들러가종료되었습니다.");
+			if (sms) {
+				sendChannel.shutdown();
+				logger.info("sendChannel핸들러가종료되었습니다.");
+				recvChannel.shutdown();
+				logger.info("recvChannel핸들러가종료되었습니다.");
+			}
+
 			if (recvServer != null && !recvServer.isClosed()) {
 				recvServer.close();
 				logger.info("리시브서버가종료되었습니다.");
@@ -135,6 +139,9 @@ public class SMSDaoImpl implements SMSDao {
 	 */
 	@Override
 	public void post(String msg) throws Exception {
+		if (sender == null) {
+			throw new Exception("smsSender가없습니다");
+		}
 		sender.sendMsg(msg);
 	}
 
@@ -341,7 +348,9 @@ public class SMSDaoImpl implements SMSDao {
 				if (recvServer == null) {
 					initRecvServer();
 				}
-				receiver.sendPING();
+				if (receiver != null) {
+					receiver.sendPING();
+				}
 			} catch (Exception e) {
 				logger.error("에러발생", e);
 			}

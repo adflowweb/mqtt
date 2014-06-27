@@ -2,7 +2,9 @@ package kr.co.adflow.push.busanbank;
 
 import java.util.Hashtable;
 
+import javax.naming.AuthenticationException;
 import javax.naming.Context;
+import javax.naming.InvalidNameException;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
@@ -32,47 +34,91 @@ public class LdapAuthDaoImpl implements LdapAuthDao {
 	private String ldapFactory = "com.sun.jndi.ldap.LdapCtxFactory";
 	private String ldapSecurity = "simple";
 
-	/**
-	 * @param id
-	 * @param pw
-	 * @return
-	 */
-	public boolean ldapAuth(String id, String password) {
-		logger.debug("ldapAuth시작(id=" + id + ", password=" + password + ")");
+	// /**
+	// * @param id
+	// * @param pw
+	// * @return
+	// */
+	// public boolean ldapAuth(String id, String password) {
+	// logger.debug("ldapAuth시작(id=" + id + ", password=" + password + ")");
+	// boolean isAuth = false;
+	// DirContext ctx = null;
+	//
+	// Hashtable<String, String> env = new Hashtable<String, String>();
+	// env.put(Context.INITIAL_CONTEXT_FACTORY, ldapFactory);
+	// env.put(Context.SECURITY_AUTHENTICATION, ldapSecurity);
+	// env.put(Context.PROVIDER_URL, ldapUrl);
+	// env.put(Context.SECURITY_PRINCIPAL, id + "@" + domain);
+	// env.put(Context.SECURITY_CREDENTIALS, password);
+	//
+	// // ////testCode
+	// // Enable connection pooling
+	// env.put("com.sun.jndi.ldap.connect.pool", "true");
+	// // ////testCodeEnd
+	//
+	// try {
+	//
+	// ctx = new InitialDirContext(env);
+	// logger.debug("ctx=" + ctx);
+	// isAuth = true;
+	// // "Login Success";
+	// } catch (Exception e) {
+	// logger.error("에러발생", e);
+	// isAuth = false;
+	// } finally {
+	// if (ctx != null) {
+	// try {
+	// ctx.close();
+	// } catch (Exception e) {
+	// logger.error("에러발생", e);
+	// }
+	// }
+	// }
+	// logger.debug("ldapAuth종료(결과=" + isAuth + ")");
+	// return isAuth;
+	// }
+
+	// LDAP ¿Œ¡ı (æ€ø°º≠ ¿Ø«¸∫∞ ø°∑Ø ∏ﬁΩ√¡ˆµµ √≥∏Æ ∫Œ≈πµÂ∏≥¥œ¥Ÿ)
+	public boolean ldapAuth(String id, String pw) {
+
 		boolean isAuth = false;
-		DirContext ctx = null;
 
-		Hashtable<String, String> env = new Hashtable<String, String>();
-		env.put(Context.INITIAL_CONTEXT_FACTORY, ldapFactory);
-		env.put(Context.SECURITY_AUTHENTICATION, ldapSecurity);
-		env.put(Context.PROVIDER_URL, ldapUrl);
-		env.put(Context.SECURITY_PRINCIPAL, id + "@" + domain);
-		env.put(Context.SECURITY_CREDENTIALS, password);
+		if (pw != null && !pw.equals("")) {
+			DirContext ctx = null;
 
-		// ////testCode
-		// Enable connection pooling
-		env.put("com.sun.jndi.ldap.connect.pool", "true");
-		// ////testCodeEnd
+			Hashtable<String, String> property = new Hashtable<String, String>();
+			property.put(Context.INITIAL_CONTEXT_FACTORY, ldapFactory);
+			property.put(Context.SECURITY_AUTHENTICATION, ldapSecurity);
+			property.put(Context.PROVIDER_URL, ldapUrl);
+			property.put(Context.SECURITY_PRINCIPAL, id + "@" + domain);
+			property.put(Context.SECURITY_CREDENTIALS, pw);
 
-		try {
+			try {
+				ctx = new InitialDirContext(property);
 
-			ctx = new InitialDirContext(env);
-			logger.debug("ctx=" + ctx);
-			isAuth = true;
-			// "Login Success";
-		} catch (Exception e) {
-			logger.error("에러발생", e);
-			isAuth = false;
-		} finally {
-			if (ctx != null) {
-				try {
-					ctx.close();
-				} catch (Exception e) {
-					logger.error("에러발생", e);
-				}
+				isAuth = true;
+				// "Login Success";
+
+			} catch (AuthenticationException e) {
+				// "Password Fail";
+			} catch (InvalidNameException e) {
+				// "User not Found";
+			} catch (NamingException e) {
+				// "Login Failure";
+			} catch (Exception e) {
+				// "Login Failure";
 			}
+
+			finally {
+				if (ctx != null)
+					try {
+						ctx.close();
+					} catch (Exception e) {
+					}
+			}
+		} else {
+			// "Password Fail";
 		}
-		logger.debug("ldapAuth종료(결과=" + isAuth + ")");
 		return isAuth;
 	}
 
@@ -125,40 +171,42 @@ public class LdapAuthDaoImpl implements LdapAuthDao {
 	 * java.lang.String)
 	 */
 	@Override
-	public boolean auth(String userID, String password) throws Exception {
-		logger.debug("auth시작(id=" + userID + ", password=" + password + ")");
+	public boolean auth(String id, String pw) throws Exception {
+		logger.debug("auth시작(id=" + id + ")");
 		boolean isAuth = false;
-		DirContext ctx = null;
 
-		Hashtable<String, String> env = new Hashtable<String, String>();
-		env.put(Context.INITIAL_CONTEXT_FACTORY, ldapFactory);
-		env.put(Context.SECURITY_AUTHENTICATION, ldapSecurity);
-		env.put(Context.PROVIDER_URL, ldapUrl);
-		env.put(Context.SECURITY_PRINCIPAL, userID + "@" + domain);
-		env.put(Context.SECURITY_CREDENTIALS, password);
+		if (pw != null && !pw.equals("")) {
+			DirContext ctx = null;
 
-		// ////testCode
-		// Enable connection pooling
-		env.put("com.sun.jndi.ldap.connect.pool", "true");
-		// ////testCodeEnd
+			Hashtable<String, String> property = new Hashtable<String, String>();
+			property.put(Context.INITIAL_CONTEXT_FACTORY, ldapFactory);
+			property.put(Context.SECURITY_AUTHENTICATION, ldapSecurity);
+			property.put(Context.PROVIDER_URL, ldapUrl);
+			property.put(Context.SECURITY_PRINCIPAL, id + "@" + domain);
+			property.put(Context.SECURITY_CREDENTIALS, pw);
 
-		try {
+			// ////testCode
+			// // Enable connection pooling
+			// env.put("com.sun.jndi.ldap.connect.pool", "true");
+			// ////testCodeEnd
 
-			ctx = new InitialDirContext(env);
-			logger.debug("ctx=" + ctx);
-			isAuth = true;
-			// "Login Success";
-		} catch (Exception e) {
-			logger.error("에러발생", e);
-			isAuth = false;
-		} finally {
-			if (ctx != null) {
-				try {
-					ctx.close();
-				} catch (Exception e) {
-					logger.error("에러발생", e);
-				}
+			try {
+				ctx = new InitialDirContext(property);
+				isAuth = true;
+				// "Login Success";
+
+			} catch (Exception e) {
+				logger.error("에러발생", e);
+				// "Login Failure";
+			} finally {
+				if (ctx != null)
+					try {
+						ctx.close();
+					} catch (Exception e) {
+					}
 			}
+		} else {
+			// "Password Fail";
 		}
 		logger.debug("auth종료(결과=" + isAuth + ")");
 		// return isAuth;
