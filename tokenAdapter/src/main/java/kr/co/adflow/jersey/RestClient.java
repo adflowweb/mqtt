@@ -6,7 +6,6 @@ import java.util.Properties;
 import javax.ws.rs.core.MediaType;
 
 import kr.co.adflow.push.domain.Response;
-import kr.co.adflow.push.domain.Token;
 import kr.co.adflow.push.domain.Validation;
 
 import org.slf4j.Logger;
@@ -21,7 +20,6 @@ import com.sun.jersey.api.json.JSONConfiguration;
 
 public class RestClient {
 
-	private static final String API_KEY = "devServer2";
 	private static Properties prop = new Properties();
 	private static final Logger logger = LoggerFactory
 			.getLogger(RestClient.class);
@@ -35,6 +33,8 @@ public class RestClient {
 			e.printStackTrace();
 		}
 	}
+
+	private static final String API_KEY = prop.getProperty("api.key");
 
 	protected Client client;
 	protected WebResource webResource;
@@ -58,6 +58,7 @@ public class RestClient {
 		logger.debug("webResource=" + webResource);
 		Validation valid = null;
 		try {
+			logger.debug("api.key=" + API_KEY);
 			Response<Validation> data = webResource.path("validate")
 					.path(token).accept(MediaType.APPLICATION_JSON)
 					.header("X-ApiKey", API_KEY)

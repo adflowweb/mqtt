@@ -122,12 +122,28 @@
 				<log.level>debug</log.level>
 				<!-- rest api version -->
 				<api.version>v1</api.version>
+				<!-- rest api key -->
+				<api.key>devServer2</api.key>
+				<!-- 인증유무 -->
+				<auth>false</auth>
 			</properties>
 		</profile>
 		<!-- Production environment @ production server -->
 		<profile>
 			<id>production</id>
 			<properties>
+				<!-- 푸시서버주소 -->
+				<server.ip>127.0.0.1</server.ip>
+				<!-- 푸시서버포트 -->
+				<server.port>8080</server.port>
+				<!-- 어플리케이션 로깅레벨 -->
+				<log.level>error</log.level>
+				<!-- rest api version -->
+				<api.version>v1</api.version>
+				<!-- rest api key -->
+				<api.key>devServer2</api.key>
+				<!-- 인증유무 -->
+				<auth>true</auth>
 				<!-- <db.driverClass>oracle.jdbc.driver.OracleDriver</db.driverClass> 
 					<db.connectionURL>jdbc:oracle:thin:@10.0.1.14:1521:APPS</db.connectionURL> 
 					<db.username>productionuser</db.username> <db.password>productionpassword</db.password> 

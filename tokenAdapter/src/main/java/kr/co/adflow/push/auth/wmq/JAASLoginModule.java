@@ -1,6 +1,8 @@
 package kr.co.adflow.push.auth.wmq;
 
+import java.io.IOException;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.net.ssl.SSLSession;
 import javax.security.auth.Subject;
@@ -12,7 +14,6 @@ import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 
 import kr.co.adflow.jersey.RestClient;
-import kr.co.adflow.push.domain.Response;
 import kr.co.adflow.push.domain.Validation;
 
 import org.slf4j.Logger;
@@ -33,6 +34,18 @@ public class JAASLoginModule implements LoginModule {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(JAASLoginModule.class);
+
+	private static Properties prop = new Properties();
+
+	static {
+		try {
+			prop.load(RestClient.class
+					.getResourceAsStream("/config.properties"));
+			logger.debug("properties=" + prop);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 	private Subject subject;
 	private CallbackHandler callbackHandler;
@@ -138,19 +151,20 @@ public class JAASLoginModule implements LoginModule {
 			// principal = new JAASPrincipal(username);
 			// }
 
-			// 임시코드 마킹함
-			// // 인증요청
-			// Validation response = client.validate(clientId);
-			// logger.debug("토큰유효성체크결과=" + response);
-			// // Validation data = (Validation) response.getResult().getData();
-			// if (response != null && response.isValidation()) {
-			// loggedIn = true;
-			// } else
-			// throw new FailedLoginException("Login failed");
-			// // principal = new JAASPrincipal(username);
-			loggedIn = true;
-			// 임시코드 end
-
+			if (prop.getProperty("auth").equals("true")) {
+				// 인증요청
+				Validation response = client.validate(clientId);
+				logger.debug("토큰유효성체크결과=" + response);
+				// Validation data = (Validation)
+				// response.getResult().getData();
+				if (response != null && response.isValidation()) {
+					loggedIn = true;
+				} else
+					throw new FailedLoginException("Login failed");
+				// principal = new JAASPrincipal(username);
+			} else {
+				logger.debug("토큰유효성체크를하지않습니다.");
+			}
 		} catch (Exception e) {
 			logger.error("에러발생", e);
 			throw new LoginException(e.toString());
