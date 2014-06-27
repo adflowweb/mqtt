@@ -164,6 +164,7 @@ public class JAASLoginModule implements LoginModule {
 				// principal = new JAASPrincipal(username);
 			} else {
 				logger.debug("토큰유효성체크를하지않습니다.");
+				loggedIn = true;
 			}
 		} catch (Exception e) {
 			logger.error("에러발생", e);
