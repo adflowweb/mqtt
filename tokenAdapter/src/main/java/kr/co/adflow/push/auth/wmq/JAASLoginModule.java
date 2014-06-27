@@ -170,7 +170,7 @@ public class JAASLoginModule implements LoginModule {
 			logger.error("에러발생", e);
 			throw new LoginException(e.toString());
 		}
-		logger.debug("login종료(loggedIn=" + loggedIn + ")");
+		logger.debug("login종료(토큰유효성체크결과=" + loggedIn + ")");
 		return loggedIn;
 	}
 
