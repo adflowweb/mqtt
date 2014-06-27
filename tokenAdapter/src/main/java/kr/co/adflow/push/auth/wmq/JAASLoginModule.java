@@ -138,15 +138,19 @@ public class JAASLoginModule implements LoginModule {
 			// principal = new JAASPrincipal(username);
 			// }
 
-			// 인증요청
-			Validation response = client.validate(clientId);
-			logger.debug("토큰유효성체크결과=" + response);
-			// Validation data = (Validation) response.getResult().getData();
-			if (response != null && response.isValidation()) {
-				loggedIn = true;
-			} else
-				throw new FailedLoginException("Login failed");
-			// principal = new JAASPrincipal(username);
+			// 임시코드 마킹함
+			// // 인증요청
+			// Validation response = client.validate(clientId);
+			// logger.debug("토큰유효성체크결과=" + response);
+			// // Validation data = (Validation) response.getResult().getData();
+			// if (response != null && response.isValidation()) {
+			// loggedIn = true;
+			// } else
+			// throw new FailedLoginException("Login failed");
+			// // principal = new JAASPrincipal(username);
+			loggedIn = true;
+			// 임시코드 end
+
 		} catch (Exception e) {
 			logger.error("에러발생", e);
 			throw new LoginException(e.toString());
