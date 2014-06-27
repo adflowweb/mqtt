@@ -22,6 +22,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -40,13 +41,14 @@ public class PushHandler implements MqttCallback {
 	// public static final int alarmInterval = 240; // 4분
 	public static final int alarmInterval = 60; // 1분 for debug
 	// private static final String SERVERURL = "ssl://adflow.net:8883";
-	private static final String SERVERURL = "ssl://adflow.net";
+	private static final String SERVERURL = "ssl://adflow.net:8883";
 	private static final String MQTT_PACKAGE = "org.eclipse.paho.client.mqttv3";
 	private static final int connectionTimeout = 10; // second
 	// private static final int connectionTimeout = 5; // second
 	// private static final int connectionTimeout = 2; // second
 	private static final int keepAliveInterval = 480; // second 현재의미없음
 	private static final boolean cleanSession = false;
+	// mqttClient 세션로그
 	private static final boolean clientSessionLog = false;
 
 	private Context context;
@@ -87,14 +89,14 @@ public class PushHandler implements MqttCallback {
 	public void connectionLost(Throwable th) {
 		Log.d(TAG, "connectionLost시작(에러=" + th + ")");
 		Log.e(TAG, "TCP세션연결이끊겼습니다", th);
-		try {
-			if (!client.isConnected()) {
-				connect();
-				Log.d(TAG, "client가접속되었습니다.");
-			}
-		} catch (MqttException e) {
-			Log.e(TAG, "예외상황발생(MqttException)", e);
-		}
+		// try {
+		// if (!client.isConnected()) {
+		// connect();
+		// Log.d(TAG, "client가접속되었습니다.");
+		// }
+		// } catch (MqttException e) {
+		// Log.e(TAG, "예외상황발생(MqttException)", e);
+		// }
 		Log.d(TAG, "connectionLost종료()");
 	}
 
@@ -255,14 +257,19 @@ public class PushHandler implements MqttCallback {
 			userID = user.getUserID();
 
 			if (client == null) {
+				// MqttDefaultFilePersistence persistence = new
+				// MqttDefaultFilePersistence(
+				// "/mmt/sdcard/temp");
+				// MqttDefaultFilePersistence fp = new
+				// MqttDefaultFilePersistence();
 				client = new ADFMqttClient(SERVERURL, tokenID,
-						new MemoryPersistence());
+						new MemoryPersistence() /* persistence */);
 				connect();
 				// default subscribe
 				subscribe("/users", 2);
 				subscribe("/users/" + userID, 2);
-				// 그룹정보동기화요청 (여기서 동기화 요청을 해야하나??? 아님 디비인서트 ???)
-				// 최초로그인시 한번만 요청하도록 변경하여야함
+
+				// 최초로그인시 그룹정보동기화요청을 한번만 요청
 				String grpReqMsg = "{\"userID\":\"" + userID + "\"}";
 				Topic[] topic = pushdb.getTopic(userID);
 				if (topic == null) {
@@ -361,6 +368,7 @@ public class PushHandler implements MqttCallback {
 		Log.d(TAG, "client=" + client);
 		Log.d(TAG, "콜백인스턴스=" + this);
 		client.setCallback(this);
+		Log.d(TAG, "mq서버에연결합니다server=" + SERVERURL);
 		client.connect(mOpts);
 		Log.d(TAG, "세션이연결되었습니다.");
 		Log.d(TAG, "connect종료()");
