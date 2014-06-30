@@ -14,7 +14,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 
-import kr.co.adflow.push.busanbank.SMSDao;
+import kr.co.adflow.push.bsbank.dao.SMSDao;
 import kr.co.adflow.push.dao.MessageDao;
 import kr.co.adflow.push.domain.Message;
 import kr.co.adflow.push.mapper.MessageMapper;
@@ -218,6 +218,8 @@ public class MessageDaoImpl implements MessageDao {
 					for (Message msg : list) {
 						logger.debug("msg=" + msg);
 						if (msg.getReservation() == null) {
+							// 아이폰 안드로이드 구별하여야함
+							// 아이폰일경우 전체 메시지 or 그룹메시지와 상관없이 apns로 전송해야함
 							// 즉시전송메시지
 							logger.debug("즉시전송대상입니다.");
 							publish(msgMapper, msg);

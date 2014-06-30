@@ -26,7 +26,7 @@ import javax.net.ssl.X509TrustManager;
 
 import kr.co.adflow.push.dao.MessageDao;
 import kr.co.adflow.push.domain.Acknowledge;
-import kr.co.adflow.push.domain.Group;
+import kr.co.adflow.push.domain.Topic;
 import kr.co.adflow.push.domain.Message;
 import kr.co.adflow.push.domain.User;
 import kr.co.adflow.push.exception.PushException;
@@ -405,7 +405,7 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 				// convert json string to object
 				User user = objectMapper.readValue(message.getPayload(),
 						User.class);
-				Group[] grp = grpMapper.get(user.getUserID());
+				Topic[] grp = grpMapper.get(user.getUserID());
 				// db insert push
 				Message msg = new Message();
 				msg.setQos(2);

@@ -4,7 +4,7 @@
      "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.co.adflow.push.mapper.GroupMapper">
 
-	<resultMap id="GroupResult" type="kr.co.adflow.push.domain.Group">
+	<resultMap id="GroupResult" type="kr.co.adflow.push.domain.Topic">
 		<result property="userID" column="userid" />
 		<result property="topic" column="topic" />
 	</resultMap>

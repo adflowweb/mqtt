@@ -1,6 +1,6 @@
 package kr.co.adflow.push.dao;
 
-import kr.co.adflow.push.domain.Group;
+import kr.co.adflow.push.domain.Topic;
 
 /**
  * @author nadir93
@@ -9,9 +9,9 @@ import kr.co.adflow.push.domain.Group;
  */
 public interface GroupDao {
 
-	Group[] get(String userID) throws Exception;
+	Topic[] get(String userID) throws Exception;
 
-	int post(Group grp) throws Exception;
+	int post(Topic grp) throws Exception;
 
 	int delete(String userID, String topic) throws Exception;
 

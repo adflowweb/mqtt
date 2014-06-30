@@ -1,4 +1,4 @@
-package kr.co.adflow.push.busanbank;
+package kr.co.adflow.push.bsbank;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

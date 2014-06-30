@@ -1,4 +1,4 @@
-package kr.co.adflow.push.busanbank;
+package kr.co.adflow.push.bsbank.dao.impl;
 
 import java.util.Hashtable;
 

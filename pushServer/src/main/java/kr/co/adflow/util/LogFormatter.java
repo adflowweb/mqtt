@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
-import kr.co.adflow.push.busanbank.BSFriendsSmsServer;
+import kr.co.adflow.push.bsbank.BSFriendsSmsServer;
 
 public final class LogFormatter extends Formatter {
 

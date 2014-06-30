@@ -3,7 +3,7 @@ package kr.co.adflow.push.service.impl;
 import javax.annotation.Resource;
 
 import kr.co.adflow.push.dao.GroupDao;
-import kr.co.adflow.push.domain.Group;
+import kr.co.adflow.push.domain.Topic;
 import kr.co.adflow.push.service.GroupService;
 
 import org.slf4j.LoggerFactory;
@@ -24,15 +24,15 @@ public class GroupServiceImpl implements GroupService {
 	GroupDao grpDao;
 
 	@Override
-	public Group[] get(String userID) throws Exception {
+	public Topic[] get(String userID) throws Exception {
 		logger.debug("get시작(group=" + userID + ")");
-		Group[] grp = grpDao.get(userID);
+		Topic[] grp = grpDao.get(userID);
 		logger.debug("get종료(result=" + grp + ")");
 		return grp;
 	}
 
 	@Override
-	public int post(Group grp) throws Exception {
+	public int post(Topic grp) throws Exception {
 		logger.debug("post시작(group=" + grp + ")");
 		int result = grpDao.post(grp);
 		logger.debug("post종료(result=" + result + ")");
