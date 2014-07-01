@@ -78,4 +78,12 @@ public class MessageServiceImpl implements MessageService {
 	public Message[] getMsgs() throws Exception {
 		return null;
 	}
+
+	@Override
+	public Message[] getReservationMsgs() throws Exception {
+		logger.debug("getReservationMsgs시작()");
+		Message[] msg = messageDao.getReservationMsgs();
+		logger.debug("getReservationMsgs종료(msg=" + msg + ")");
+		return msg;
+	}
 }

@@ -3,10 +3,13 @@ package kr.co.adflow.push.bsbank.mapper;
 import kr.co.adflow.push.domain.Topic;
 import kr.co.adflow.push.domain.bsbank.Affiliate;
 import kr.co.adflow.push.domain.bsbank.Department;
+import kr.co.adflow.push.domain.bsbank.User;
 
 public interface GroupMapper {
 
 	Affiliate[] get() throws Exception;
+
+	User getTopic(String userID) throws Exception;
 
 	Department[] getAllDept() throws Exception;
 

@@ -1,5 +1,6 @@
 package kr.co.adflow.push.service;
 
+import kr.co.adflow.push.domain.Token;
 import kr.co.adflow.push.domain.User;
 
 /**
@@ -16,5 +17,5 @@ public interface UserService {
 
 	int delete(String userID) throws Exception;
 
-	boolean auth(User user) throws Exception;;
+	Token auth(User user) throws Exception;;
 }

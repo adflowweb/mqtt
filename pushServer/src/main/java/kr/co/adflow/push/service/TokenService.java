@@ -1,7 +1,7 @@
 package kr.co.adflow.push.service;
 
-import kr.co.adflow.push.domain.Response;
 import kr.co.adflow.push.domain.Token;
+import kr.co.adflow.push.domain.User;
 
 /**
  * @author nadir93
@@ -18,11 +18,11 @@ public interface TokenService {
 	Token get(String token) throws Exception;
 
 	/**
-	 * @param token
+	 * @param user
 	 * @return
 	 * @throws Exception
 	 */
-	Token post(Token token) throws Exception;
+	Token post(User user) throws Exception;
 
 	/**
 	 * @param token

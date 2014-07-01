@@ -5,6 +5,7 @@ import kr.co.adflow.push.bsbank.mapper.GroupMapper;
 import kr.co.adflow.push.domain.Topic;
 import kr.co.adflow.push.domain.bsbank.Affiliate;
 import kr.co.adflow.push.domain.bsbank.Department;
+import kr.co.adflow.push.domain.bsbank.User;
 
 import org.apache.ibatis.session.SqlSession;
 import org.slf4j.LoggerFactory;
@@ -45,6 +46,13 @@ public class GroupDaoImpl implements GroupDao {
 		return result;
 	}
 
+	/*
+	 * 계열사정보가져오기
+	 * 
+	 * (non-Javadoc)
+	 * 
+	 * @see kr.co.adflow.push.bsbank.dao.GroupDao#get()
+	 */
 	@Override
 	public Affiliate[] get() throws Exception {
 		logger.debug("get시작()");
@@ -69,6 +77,15 @@ public class GroupDaoImpl implements GroupDao {
 		GroupMapper grpMapper = sqlSession.getMapper(GroupMapper.class);
 		Department[] result = grpMapper.getAllDept();
 		logger.debug("getAllDept종료(result=" + result + ")");
+		return result;
+	}
+
+	@Override
+	public User getTopic(String userID) throws Exception {
+		logger.debug("getTopic시작(userID=" + userID + ")");
+		GroupMapper grpMapper = sqlSession.getMapper(GroupMapper.class);
+		User result = grpMapper.getTopic(userID);
+		logger.debug("getTopic종료(result=" + result + ")");
 		return result;
 	}
 

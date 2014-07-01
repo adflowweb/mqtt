@@ -34,4 +34,6 @@ public interface MessageMapper {
 
 	int putIssueSms(Message msg) throws Exception;
 
+	Message[] getReservationMsgs() throws Exception;
+
 }

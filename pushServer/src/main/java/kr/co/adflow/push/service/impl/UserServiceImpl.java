@@ -3,7 +3,9 @@ package kr.co.adflow.push.service.impl;
 import javax.annotation.Resource;
 
 import kr.co.adflow.push.dao.UserDao;
+import kr.co.adflow.push.domain.Token;
 import kr.co.adflow.push.domain.User;
+import kr.co.adflow.push.service.TokenService;
 import kr.co.adflow.push.service.UserService;
 
 import org.slf4j.LoggerFactory;
@@ -21,7 +23,10 @@ public class UserServiceImpl implements UserService {
 			.getLogger(UserServiceImpl.class);
 
 	@Resource
-	UserDao userDao;
+	private UserDao userDao;
+
+	@Resource
+	private TokenService tokenService;
 
 	/*
 	 * (non-Javadoc)
@@ -67,10 +72,16 @@ public class UserServiceImpl implements UserService {
 	 * kr.co.adflow.push.service.UserService#auth(kr.co.adflow.push.domain.User)
 	 */
 	@Override
-	public boolean auth(User user) throws Exception {
+	public Token auth(User user) throws Exception {
 		logger.debug("auth시작(user=" + user + ")");
+
 		boolean rst = userDao.auth(user);
-		logger.debug("auth종료(result=" + rst + ")");
-		return rst;
+		Token token = null;
+		if (rst) {
+			// token 발급
+			token = tokenService.post(user);
+		}
+		logger.debug("auth종료(token=" + token + ")");
+		return token;
 	}
 }

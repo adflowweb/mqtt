@@ -136,11 +136,10 @@ public class UserController {
 			HttpServletRequest request,
 			@RequestHeader("User-Agent") String userAgent) throws Exception {
 		logger.debug("유저=" + user);
-
-		Boolean data = userService.auth(user);
+		Token token = userService.auth(user);
 		Result<Token> result = new Result<Token>();
 		result.setSuccess(true);
-		if (!data) {
+		if (token == null) {
 			List<String> messages = new ArrayList<String>() {
 				{
 					add("user not found or invalid password");
@@ -148,16 +147,7 @@ public class UserController {
 			};
 			result.setErrors(messages);
 		} else {
-			// token 발급
-			Token token = new Token();
-			token.setUserID(user.getUserID());
-			// ////임시코드
-			final String userIpAddress = request.getRemoteAddr();
-			token.setDeviceID(userIpAddress);
-			// ////임시코드 end
-			Token rst = tokenService.post(token);
-			// Result<Token> result = new Result<Token>();
-			result.setData(rst);
+			result.setData(token);
 		}
 
 		Response<Token> res = new Response<Token>(result);
@@ -182,10 +172,9 @@ public class UserController {
 		User user = new User();
 		user.setUserID(userID);
 		user.setPassword(password);
-		Boolean data = userService.auth(user);
+		Token token = userService.auth(user);
 		Result<Token> result = new Result<Token>();
-		result.setSuccess(true);
-		if (!data) {
+		if (token == null) {
 			List<String> messages = new ArrayList<String>() {
 				{
 					add("user not found or invalid password");
@@ -193,16 +182,7 @@ public class UserController {
 			};
 			result.setErrors(messages);
 		} else {
-			// token 발급
-			Token token = new Token();
-			token.setUserID(user.getUserID());
-			// ////임시코드
-			final String userIpAddress = request.getRemoteAddr();
-			token.setDeviceID(userIpAddress);
-			// ////임시코드 end
-			Token rst = tokenService.post(token);
-			// Result<Token> result = new Result<Token>();
-			result.setData(rst);
+			result.setData(token);
 		}
 
 		Response<Token> res = new Response<Token>(result);

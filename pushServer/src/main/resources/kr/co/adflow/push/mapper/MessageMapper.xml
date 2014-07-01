@@ -39,6 +39,13 @@
 		<!-- and reservation is not null -->
 	</select>
 
+	<select id="getReservationMsgs" resultMap="MessageResult">
+		select * from message
+		where
+		reservation is not null and issue is null
+		<!-- and reservation is not null -->
+	</select>
+
 
 
 	<!-- <select id="getID" resultType="java.lang.Integer" parameterType="kr.co.adflow.push.domain.Message"> 

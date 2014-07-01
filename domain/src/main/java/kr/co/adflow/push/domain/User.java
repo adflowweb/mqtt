@@ -18,19 +18,9 @@ public class User {
 	private String phone;
 	private String password;
 	private String deviceID;
+	private String apnsToken;
 
 	public User() {
-	}
-
-	public User(String userID, String name, String title, String dept,
-			String email, String phone) {
-		super();
-		this.userID = userID;
-		this.name = name;
-		this.title = title;
-		this.dept = dept;
-		this.email = email;
-		this.phone = phone;
 	}
 
 	public String getUserID() {
@@ -97,11 +87,20 @@ public class User {
 		this.deviceID = deviceID;
 	}
 
+	public String getApnsToken() {
+		return apnsToken;
+	}
+
+	public void setApnsToken(String apnsToken) {
+		this.apnsToken = apnsToken;
+	}
+
 	@Override
 	public String toString() {
 		return "User [userID=" + userID + ", name=" + name + ", title=" + title
 				+ ", dept=" + dept + ", email=" + email + ", phone=" + phone
-				+ ", password=" + password + ", deviceID=" + deviceID + "]";
+				+ ", password=" + password + ", deviceID=" + deviceID
+				+ ", apnsToken=" + apnsToken + "]";
 	}
 
 }

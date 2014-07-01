@@ -23,6 +23,12 @@
 		SELECT * FROM affiliate
 	</select>
 
+	<select id="getTopic" parameterType="java.lang.String"
+		resultType="kr.co.adflow.push.domain.bsbank.User">
+		SELECT * FROM emp WHERE gw_stf_cdnm =
+		#{gw_stf_cdnm}
+	</select>
+
 	<select id="getDept" parameterType="java.lang.String" resultMap="DeptResult">
 		SELECT * FROM department Where gw_sbsd_cdnm = #{gw_sbsd_cdnm}
 	</select>

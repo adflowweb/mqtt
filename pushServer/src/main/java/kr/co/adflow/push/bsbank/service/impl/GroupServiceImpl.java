@@ -7,6 +7,7 @@ import kr.co.adflow.push.bsbank.service.GroupService;
 import kr.co.adflow.push.domain.Topic;
 import kr.co.adflow.push.domain.bsbank.Affiliate;
 import kr.co.adflow.push.domain.bsbank.Department;
+import kr.co.adflow.push.domain.bsbank.User;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -84,6 +85,14 @@ public class GroupServiceImpl implements GroupService {
 		logger.debug("getAllDept시작()");
 		Department[] grp = grpDao.getAllDept();
 		logger.debug("getAllDept종료(result=" + grp + ")");
+		return grp;
+	}
+
+	@Override
+	public User getTopic(String userID) throws Exception {
+		logger.debug("get시작(group=" + userID + ")");
+		User grp = grpDao.getTopic(userID);
+		logger.debug("get종료(result=" + grp + ")");
 		return grp;
 	}
 

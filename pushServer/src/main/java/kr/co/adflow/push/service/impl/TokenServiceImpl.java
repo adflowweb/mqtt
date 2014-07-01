@@ -75,31 +75,35 @@ public class TokenServiceImpl implements TokenService {
 	 */
 	// @Transactional
 	@Override
-	public Token post(Token token) throws Exception {
-		logger.debug("post시작(token=" + token + ")");
+	public Token post(User user) throws Exception {
+		logger.debug("post시작(user=" + user + ")");
 
 		// insert user
-		User user = new User();
-		user.setUserID(token.getUserID());
+		// User user = new User();
+		// user.setUserID(token.getUserID());
 		try {
 			userDao.post(user);
 		} catch (DuplicateKeyException e) {
-			logger.debug(e.getMessage());
+			logger.debug("유저가이미등록되어있습니다.user=" + user.getUserID());
 		}
 
 		// insert device
 		Device device = new Device();
-		device.setDeviceID(token.getDeviceID());
-		device.setUserID(token.getUserID());
+		device.setDeviceID(user.getDeviceID());
+		device.setUserID(user.getUserID());
+		device.setApnsToken(user.getApnsToken());
 		try {
 			deviceDao.post(device);
 		} catch (DuplicateKeyException e) {
-			logger.debug(e.getMessage());
+			logger.debug("디바이스가이미등록되어있습니다.device=" + device.getDeviceID());
 		}
 
 		// select 최신 token
 		// select * from token where userid='kicho' and deviceid='test' order by
 		// issue desc limit 1;
+		Token token = new Token();
+		token.setUserID(user.getUserID());
+		token.setDeviceID(user.getDeviceID());
 		Token rst = tokenDao.getLatest(token);
 
 		// 발급시간에 따른 토큰 재발급로직... 추가해야함

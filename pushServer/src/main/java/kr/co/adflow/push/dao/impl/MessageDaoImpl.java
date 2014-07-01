@@ -190,6 +190,15 @@ public class MessageDaoImpl implements MessageDao {
 		return result;
 	}
 
+	@Override
+	public Message[] getReservationMsgs() throws Exception {
+		logger.debug("getReservationMsgs시작()");
+		MessageMapper msgMapper = sqlSession.getMapper(MessageMapper.class);
+		Message[] msg = msgMapper.getReservationMsgs();
+		logger.debug("getReservationMsgs종료(" + msg + ")");
+		return msg;
+	}
+
 	/**
 	 * 메시지처리
 	 * 
@@ -317,4 +326,5 @@ public class MessageDaoImpl implements MessageDao {
 			logger.debug("전송시간정보를업데이트했습니다.");
 		}
 	}
+
 }

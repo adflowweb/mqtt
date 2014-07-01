@@ -68,14 +68,20 @@ public class SMSDaoImpl implements SMSDao {
 
 	private static final String ENCODING_TYPE = "EUC-KR";
 	private static final int RECEIVERPORT = 3000;
-	private static final String SERVER_IP = "127.0.0.1";
+
 	private static final int PORT = 4000;
 
 	private int sendChannelInterval = Integer.parseInt(prop
 			.getProperty("sendChannel.process.interval"));
+
 	private int recvChannelInterval = Integer.parseInt(prop
 			.getProperty("recvChannel.process.interval"));
+
+	private String smsServer = prop.getProperty("sms.server.url");
+
 	private boolean sms = Boolean.parseBoolean(prop.getProperty("sms.enable"));
+
+	private final String SERVER_IP = smsServer;
 
 	private ScheduledExecutorService sendChannel;
 	private ScheduledExecutorService recvChannel;

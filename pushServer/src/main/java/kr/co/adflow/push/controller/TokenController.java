@@ -8,6 +8,7 @@ import javax.annotation.Resource;
 import kr.co.adflow.push.domain.Response;
 import kr.co.adflow.push.domain.Result;
 import kr.co.adflow.push.domain.Token;
+import kr.co.adflow.push.domain.User;
 import kr.co.adflow.push.domain.Validation;
 import kr.co.adflow.push.service.TokenService;
 
@@ -77,7 +78,11 @@ public class TokenController {
 			result.setErrors(messages);
 			return new Response(result);
 		}
-		Token rst = tokenService.post(token);
+
+		User user = new User();
+		user.setUserID(token.getUserID());
+		user.setDeviceID(token.getDeviceID());
+		Token rst = tokenService.post(user);
 		Result<Token> result = new Result<Token>();
 		result.setSuccess(true);
 		result.setData(rst);

@@ -12,7 +12,7 @@
 	<insert id="post" parameterType="kr.co.adflow.push.domain.Device">
 		INSERT INTO
 		device values(
-		#{deviceID}, #{userID}, #{deviceInfo}
+		#{deviceID}, #{userID}, #{deviceInfo}, #{apnsToken}
 		)
 	</insert>
 

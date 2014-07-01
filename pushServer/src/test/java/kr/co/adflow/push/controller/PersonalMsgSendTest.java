@@ -83,7 +83,7 @@ public class PersonalMsgSendTest extends AbstractTestNGSpringContextTests {
 		logger.debug("==========메시지전송테스트시작()==========");
 		Message msg = new Message();
 		msg.setSender("nadir93");
-		msg.setReceiver("/users/nadir93");
+		msg.setReceiver("/users/kicho");
 		jsonString = "{\"notification\":{\"notificationStyle\":1,\"contentTitle\":\"교육장소공지\","
 				+ "\"contentText\":\"메시지전송테스트.\", \"ticker\":\"부산은행교육장소알림장소: 수림연수원 시간: 3월 22일 오전: 12시\","
 				+ "\"summaryText\":\"장소: 수림연수원 시간: 3월 22일 오전: "

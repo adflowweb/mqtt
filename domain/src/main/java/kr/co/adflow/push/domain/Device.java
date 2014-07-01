@@ -13,6 +13,7 @@ public class Device {
 	private String deviceID;
 	private String userID;
 	private String deviceInfo;
+	private String apnsToken;
 
 	public String getDeviceID() {
 		return deviceID;
@@ -36,6 +37,21 @@ public class Device {
 
 	public void setDeviceInfo(String deviceInfo) {
 		this.deviceInfo = deviceInfo;
+	}
+
+	public String getApnsToken() {
+		return apnsToken;
+	}
+
+	public void setApnsToken(String apnsToken) {
+		this.apnsToken = apnsToken;
+	}
+
+	@Override
+	public String toString() {
+		return "Device [deviceID=" + deviceID + ", userID=" + userID
+				+ ", deviceInfo=" + deviceInfo + ", apnsToken=" + apnsToken
+				+ "]";
 	}
 
 }

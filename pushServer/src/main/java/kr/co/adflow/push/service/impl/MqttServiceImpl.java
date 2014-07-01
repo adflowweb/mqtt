@@ -24,13 +24,13 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import kr.co.adflow.push.bsbank.mapper.GroupMapper;
 import kr.co.adflow.push.dao.MessageDao;
 import kr.co.adflow.push.domain.Acknowledge;
 import kr.co.adflow.push.domain.Topic;
 import kr.co.adflow.push.domain.Message;
 import kr.co.adflow.push.domain.User;
 import kr.co.adflow.push.exception.PushException;
-import kr.co.adflow.push.mapper.GroupMapper;
 import kr.co.adflow.push.mapper.MessageMapper;
 import kr.co.adflow.push.service.MqttService;
 
@@ -45,6 +45,7 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 /**
@@ -108,6 +109,11 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 
 	@Autowired
 	private SqlSession sqlSession;
+
+	@Autowired
+	@Qualifier("bsBanksqlSession")
+	private SqlSession bsBanksqlSession;
+
 	@Resource
 	private MessageDao messageDao;
 
@@ -161,7 +167,7 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 
 		mOpts = makeMqttOpts();
 		msgMapper = sqlSession.getMapper(MessageMapper.class);
-		grpMapper = sqlSession.getMapper(GroupMapper.class);
+		grpMapper = bsBanksqlSession.getMapper(GroupMapper.class);
 		logger.info("mqttService초기화종료()");
 	}
 
@@ -405,7 +411,9 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 				// convert json string to object
 				User user = objectMapper.readValue(message.getPayload(),
 						User.class);
-				Topic[] grp = grpMapper.get(user.getUserID());
+				kr.co.adflow.push.domain.bsbank.User bsbankUser = grpMapper
+						.getTopic(user.getUserID());
+				logger.debug("user=" + bsbankUser);
 				// db insert push
 				Message msg = new Message();
 				msg.setQos(2);
@@ -415,15 +423,21 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 				content.append("{\"userID\":");
 				content.append("\"");
 				content.append(user.getUserID());
-				content.append("\",\"groups\":[");
-				for (int i = 0; i < grp.length; i++) {
-					content.append("\"");
-					content.append(grp[i].getTopic());
-					content.append("\"");
-					if (i < grp.length - 1) {
-						content.append(",");
-					}
-				}
+				content.append("\",\"groups\":[\"");
+				content.append(bsbankUser.getGw_sbsd_cdnm());
+				content.append("\"");
+				content.append(",\"");
+				content.append(bsbankUser.getGw_sbsd_cdnm() + "/"
+						+ bsbankUser.getGw_deptmt_cdnm());
+				content.append("\"");
+				// for (int i = 0; i < grp.length; i++) {
+				// content.append("\"");
+				// content.append(grp[i].getTopic());
+				// content.append("\"");
+				// if (i < grp.length - 1) {
+				// content.append(",");
+				// }
+				// }
 				content.append("]}");
 				msg.setType(Message.COMMAND);
 				msg.setContent(content.toString());
