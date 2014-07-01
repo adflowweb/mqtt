@@ -12,7 +12,8 @@
 	<insert id="post" parameterType="kr.co.adflow.push.domain.User">
 		INSERT INTO
 		user values(
-		#{userID}, #{password}, #{name}, #{title}, #{dept}, #{email}, #{phone}
+		#{userID}, #{password}, #{name}, #{title}, #{dept}, #{email},
+		#{phone}, #{admin}
 		)
 	</insert>
 
