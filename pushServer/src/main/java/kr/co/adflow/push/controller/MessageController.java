@@ -215,7 +215,7 @@ public class MessageController {
 	}
 
 	/**
-	 * 메시지 가져오기
+	 * 전체 메시지 가져오기
 	 * 
 	 * @param msg
 	 * @return

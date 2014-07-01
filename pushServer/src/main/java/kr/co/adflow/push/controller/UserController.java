@@ -162,6 +162,38 @@ public class UserController {
 	 * @return
 	 * @throws Exception
 	 */
+	@RequestMapping(value = "adminAuth", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	@ResponseBody
+	public Response<Token> adminAuth(@RequestBody User user,
+			HttpServletRequest request,
+			@RequestHeader("User-Agent") String userAgent) throws Exception {
+		logger.debug("유저=" + user);
+		Token token = userService.adminAuth(user);
+		Result<Token> result = new Result<Token>();
+		result.setSuccess(true);
+		if (token == null) {
+			List<String> messages = new ArrayList<String>() {
+				{
+					add("user not found or invalid password");
+				}
+			};
+			result.setErrors(messages);
+		} else {
+			result.setData(token);
+		}
+
+		Response<Token> res = new Response<Token>(result);
+		logger.debug("response=" + res);
+		return res;
+	}
+
+	/**
+	 * 유저인증
+	 * 
+	 * @param msg
+	 * @return
+	 * @throws Exception
+	 */
 	@RequestMapping(value = "auth", method = RequestMethod.GET)
 	@ResponseBody
 	public Response<Token> auth(HttpServletRequest request,

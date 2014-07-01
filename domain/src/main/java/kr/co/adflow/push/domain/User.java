@@ -19,6 +19,7 @@ public class User {
 	private String password;
 	private String deviceID;
 	private String apnsToken;
+	private boolean admin;
 
 	public User() {
 	}
@@ -95,12 +96,20 @@ public class User {
 		this.apnsToken = apnsToken;
 	}
 
+	public boolean isAdmin() {
+		return admin;
+	}
+
+	public void setAdmin(boolean admin) {
+		this.admin = admin;
+	}
+
 	@Override
 	public String toString() {
 		return "User [userID=" + userID + ", name=" + name + ", title=" + title
 				+ ", dept=" + dept + ", email=" + email + ", phone=" + phone
 				+ ", password=" + password + ", deviceID=" + deviceID
-				+ ", apnsToken=" + apnsToken + "]";
+				+ ", apnsToken=" + apnsToken + ", admin=" + admin + "]";
 	}
 
 }

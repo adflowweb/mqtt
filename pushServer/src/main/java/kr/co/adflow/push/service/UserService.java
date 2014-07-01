@@ -18,4 +18,6 @@ public interface UserService {
 	int delete(String userID) throws Exception;
 
 	Token auth(User user) throws Exception;;
+
+	Token adminAuth(User user) throws Exception;;
 }

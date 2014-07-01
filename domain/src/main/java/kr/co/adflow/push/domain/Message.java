@@ -1,5 +1,6 @@
 package kr.co.adflow.push.domain;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**

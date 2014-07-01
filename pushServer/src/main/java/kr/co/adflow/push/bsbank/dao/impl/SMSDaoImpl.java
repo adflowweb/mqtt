@@ -67,9 +67,6 @@ public class SMSDaoImpl implements SMSDao {
 	private static final int ALIVE_ACK_LENGTH = 38;
 
 	private static final String ENCODING_TYPE = "EUC-KR";
-	private static final int RECEIVERPORT = 3000;
-
-	private static final int PORT = 4000;
 
 	private int sendChannelInterval = Integer.parseInt(prop
 			.getProperty("sendChannel.process.interval"));
@@ -79,9 +76,12 @@ public class SMSDaoImpl implements SMSDao {
 
 	private String smsServer = prop.getProperty("sms.server.url");
 
+	private int smsPort = Integer.parseInt(prop.getProperty("sms.server.port"));
+
 	private boolean sms = Boolean.parseBoolean(prop.getProperty("sms.enable"));
 
 	private final String SERVER_IP = smsServer;
+	private final int PORT = smsPort;
 
 	private ScheduledExecutorService sendChannel;
 	private ScheduledExecutorService recvChannel;
@@ -376,8 +376,8 @@ public class SMSDaoImpl implements SMSDao {
 			logger.debug("recvServer가널값이아닙니다.");
 			return;
 		}
-		logger.debug("리시버서버 포트=" + RECEIVERPORT);
-		recvServer = new ServerSocket(RECEIVERPORT);
+		logger.debug("리시버서버 포트=" + PORT);
+		recvServer = new ServerSocket(PORT);
 		logger.debug("소케연결기다림..(블락킹)");
 		Socket recvSocket = recvServer.accept();
 		logger.debug("리시브소켓이연결되었습니다.recvSocket=" + recvSocket);
