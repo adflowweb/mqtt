@@ -73,6 +73,36 @@ public class UserController {
 	}
 
 	/**
+	 * 어드민 유저정보 가져오기
+	 * 
+	 * @param userID
+	 * @param clientID
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "users", params = "type=admin", method = RequestMethod.GET)
+	@ResponseBody
+	public Response<User[]> getAdmin() throws Exception {
+		Result<User[]> result = new Result<User[]>();
+		result.setSuccess(true);
+		User[] user = userService.getAdmin();
+		if (user == null) {
+			List<String> messages = new ArrayList<String>() {
+				{
+					add("admin not found");
+				}
+			};
+			result.setInfo(messages);
+		} else {
+			result.setData(user);
+		}
+
+		Response<User[]> res = new Response<User[]>(result);
+		logger.debug("response=" + res);
+		return res;
+	}
+
+	/**
 	 * 유저정보 삭제하기
 	 * 
 	 * @param userID
@@ -110,6 +140,31 @@ public class UserController {
 	public Response post(@RequestBody User user) throws Exception {
 		logger.debug("유저=" + user);
 		final int count = userService.post(user);
+		Result result = new Result();
+		result.setSuccess(true);
+		List<String> messages = new ArrayList<String>() {
+			{
+				add("updates=" + count);
+			}
+		};
+		result.setInfo(messages);
+		Response res = new Response(result);
+		logger.debug("response=" + res);
+		return res;
+	}
+
+	/**
+	 * 유저정보 수정하기
+	 * 
+	 * @param msg
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "users", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
+	@ResponseBody
+	public Response put(@RequestBody User user) throws Exception {
+		logger.debug("유저=" + user);
+		final int count = userService.put(user);
 		Result result = new Result();
 		result.setSuccess(true);
 		List<String> messages = new ArrayList<String>() {

@@ -17,4 +17,6 @@ public interface UserMapper {
 	int delete(String userID) throws Exception;
 
 	boolean auth(User user) throws Exception;
+
+	User[] getAdmin() throws Exception;
 }

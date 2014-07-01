@@ -61,7 +61,11 @@ public class UserDaoImpl implements UserDao {
 	 */
 	@Override
 	public int put(User user) throws Exception {
-		return 0;
+		logger.debug("put시작(user=" + user + ")");
+		UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+		int result = userMapper.put(user);
+		logger.debug("put종료(result=" + result + ")");
+		return result;
 	}
 
 	/*
@@ -88,6 +92,12 @@ public class UserDaoImpl implements UserDao {
 		boolean rst = ldap.auth(user.getUserID(), user.getPassword());
 		logger.debug("auth종료(result=" + rst + ")");
 		return rst;
+	}
+
+	@Override
+	public User[] getAdmin() throws Exception {
+		UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+		return userMapper.getAdmin();
 	}
 
 }

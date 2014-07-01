@@ -109,4 +109,12 @@ public class UserServiceImpl implements UserService {
 		logger.debug("auth종료(token=" + token + ")");
 		return token;
 	}
+
+	@Override
+	public User[] getAdmin() throws Exception {
+		logger.debug("getAdmin시작()");
+		User[] user = userDao.getAdmin();
+		logger.debug("getAdmin종료(user=" + user + ")");
+		return user;
+	}
 }
