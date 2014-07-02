@@ -71,8 +71,8 @@ public class SMSDaoImpl implements SMSDao {
 	private int sendChannelInterval = Integer.parseInt(prop
 			.getProperty("sendChannel.process.interval"));
 
-	private int recvChannelInterval = Integer.parseInt(prop
-			.getProperty("recvChannel.process.interval"));
+	// private int recvChannelInterval = Integer.parseInt(prop
+	// .getProperty("recvChannel.process.interval"));
 
 	private String smsServer = prop.getProperty("sms.server.url");
 
@@ -103,10 +103,10 @@ public class SMSDaoImpl implements SMSDao {
 			sendChannel.scheduleWithFixedDelay(new SendChannelHandler(), 0,
 					sendChannelInterval, TimeUnit.SECONDS);
 			logger.info("sendChannel핸들러가시작되었습니다.");
-			recvChannel = Executors.newScheduledThreadPool(1);
-			recvChannel.scheduleWithFixedDelay(new RecvChannelHandler(), 0,
-					recvChannelInterval, TimeUnit.SECONDS);
-			logger.info("recvChannel핸들러가시작되었습니다.");
+			// recvChannel = Executors.newScheduledThreadPool(1);
+			// recvChannel.scheduleWithFixedDelay(new RecvChannelHandler(), 0,
+			// recvChannelInterval, TimeUnit.SECONDS);
+			// logger.info("recvChannel핸들러가시작되었습니다.");
 		}
 		logger.info("SMSDAOImpl초기화종료()");
 	}
@@ -123,8 +123,8 @@ public class SMSDaoImpl implements SMSDao {
 			if (sms) {
 				sendChannel.shutdown();
 				logger.info("sendChannel핸들러가종료되었습니다.");
-				recvChannel.shutdown();
-				logger.info("recvChannel핸들러가종료되었습니다.");
+				// recvChannel.shutdown();
+				// logger.info("recvChannel핸들러가종료되었습니다.");
 			}
 
 			if (recvServer != null && !recvServer.isClosed()) {
