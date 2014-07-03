@@ -21,6 +21,7 @@
 		<result property="gw_jgd_nm" column="gw_jgd_nm" />
 		<result property="gw_rsb_cdnm" column="gw_rsb_cdnm" />
 		<result property="gw_rsb_nm" column="gw_rsb_nm" />
+		<result property="mpno" column="mpno" />
 	</resultMap>
 
 	<select id="getUsersByDepartment" parameterType="java.lang.String"
@@ -29,11 +30,21 @@
 		#{gw_deptmt_cdnm}
 	</select>
 
+	<select id="getUsersBySBSD" parameterType="java.lang.String"
+		resultMap="UserResult">
+		SELECT * FROM emp WHERE gw_sbsd_cdnm =
+		#{gw_sbsd_cdnm}
+	</select>
+
 
 	<select id="getUsersByName" parameterType="java.lang.String"
 		resultMap="UserResult">
 		SELECT * FROM emp WHERE gw_user_nm like CONCAT('%', #{name}, '%')
 		<!-- SELECT * FROM emp WHERE gw_user_nm like '%#{name}%' -->
+	</select>
+
+	<select id="getAllUser" resultMap="UserResult">
+		SELECT * FROM emp
 	</select>
 </mapper>	
 	

@@ -83,7 +83,7 @@ public class PersonalMsgSendTest extends AbstractTestNGSpringContextTests {
 		logger.debug("==========메시지전송테스트시작()==========");
 		Message msg = new Message();
 		msg.setSender("nadir93");
-		msg.setReceiver("/users/1731124234234");
+		msg.setReceiver("/users/1731124");
 		jsonString = "{\"notification\":{\"notificationStyle\":1,\"contentTitle\":\"교육장소공지\","
 				+ "\"contentText\":\"메시지전송테스트.\", \"ticker\":\"부산은행교육장소알림장소: 수림연수원 시간: 3월 22일 오전: 12시\","
 				+ "\"summaryText\":\"장소: 수림연수원 시간: 3월 22일 오전: "
@@ -99,6 +99,7 @@ public class PersonalMsgSendTest extends AbstractTestNGSpringContextTests {
 		msg.setQos(1);
 		msg.setSms(true);
 		msg.setTimeOut(1);
+		msg.setType(Message.NOTIFICATION_PERSONAL); // 개인메시지타입 = 0
 		Response res = messageController.post(msg);
 		logger.debug("호출결과=" + res);
 		List<String> errors = res.getResult().getErrors();

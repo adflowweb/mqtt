@@ -8,17 +8,24 @@ import java.util.Date;
  */
 public class Message {
 
-	public static final int STATUS_SMS_SENT = 1;
-	public static final int STATUS_PHONENUMBER_NOT_FOUND = 2;
-	public static final int STATUS_USER_NOT_FOUND = 3;
-	public static final int STATUS_EXIST_ACK = 4;
+	public static final int STATUS_WAIT_FOR_SENDING = 0;
+	public static final int STATUS_PUSH_SENT = 1;
+	public static final int STATUS_SMS_SENT = 2;
+	public static final int STATUS_SMS_PROCESS_DONE = 3; // 전송작업을 수행하였지만 실제
+															// sms 전송건수가 0 일때
+	public static final int STATUS_EXIST_ACK = 4; // 개인메시지용
 
-	public static int NOTIFICATION_PERSONAL = 0; // 개인메시지
-	public static int NOTIFICATION_GROUP = 1; // 그룹메시지
-	public static int NOTIFICATION_ALL = 2; // 전체메시지
+	public static final int STATUS_PHONENUMBER_NOT_FOUND = 100;
+	public static final int STATUS_USER_NOT_FOUND = 200;
 
-	public static int COMMAND_SUBSCRIBE = 100; // subscribe
-	public static int COMMAND_UNSUBSCRIBE = 101; // unsubscribe
+	public static final int NOTIFICATION_PERSONAL = 0; // 개인메시지
+	public static final int NOTIFICATION_ALL = 1; // 전체메시지
+	public static final int NOTIFICATION_GROUP_AFFILIATE = 2; // 계엵사 그룹메시지
+	public static final int NOTIFICATION_GROUP_DEPT = 3; // 부서 그룹메시지
+	public static final int NOTIFICATION_GROUP_TITLE = 4; // 직급 그룹메시지
+
+	public static final int COMMAND_SUBSCRIBE = 100; // subscribe
+	public static final int COMMAND_UNSUBSCRIBE = 101; // unsubscribe
 
 	private int id;
 	private String content;

@@ -414,36 +414,39 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 				kr.co.adflow.push.domain.bsbank.User bsbankUser = grpMapper
 						.getTopic(user.getUserID());
 				logger.debug("user=" + bsbankUser);
-				// db insert push
-				Message msg = new Message();
-				msg.setQos(2);
-				msg.setReceiver("/users/" + user.getUserID());
-				msg.setSender("pushServer");
-				StringBuffer content = new StringBuffer();
-				content.append("{\"userID\":");
-				content.append("\"");
-				content.append(user.getUserID());
-				content.append("\",\"groups\":[\"");
-				content.append(bsbankUser.getGw_sbsd_cdnm());
-				content.append("\"");
-				content.append(",\"");
-				content.append(bsbankUser.getGw_sbsd_cdnm() + "/"
-						+ bsbankUser.getGw_deptmt_cdnm());
-				content.append("\"");
-				// for (int i = 0; i < grp.length; i++) {
-				// content.append("\"");
-				// content.append(grp[i].getTopic());
-				// content.append("\"");
-				// if (i < grp.length - 1) {
-				// content.append(",");
-				// }
-				// }
-				content.append("]}");
-				msg.setType(Message.COMMAND_SUBSCRIBE);
-				msg.setContent(content.toString());
-				logger.debug("msg=" + msg);
-				messageDao.post(msg);
-				logger.debug("그룹정보메시지를등록하였습니다.");
+				if (user != null) {
+					// db insert push
+					Message msg = new Message();
+					msg.setQos(2);
+					msg.setReceiver("/users/" + user.getUserID());
+					msg.setSender("pushServer");
+					StringBuffer content = new StringBuffer();
+					content.append("{\"userID\":");
+					content.append("\"");
+					content.append(user.getUserID());
+					content.append("\",\"groups\":[\"");
+					content.append(bsbankUser.getGw_sbsd_cdnm());
+					content.append("\"");
+					content.append(",\"");
+					content.append(bsbankUser.getGw_deptmt_cdnm());
+					content.append("\"");
+					// for (int i = 0; i < grp.length; i++) {
+					// content.append("\"");
+					// content.append(grp[i].getTopic());
+					// content.append("\"");
+					// if (i < grp.length - 1) {
+					// content.append(",");
+					// }
+					// }
+					content.append("]}");
+					msg.setType(Message.COMMAND_SUBSCRIBE);
+					msg.setContent(content.toString());
+					logger.debug("msg=" + msg);
+					messageDao.post(msg);
+					logger.debug("그룹정보메시지를등록하였습니다.");
+				} else {
+					logger.error("사용자정보가없습니다.");
+				}
 			} catch (Exception e) {
 				logger.error("에러발생", e);
 			}

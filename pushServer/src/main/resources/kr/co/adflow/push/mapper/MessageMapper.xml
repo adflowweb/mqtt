@@ -34,7 +34,7 @@
 
 	<select id="getUndeliveredSmsMsg" resultMap="MessageResult">
 		select * from message
-		where status = 0 and sms = 1 and issue is not
+		where status = 1 and sms = 1 and issue is not
 		null and issueSms is null
 		<!-- and reservation is not null -->
 	</select>
@@ -79,15 +79,13 @@
 	</update>
 
 	<update id="putIssue" parameterType="kr.co.adflow.push.domain.Message">
-		UPDATE message set
-		issue =
-		#{issue} where id = #{id}
+		UPDATE message set issue =
+		#{issue}, status = #{status} where id = #{id}
 	</update>
 
 	<update id="putIssueSms" parameterType="kr.co.adflow.push.domain.Message">
 		UPDATE message set
-		issueSms =
-		#{issueSms} where id = #{id}
+		issueSms = #{issueSms}, status = #{status} where id = #{id}
 	</update>
 
 	<update id="putStatus" parameterType="kr.co.adflow.push.domain.Message">

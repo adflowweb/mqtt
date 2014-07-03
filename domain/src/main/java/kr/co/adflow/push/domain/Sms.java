@@ -18,8 +18,9 @@ public class Sms {
 	// +--------+------------------+------+-----+---------+-------+
 
 	public static final int SMS_SENT = 1;
-	public static final int STATUS_PHONENUMBER_NOT_FOUND = 2;
-	public static final int STATUS_USER_NOT_FOUND = 3;
+
+	public static final int STATUS_PHONENUMBER_NOT_FOUND = 100;
+	public static final int STATUS_USER_NOT_FOUND = 200;
 	private int id;
 	private String userID;
 	private Date issue;

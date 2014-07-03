@@ -12,5 +12,11 @@ public interface UserMapper {
 
 	User[] getUsersByDepartment(String dept) throws Exception;
 
+	User[] getUsersBySBSD(String sbsd) throws Exception;
+
 	User[] getUsersByName(String name) throws Exception;
+
+	User[] getAllUser() throws Exception;
+
+	User[] getUsers(String deptID) throws Exception;
 }

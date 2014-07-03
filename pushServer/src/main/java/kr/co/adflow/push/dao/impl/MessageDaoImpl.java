@@ -31,14 +31,13 @@ import kr.co.adflow.push.service.MqttService;
 import org.apache.ibatis.session.SqlSession;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
  * @author nadir93
  * @date 2014. 4. 14.
  * 
  */
-@Component
+// @Component
 public class MessageDaoImpl implements MessageDao {
 
 	private static final org.slf4j.Logger logger = LoggerFactory
@@ -466,7 +465,7 @@ public class MessageDaoImpl implements MessageDao {
 						+ "님으로부터 메시지가도착하였습니다. 메시지앱으로확인바랍니다.");
 			} else {
 				throw new PhoneNumberNotFoundException("전화번호가존재하지않습니다.userID="
-						+ user.getUserID());
+						+ userID);
 			}
 			// mqttService.publish(message);
 			logger.debug("SMS메시지를전송하였습니다.");

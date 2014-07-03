@@ -74,13 +74,13 @@ public class GroupMsgSendTest extends AbstractTestNGSpringContextTests {
 	}
 
 	/**
-	 * 전체 메시지 전송 테스트
+	 * 계열사그룹메시지전송테스트
 	 * 
 	 * @throws Exception
 	 */
 	@Test(priority = 1)
-	void 그룹메시지전송테스트() throws Exception {
-		logger.debug("==========그룹메시지전송테스트시작()==========");
+	void 계열사그룹메시지전송테스트() throws Exception {
+		logger.debug("==========계열사그룹메시지전송테스트시작()==========");
 		Message msg = new Message();
 		msg.setSender("nadir93");
 		msg.setReceiver("/groups/BSBK");
@@ -99,12 +99,12 @@ public class GroupMsgSendTest extends AbstractTestNGSpringContextTests {
 		msg.setQos(1);
 		msg.setSms(true);
 		msg.setTimeOut(1);
-		msg.setType(2); // 전체메시지타입 = 2
+		msg.setType(2); // 계열사그룹메시지타입 = 2
 		Response res = messageController.post(msg);
 		logger.debug("호출결과=" + res);
 		List<String> errors = res.getResult().getErrors();
 		logger.debug("errors=" + errors);
 		assertNull(errors);
-		logger.debug("==========그룹메시지전송테스트종료()==========");
+		logger.debug("==========계열사그룹메시지전송테스트종료()==========");
 	}
 }

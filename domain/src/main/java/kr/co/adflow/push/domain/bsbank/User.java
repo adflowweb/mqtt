@@ -41,6 +41,7 @@ public class User {
 	private String gw_jgd_nm;
 	private String gw_rsb_cdnm;
 	private String gw_rsb_nm;
+	private String mpno;
 
 	public String getGw_sbsd_cdnm() {
 		return gw_sbsd_cdnm;
@@ -122,6 +123,14 @@ public class User {
 		this.gw_rsb_nm = gw_rsb_nm;
 	}
 
+	public String getMpno() {
+		return mpno;
+	}
+
+	public void setMpno(String mpno) {
+		this.mpno = mpno;
+	}
+
 	@Override
 	public String toString() {
 		return "User [gw_sbsd_cdnm=" + gw_sbsd_cdnm + ", gw_stf_cdnm="
@@ -129,7 +138,8 @@ public class User {
 				+ ", gw_user_nm=" + gw_user_nm + ", gw_psit_cdnm="
 				+ gw_psit_cdnm + ", gw_psinm=" + gw_psinm + ", gw_jgd_cdnm="
 				+ gw_jgd_cdnm + ", gw_jgd_nm=" + gw_jgd_nm + ", gw_rsb_cdnm="
-				+ gw_rsb_cdnm + ", gw_rsb_nm=" + gw_rsb_nm + "]";
+				+ gw_rsb_cdnm + ", gw_rsb_nm=" + gw_rsb_nm + ", mpno=" + mpno
+				+ "]";
 	}
 
 }
