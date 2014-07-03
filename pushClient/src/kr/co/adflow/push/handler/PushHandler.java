@@ -22,7 +22,6 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
-import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -141,7 +140,11 @@ public class PushHandler implements MqttCallback {
 			// end
 
 			switch (msgType) {
-			case 0:
+			case 0: // 개인메시지
+			case 1: // 전체메시지
+			case 2: // 그룹메시지(계열사)
+			case 3: // 그룹메시지(부서)
+			case 4: // 그룹메시지(직급)
 				// notification msg
 				if (msg.getBoolean("ack")) {
 					// ack message
@@ -179,7 +182,8 @@ public class PushHandler implements MqttCallback {
 				// showNotify
 				NotificationHandler.notify(context, noti);
 				break;
-			case 1:
+			case 100: // subscribe
+			case 101: // unsubscribe
 				// command msg
 				// 그룹정보변경 (전체토픽을 구독취소하고 다시 전체토픽구독)
 				// (토픽=/users/nadir93,메시지={"id":5,"ack":false,"type":1,"content":{"userID":"nadir93","groups":["dev","adflow"]}},qos=2)

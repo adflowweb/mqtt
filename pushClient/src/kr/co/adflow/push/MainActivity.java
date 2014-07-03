@@ -139,13 +139,13 @@ public class MainActivity extends WLDroidGap {
 			// }
 			// for 이찬호 end
 
-			// for nadir93
-			User user = pushdb.getUser("nadir93");
+			// for 1731124
+			User user = pushdb.getUser("1731124");
 			Log.d(TAG, "user" + user);
 			if (user == null) {
 				try {
 					user = new User();
-					user.setUserID("nadir93");
+					user.setUserID("1731124");
 					// user.setPassword("passw0rd");
 					user.setTokenID("08be01ba2e1f4e2e8216725");
 					user.setCurrentUser(true);
