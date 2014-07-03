@@ -4,6 +4,7 @@ import java.util.List;
 
 import kr.co.adflow.push.domain.Acknowledge;
 import kr.co.adflow.push.domain.Message;
+import kr.co.adflow.push.domain.Sms;
 
 /**
  * @author nadir93
@@ -26,6 +27,8 @@ public interface MessageMapper {
 
 	int postAck(Acknowledge ack) throws Exception;
 
+	boolean getAck(Acknowledge ack) throws Exception;
+
 	int deleteMsg(int id) throws Exception;
 
 	int postContent(Message msg) throws Exception;
@@ -36,4 +39,11 @@ public interface MessageMapper {
 
 	Message[] getReservationMsgs() throws Exception;
 
+	int putStatus(Message msg) throws Exception;
+
+	Acknowledge[] getAckAll(int msgID) throws Exception;
+
+	boolean getSms(Sms sms) throws Exception;
+
+	int postSms(Sms sms) throws Exception;
 }

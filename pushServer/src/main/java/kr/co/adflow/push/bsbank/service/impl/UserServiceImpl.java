@@ -38,9 +38,17 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User[] getUsersByDepartment(String dept) throws Exception {
-		logger.debug("get시작(dept=" + dept + ")");
+		logger.debug("getUsersByDepartment시작(dept=" + dept + ")");
 		User[] users = userDao.getUsersByDepartment(dept);
-		logger.debug("get종료(users=" + users + ")");
+		logger.debug("getUsersByDepartment종료(users=" + users + ")");
+		return users;
+	}
+
+	@Override
+	public User[] getUsersByName(String name) throws Exception {
+		logger.debug("getUsersByName시작(name=" + name + ")");
+		User[] users = userDao.getUsersByName(name);
+		logger.debug("getUsersByName종료(users=" + users + ")");
 		return users;
 	}
 }

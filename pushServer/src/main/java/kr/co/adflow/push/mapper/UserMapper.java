@@ -19,4 +19,6 @@ public interface UserMapper {
 	boolean auth(User user) throws Exception;
 
 	User[] getAdmin() throws Exception;
+
+	User[] getAllUser() throws Exception;
 }

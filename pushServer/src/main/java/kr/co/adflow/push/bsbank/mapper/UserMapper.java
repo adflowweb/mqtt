@@ -10,5 +10,7 @@ import kr.co.adflow.push.domain.bsbank.User;
 public interface UserMapper {
 	User get(String userID) throws Exception;
 
-	User[] getUsersByDepartment(String dept);
+	User[] getUsersByDepartment(String dept) throws Exception;
+
+	User[] getUsersByName(String name) throws Exception;
 }

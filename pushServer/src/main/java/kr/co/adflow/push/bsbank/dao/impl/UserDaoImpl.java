@@ -40,11 +40,20 @@ public class UserDaoImpl implements UserDao {
 	}
 
 	@Override
-	public User[] getUsersByDepartment(String dept) {
+	public User[] getUsersByDepartment(String dept) throws Exception {
 		logger.debug("getUsersByDepartment시작(dept=" + dept + ")");
 		UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
 		User[] user = userMapper.getUsersByDepartment(dept);
 		logger.debug("getUsersByDepartment종료(user=" + user + ")");
+		return user;
+	}
+
+	@Override
+	public User[] getUsersByName(String name) throws Exception {
+		logger.debug("getUsersByName시작(name=" + name + ")");
+		UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+		User[] user = userMapper.getUsersByName(name);
+		logger.debug("getUsersByName종료(user=" + user + ")");
 		return user;
 	}
 }

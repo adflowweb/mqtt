@@ -11,4 +11,6 @@ public interface UserService {
 	User get(String userID) throws Exception;
 
 	User[] getUsersByDepartment(String dept) throws Exception;
+
+	User[] getUsersByName(String name) throws Exception;
 }

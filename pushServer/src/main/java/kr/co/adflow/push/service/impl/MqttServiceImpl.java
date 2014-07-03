@@ -439,7 +439,7 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 				// }
 				// }
 				content.append("]}");
-				msg.setType(Message.COMMAND);
+				msg.setType(Message.COMMAND_SUBSCRIBE);
 				msg.setContent(content.toString());
 				logger.debug("msg=" + msg);
 				messageDao.post(msg);

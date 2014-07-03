@@ -22,10 +22,10 @@ import org.testng.annotations.Test;
 
 @Test
 @ContextConfiguration("file:src/test/resources/applicationContext.xml")
-public class PersonalMsgSendTest extends AbstractTestNGSpringContextTests {
+public class AllUsersMsgSendTest extends AbstractTestNGSpringContextTests {
 
 	private static final org.slf4j.Logger logger = LoggerFactory
-			.getLogger(PersonalMsgSendTest.class);
+			.getLogger(AllUsersMsgSendTest.class);
 
 	private byte[] data;
 	private String jsonString;
@@ -74,16 +74,16 @@ public class PersonalMsgSendTest extends AbstractTestNGSpringContextTests {
 	}
 
 	/**
-	 * 메시지 전송 테스트
+	 * 전체 메시지 전송 테스트
 	 * 
 	 * @throws Exception
 	 */
 	@Test(priority = 1)
-	void 메시지전송테스트() throws Exception {
-		logger.debug("==========메시지전송테스트시작()==========");
+	void 전체메시지전송테스트() throws Exception {
+		logger.debug("==========전체메시지전송테스트시작()==========");
 		Message msg = new Message();
 		msg.setSender("nadir93");
-		msg.setReceiver("/users/1731124234234");
+		msg.setReceiver("/users");
 		jsonString = "{\"notification\":{\"notificationStyle\":1,\"contentTitle\":\"교육장소공지\","
 				+ "\"contentText\":\"메시지전송테스트.\", \"ticker\":\"부산은행교육장소알림장소: 수림연수원 시간: 3월 22일 오전: 12시\","
 				+ "\"summaryText\":\"장소: 수림연수원 시간: 3월 22일 오전: "
@@ -99,11 +99,12 @@ public class PersonalMsgSendTest extends AbstractTestNGSpringContextTests {
 		msg.setQos(1);
 		msg.setSms(true);
 		msg.setTimeOut(1);
+		msg.setType(2); // 전체메시지타입 = 2
 		Response res = messageController.post(msg);
 		logger.debug("호출결과=" + res);
 		List<String> errors = res.getResult().getErrors();
 		logger.debug("errors=" + errors);
 		assertNull(errors);
-		logger.debug("==========메시지전송테스트종료()==========");
+		logger.debug("==========전체메시지전송테스트종료()==========");
 	}
 }

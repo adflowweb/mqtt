@@ -6,6 +6,6 @@ package kr.co.adflow.push.bsbank.dao;
  */
 public interface SMSDao {
 
-	void post(String msg) throws Exception;
+	void post(String phoneNum, String callbackNum, String msg) throws Exception;
 
 }

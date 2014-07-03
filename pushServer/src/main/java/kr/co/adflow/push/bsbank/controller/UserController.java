@@ -76,12 +76,43 @@ public class UserController {
 	@RequestMapping(value = "/bsbank/users", method = RequestMethod.GET)
 	@ResponseBody
 	public Response<User[]> getUsersByDepartment(
-			@RequestParam(value = "dept", required = true) String id)
+			@RequestParam(value = "dept", required = true) String dept)
 			throws Exception {
-		logger.debug("dept=" + id);
+		logger.debug("dept=" + dept);
 		Result<User[]> result = new Result<User[]>();
 		result.setSuccess(true);
-		User[] users = userService.getUsersByDepartment(id);
+		User[] users = userService.getUsersByDepartment(dept);
+		if (users == null) {
+			List<String> messages = new ArrayList<String>() {
+				{
+					add("user not found");
+				}
+			};
+			result.setInfo(messages);
+		} else {
+			result.setData(users);
+		}
+
+		Response<User[]> res = new Response<User[]>(result);
+		logger.debug("response=" + res);
+		return res;
+	}
+
+	/**
+	 *  직원정보검색하기
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/bsbank/users", params = { "name" }, method = RequestMethod.GET)
+	@ResponseBody
+	public Response<User[]> getUsersByName(
+			@RequestParam(value = "name", required = true) String name)
+			throws Exception {
+		logger.debug("name=" + name);
+		Result<User[]> result = new Result<User[]>();
+		result.setSuccess(true);
+		User[] users = userService.getUsersByName(name);
 		if (users == null) {
 			List<String> messages = new ArrayList<String>() {
 				{

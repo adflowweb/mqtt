@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -16,8 +18,14 @@ import javax.annotation.Resource;
 
 import kr.co.adflow.push.bsbank.dao.SMSDao;
 import kr.co.adflow.push.dao.MessageDao;
+import kr.co.adflow.push.domain.Acknowledge;
 import kr.co.adflow.push.domain.Message;
+import kr.co.adflow.push.domain.Sms;
+import kr.co.adflow.push.domain.User;
+import kr.co.adflow.push.exception.NonExistentUserException;
+import kr.co.adflow.push.exception.PhoneNumberNotFoundException;
 import kr.co.adflow.push.mapper.MessageMapper;
+import kr.co.adflow.push.mapper.UserMapper;
 import kr.co.adflow.push.service.MqttService;
 
 import org.apache.ibatis.session.SqlSession;
@@ -286,6 +294,9 @@ public class MessageDaoImpl implements MessageDao {
 			try {
 				MessageMapper msgMapper = sqlSession
 						.getMapper(MessageMapper.class);
+				// select * from message
+				// where status = 0 and sms = 1 and issue is not
+				// null and issueSms is null
 				List<Message> list = (List<Message>) msgMapper
 						.getUndeliveredSmsMsg();
 				for (Message msg : list) {
@@ -293,18 +304,140 @@ public class MessageDaoImpl implements MessageDao {
 
 					Calendar cal = Calendar.getInstance();
 					cal.setTime(msg.getIssue());
-					cal.add(cal.MINUTE, msg.getTimeOut()); // 2분뒤
+					cal.add(cal.MINUTE, msg.getTimeOut());
 					Date timeOut = cal.getTime();
-					logger.debug("timeOut=" + timeOut);
+					logger.debug("타임아웃시간=" + timeOut);
 					// 발송시간(issue)과 현재시간 그리고 timeOut을 계산하여 대상선정
 					if (timeOut.before(new Date())) {
 						// SMS발송대상인 경우
 						logger.debug("SMS전송대상입니다.");
-						// smsDao.post(msg.getContent());
-						sendSMS(msgMapper, msg);
-						// 개별메시지
-						// 그룹메시지
-						// 전체메시지 처리 요망
+						int msgType = msg.getType();
+
+						switch (msgType) {
+						case 0: // 개인메시지
+							logger.debug("개인메시지처리시작");
+							Acknowledge ack = new Acknowledge();
+							ack.setId(msg.getId());
+							ack.setUserID(msg.getReceiver().substring(7));
+							// ack 존재유무 파악
+							if (msgMapper.getAck(ack)) {
+								// ack가 존재하면 sms 전송 종료
+								logger.debug("ack메시지가존재합니다.");
+								// db(status) update
+								msg.setStatus(Message.STATUS_EXIST_ACK);
+								msgMapper.putStatus(msg);
+								logger.debug("메시지정보를완료로업데이트했습니다.");
+							} else {
+								// ack가 존재하지 않으면 sms 전송후 종료
+								try {
+									sendSMS(msgMapper, ack.getUserID(), msg);
+									// 전송후 db(issueSms, status) update
+									msg.setIssueSms(new Date());
+									msg.setStatus(Message.STATUS_SMS_SENT);
+									msgMapper.putMsg(msg);
+									logger.debug("전송시간정보를업데이트했습니다.");
+									// db sms update
+									Sms sms = new Sms();
+									sms.setId(ack.getId());
+									sms.setUserID(ack.getUserID());
+									sms.setIssue(new Date());
+									sms.setStatus(Sms.SMS_SENT);
+									msgMapper.postSms(sms);
+									logger.debug("SMS발송정보가업데이트되었습니다.");
+								} catch (NonExistentUserException e) {
+									logger.debug(e.getMessage());
+									// db(status) update
+									msg.setStatus(Message.STATUS_USER_NOT_FOUND);
+									msgMapper.putMsg(msg);
+									logger.debug("메시지정보를업데이트했습니다.");
+								} catch (PhoneNumberNotFoundException e) {
+									logger.debug(e.getMessage());
+									// db(status) update
+									msg.setStatus(Message.STATUS_PHONENUMBER_NOT_FOUND);
+									msgMapper.putMsg(msg);
+									logger.debug("메시지정보를업데이트했습니다.");
+									// throw e;
+								}
+							}
+							logger.debug("개인메시지처리종료");
+							break;
+						case 1: // 그룹메시지
+							logger.debug("그룹메시지처리시작");
+							logger.debug("그룹메시지처리종료");
+							break;
+						case 2: // 전체메시지
+							logger.debug("전체메시지처리시작");
+							// 전체사용자가져오기
+							UserMapper userMapper = sqlSession
+									.getMapper(UserMapper.class);
+							User[] users = userMapper.getAllUser();
+							// ack사용자가져오기
+							Acknowledge[] acks = msgMapper.getAckAll(msg
+									.getId());
+
+							Map<String, Acknowledge> ackMap = new HashMap<String, Acknowledge>();
+							for (Acknowledge acknowledge : acks) {
+								logger.debug("acknowledge=" + acknowledge);
+								ackMap.put(acknowledge.getUserID(), acknowledge);
+							}
+
+							for (User user : users) {
+								logger.debug("user=" + user);
+								// sms 테이블을 체크해보고 없으면 수행 있으면 스킵
+								Sms sms = new Sms();
+								sms.setId(msg.getId());
+								sms.setUserID(user.getUserID());
+								if (msgMapper.getSms(sms)) {
+									// skip
+									logger.debug("이미SMS가발송되었습니다.");
+								} else {
+									// 루프돌면서 각사용자의 ack정보에 따라 메시지 전송
+									if (ackMap.containsKey(user.getUserID())) {
+										// skip
+										logger.debug("ack메시지가있습니다.(sms발송대상이아닙니다) user="
+												+ user.getUserID());
+									} else {
+										// sms 전송
+										try {
+											sendSMS(msgMapper,
+													user.getUserID(), msg);
+											// db sms update
+											sms.setIssue(new Date());
+											sms.setStatus(Sms.SMS_SENT);
+											msgMapper.postSms(sms);
+											logger.debug("SMS발송정보가업데이트되었습니다.");
+										} catch (NonExistentUserException e) {
+											logger.debug(e.getMessage());
+											// db(status) update
+											sms.setStatus(Sms.STATUS_USER_NOT_FOUND);
+											msgMapper.postSms(sms);
+											logger.debug("SMS발송정보가업데이트되었습니다.");
+											// throw e;
+										} catch (PhoneNumberNotFoundException e) {
+											logger.debug(e.getMessage());
+											// db(status) update
+											sms.setStatus(Sms.STATUS_PHONENUMBER_NOT_FOUND);
+											msgMapper.postSms(sms);
+											logger.debug("SMS발송정보가업데이트되었습니다.");
+											// throw e;
+										}
+									}
+								}
+							}
+
+							// 전송후 db update
+							msg.setIssueSms(new Date());
+							msg.setStatus(Message.STATUS_SMS_SENT);
+							msgMapper.putMsg(msg);
+							logger.debug("전송시간정보를업데이트했습니다.");
+							logger.debug("전체메시지처리종료");
+							break;
+						case 100: // subscribe
+						case 101: // unsubscribe
+						default:
+							logger.debug("메시지타입오류입니다.");
+							break;
+						}
 					}
 				}
 			} catch (Exception e) {
@@ -313,18 +446,30 @@ public class MessageDaoImpl implements MessageDao {
 			logger.debug("SMS핸들러처리종료()");
 		}
 
-		private void sendSMS(MessageMapper msgMapper, Message msg)
+		private void sendSMS(MessageMapper msgMapper, String userID, Message msg)
 				throws Exception {
-			logger.debug("sendSMS시작()");
-			Message message = msgMapper.get(msg.getId());
-			smsDao.post(message.getContent());
+			logger.debug("sendSMS시작(msg=" + msg + ")");
+			UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+			User user = userMapper.get(userID);
+			logger.debug("user=" + user);
+
+			if (user == null) {
+				throw new NonExistentUserException("푸시사용자가존재하지않습니다.userID="
+						+ userID);
+			}
+
+			// Message message = msgMapper.get(msg.getId());
+			// 80문자이고 내용을 적절히 변경해야함
+			// 필요정보는 전화번호 ...
+			if (user.getPhone() != null) {
+				smsDao.post(user.getPhone(), "15441000", msg.getSender()
+						+ "님으로부터 메시지가도착하였습니다. 메시지앱으로확인바랍니다.");
+			} else {
+				throw new PhoneNumberNotFoundException("전화번호가존재하지않습니다.userID="
+						+ user.getUserID());
+			}
 			// mqttService.publish(message);
 			logger.debug("SMS메시지를전송하였습니다.");
-			// 전송후 db(issueSms) update
-			msg.setIssueSms(new Date());
-			msgMapper.putIssueSms(msg);
-			logger.debug("전송시간정보를업데이트했습니다.");
 		}
 	}
-
 }

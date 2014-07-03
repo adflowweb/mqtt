@@ -66,6 +66,20 @@ public class SMSDaoImpl implements SMSDao {
 	private static final int DELIVERY_SMS_LENGTH = 347;
 	private static final int ALIVE_ACK_LENGTH = 38;
 
+	// SEND SMS
+	private static final String S_MSGLEN = "347"; // (HEADER)body 343byte +
+													// 4byte
+	private static final String S_MSGTYPE = "0002"; // (HEADER)SMS MSGTYPE
+	private static final String S_COMP_CD = "001001"; // (BODY)점번
+	private static final String S_PLACE_CD = "SMS822"; // (BODY)부서(지점코드)
+	private static final String S_BIZ_ID1 = "SO"; // (BODY)대분류
+	private static final String S_BIZ_ID2 = "S18"; // (BODY)소분류
+	private static final String S_CUST_ID = ""; // (BODY)....
+	private static final String S_COMP_KEY = ""; // (BODY)부서 키???
+	private static final String S_SMS_TYPE = "0"; // (BODY)TEXT SMS 0,
+													// URL_CALLBACK 1
+	private static final String S_SEND_TIME = ""; // (BODY)예약 전송 시간
+
 	private static final String ENCODING_TYPE = "EUC-KR";
 
 	private int sendChannelInterval = Integer.parseInt(prop
@@ -127,10 +141,10 @@ public class SMSDaoImpl implements SMSDao {
 				// logger.info("recvChannel핸들러가종료되었습니다.");
 			}
 
-			if (recvServer != null && !recvServer.isClosed()) {
-				recvServer.close();
-				logger.info("리시브서버가종료되었습니다.");
-			}
+			// if (recvServer != null && !recvServer.isClosed()) {
+			// recvServer.close();
+			// logger.info("리시브서버가종료되었습니다.");
+			// }
 			logger.info("cleanUp종료()");
 		} catch (Exception e) {
 			logger.error("에러발생", e);
@@ -145,11 +159,15 @@ public class SMSDaoImpl implements SMSDao {
 	 * @see kr.co.adflow.push.dao.SMSDAO#post()
 	 */
 	@Override
-	public void post(String msg) throws Exception {
+	public void post(String phoneNum, String callbackNum, String msg)
+			throws Exception {
+		logger.info("post시작(phoneNum=" + phoneNum + ",callbackNum="
+				+ callbackNum + ", msg=" + msg + ")");
 		if (sender == null) {
 			throw new Exception("smsSender가없습니다");
 		}
-		sender.sendMsg(msg);
+		sender.sendMsg(phoneNum, callbackNum, msg);
+		logger.info("post종료()");
 	}
 
 	/**
@@ -249,20 +267,21 @@ public class SMSDaoImpl implements SMSDao {
 
 		/**
 		 * @param msg
+		 * @param msg2
 		 * @throws Exception
 		 */
-		public synchronized void sendMsg(String msg) throws Exception {
-			logger.debug("sendMsg시작(msg=" + msg + ")");
+		public synchronized void sendMsg(String phoneNum, String callbackNum,
+				String msg) throws Exception {
+			logger.debug("sendMsg시작(phoneNum=" + phoneNum + ",callbackNum="
+					+ callbackNum + ", msg=" + msg + ")");
 			try {
 				if (sender == null || !sender.isAvailable()) {
 					throw new Exception("메시지를보낼수없습니다.");
 				}
 
-				byte[] DATA = new byte[357];
-				setData(DATA, msg);
-				bos.write(DATA);
+				setDeliverSmsData(bos, "", phoneNum, callbackNum, msg);
 				bos.flush();
-				logger.debug("메시지를전송하였습니다.DATA=" + new String(DATA));
+				logger.debug("SMS메시지를전송하였습니다.phone=" + phoneNum); // 수정요망
 				byte[] deliveryAck = new byte[DELIVERY_SMS_LENGTH];
 				bis.read(deliveryAck);
 				String deliveryAckString = new String(deliveryAck);
@@ -569,6 +588,88 @@ public class SMSDaoImpl implements SMSDao {
 		setData(VERSION, B_VERSION);
 		bos.write(VERSION);
 		logger.debug("setBindServerData종료()");
+	}
+
+	/**
+	 * SMS 데이터 셋팅
+	 * 
+	 * @param bos
+	 * @param sSN
+	 * @param sDESTADDR
+	 * @param sTEXT
+	 * @throws IOException
+	 */
+	public static void setDeliverSmsData(BufferedOutputStream bos, String sn,
+			String phoneNumber, String callbackNumber, String content)
+			throws IOException {
+		logger.debug("setDeliverSmsData시작(bos=" + bos + ", sn=" + sn
+				+ ", phoneNumber=" + phoneNumber + ", callbackNumber="
+				+ callbackNumber + ", content=" + content + ")");
+
+		// HEADER
+		byte[] MSGLEN = new byte[10]; // Body의 길이 + 4 Byte
+		byte[] MSGTYPE = new byte[4];
+
+		// BODY - DELIVER_SMS
+		byte[] SN = new byte[20];
+		byte[] USER_ID = new byte[20];
+		byte[] COMP_CD = new byte[6];
+		byte[] PLACE_CD = new byte[10];
+		byte[] BIZ_ID1 = new byte[10];
+		byte[] BIZ_ID2 = new byte[10];
+		byte[] CUST_ID = new byte[20];
+		byte[] COMP_KEY = new byte[40];
+		byte[] DESTADDR = new byte[16];
+		byte[] CALLBACK = new byte[16];
+		byte[] SMS_TYPE = new byte[1];
+		byte[] SEND_TIME = new byte[14];
+		byte[] TEXT = new byte[160];
+
+		setData(MSGLEN, S_MSGLEN);
+		bos.write(MSGLEN);
+
+		setData(MSGTYPE, S_MSGTYPE);
+		bos.write(MSGTYPE);
+
+		setData(SN, sn); // Message Sequence Number
+		bos.write(SN);
+
+		setData(USER_ID, P_USER_ID);
+		bos.write(USER_ID);
+
+		setData(COMP_CD, S_COMP_CD);
+		bos.write(COMP_CD);
+
+		setData(PLACE_CD, S_PLACE_CD); // 부서(지점) 코드
+		bos.write(PLACE_CD);
+
+		setData(BIZ_ID1, S_BIZ_ID1); // 대분류
+		bos.write(BIZ_ID1);
+
+		setData(BIZ_ID2, S_BIZ_ID2); // 소분류
+		bos.write(BIZ_ID2);
+
+		setData(CUST_ID, S_CUST_ID);
+		bos.write(CUST_ID);
+
+		setData(COMP_KEY, S_COMP_KEY);
+		bos.write(COMP_KEY);
+
+		setData(DESTADDR, phoneNumber); // 받는 사람
+		bos.write(DESTADDR);
+
+		setData(CALLBACK, callbackNumber); // 보내는 사람
+		bos.write(CALLBACK);
+
+		setData(SMS_TYPE, S_SMS_TYPE); // TEXT SMS 0, URL_CALLBACK 1
+		bos.write(SMS_TYPE);
+
+		setData(SEND_TIME, S_SEND_TIME); // 전송예약 시간
+		bos.write(SEND_TIME);
+
+		setData(TEXT, content);
+		bos.write(TEXT);
+		logger.debug("setDeliverSmsData종료()");
 	}
 
 }

@@ -29,6 +29,12 @@
 		#{gw_deptmt_cdnm}
 	</select>
 
+
+	<select id="getUsersByName" parameterType="java.lang.String"
+		resultMap="UserResult">
+		SELECT * FROM emp WHERE gw_user_nm like CONCAT('%', #{name}, '%')
+		<!-- SELECT * FROM emp WHERE gw_user_nm like '%#{name}%' -->
+	</select>
 </mapper>	
 	
 	

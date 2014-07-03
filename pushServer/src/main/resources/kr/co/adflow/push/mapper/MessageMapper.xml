@@ -22,6 +22,7 @@
 		<result property="sender" column="sender" />
 		<result property="timeOut" column="timeOut" />
 		<result property="type" column="type" />
+		<result property="status" column="status" />
 	</resultMap>
 
 	<select id="getUndeliveredMsg" resultMap="MessageResult">
@@ -33,9 +34,8 @@
 
 	<select id="getUndeliveredSmsMsg" resultMap="MessageResult">
 		select * from message
-		where
-		sms = 1 and issue is not null and issueSms
-		is null and type = 0
+		where status = 0 and sms = 1 and issue is not
+		null and issueSms is null
 		<!-- and reservation is not null -->
 	</select>
 
@@ -56,11 +56,11 @@
 	<insert id="postMsg" parameterType="kr.co.adflow.push.domain.Message">
 		INSERT INTO
 		message (sender, receiver, sms, timeOut, qos, retained,
-		reservation, type) values(
+		reservation, type, status) values(
 		#{sender}, #{receiver}, #{sms},
 		#{timeOut},
 		#{qos},
-		#{retained}, #{reservation}, #{type}
+		#{retained}, #{reservation}, #{type}, #{status}
 		)
 		<selectKey keyProperty="id" resultType="Integer" order="AFTER">
 			SELECT
@@ -70,13 +70,12 @@
 
 	<update id="putMsg" parameterType="kr.co.adflow.push.domain.Message">
 		UPDATE message set
-		sender =
-		#{sender}, receiver = #{receiver}, sms = #{sms},
-		timeOut = #{timeOut},
-		qos = #{qos},
-		retained = #{retained}, reservation = #{reservation},
-		type = #{type}
-		where id = #{id}
+		issueSms =
+		#{issueSms}, sender = #{sender}, receiver = #{receiver}, sms = #{sms},
+		timeOut = #{timeOut}, qos = #{qos}, retained = #{retained},
+		reservation =
+		#{reservation}, type = #{type}, status = #{status} where
+		id = #{id}
 	</update>
 
 	<update id="putIssue" parameterType="kr.co.adflow.push.domain.Message">
@@ -89,6 +88,12 @@
 		UPDATE message set
 		issueSms =
 		#{issueSms} where id = #{id}
+	</update>
+
+	<update id="putStatus" parameterType="kr.co.adflow.push.domain.Message">
+		UPDATE message set
+		status =
+		#{status} where id = #{id}
 	</update>
 
 	<insert id="putContent" parameterType="kr.co.adflow.push.domain.Message">
@@ -113,10 +118,45 @@
 		)
 	</insert>
 
+	<select id="getAck" parameterType="kr.co.adflow.push.domain.Acknowledge"
+		resultType="boolean">
+		SELECT CASE WHEN count(*) > 0
+		THEN 1 ELSE 0 END From ack
+		where userid = #{userID} and id = #{id}
+	</select>
+
+	<resultMap id="AckResult" type="kr.co.adflow.push.domain.Acknowledge">
+		<result property="id" column="id" />
+		<result property="userID" column="userid" />
+		<result property="deviceID" column="deviceid" />
+	</resultMap>
+
+	<select id="getAckAll" parameterType="java.lang.Integer"
+		resultMap="AckResult">
+		SELECT * From ack where id =
+		#{id}
+	</select>
+
 	<delete id="deleteMsg" parameterType="java.lang.Integer">
 		DELETE from
 		message
 		WHERE
 		id=#{id}
 	</delete>
+
+	<select id="getSms" parameterType="kr.co.adflow.push.domain.Sms"
+		resultType="boolean">
+		SELECT CASE WHEN count(*) > 0
+		THEN 1 ELSE 0 END From sms
+		where userid = #{userID} and id = #{id}
+	</select>
+
+	<insert id="postSms" parameterType="kr.co.adflow.push.domain.Sms">
+		INSERT INTO
+		sms
+		values(
+		#{id},
+		#{userID}, #{issue}, #{status}
+		)
+	</insert>
 </mapper>	
