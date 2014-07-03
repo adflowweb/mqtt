@@ -1,6 +1,5 @@
 package kr.co.adflow.push.domain;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -9,8 +8,17 @@ import java.util.Date;
  */
 public class Message {
 
-	public static int NOTIFICATION = 0;
-	public static int COMMAND = 1;
+	public static final int STATUS_SMS_SENT = 1;
+	public static final int STATUS_PHONENUMBER_NOT_FOUND = 2;
+	public static final int STATUS_USER_NOT_FOUND = 3;
+	public static final int STATUS_EXIST_ACK = 4;
+
+	public static int NOTIFICATION_PERSONAL = 0; // 개인메시지
+	public static int NOTIFICATION_GROUP = 1; // 그룹메시지
+	public static int NOTIFICATION_ALL = 2; // 전체메시지
+
+	public static int COMMAND_SUBSCRIBE = 100; // subscribe
+	public static int COMMAND_UNSUBSCRIBE = 101; // unsubscribe
 
 	private int id;
 	private String content;
@@ -48,6 +56,8 @@ public class Message {
 	private Date reservation;
 
 	private int type;
+
+	private int status;
 
 	public int getId() {
 		return id;
@@ -151,13 +161,22 @@ public class Message {
 		this.type = type;
 	}
 
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
+	}
+
 	@Override
 	public String toString() {
 		return "Message [id=" + id + ", content=" + content + ", sender="
 				+ sender + ", receiver=" + receiver + ", issue=" + issue
 				+ ", issueSms=" + issueSms + ", qos=" + qos + ", retained="
 				+ retained + ", sms=" + sms + ", timeOut=" + timeOut
-				+ ", reservation=" + reservation + ", type=" + type + "]";
+				+ ", reservation=" + reservation + ", type=" + type
+				+ ", status=" + status + "]";
 	}
 
 }
