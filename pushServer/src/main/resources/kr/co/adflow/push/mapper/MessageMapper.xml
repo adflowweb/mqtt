@@ -22,6 +22,7 @@
 		<result property="sender" column="sender" />
 		<result property="timeOut" column="timeOut" />
 		<result property="type" column="type" />
+		<result property="content" column="content" />
 		<result property="status" column="status" />
 	</resultMap>
 
@@ -40,9 +41,8 @@
 	</select>
 
 	<select id="getReservationMsgs" resultMap="MessageResult">
-		select * from message
-		where
-		reservation is not null and issue is null
+		select * from message a, content b where a.id = b.id and reservation
+		is not null and issue is null
 		<!-- and reservation is not null -->
 	</select>
 
