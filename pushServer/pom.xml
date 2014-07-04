@@ -198,6 +198,11 @@
 			<version>1.6.2</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>kr.co.adflow.push</groupId>
+			<artifactId>pushServerCore</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

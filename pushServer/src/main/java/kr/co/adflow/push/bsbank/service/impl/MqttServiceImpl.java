@@ -1,4 +1,4 @@
-package kr.co.adflow.push.service.impl;
+package kr.co.adflow.push.bsbank.service.impl;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -414,7 +414,7 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 				kr.co.adflow.push.domain.bsbank.User bsbankUser = grpMapper
 						.getTopic(user.getUserID());
 				logger.debug("user=" + bsbankUser);
-				if (user != null) {
+				if (bsbankUser != null) {
 					// db insert push
 					Message msg = new Message();
 					msg.setQos(2);

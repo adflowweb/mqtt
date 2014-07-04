@@ -7,6 +7,9 @@
         <dependent-module archiveName="domain-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/domain/domain">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="pushServerCore-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/pushServerCore/pushServerCore">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
 		<property name="java-output-path" value="target/classes"/>
         <property name="context-root" value="/v1"/>
 	</wb-module>
