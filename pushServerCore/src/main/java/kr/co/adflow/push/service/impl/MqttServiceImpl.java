@@ -1,4 +1,4 @@
-package kr.co.adflow.push.bsbank.service.impl;
+package kr.co.adflow.push.service.impl;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -24,12 +24,9 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import kr.co.adflow.push.bsbank.mapper.GroupMapper;
 import kr.co.adflow.push.dao.MessageDao;
 import kr.co.adflow.push.domain.Acknowledge;
-import kr.co.adflow.push.domain.Topic;
 import kr.co.adflow.push.domain.Message;
-import kr.co.adflow.push.domain.User;
 import kr.co.adflow.push.exception.PushException;
 import kr.co.adflow.push.mapper.MessageMapper;
 import kr.co.adflow.push.service.MqttService;
@@ -45,14 +42,11 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
 
 /**
  * @author nadir93
  * @date 2014. 3. 21.
  */
-@Service
 public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 
 	private static final String CONFIG_PROPERTIES = "/config.properties";
@@ -107,21 +101,16 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 
 	}
 
+	protected double reqCnt; // receive message count
+	protected ObjectMapper objectMapper = new ObjectMapper();
+	protected MessageMapper msgMapper;
+	@Resource
+	protected MessageDao messageDao;
+
 	@Autowired
 	private SqlSession sqlSession;
 
-	@Autowired
-	@Qualifier("bsBanksqlSession")
-	private SqlSession bsBanksqlSession;
-
-	@Resource
-	private MessageDao messageDao;
-
-	private MessageMapper msgMapper;
-	private GroupMapper grpMapper;
-
 	private ScheduledExecutorService healthCheckLooper;
-	private ObjectMapper objectMapper = new ObjectMapper();
 
 	private MqttClient mqttClient;
 
@@ -142,7 +131,7 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 
 	private MqttConnectOptions mOpts;
 	private String errorMsg;
-	private double reqCnt; // receive message count
+
 	private double tps; // 10초 평균 tps
 
 	private Level logLevel = Level.parse(prop.getProperty("paho.log.level"));
@@ -167,7 +156,7 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 
 		mOpts = makeMqttOpts();
 		msgMapper = sqlSession.getMapper(MessageMapper.class);
-		grpMapper = bsBanksqlSession.getMapper(GroupMapper.class);
+		// grpMapper = bsBanksqlSession.getMapper(GroupMapper.class);
 		logger.info("mqttService초기화종료()");
 	}
 
@@ -406,50 +395,50 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 			}
 		} else if (topic.equals("/push/group")) {
 			logger.debug("그룹정보요청메시지가수신되었습니다.");
-			try {
-				// db select group info
-				// convert json string to object
-				User user = objectMapper.readValue(message.getPayload(),
-						User.class);
-				kr.co.adflow.push.domain.bsbank.User bsbankUser = grpMapper
-						.getTopic(user.getUserID());
-				logger.debug("user=" + bsbankUser);
-				if (bsbankUser != null) {
-					// db insert push
-					Message msg = new Message();
-					msg.setQos(2);
-					msg.setReceiver("/users/" + user.getUserID());
-					msg.setSender("pushServer");
-					StringBuffer content = new StringBuffer();
-					content.append("{\"userID\":");
-					content.append("\"");
-					content.append(user.getUserID());
-					content.append("\",\"groups\":[\"");
-					content.append(bsbankUser.getGw_sbsd_cdnm());
-					content.append("\"");
-					content.append(",\"");
-					content.append(bsbankUser.getGw_deptmt_cdnm());
-					content.append("\"");
-					// for (int i = 0; i < grp.length; i++) {
-					// content.append("\"");
-					// content.append(grp[i].getTopic());
-					// content.append("\"");
-					// if (i < grp.length - 1) {
-					// content.append(",");
-					// }
-					// }
-					content.append("]}");
-					msg.setType(Message.COMMAND_SUBSCRIBE);
-					msg.setContent(content.toString());
-					logger.debug("msg=" + msg);
-					messageDao.post(msg);
-					logger.debug("그룹정보메시지를등록하였습니다.");
-				} else {
-					logger.error("사용자정보가없습니다.");
-				}
-			} catch (Exception e) {
-				logger.error("에러발생", e);
-			}
+			// try {
+			// // db select group info
+			// // convert json string to object
+			// User user = objectMapper.readValue(message.getPayload(),
+			// User.class);
+			// kr.co.adflow.push.domain.bsbank.User bsbankUser = grpMapper
+			// .getTopic(user.getUserID());
+			// logger.debug("user=" + bsbankUser);
+			// if (bsbankUser != null) {
+			// // db insert push
+			// Message msg = new Message();
+			// msg.setQos(2);
+			// msg.setReceiver("/users/" + user.getUserID());
+			// msg.setSender("pushServer");
+			// StringBuffer content = new StringBuffer();
+			// content.append("{\"userID\":");
+			// content.append("\"");
+			// content.append(user.getUserID());
+			// content.append("\",\"groups\":[\"");
+			// content.append(bsbankUser.getGw_sbsd_cdnm());
+			// content.append("\"");
+			// content.append(",\"");
+			// content.append(bsbankUser.getGw_deptmt_cdnm());
+			// content.append("\"");
+			// // for (int i = 0; i < grp.length; i++) {
+			// // content.append("\"");
+			// // content.append(grp[i].getTopic());
+			// // content.append("\"");
+			// // if (i < grp.length - 1) {
+			// // content.append(",");
+			// // }
+			// // }
+			// content.append("]}");
+			// msg.setType(Message.COMMAND_SUBSCRIBE);
+			// msg.setContent(content.toString());
+			// logger.debug("msg=" + msg);
+			// messageDao.post(msg);
+			// logger.debug("그룹정보메시지를등록하였습니다.");
+			// } else {
+			// logger.error("사용자정보가없습니다.");
+			// }
+			// } catch (Exception e) {
+			// logger.error("에러발생", e);
+			// }
 		} else if (topic.equals("/push/poll")) {
 			// 설문조사용
 		} else {
