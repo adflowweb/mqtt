@@ -99,15 +99,20 @@ public class PersonalMsgSendTest extends AbstractTestNGSpringContextTests {
 		msg.setQos(1);
 		msg.setSms(true);
 
-		cal.set(cal.SECOND, 0);
-		cal.add(cal.MINUTE, +2); // 2분뒤
-		Date sendDate = cal.getTime();
-		sendDate.setSeconds(0);
-		msg.setReservation(sendDate); // 분단위 지정
+		// cal.set(cal.SECOND, 0);
+		// cal.add(cal.MINUTE, +2); // 2분뒤
+		// Date sendDate = cal.getTime();
+		// sendDate.setSeconds(0);
+		// msg.setReservation(sendDate); // 분단위 지정
 
-		msg.setTimeOut(1);
+		msg.setTimeOut(10);
 		msg.setType(Message.NOTIFICATION_PERSONAL); // 개인메시지타입 = 0
-		Response res = messageController.post(msg);
+
+		Response res = null;
+		for (int i = 0; i < 1000; i++) {
+			res = messageController.post(msg);
+		}
+
 		logger.debug("호출결과=" + res);
 		List<String> errors = res.getResult().getErrors();
 		logger.debug("errors=" + errors);

@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import kr.co.adflow.push.bsbank.mapper.UserMapper;
-
 import kr.co.adflow.push.dao.SMSDao;
 import kr.co.adflow.push.domain.Acknowledge;
 import kr.co.adflow.push.domain.Message;
@@ -35,6 +34,8 @@ public class SMSHandler implements Runnable {
 	private static final org.slf4j.Logger logger = LoggerFactory
 			.getLogger(SMSHandler.class);
 
+	private static boolean first = true;
+
 	@Autowired
 	private SqlSession sqlSession;
 
@@ -52,6 +53,13 @@ public class SMSHandler implements Runnable {
 	 */
 	@Override
 	public void run() {
+
+		if (first) {
+			final String orgName = Thread.currentThread().getName();
+			Thread.currentThread().setName("SMSPrecessing " + orgName);
+			first = !first;
+		}
+
 		logger.debug("SMS핸들러처리시작()");
 		// db query select sms
 		// send sms
