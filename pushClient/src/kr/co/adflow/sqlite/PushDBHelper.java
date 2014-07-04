@@ -122,7 +122,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
 	/**
 	 * @param user
 	 */
-	public void addUser(User user) {
+	public synchronized void addUser(User user) {
 		Log.d(TAG, "addUser시작(user=" + user + ")");
 
 		// 1. get reference to writable DB
@@ -149,7 +149,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
 	 * @param userid
 	 * @return
 	 */
-	public User getUser(String userid) {
+	public synchronized User getUser(String userid) {
 		Log.d(TAG, "getUser시작(userid=" + userid + ")");
 		User user = null;
 		try {
@@ -191,7 +191,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
 	 * @param userid
 	 * @return
 	 */
-	public User getCurrentUser() throws Exception {
+	public synchronized User getCurrentUser() throws Exception {
 		Log.d(TAG, "getCurrentUser시작()");
 		User user = null;
 		try {
@@ -234,7 +234,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
 	 * @param user
 	 * @return
 	 */
-	public int updateUser(User user) {
+	public synchronized int updateUser(User user) {
 		Log.d(TAG, "updateUser시작(user=" + user + ")");
 		// 1. get reference to writable DB
 		SQLiteDatabase db = this.getWritableDatabase();
@@ -260,7 +260,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
 	/**
 	 * @param user
 	 */
-	public void deleteUser(User user) {
+	public synchronized void deleteUser(User user) {
 		Log.d(TAG, "deleteUser시작(user=" + user + ")");
 		// 1. get reference to writable DB
 		SQLiteDatabase db = this.getWritableDatabase();
@@ -279,7 +279,8 @@ public class PushDBHelper extends SQLiteOpenHelper {
 	 * @param msg
 	 * @throws JSONException
 	 */
-	public int addJob(int type, String topic, String content) throws Exception {
+	public synchronized int addJob(int type, String topic, String content)
+			throws Exception {
 		Log.d(TAG, "addJob시작(type=" + type + ", topic=" + topic + ", content="
 				+ content + ")");
 
@@ -316,7 +317,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
 	 * @param rst
 	 * @return
 	 */
-	public Job getJob(int id) throws Exception {
+	public synchronized Job getJob(int id) throws Exception {
 		Log.d(TAG, "getJob시작()");
 		// 1. get reference to readable DB
 		SQLiteDatabase db = this.getReadableDatabase();
@@ -348,7 +349,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
 	/**
 	 * @param id
 	 */
-	public void deteletJob(int id) {
+	public synchronized void deteletJob(int id) {
 		Log.d(TAG, "deteletJob시작(id=" + id + ")");
 		// 1. get reference to writable DB
 		SQLiteDatabase db = this.getWritableDatabase();
@@ -417,7 +418,8 @@ public class PushDBHelper extends SQLiteOpenHelper {
 		return req;
 	}
 
-	public void addMessage(String userID, JSONObject msg) throws Exception {
+	public synchronized void addMessage(String userID, JSONObject msg)
+			throws Exception {
 		Log.d(TAG, "addMessage시작(msg=" + msg + ")");
 
 		// messageArrived시작(토픽=/users/nadir93,메시지={"id":6,"ack":true,"type":0,"content":
@@ -448,7 +450,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
 		Log.d(TAG, "addMessage종료()");
 	}
 
-	public Message getMessage(int id) throws Exception {
+	public synchronized Message getMessage(int id) throws Exception {
 		Log.d(TAG, "getMessage시작()");
 		// 1. get reference to readable DB
 		SQLiteDatabase db = this.getReadableDatabase();
@@ -479,7 +481,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
 		return msg;
 	}
 
-	public Message[] getAllMessages() throws Exception {
+	public synchronized Message[] getAllMessages() throws Exception {
 		Log.d(TAG, "getAllMessages시작()");
 		// 1. get reference to readable DB
 		SQLiteDatabase db = this.getReadableDatabase();
@@ -530,7 +532,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
 	/**
 	 * 
 	 */
-	public Topic[] getTopic(String userid) throws Exception {
+	public synchronized Topic[] getTopic(String userid) throws Exception {
 		Log.d(TAG, "getTopic시작(userid=" + userid + ")");
 		// 1. get reference to readable DB
 		SQLiteDatabase db = this.getReadableDatabase();
@@ -580,7 +582,8 @@ public class PushDBHelper extends SQLiteOpenHelper {
 	 * @param userID
 	 * @param topic
 	 */
-	public void deleteTopic(String userID, String topic) throws Exception {
+	public synchronized void deleteTopic(String userID, String topic)
+			throws Exception {
 		Log.d(TAG, "deleteTopic시작(userID=" + userID + ", topic=" + topic + ")");
 		// 1. get reference to writable DB
 		SQLiteDatabase db = this.getWritableDatabase();
@@ -601,7 +604,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
 	 * @param topic
 	 * @param i
 	 */
-	public void addTopic(String userID, String topic, int subscribe)
+	public synchronized void addTopic(String userID, String topic, int subscribe)
 			throws Exception {
 		Log.d(TAG, "addTopic시작(userID=" + userID + ", topic=" + topic + ")");
 
