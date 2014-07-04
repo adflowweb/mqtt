@@ -47,12 +47,13 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author nadir93
  * @date 2014. 3. 21.
  */
-public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
+public abstract class AbstractMqttServiceImpl implements Runnable,
+		MqttCallback, MqttService {
 
 	private static final String CONFIG_PROPERTIES = "/config.properties";
 
 	private static final org.slf4j.Logger logger = LoggerFactory
-			.getLogger(MqttServiceImpl.class);
+			.getLogger(AbstractMqttServiceImpl.class);
 
 	// 23 character 로 제한됨
 	private static final int CLIENT_ID_LENGTH = 23;
@@ -60,7 +61,7 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 
 	static {
 		try {
-			prop.load(MqttServiceImpl.class
+			prop.load(AbstractMqttServiceImpl.class
 					.getResourceAsStream(CONFIG_PROPERTIES));
 			logger.debug("속성값=" + prop);
 		} catch (IOException e) {
@@ -100,6 +101,8 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 		}
 
 	}
+
+	private static boolean first = true;
 
 	protected double reqCnt; // receive message count
 	protected ObjectMapper objectMapper = new ObjectMapper();
@@ -197,6 +200,13 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 	 */
 	@Override
 	public void run() {
+
+		if (first) {
+			final String orgName = Thread.currentThread().getName();
+			Thread.currentThread().setName("HealthCheckPrecessing " + orgName);
+			first = !first;
+		}
+
 		logger.debug("healthCheck시작()");
 		try {
 			// mqtt connection 헬스체크
@@ -240,10 +250,31 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 	/**
 	 * @throws MqttException
 	 */
+	private synchronized void connect() throws MqttException {
+		logger.debug("connect시작()");
+		logger.debug("serverURL=" + SERVERURL);
+		logger.debug("clientID=" + CLIENTID);
+		mqttClient = new MqttClient(SERVERURL, CLIENTID,
+				new MemoryPersistence());
+		logger.debug("mqttClient인스턴스가생성되었습니다.::" + mqttClient);
+		mqttClient.setCallback(this);
+		mqttClient.connect(mOpts);
+		logger.debug("세션연결을완료하였습니다.");
+		logger.debug("connect종료()");
+	}
+
+	/**
+	 * @throws MqttException
+	 */
 	private synchronized void reconnect() throws MqttException {
 		logger.debug("reconnect시작()");
 		logger.debug("serverURL=" + SERVERURL);
 		logger.debug("clientID=" + CLIENTID);
+		mqttClient.close();
+		mqttClient = new MqttClient(SERVERURL, CLIENTID,
+				new MemoryPersistence());
+		logger.debug("mqttClient인스턴스가생성되었습니다.::" + mqttClient);
+		mqttClient.setCallback(this);
 		mqttClient.connect(mOpts);
 		// 리커넥트시에 초기시도했던 상태값들이 정상적으로 되어있는지
 		// 커넥트옵션이나 서브스크라이브가 정확히 되어있는지 상태 체크바람
@@ -308,24 +339,6 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 	}
 
 	/**
-	 * @throws MqttException
-	 */
-	private synchronized void connect() throws MqttException {
-		logger.debug("connect시작()");
-		logger.debug("serverURL=" + SERVERURL);
-		logger.debug("clientID=" + CLIENTID);
-
-		// testCode
-		mqttClient = new MqttClient(SERVERURL, CLIENTID,
-				new MemoryPersistence());
-		logger.debug("mqttClient인스턴스가생성되었습니다.::" + mqttClient);
-		mqttClient.setCallback(this);
-		mqttClient.connect(mOpts);
-		logger.debug("세션연결을완료하였습니다.");
-		logger.debug("connect종료()");
-	}
-
-	/**
 	 * @param topic
 	 * @param qos
 	 * @throws MqttException
@@ -382,19 +395,21 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 		reqCnt++;
 
 		if (topic.equals("/push/ack")) {
-			logger.debug("ack메시지가수신되었습니다.");
-			try {
-				// db insert ack
-				// convert json string to object
-				Acknowledge ack = objectMapper.readValue(message.getPayload(),
-						Acknowledge.class);
-				msgMapper.postAck(ack);
-				logger.debug("ack메시지를등록하였습니다.");
-			} catch (Exception e) {
-				logger.error("에러발생", e);
-			}
+			receiveAck(topic, message);
+			// logger.debug("ack메시지가수신되었습니다.");
+			// try {
+			// // db insert ack
+			// // convert json string to object
+			// Acknowledge ack = objectMapper.readValue(message.getPayload(),
+			// Acknowledge.class);
+			// msgMapper.postAck(ack);
+			// logger.debug("ack메시지를등록하였습니다.");
+			// } catch (Exception e) {
+			// logger.error("에러발생", e);
+			// }
 		} else if (topic.equals("/push/group")) {
-			logger.debug("그룹정보요청메시지가수신되었습니다.");
+			receiveGroup(topic, message);
+			// logger.debug("그룹정보요청메시지가수신되었습니다.");
 			// try {
 			// // db select group info
 			// // convert json string to object
@@ -441,11 +456,18 @@ public class MqttServiceImpl implements Runnable, MqttCallback, MqttService {
 			// }
 		} else if (topic.equals("/push/poll")) {
 			// 설문조사용
+			receivePoll(topic, message);
 		} else {
 			logger.error("적절한토픽처리자가없습니다.");
 		}
 		logger.debug("messageArrived종료()");
 	}
+
+	abstract protected void receiveAck(String topic, MqttMessage message);
+
+	abstract protected void receiveGroup(String topic, MqttMessage message);
+
+	abstract protected void receivePoll(String topic, MqttMessage message);
 
 	/*
 	 * (non-Javadoc)

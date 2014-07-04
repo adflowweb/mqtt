@@ -25,6 +25,7 @@ public class MessageHandler implements Runnable {
 	private static final org.slf4j.Logger logger = LoggerFactory
 			.getLogger(MessageHandler.class);
 
+	private static boolean first = true;
 	@Resource
 	MqttService mqttService;
 	@Autowired
@@ -37,6 +38,13 @@ public class MessageHandler implements Runnable {
 	 */
 	@Override
 	public void run() {
+
+		if (first) {
+			final String orgName = Thread.currentThread().getName();
+			Thread.currentThread().setName("MessagePrecessing " + orgName);
+			first = !first;
+		}
+
 		logger.debug("메시지처리시작()");
 
 		try {
