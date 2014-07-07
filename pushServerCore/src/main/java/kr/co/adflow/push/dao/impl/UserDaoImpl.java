@@ -96,8 +96,10 @@ public class UserDaoImpl implements UserDao {
 
 	@Override
 	public User[] getAdmin() throws Exception {
+		logger.debug("getAdmin시작()");
 		UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
-		return userMapper.getAdmin();
+		User[] users = userMapper.getAdmin();
+		logger.debug("getAdmin종료(user=" + users + ")");
+		return users;
 	}
-
 }

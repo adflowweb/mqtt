@@ -2,15 +2,8 @@ package kr.co.adflow.push.dao.impl;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -18,14 +11,8 @@ import javax.annotation.Resource;
 
 import kr.co.adflow.push.dao.MessageDao;
 import kr.co.adflow.push.dao.SMSDao;
-import kr.co.adflow.push.domain.Acknowledge;
 import kr.co.adflow.push.domain.Message;
-import kr.co.adflow.push.domain.Sms;
-import kr.co.adflow.push.domain.User;
-import kr.co.adflow.push.exception.NonExistentUserException;
-import kr.co.adflow.push.exception.PhoneNumberNotFoundException;
 import kr.co.adflow.push.mapper.MessageMapper;
-import kr.co.adflow.push.mapper.UserMapper;
 import kr.co.adflow.push.service.MqttService;
 
 import org.apache.ibatis.session.SqlSession;
