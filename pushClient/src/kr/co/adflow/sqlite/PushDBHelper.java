@@ -41,7 +41,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
 	private static final String[] USER_COLUMNS = { USER_ID, PASSWORD, TOKEN_ID,
 			CURRENT_USER };
 	private static final String[] MESSAGE_COLUMNS = { "id", "userid", "ack",
-			"type", "content", "receivedate", "category" };
+			"type", "content", "receivedate", "category", "read" };
 
 	private static final String[] JOB_COLUMNS = { "id", "type", "topic",
 			"content" };
@@ -79,7 +79,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
 
 		String CREATE_MESSAGE_TABLE = "CREATE TABLE message ( "
 				+ "id INTEGER, userid TEXT, ack INTEGER, "
-				+ "type INTEGER, content TEXT, receivedate TEXT, category TEXT, PRIMARY KEY (id, userid))";
+				+ "type INTEGER, content TEXT, receivedate TEXT, category TEXT, read INTEGER, PRIMARY KEY (id, userid))";
 		// create message table
 		db.execSQL(CREATE_MESSAGE_TABLE);
 
@@ -478,6 +478,8 @@ public class PushDBHelper extends SQLiteOpenHelper {
 		msg.setType(cursor.getInt(3));
 		msg.setContent(cursor.getString(4));
 		msg.setReceivedate(cursor.getString(5));
+		msg.setCategory(cursor.getString(6));
+		msg.setRead(cursor.getInt(7) != 0);
 		// log
 		Log.d(TAG, "getMessage종료(msg=" + msg + ")");
 		// 5. return user
@@ -521,6 +523,8 @@ public class PushDBHelper extends SQLiteOpenHelper {
 			msg[i].setType(cursor.getInt(3));
 			msg[i].setContent(cursor.getString(4));
 			msg[i].setReceivedate(cursor.getString(5));
+			msg[i].setCategory(cursor.getString(6));
+			msg[i].setRead(cursor.getInt(7) != 0);
 			Log.d(TAG, "msg[" + i + "]=" + msg[i]);
 			i++;
 			cursor.moveToNext();

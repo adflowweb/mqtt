@@ -12,6 +12,7 @@ public class Message {
 	private String content;
 	private String receivedate;
 	private String category;
+	private boolean read;
 
 	public int getId() {
 		return id;
@@ -69,11 +70,20 @@ public class Message {
 		this.category = category;
 	}
 
+	public boolean isRead() {
+		return read;
+	}
+
+	public void setRead(boolean read) {
+		this.read = read;
+	}
+
 	@Override
 	public String toString() {
 		return "Message [id=" + id + ", userID=" + userID + ", ack=" + ack
 				+ ", type=" + type + ", content=" + content + ", receivedate="
-				+ receivedate + ", category=" + category + "]";
+				+ receivedate + ", category=" + category + ", read=" + read
+				+ "]";
 	}
 
 }
