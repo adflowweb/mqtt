@@ -10,6 +10,7 @@ import kr.co.adflow.push.mapper.MessageMapper;
 import kr.co.adflow.push.service.MqttService;
 
 import org.apache.ibatis.session.SqlSession;
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,9 +100,11 @@ public class MessageHandler implements Runnable {
 	}
 
 	private void publish(MessageMapper msgMapper, Message msg) throws Exception {
+		logger.debug("publish시작(msgMapper=" + msgMapper + ", msg=" + msg + ")");
 		Message message = msgMapper.get(msg.getId());
-		mqttService.publish(message);
-		logger.debug("메시지를전송하였습니다.");
+		logger.debug("message(컨텐츠포함)=" + message);
+		IMqttDeliveryToken token = mqttService.publish(message);
+		logger.debug("메시지를전송하였습니다.token=" + token);
 		// 모니터링용 송신 메시지 처리건수 계산 추가해야함
 
 		// 전송후 db(issue) update
@@ -109,5 +112,6 @@ public class MessageHandler implements Runnable {
 		msg.setStatus(Message.STATUS_PUSH_SENT);
 		msgMapper.putIssue(msg);
 		logger.debug("전송시간정보를업데이트했습니다.");
+		logger.debug("publish종료()");
 	}
 }

@@ -1,24 +1,14 @@
 package kr.co.adflow.push.bsbank.dao.impl;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Properties;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
 
 import kr.co.adflow.push.bsbank.handler.SMSHandler;
 import kr.co.adflow.push.dao.impl.DefaultMessageDaoImpl;
-import kr.co.adflow.push.domain.Message;
 import kr.co.adflow.push.handler.MessageHandler;
-import kr.co.adflow.push.mapper.MessageMapper;
-import kr.co.adflow.push.service.MqttService;
 
-import org.apache.ibatis.session.SqlSession;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

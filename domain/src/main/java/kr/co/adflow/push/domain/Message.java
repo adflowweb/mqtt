@@ -68,6 +68,8 @@ public class Message {
 
 	private int status;
 
+	private String category;
+
 	public int getId() {
 		return id;
 	}
@@ -178,6 +180,14 @@ public class Message {
 		this.status = status;
 	}
 
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
+	}
+
 	@Override
 	public String toString() {
 		return "Message [id=" + id + ", content=" + content + ", sender="
@@ -185,7 +195,7 @@ public class Message {
 				+ ", issueSms=" + issueSms + ", qos=" + qos + ", retained="
 				+ retained + ", sms=" + sms + ", timeOut=" + timeOut
 				+ ", reservation=" + reservation + ", type=" + type
-				+ ", status=" + status + "]";
+				+ ", status=" + status + ", category=" + category + "]";
 	}
 
 }

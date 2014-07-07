@@ -509,7 +509,8 @@ public abstract class AbstractMqttServiceImpl implements Runnable,
 	}
 
 	@Override
-	public synchronized void publish(Message msg) throws Exception {
+	public synchronized IMqttDeliveryToken publish(Message msg)
+			throws Exception {
 		logger.debug("publish시작(msg=" + msg + ")");
 		if (mqttClient == null || !mqttClient.isConnected()) {
 			logger.error("메시지전송실패(mqtt연결없음)");
@@ -527,13 +528,19 @@ public abstract class AbstractMqttServiceImpl implements Runnable,
 		StringBuffer pushMsg = new StringBuffer();
 		pushMsg.append("{\"id\":").append(msg.getId()).append(",\"ack\":")
 				.append(msg.isSms()).append(",\"type\":").append(msg.getType())
-				.append(",\"content\":").append(msg.getContent()).append("}");
+				.append(",\"category\":\"").append(msg.getCategory())
+				.append("\",\"content\":").append(msg.getContent()).append("}");
 
 		logger.debug("pushMsg=" + pushMsg);
 
-		mqttClient.publish(msg.getReceiver(), /* msg.getContent() */
+		IMqttDeliveryToken token = mqttClient.publish(msg.getReceiver(), /*
+																		 * msg.
+																		 * getContent
+																		 * ()
+																		 */
 				pushMsg.toString().getBytes(), msg.getQos(), msg.isRetained());
 		logger.debug("publish종료()");
+		return token;
 	}
 
 	@Override
