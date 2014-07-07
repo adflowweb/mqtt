@@ -25,7 +25,6 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import kr.co.adflow.push.dao.MessageDao;
-import kr.co.adflow.push.domain.Acknowledge;
 import kr.co.adflow.push.domain.Message;
 import kr.co.adflow.push.exception.PushException;
 import kr.co.adflow.push.mapper.MessageMapper;
@@ -34,8 +33,9 @@ import kr.co.adflow.push.service.MqttService;
 import org.apache.ibatis.session.SqlSession;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.IMqttToken;
+import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
-import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -115,7 +115,7 @@ public abstract class AbstractMqttServiceImpl implements Runnable,
 
 	private ScheduledExecutorService healthCheckLooper;
 
-	private MqttClient mqttClient;
+	private MqttAsyncClient mqttClient;
 
 	private boolean healthCheck = Boolean.parseBoolean(prop
 			.getProperty("health.enable"));
@@ -254,11 +254,12 @@ public abstract class AbstractMqttServiceImpl implements Runnable,
 		logger.debug("connect시작()");
 		logger.debug("serverURL=" + SERVERURL);
 		logger.debug("clientID=" + CLIENTID);
-		mqttClient = new MqttClient(SERVERURL, CLIENTID,
+		mqttClient = new MqttAsyncClient(SERVERURL, CLIENTID,
 				new MemoryPersistence());
 		logger.debug("mqttClient인스턴스가생성되었습니다.::" + mqttClient);
 		mqttClient.setCallback(this);
-		mqttClient.connect(mOpts);
+		IMqttToken token = mqttClient.connect(mOpts);
+		token.waitForCompletion();
 		logger.debug("세션연결을완료하였습니다.");
 		logger.debug("connect종료()");
 	}
@@ -271,11 +272,12 @@ public abstract class AbstractMqttServiceImpl implements Runnable,
 		logger.debug("serverURL=" + SERVERURL);
 		logger.debug("clientID=" + CLIENTID);
 		mqttClient.close();
-		mqttClient = new MqttClient(SERVERURL, CLIENTID,
+		mqttClient = new MqttAsyncClient(SERVERURL, CLIENTID,
 				new MemoryPersistence());
 		logger.debug("mqttClient인스턴스가생성되었습니다.::" + mqttClient);
 		mqttClient.setCallback(this);
-		mqttClient.connect(mOpts);
+		IMqttToken token = mqttClient.connect(mOpts);
+		token.waitForCompletion();
 		// 리커넥트시에 초기시도했던 상태값들이 정상적으로 되어있는지
 		// 커넥트옵션이나 서브스크라이브가 정확히 되어있는지 상태 체크바람
 		logger.debug("세션연결을완료하였습니다.");
@@ -346,7 +348,8 @@ public abstract class AbstractMqttServiceImpl implements Runnable,
 	private synchronized void subscribe(String topic, int qos)
 			throws MqttException {
 		logger.debug("subscribe시작(topic=" + topic + ",qos=" + qos + ")");
-		mqttClient.subscribe(topic, qos);
+		IMqttToken token = mqttClient.subscribe(topic, qos);
+		token.waitForCompletion();
 		logger.debug("토픽구독을완료하였습니다");
 		logger.debug("subscribe종료()");
 	}
@@ -486,7 +489,8 @@ public abstract class AbstractMqttServiceImpl implements Runnable,
 		logger.debug("mqttClient세션연결상태="
 				+ (mqttClient.isConnected() ? "연결됨" : "끊어짐"));
 		if (mqttClient.isConnected()) {
-			mqttClient.disconnect();
+			IMqttToken token = mqttClient.disconnect();
+			token.waitForCompletion();
 			logger.debug("mqttClient연결을끊었습니다.");
 		}
 		mqttClient.close();

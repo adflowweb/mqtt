@@ -235,6 +235,37 @@ public class MessageController {
 	}
 
 	/**
+	 * 발송 메시지 가져오기
+	 * 
+	 * @param msg
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "messages", params = "type=sent", method = RequestMethod.GET)
+	@ResponseBody
+	public Response<Message[]> getDeliveredMsgs(
+	/* @RequestParam(value = "type", required = true) String type */)
+			throws Exception {
+		Result<Message[]> result = new Result<Message[]>();
+		result.setSuccess(true);
+		// if (type.equals("reservation")) {
+		Message[] msg = msgService.getDeliveredMsgs();
+		logger.debug("메시지=" + msg);
+		result.setData(msg);
+		// } else {
+		// List<String> messages = new ArrayList<String>() {
+		// {
+		// add("type not found");
+		// }
+		// };
+		// result.setErrors(messages);
+		// }
+		Response<Message[]> res = new Response<Message[]>(result);
+		logger.debug("response=" + res);
+		return res;
+	}
+
+	/**
 	 * 예약 메시지 가져오기
 	 * 
 	 * @param msg

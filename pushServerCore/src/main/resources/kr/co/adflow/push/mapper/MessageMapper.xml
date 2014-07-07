@@ -26,17 +26,25 @@
 		<result property="status" column="status" />
 	</resultMap>
 
-	<select id="getUndeliveredMsg" resultMap="MessageResult">
+	<select id="getUndeliveredMsgs" resultMap="MessageResult">
 		select * from message
 		where
-		issue is null
+		issue is null and status = 0
 		<!-- and reservation is not null -->
 	</select>
 
-	<select id="getUndeliveredSmsMsg" resultMap="MessageResult">
+	<select id="getUndeliveredSmsMsgs" resultMap="MessageResult">
 		select * from message
 		where status = 1 and sms = 1 and issue is not
 		null and issueSms is null
+		<!-- and reservation is not null -->
+	</select>
+
+	<select id="getDeliveredMsgs" resultMap="MessageResult">
+		select * from message
+		where
+		issue is not null order by issue desc limit
+		100
 		<!-- and reservation is not null -->
 	</select>
 

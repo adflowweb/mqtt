@@ -71,102 +71,109 @@ public class SMSHandler implements Runnable {
 			// where status = 1 and sms = 1 and issue is not
 			// null and issueSms is null
 			List<Message> list = (List<Message>) msgMapper
-					.getUndeliveredSmsMsg();
+					.getUndeliveredSmsMsgs();
 			for (Message msg : list) {
-				logger.debug("msg=" + msg);
+				try {
+					logger.debug("msg=" + msg);
 
-				Calendar cal = Calendar.getInstance();
-				cal.setTime(msg.getIssue());
-				cal.add(cal.MINUTE, msg.getTimeOut());
-				Date timeOut = cal.getTime();
-				logger.debug("타임아웃시간=" + timeOut);
-				// 발송시간(issue)과 현재시간 그리고 timeOut을 계산하여 대상선정
-				if (timeOut.before(new Date())) {
-					// SMS발송대상인 경우
-					logger.debug("SMS전송대상입니다.");
-					int msgType = msg.getType();
+					Calendar cal = Calendar.getInstance();
+					cal.setTime(msg.getIssue());
+					cal.add(cal.MINUTE, msg.getTimeOut());
+					Date timeOut = cal.getTime();
+					logger.debug("타임아웃시간=" + timeOut);
+					// 발송시간(issue)과 현재시간 그리고 timeOut을 계산하여 대상선정
+					if (timeOut.before(new Date())) {
+						// SMS발송대상인 경우
+						logger.debug("SMS전송대상입니다.");
+						int msgType = msg.getType();
 
-					switch (msgType) {
-					case Message.NOTIFICATION_PERSONAL: // 개인메시지
-						logger.debug("개인메시지처리시작");
-						Acknowledge ack = new Acknowledge();
-						ack.setId(msg.getId());
-						ack.setUserID(msg.getReceiver().substring(7));
-						// ack 존재유무 파악
-						if (msgMapper.getAck(ack)) {
-							// ack가 존재하면 sms 전송 종료
-							logger.debug("ack메시지가존재합니다.");
-							// db(status) update
-							msg.setStatus(Message.STATUS_EXIST_ACK);
-							msgMapper.putStatus(msg);
-							logger.debug("메시지정보를완료로업데이트했습니다.");
-						} else {
-							// ack가 존재하지 않으면 sms 전송후 종료
-							try {
-								sendSMS(msgMapper, ack.getUserID(), msg);
-								// 전송후 db(issueSms, status) update
-								msg.setIssueSms(new Date());
-								msg.setStatus(Message.STATUS_SMS_SENT);
-								msgMapper.putIssueSms(msg);
-								logger.debug("전송시간정보를업데이트했습니다.");
-								// db sms update
-								Sms sms = new Sms();
-								sms.setId(ack.getId());
-								sms.setUserID(ack.getUserID());
-								sms.setIssue(new Date());
-								sms.setStatus(Sms.SMS_SENT);
-								msgMapper.postSms(sms);
-								logger.debug("SMS발송정보가업데이트되었습니다.");
-							} catch (NonExistentUserException e) {
-								logger.debug(e.getMessage());
+						switch (msgType) {
+						case Message.NOTIFICATION_PERSONAL: // 개인메시지
+							logger.debug("개인메시지처리시작");
+							Acknowledge ack = new Acknowledge();
+							ack.setId(msg.getId());
+							ack.setUserID(msg.getReceiver().substring(7));
+							// ack 존재유무 파악
+							if (msgMapper.getAck(ack)) {
+								// ack가 존재하면 sms 전송 종료
+								logger.debug("ack메시지가존재합니다.");
 								// db(status) update
-								msg.setStatus(Message.STATUS_USER_NOT_FOUND);
+								msg.setStatus(Message.STATUS_EXIST_ACK);
 								msgMapper.putStatus(msg);
-								logger.debug("메시지정보를업데이트했습니다.");
-							} catch (PhoneNumberNotFoundException e) {
-								logger.debug(e.getMessage());
-								// db(status) update
-								msg.setStatus(Message.STATUS_PHONENUMBER_NOT_FOUND);
-								msgMapper.putStatus(msg);
-								logger.debug("메시지정보를업데이트했습니다.");
-								// throw e;
+								logger.debug("메시지정보를완료로업데이트했습니다.");
+							} else {
+								// ack가 존재하지 않으면 sms 전송후 종료
+								try {
+									sendSMS(msgMapper, ack.getUserID(), msg);
+									// 전송후 db(issueSms, status) update
+									msg.setIssueSms(new Date());
+									msg.setStatus(Message.STATUS_SMS_SENT);
+									msgMapper.putIssueSms(msg);
+									logger.debug("전송시간정보를업데이트했습니다.");
+									// db sms update
+									Sms sms = new Sms();
+									sms.setId(ack.getId());
+									sms.setUserID(ack.getUserID());
+									sms.setIssue(new Date());
+									sms.setStatus(Sms.SMS_SENT);
+									msgMapper.postSms(sms);
+									logger.debug("SMS발송정보가업데이트되었습니다.");
+								} catch (NonExistentUserException e) {
+									logger.debug(e.getMessage());
+									// db(status) update
+									msg.setStatus(Message.STATUS_USER_NOT_FOUND);
+									msgMapper.putStatus(msg);
+									logger.debug("메시지정보를업데이트했습니다.");
+								} catch (PhoneNumberNotFoundException e) {
+									logger.debug(e.getMessage());
+									// db(status) update
+									msg.setStatus(Message.STATUS_PHONENUMBER_NOT_FOUND);
+									msgMapper.putStatus(msg);
+									logger.debug("메시지정보를업데이트했습니다.");
+									// throw e;
+								}
 							}
+							logger.debug("개인메시지처리종료");
+							break;
+						case Message.NOTIFICATION_ALL: // 전체메시지
+							logger.debug("전체메시지처리시작");
+							// 전체사용자가져오기
+							UserMapper userMapper = bsBanksqlSession
+									.getMapper(UserMapper.class);
+							User[] allUsers = userMapper.getAllUser();
+							processSMS(msgMapper, msg, allUsers);
+							logger.debug("전체메시지처리종료");
+							break;
+						case Message.NOTIFICATION_GROUP_AFFILIATE: // 그룹메시지(계열사)
+							logger.debug("그룹메시지(계열사)처리시작");
+							// 계열사그룹사용자가져오기
+							UserMapper usrMapper = bsBanksqlSession
+									.getMapper(UserMapper.class);
+							User[] alliliateUser = usrMapper.getUsersBySBSD(msg
+									.getReceiver().substring(8));
+							processSMS(msgMapper, msg, alliliateUser);
+							logger.debug("그룹메시지(계열사)처리종료");
+							break;
+						case Message.NOTIFICATION_GROUP_DEPT: // 그룹메시지(부서)
+							logger.debug("그룹메시지(부서)처리시작");
+							// 부서그룹사용자가져오기
+							UserMapper mapper = bsBanksqlSession
+									.getMapper(UserMapper.class);
+							User[] deptUser = mapper.getUsersByDepartment(msg
+									.getReceiver().substring(8));
+							processSMS(msgMapper, msg, deptUser);
+							logger.debug("그룹메시지(부서)처리종료");
+							break;
+						default:
+							logger.debug("메시지타입오류입니다.");
+							break;
 						}
-						logger.debug("개인메시지처리종료");
-						break;
-					case Message.NOTIFICATION_ALL: // 전체메시지
-						logger.debug("전체메시지처리시작");
-						// 전체사용자가져오기
-						UserMapper userMapper = bsBanksqlSession
-								.getMapper(UserMapper.class);
-						User[] allUsers = userMapper.getAllUser();
-						processSMS(msgMapper, msg, allUsers);
-						logger.debug("전체메시지처리종료");
-						break;
-					case Message.NOTIFICATION_GROUP_AFFILIATE: // 그룹메시지(계열사)
-						logger.debug("그룹메시지(계열사)처리시작");
-						// 계열사그룹사용자가져오기
-						UserMapper usrMapper = bsBanksqlSession
-								.getMapper(UserMapper.class);
-						User[] alliliateUser = usrMapper.getUsersBySBSD(msg
-								.getReceiver().substring(8));
-						processSMS(msgMapper, msg, alliliateUser);
-						logger.debug("그룹메시지(계열사)처리종료");
-						break;
-					case Message.NOTIFICATION_GROUP_DEPT: // 그룹메시지(부서)
-						logger.debug("그룹메시지(부서)처리시작");
-						// 부서그룹사용자가져오기
-						UserMapper mapper = bsBanksqlSession
-								.getMapper(UserMapper.class);
-						User[] deptUser = mapper.getUsersByDepartment(msg
-								.getReceiver().substring(8));
-						processSMS(msgMapper, msg, deptUser);
-						logger.debug("그룹메시지(부서)처리종료");
-						break;
-					default:
-						logger.debug("메시지타입오류입니다.");
-						break;
 					}
+				} catch (Exception e) {
+					// db(status) update
+					msg.setStatus(Message.STATUS_ERROR);
+					msgMapper.putStatus(msg);
+					logger.debug("SMS메시지처리중에러가발생하였습니다. 에러=" + e.getMessage());
 				}
 			}
 		} catch (Exception e) {
@@ -175,6 +182,12 @@ public class SMSHandler implements Runnable {
 		logger.debug("SMS핸들러처리종료()");
 	}
 
+	/**
+	 * @param msgMapper
+	 * @param msg
+	 * @param users
+	 * @throws Exception
+	 */
 	private void processSMS(MessageMapper msgMapper, Message msg, User[] users)
 			throws Exception {
 		// ack사용자가져오기

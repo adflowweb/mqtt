@@ -80,6 +80,14 @@ public class MessageServiceImpl implements MessageService {
 	}
 
 	@Override
+	public Message[] getDeliveredMsgs() throws Exception {
+		logger.debug("getDeliveredMsgs시작()");
+		Message[] msg = messageDao.getDeliveredMsgs();
+		logger.debug("getDeliveredMsgs종료(msg=" + msg + ")");
+		return msg;
+	}
+
+	@Override
 	public Message[] getReservationMsgs() throws Exception {
 		logger.debug("getReservationMsgs시작()");
 		Message[] msg = messageDao.getReservationMsgs();

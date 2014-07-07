@@ -17,4 +17,6 @@ public interface MessageDao {
 	int delete(int msgID) throws Exception;
 
 	Message[] getReservationMsgs() throws Exception;
+
+	Message[] getDeliveredMsgs() throws Exception;
 }

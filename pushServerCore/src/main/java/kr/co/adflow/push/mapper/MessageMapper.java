@@ -13,9 +13,9 @@ import kr.co.adflow.push.domain.Sms;
 public interface MessageMapper {
 	Message get(int id) throws Exception;
 
-	List<Message> getUndeliveredMsg() throws Exception;
+	List<Message> getUndeliveredMsgs() throws Exception;
 
-	List<Message> getUndeliveredSmsMsg() throws Exception;
+	List<Message> getUndeliveredSmsMsgs() throws Exception;
 
 	// int getID(Message msg) throws Exception;
 
@@ -46,4 +46,6 @@ public interface MessageMapper {
 	boolean getSms(Sms sms) throws Exception;
 
 	int postSms(Sms sms) throws Exception;
+
+	Message[] getDeliveredMsgs() throws Exception;
 }

@@ -18,6 +18,8 @@ public class Message {
 	public static final int STATUS_PHONENUMBER_NOT_FOUND = 100;
 	public static final int STATUS_USER_NOT_FOUND = 200;
 
+	public static final int STATUS_ERROR = 500; // 에러
+
 	public static final int NOTIFICATION_PERSONAL = 0; // 개인메시지
 	public static final int NOTIFICATION_ALL = 1; // 전체메시지
 	public static final int NOTIFICATION_GROUP_AFFILIATE = 2; // 계엵사 그룹메시지

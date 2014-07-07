@@ -284,7 +284,7 @@
 				<!-- paho logging level설정 -->
 				<paho.log.level>SEVERE</paho.log.level>
 				<!-- application log level 설정 -->
-				<log.level>debug</log.level>
+				<log.level>error</log.level>
 			</properties>
 		</profile>
 		<!-- Production environment @ production server -->

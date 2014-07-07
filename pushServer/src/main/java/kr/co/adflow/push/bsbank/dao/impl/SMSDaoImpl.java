@@ -15,7 +15,6 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
 import kr.co.adflow.push.dao.SMSDao;
-import kr.co.adflow.push.dao.impl.MessageDaoImpl;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

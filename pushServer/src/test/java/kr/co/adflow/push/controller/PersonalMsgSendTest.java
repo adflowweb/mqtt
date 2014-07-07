@@ -84,20 +84,23 @@ public class PersonalMsgSendTest extends AbstractTestNGSpringContextTests {
 		Message msg = new Message();
 		msg.setSender("nadir93");
 		msg.setReceiver("/users/1731124");
-		jsonString = "{\"notification\":{\"notificationStyle\":1,\"contentTitle\":\"교육장소공지\","
-				+ "\"contentText\":\"메시지전송테스트.\", \"ticker\":\"부산은행교육장소알림장소: 수림연수원 시간: 3월 22일 오전: 12시\","
-				+ "\"summaryText\":\"장소: 수림연수원 시간: 3월 22일 오전: "
-				+ (int) (Math.random() * 100)
-				+ "시\", \"image\":\""
-				+ "encodedStr"
-				+ "\"},"
-				+ "\"event\":{\"title\":\"부산은행교육\", \"location\":\"수림연수원\", \"desc\":\"\","
-				+ "\"year\":\"2014\", \"month\":\"2\","
-				+ "\"day\":\"22\"}"
-				+ "}";
-		msg.setContent(jsonString);
+		// jsonString =
+		// "{\"notification\":{\"notificationStyle\":1,\"contentTitle\":\"교육장소공지\","
+		// +
+		// "\"contentText\":\"메시지전송테스트.\", \"ticker\":\"부산은행교육장소알림장소: 수림연수원 시간: 3월 22일 오전: 12시\","
+		// + "\"summaryText\":\"장소: 수림연수원 시간: 3월 22일 오전: "
+		// + (int) (Math.random() * 100)
+		// + "시\", \"image\":\""
+		// + "encodedStr"
+		// + "\"},"
+		// +
+		// "\"event\":{\"title\":\"부산은행교육\", \"location\":\"수림연수원\", \"desc\":\"\","
+		// + "\"year\":\"2014\", \"month\":\"2\","
+		// + "\"day\":\"22\"}"
+		// + "}";
+		// msg.setContent(jsonString);
 		msg.setQos(1);
-		msg.setSms(true);
+		// msg.setSms(true);
 
 		// cal.set(cal.SECOND, 0);
 		// cal.add(cal.MINUTE, +2); // 2분뒤
@@ -105,11 +108,31 @@ public class PersonalMsgSendTest extends AbstractTestNGSpringContextTests {
 		// sendDate.setSeconds(0);
 		// msg.setReservation(sendDate); // 분단위 지정
 
-		msg.setTimeOut(10);
+		// msg.setTimeOut(10);
 		msg.setType(Message.NOTIFICATION_PERSONAL); // 개인메시지타입 = 0
 
 		Response res = null;
 		for (int i = 0; i < 1000; i++) {
+			jsonString = "{\"notification\":{\"notificationStyle\":1,\"contentTitle\":\""
+					+ i
+					+ "교육장소공지\","
+					+ "\"contentText\":\""
+					+ i
+					+ "메시지전송테스트.\", \"ticker\":\""
+					+ i
+					+ " 부산은행교육장소알림장소: 수림연수원 시간: 3월 22일 오전: 12시\","
+					+ "\"summaryText\":\"장소: 수림연수원 시간: 3월 22일 오전: "
+					+ (int) (Math.random() * 100)
+					+ "시\", \"image\":\""
+					+ "encodedStr"
+					+ "\"},"
+					+ "\"event\":{\"title\":\""
+					+ i
+					+ " 부산은행교육\", \"location\":\"수림연수원\", \"desc\":\"\","
+					+ "\"year\":\"2014\", \"month\":\"2\","
+					+ "\"day\":\"22\"}"
+					+ "}";
+			msg.setContent(jsonString);
 			res = messageController.post(msg);
 		}
 
