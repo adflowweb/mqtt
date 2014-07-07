@@ -41,7 +41,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
 	private static final String[] USER_COLUMNS = { USER_ID, PASSWORD, TOKEN_ID,
 			CURRENT_USER };
 	private static final String[] MESSAGE_COLUMNS = { "id", "userid", "ack",
-			"type", "content", "receivedate" };
+			"type", "content", "receivedate", "category" };
 
 	private static final String[] JOB_COLUMNS = { "id", "type", "topic",
 			"content" };
@@ -79,7 +79,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
 
 		String CREATE_MESSAGE_TABLE = "CREATE TABLE message ( "
 				+ "id INTEGER, userid TEXT, ack INTEGER, "
-				+ "type INTEGER, content TEXT, receivedate TEXT, PRIMARY KEY (id, userid))";
+				+ "type INTEGER, content TEXT, receivedate TEXT, category TEXT, PRIMARY KEY (id, userid))";
 		// create message table
 		db.execSQL(CREATE_MESSAGE_TABLE);
 
@@ -439,6 +439,9 @@ public class PushDBHelper extends SQLiteOpenHelper {
 		Date now = new Date();
 		values.put("receivedate", sdf.format(now));
 		values.put("content", msg.getString("content"));
+		if (msg.has("category")) {
+			values.put("category", msg.getString("category"));
+		}
 
 		// 3. insert
 		db.insertOrThrow(TABLE_MESSAGE, // table
@@ -625,5 +628,29 @@ public class PushDBHelper extends SQLiteOpenHelper {
 		// 4. close
 		db.close();
 		Log.d(TAG, "addTopic종료()");
+	}
+
+	public synchronized void getMsgCount() {
+		Log.d(TAG, "getMsgCount시작()");
+		// 1. get reference to readable DB
+		SQLiteDatabase db = this.getReadableDatabase();
+		// 2. build query
+		Cursor cursor = db.query(TABLE_MESSAGE, // a. table
+				new String[] { "count(*)" }, // b. column names
+				null, // c. selections
+				null, // d. selections args
+				null, // e. group by
+				null, // f. having
+				null, // g. order by
+				null); // h. limit
+		// 3. if we got results get the first one
+		if (cursor != null)
+			cursor.moveToFirst();
+
+		while (cursor.isAfterLast() == false) {
+			// 4. build Topic object
+			Log.d(TAG, "getMsgCount종료(count=" + cursor.getString(0) + ")");
+			cursor.moveToNext();
+		}
 	}
 }

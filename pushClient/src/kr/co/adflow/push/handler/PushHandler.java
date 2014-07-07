@@ -27,6 +27,7 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteConstraintException;
 import android.util.Log;
 
 /**
@@ -136,7 +137,8 @@ public class PushHandler implements MqttCallback {
 			// Log.d(TAG, "저장된메시지=" + result);
 
 			// testCode
-			pushdb.getAllMessages();
+			// pushdb.getAllMessages();
+			pushdb.getMsgCount();
 			// end
 
 			switch (msgType) {
@@ -330,8 +332,16 @@ public class PushHandler implements MqttCallback {
 				case 1:
 					// SUBSCRIBE
 					subscribe(job[i].getTopic(), 2);
-					// 디비인서트
-					pushdb.addTopic(userID, job[i].getTopic(), 1);
+
+					// SQLiteConstraintException
+
+					try {
+						// 디비인서트
+						pushdb.addTopic(userID, job[i].getTopic(), 1);
+					} catch (SQLiteConstraintException e) {
+						Log.e(TAG, "디비인서트중예외상황발생", e);
+					}
+
 					// 디비삭제
 					pushdb.deteletJob(job[i].getId());
 					Log.d(TAG, "작업이수행되었습니다.id=" + job[i].getId());

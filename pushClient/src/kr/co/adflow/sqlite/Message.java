@@ -11,6 +11,7 @@ public class Message {
 	private int type;
 	private String content;
 	private String receivedate;
+	private String category;
 
 	public int getId() {
 		return id;
@@ -60,11 +61,19 @@ public class Message {
 		this.receivedate = receivedate;
 	}
 
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
+	}
+
 	@Override
 	public String toString() {
 		return "Message [id=" + id + ", userID=" + userID + ", ack=" + ack
 				+ ", type=" + type + ", content=" + content + ", receivedate="
-				+ receivedate + "]";
+				+ receivedate + ", category=" + category + "]";
 	}
 
 }
