@@ -14,4 +14,10 @@
 		username="root" password="passw0rd" maxActive="20" maxIdle="10"
 		maxWait="10000" validationQuery="SELECT 1" validationInterval="30000"
 		testWhileIdle="true" />
+
+	<!-- <Resource name="jdbc/bsbank" auth="Container" type="javax.sql.DataSource" 
+		factory="org.apache.tomcat.jdbc.pool.DataSourceFactory" driverClassName="oracle.jdbc.OracleDriver" 
+		url="jdbc:oracle:thin:@130.12.4.151:1621:DODSDB" username="MBO_AP" password="MBO99AP" 
+		maxActive="20" maxIdle="10" maxWait="10000" validationQuery="select 1 from 
+		dual" validationInterval="30000" testOnBorrow="false"/> -->
 </Context>

@@ -43,8 +43,4 @@ public interface GroupService {
 	 */
 	Department[] getAllDept() throws Exception;
 
-	int post(Topic grp) throws Exception;
-
-	int delete(String userID, String topic) throws Exception;
-
 }

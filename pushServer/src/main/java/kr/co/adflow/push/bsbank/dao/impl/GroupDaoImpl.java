@@ -28,24 +28,6 @@ public class GroupDaoImpl implements GroupDao {
 	@Qualifier("bsBanksqlSession")
 	private SqlSession sqlSession;
 
-	@Override
-	public int post(Topic grp) throws Exception {
-		logger.debug("post시작(Group=" + grp + ")");
-		GroupMapper grpMapper = sqlSession.getMapper(GroupMapper.class);
-		int result = grpMapper.post(grp);
-		logger.debug("post종료(updates=" + result + ")");
-		return result;
-	}
-
-	@Override
-	public int delete(String userID, String topic) throws Exception {
-		logger.debug("delete시작(userID=" + userID + ", topic=" + topic + ")");
-		GroupMapper grpMapper = sqlSession.getMapper(GroupMapper.class);
-		int result = grpMapper.delete(userID, topic);
-		logger.debug("delete종료(updates=" + result + ")");
-		return result;
-	}
-
 	/*
 	 * 계열사정보가져오기
 	 * 

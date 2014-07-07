@@ -25,22 +25,6 @@ public class GroupServiceImpl implements GroupService {
 	@Resource
 	GroupDao grpDao;
 
-	@Override
-	public int post(Topic grp) throws Exception {
-		logger.debug("post시작(group=" + grp + ")");
-		int result = grpDao.post(grp);
-		logger.debug("post종료(result=" + result + ")");
-		return result;
-	}
-
-	@Override
-	public int delete(String userID, String topic) throws Exception {
-		logger.debug("delete시작(userID=" + userID + ",topic=" + topic + ")");
-		int result = grpDao.delete(userID, topic);
-		logger.debug("delete종료(result=" + result + ")");
-		return result;
-	}
-
 	/*
 	 * 계열사 정보 가져오기
 	 * 

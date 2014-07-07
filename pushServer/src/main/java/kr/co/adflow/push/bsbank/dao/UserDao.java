@@ -8,9 +8,24 @@ import kr.co.adflow.push.domain.bsbank.User;
  * 
  */
 public interface UserDao {
+	/**
+	 * @param userID
+	 * @return
+	 * @throws Exception
+	 */
 	User get(String userID) throws Exception;
 
+	/**
+	 * @param dept
+	 * @return
+	 * @throws Exception
+	 */
 	User[] getUsersByDepartment(String dept) throws Exception;
 
+	/**
+	 * @param name
+	 * @return
+	 * @throws Exception
+	 */
 	User[] getUsersByName(String name) throws Exception;
 }
