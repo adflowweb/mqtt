@@ -6,9 +6,6 @@ import java.security.MessageDigest;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Properties;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -47,8 +44,8 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author nadir93
  * @date 2014. 3. 21.
  */
-public abstract class AbstractMqttServiceImpl implements Runnable,
-		MqttCallback, MqttService {
+public abstract class AbstractMqttServiceImpl implements MqttCallback,
+		MqttService {
 
 	private static final String CONFIG_PROPERTIES = "/config.properties";
 
@@ -102,8 +99,6 @@ public abstract class AbstractMqttServiceImpl implements Runnable,
 
 	}
 
-	private static boolean first = true;
-
 	protected double reqCnt; // receive message count
 	protected ObjectMapper objectMapper = new ObjectMapper();
 	protected MessageMapper msgMapper;
@@ -113,15 +108,7 @@ public abstract class AbstractMqttServiceImpl implements Runnable,
 	@Autowired
 	private SqlSession sqlSession;
 
-	private ScheduledExecutorService healthCheckLooper;
-
 	private MqttAsyncClient mqttClient;
-
-	private boolean healthCheck = Boolean.parseBoolean(prop
-			.getProperty("health.enable"));
-
-	private int healthCheckInterval = Integer.parseInt(prop
-			.getProperty("health.check.interval"));
 
 	private int connectionTimeout = Integer.parseInt(prop
 			.getProperty("connection.timeout"));
@@ -148,15 +135,6 @@ public abstract class AbstractMqttServiceImpl implements Runnable,
 	public void initIt() throws Exception {
 		logger.info("mqttService초기화시작()");
 		setMqttClientLog();
-
-		logger.info("헬스체크처리유무=" + healthCheck);
-		if (healthCheck) {
-			healthCheckLooper = Executors.newScheduledThreadPool(1);
-			healthCheckLooper.scheduleWithFixedDelay(this, 0,
-					healthCheckInterval, TimeUnit.SECONDS);
-			logger.info("healthCheckLooper가시작되었습니다.");
-		}
-
 		mOpts = makeMqttOpts();
 		msgMapper = sqlSession.getMapper(MessageMapper.class);
 		// grpMapper = bsBanksqlSession.getMapper(GroupMapper.class);
@@ -171,11 +149,6 @@ public abstract class AbstractMqttServiceImpl implements Runnable,
 	@PreDestroy
 	public void cleanUp() throws Exception {
 		logger.info("cleanUp시작()");
-
-		if (healthCheck) {
-			healthCheckLooper.shutdown();
-			logger.info("healthCheckLooper가종료되었습니다.");
-		}
 		destroy();
 		logger.info("cleanUp종료()");
 	}
@@ -194,33 +167,13 @@ public abstract class AbstractMqttServiceImpl implements Runnable,
 	}
 
 	/*
+	 * 메시지핸들러가 10초에 한번씩 돌아야 tps가 맞음
+	 * 
 	 * (non-Javadoc)
 	 * 
-	 * @see java.lang.Runnable#run()
+	 * @see kr.co.adflow.push.service.MqttService#generateTPS()
 	 */
-	@Override
-	public void run() {
-
-		if (first) {
-			final String orgName = Thread.currentThread().getName();
-			Thread.currentThread().setName("HealthCheckPrecessing " + orgName);
-			first = !first;
-		}
-
-		logger.debug("healthCheck시작()");
-		try {
-			// mqtt connection 헬스체크
-			healthCheck();
-			// 모니터링용 수신 메시지 처리건수 계산
-			generateTPS();
-		} catch (Exception e) {
-			errorMsg = e.toString();
-			logger.error("에러발생", e);
-		}
-		logger.debug("healthCheck종료()");
-	}
-
-	private void generateTPS() {
+	public void generateTPS() {
 		// tps 계산
 		tps = reqCnt / (double) 10;
 		logger.debug("reqCnt=" + reqCnt);
@@ -228,7 +181,7 @@ public abstract class AbstractMqttServiceImpl implements Runnable,
 		reqCnt = 0; // 초기화
 	}
 
-	private void healthCheck() throws Exception {
+	public void healthCheck() throws Exception {
 		if (mqttClient == null) {
 			logger.debug("mqtt연결을처음시도합니다.");
 			connect();
@@ -399,64 +352,8 @@ public abstract class AbstractMqttServiceImpl implements Runnable,
 
 		if (topic.equals("/push/ack")) {
 			receiveAck(topic, message);
-			// logger.debug("ack메시지가수신되었습니다.");
-			// try {
-			// // db insert ack
-			// // convert json string to object
-			// Acknowledge ack = objectMapper.readValue(message.getPayload(),
-			// Acknowledge.class);
-			// msgMapper.postAck(ack);
-			// logger.debug("ack메시지를등록하였습니다.");
-			// } catch (Exception e) {
-			// logger.error("에러발생", e);
-			// }
 		} else if (topic.equals("/push/group")) {
 			receiveGroup(topic, message);
-			// logger.debug("그룹정보요청메시지가수신되었습니다.");
-			// try {
-			// // db select group info
-			// // convert json string to object
-			// User user = objectMapper.readValue(message.getPayload(),
-			// User.class);
-			// kr.co.adflow.push.domain.bsbank.User bsbankUser = grpMapper
-			// .getTopic(user.getUserID());
-			// logger.debug("user=" + bsbankUser);
-			// if (bsbankUser != null) {
-			// // db insert push
-			// Message msg = new Message();
-			// msg.setQos(2);
-			// msg.setReceiver("/users/" + user.getUserID());
-			// msg.setSender("pushServer");
-			// StringBuffer content = new StringBuffer();
-			// content.append("{\"userID\":");
-			// content.append("\"");
-			// content.append(user.getUserID());
-			// content.append("\",\"groups\":[\"");
-			// content.append(bsbankUser.getGw_sbsd_cdnm());
-			// content.append("\"");
-			// content.append(",\"");
-			// content.append(bsbankUser.getGw_deptmt_cdnm());
-			// content.append("\"");
-			// // for (int i = 0; i < grp.length; i++) {
-			// // content.append("\"");
-			// // content.append(grp[i].getTopic());
-			// // content.append("\"");
-			// // if (i < grp.length - 1) {
-			// // content.append(",");
-			// // }
-			// // }
-			// content.append("]}");
-			// msg.setType(Message.COMMAND_SUBSCRIBE);
-			// msg.setContent(content.toString());
-			// logger.debug("msg=" + msg);
-			// messageDao.post(msg);
-			// logger.debug("그룹정보메시지를등록하였습니다.");
-			// } else {
-			// logger.error("사용자정보가없습니다.");
-			// }
-			// } catch (Exception e) {
-			// logger.error("에러발생", e);
-			// }
 		} else if (topic.equals("/push/poll")) {
 			// 설문조사용
 			receivePoll(topic, message);
@@ -509,6 +406,23 @@ public abstract class AbstractMqttServiceImpl implements Runnable,
 	}
 
 	@Override
+	public void setError(String error) {
+		logger.debug("setError시작(errorMsg=" + error + ")");
+		errorMsg = error;
+		logger.debug("setError종료()");
+	}
+
+	/*
+	 * 푸시서버 초당 받은 메시지 건수
+	 * 
+	 * @see kr.co.adflow.push.service.MqttService#getTps()
+	 */
+	@Override
+	public double getTps() throws Exception {
+		return tps;
+	}
+
+	@Override
 	public synchronized IMqttDeliveryToken publish(Message msg)
 			throws Exception {
 		logger.debug("publish시작(msg=" + msg + ")");
@@ -548,16 +462,6 @@ public abstract class AbstractMqttServiceImpl implements Runnable,
 		logger.debug("isConnected시작()");
 		logger.debug("isConnected종료(" + mqttClient.isConnected() + ")");
 		return mqttClient.isConnected();
-	}
-
-	/*
-	 * 푸시서버 초당 받은 메시지 건수
-	 * 
-	 * @see kr.co.adflow.push.service.MqttService#getTps()
-	 */
-	@Override
-	public double getTps() throws Exception {
-		return tps;
 	}
 
 }

@@ -4,7 +4,6 @@ import static org.testng.AssertJUnit.assertNull;
 
 import java.io.FileInputStream;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import kr.co.adflow.push.domain.Message;

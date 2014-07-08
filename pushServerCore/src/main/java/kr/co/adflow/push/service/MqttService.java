@@ -19,4 +19,10 @@ public interface MqttService {
 	IMqttDeliveryToken publish(Message msg) throws Exception;
 
 	double getTps() throws Exception;
+
+	void healthCheck() throws Exception;
+
+	void generateTPS() throws Exception;
+
+	void setError(String error);
 }

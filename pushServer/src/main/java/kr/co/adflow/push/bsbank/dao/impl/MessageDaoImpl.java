@@ -7,7 +7,6 @@ import javax.annotation.PostConstruct;
 
 import kr.co.adflow.push.bsbank.handler.SMSHandler;
 import kr.co.adflow.push.dao.impl.DefaultMessageDaoImpl;
-import kr.co.adflow.push.handler.MessageHandler;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +24,6 @@ public class MessageDaoImpl extends DefaultMessageDaoImpl {
 			.getLogger(MessageDaoImpl.class);
 
 	@Autowired
-	private MessageHandler msgHandler;
-
-	@Autowired
 	private SMSHandler smsHandler;
 
 	/**
@@ -37,15 +33,8 @@ public class MessageDaoImpl extends DefaultMessageDaoImpl {
 	 */
 	@PostConstruct
 	public void initIt() throws Exception {
+		super.initIt();
 		logger.info("MessageDAOImpl초기화시작()");
-
-		logger.info("메시지처리유무=" + msgProcess);
-		if (msgProcess) {
-			messageLooper = Executors.newScheduledThreadPool(1);
-			messageLooper.scheduleWithFixedDelay(msgHandler, messageInterval,
-					messageInterval, TimeUnit.SECONDS);
-			logger.info("메시지핸들러가시작되었습니다.");
-		}
 
 		logger.info("SMS처리유무=" + sms);
 		if (sms) {
