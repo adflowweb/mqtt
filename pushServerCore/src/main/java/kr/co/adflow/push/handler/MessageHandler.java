@@ -1,8 +1,15 @@
 package kr.co.adflow.push.handler;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 
 import kr.co.adflow.push.domain.Message;
@@ -27,11 +34,70 @@ public class MessageHandler implements Runnable {
 	private static final org.slf4j.Logger logger = LoggerFactory
 			.getLogger(MessageHandler.class);
 
+	private static final String CONFIG_PROPERTIES = "/config.properties";
+
+	private static Properties prop = new Properties();
+
+	static {
+		try {
+			prop.load(MessageHandler.class
+					.getResourceAsStream(CONFIG_PROPERTIES));
+			logger.debug("속성값=" + prop);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	// 메시지처리 유무
+	private boolean msgProcess = Boolean.parseBoolean(prop
+			.getProperty("message.enable"));
+	// 메시지처리주기
+	private int messageInterval = Integer.parseInt(prop
+			.getProperty("message.process.interval"));
+
 	private static boolean first = true;
+
 	@Resource
 	MqttService mqttService;
+
 	@Autowired
 	private SqlSession sqlSession;
+
+	protected ScheduledExecutorService messageLooper;
+
+	/**
+	 * initialize
+	 * 
+	 * @throws Exception
+	 */
+	@PostConstruct
+	public void initIt() throws Exception {
+		logger.info("MessageHandler초기화시작()");
+
+		logger.info("메시지처리유무=" + msgProcess);
+		if (msgProcess) {
+			messageLooper = Executors.newScheduledThreadPool(1);
+			messageLooper.scheduleWithFixedDelay(this, messageInterval,
+					messageInterval, TimeUnit.SECONDS);
+			logger.info("메시지핸들러가시작되었습니다.");
+		}
+		logger.info("MessageHandler초기화종료()");
+	}
+
+	/**
+	 * 모든리소스정리
+	 * 
+	 * @throws Exception
+	 */
+	@PreDestroy
+	public void cleanUp() throws Exception {
+		logger.info("cleanUp시작()");
+		if (msgProcess) {
+			messageLooper.shutdown();
+			logger.info("메시지핸들러가종료되었습니다.");
+		}
+		logger.info("cleanUp종료()");
+	}
 
 	/*
 	 * (non-Javadoc)

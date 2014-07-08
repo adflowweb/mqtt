@@ -14,6 +14,7 @@ import kr.co.adflow.push.domain.Sms;
 import kr.co.adflow.push.domain.bsbank.User;
 import kr.co.adflow.push.exception.NonExistentUserException;
 import kr.co.adflow.push.exception.PhoneNumberNotFoundException;
+import kr.co.adflow.push.handler.DefaultSMSHandler;
 import kr.co.adflow.push.mapper.MessageMapper;
 
 import org.apache.ibatis.session.SqlSession;
@@ -29,38 +30,137 @@ import org.springframework.stereotype.Component;
  * @date 2014. 6. 12.
  */
 @Component
-public class SMSHandler implements Runnable {
+public class SMSHandler extends DefaultSMSHandler {
 
 	private static final org.slf4j.Logger logger = LoggerFactory
 			.getLogger(SMSHandler.class);
-
-	private static boolean first = true;
-
-	@Autowired
-	private SqlSession sqlSession;
 
 	@Autowired
 	@Qualifier("bsBanksqlSession")
 	private SqlSession bsBanksqlSession;
 
 	@Autowired
+	private SqlSession sqlSession;
+
+	@Autowired
 	private SMSDao smsDao;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Runnable#run()
+	/**
+	 * @param msgMapper
+	 * @param msg
+	 * @param users
+	 * @throws Exception
 	 */
-	@Override
-	public void run() {
+	private void processSMS(MessageMapper msgMapper, Message msg, User[] users)
+			throws Exception {
+		// ack사용자가져오기
+		Acknowledge[] acks = msgMapper.getAckAll(msg.getId());
 
-		if (first) {
-			final String orgName = Thread.currentThread().getName();
-			Thread.currentThread().setName("SMSPrecessing " + orgName);
-			first = !first;
+		Map<String, Acknowledge> ackMap = new HashMap<String, Acknowledge>();
+		for (Acknowledge acknowledge : acks) {
+			logger.debug("acknowledge=" + acknowledge);
+			ackMap.put(acknowledge.getUserID(), acknowledge);
 		}
 
-		logger.debug("SMS핸들러처리시작()");
+		int smsCount = 0;
+		for (User user : users) {
+			try {
+				logger.debug("user=" + user);
+				// sms 테이블을 체크해보고 없으면 수행 있으면 스킵
+				Sms sms = new Sms();
+				sms.setId(msg.getId());
+				sms.setUserID(user.getGw_stf_cdnm());
+				if (msgMapper.getSms(sms)) {
+					// skip
+					logger.debug("이미SMS처리작업이완료되었습니다.");
+				} else {
+					// 루프돌면서 각사용자의 ack정보에 따라 메시지 전송
+					if (ackMap.containsKey(user.getGw_stf_cdnm())) {
+						// skip
+						logger.debug("ack메시지가있습니다.(sms발송대상이아닙니다) user="
+								+ user.getGw_stf_cdnm());
+					} else {
+						// sms 전송
+						try {
+							sendSMS(msgMapper, user.getGw_stf_cdnm(), msg);
+							smsCount++;
+							// db sms update
+							sms.setIssue(new Date());
+							sms.setStatus(Sms.SMS_SENT);
+							msgMapper.postSms(sms);
+							logger.debug("SMS발송정보가업데이트되었습니다.(전송되었습니다.)");
+						} catch (NonExistentUserException e) {
+							logger.debug(e.getMessage());
+							// db(status) update
+							sms.setStatus(Sms.STATUS_USER_NOT_FOUND);
+							msgMapper.postSms(sms);
+							logger.debug("SMS발송정보가업데이트되었습니다.(사용자가없습니다.)");
+							// throw e;
+						} catch (PhoneNumberNotFoundException e) {
+							logger.debug(e.getMessage());
+							// db(status) update
+							sms.setStatus(Sms.STATUS_PHONENUMBER_NOT_FOUND);
+							msgMapper.postSms(sms);
+							logger.debug("SMS발송정보가업데이트되었습니다.(전화번호가없습니다.)");
+							// throw e;
+						}
+					}
+				}
+			} catch (Exception e) {
+				logger.error("에러발생", e);
+			}
+		}
+
+		// 전송후 db update
+		if (smsCount > 0) {
+			msg.setIssueSms(new Date());
+			msg.setStatus(Message.STATUS_SMS_SENT);
+			msgMapper.putIssueSms(msg);
+			logger.debug("전송시간정보를업데이트했습니다.status=" + Message.STATUS_SMS_SENT);
+		} else {
+			msg.setStatus(Message.STATUS_SMS_PROCESS_DONE);
+			msgMapper.putStatus(msg);
+			logger.debug("SMS처리작업정보를업데이트했습니다.status="
+					+ Message.STATUS_SMS_PROCESS_DONE);
+		}
+	}
+
+	private void sendSMS(MessageMapper msgMapper, String userID, Message msg)
+			throws Exception {
+		logger.debug("sendSMS시작(msg=" + msg + ")");
+		UserMapper userMapper = bsBanksqlSession.getMapper(UserMapper.class);
+		User user = userMapper.get(userID);
+		logger.debug("user=" + user);
+
+		if (user == null) {
+			throw new NonExistentUserException("푸시사용자가존재하지않습니다.userID="
+					+ userID);
+		}
+
+		// Message message = msgMapper.get(msg.getId());
+		// 80문자이고 내용을 적절히 변경해야함
+		// 필요정보는 전화번호 ...
+		if (user.getMpno() != null) {
+			smsDao.post(user.getMpno(), "15441000", msg.getSender()
+					+ "님으로부터 메시지가도착하였습니다. 메시지앱으로확인바랍니다.");
+		} else {
+			throw new PhoneNumberNotFoundException("전화번호가존재하지않습니다.userID="
+					+ userID);
+		}
+		// mqttService.publish(message);
+		logger.debug("SMS메시지를전송하였습니다.");
+	}
+
+	/*
+	 * 처리주기 1분
+	 * 
+	 * (non-Javadoc)
+	 * 
+	 * @see kr.co.adflow.push.handler.DefaultSMSHandler#doProcess()
+	 */
+	@Override
+	protected void doProcess() {
+		logger.debug("doProcess시작()");
 		// db query select sms
 		// send sms
 		// db update
@@ -179,112 +279,6 @@ public class SMSHandler implements Runnable {
 		} catch (Exception e) {
 			logger.error("에러발생", e);
 		}
-		logger.debug("SMS핸들러처리종료()");
-	}
-
-	/**
-	 * @param msgMapper
-	 * @param msg
-	 * @param users
-	 * @throws Exception
-	 */
-	private void processSMS(MessageMapper msgMapper, Message msg, User[] users)
-			throws Exception {
-		// ack사용자가져오기
-		Acknowledge[] acks = msgMapper.getAckAll(msg.getId());
-
-		Map<String, Acknowledge> ackMap = new HashMap<String, Acknowledge>();
-		for (Acknowledge acknowledge : acks) {
-			logger.debug("acknowledge=" + acknowledge);
-			ackMap.put(acknowledge.getUserID(), acknowledge);
-		}
-
-		int smsCount = 0;
-		for (User user : users) {
-			try {
-				logger.debug("user=" + user);
-				// sms 테이블을 체크해보고 없으면 수행 있으면 스킵
-				Sms sms = new Sms();
-				sms.setId(msg.getId());
-				sms.setUserID(user.getGw_stf_cdnm());
-				if (msgMapper.getSms(sms)) {
-					// skip
-					logger.debug("이미SMS처리작업이완료되었습니다.");
-				} else {
-					// 루프돌면서 각사용자의 ack정보에 따라 메시지 전송
-					if (ackMap.containsKey(user.getGw_stf_cdnm())) {
-						// skip
-						logger.debug("ack메시지가있습니다.(sms발송대상이아닙니다) user="
-								+ user.getGw_stf_cdnm());
-					} else {
-						// sms 전송
-						try {
-							sendSMS(msgMapper, user.getGw_stf_cdnm(), msg);
-							smsCount++;
-							// db sms update
-							sms.setIssue(new Date());
-							sms.setStatus(Sms.SMS_SENT);
-							msgMapper.postSms(sms);
-							logger.debug("SMS발송정보가업데이트되었습니다.(전송되었습니다.)");
-						} catch (NonExistentUserException e) {
-							logger.debug(e.getMessage());
-							// db(status) update
-							sms.setStatus(Sms.STATUS_USER_NOT_FOUND);
-							msgMapper.postSms(sms);
-							logger.debug("SMS발송정보가업데이트되었습니다.(사용자가없습니다.)");
-							// throw e;
-						} catch (PhoneNumberNotFoundException e) {
-							logger.debug(e.getMessage());
-							// db(status) update
-							sms.setStatus(Sms.STATUS_PHONENUMBER_NOT_FOUND);
-							msgMapper.postSms(sms);
-							logger.debug("SMS발송정보가업데이트되었습니다.(전화번호가없습니다.)");
-							// throw e;
-						}
-					}
-				}
-			} catch (Exception e) {
-				logger.error("에러발생", e);
-			}
-		}
-
-		// 전송후 db update
-		if (smsCount > 0) {
-			msg.setIssueSms(new Date());
-			msg.setStatus(Message.STATUS_SMS_SENT);
-			msgMapper.putIssueSms(msg);
-			logger.debug("전송시간정보를업데이트했습니다.status=" + Message.STATUS_SMS_SENT);
-		} else {
-			msg.setStatus(Message.STATUS_SMS_PROCESS_DONE);
-			msgMapper.putStatus(msg);
-			logger.debug("SMS처리작업정보를업데이트했습니다.status="
-					+ Message.STATUS_SMS_PROCESS_DONE);
-		}
-	}
-
-	private void sendSMS(MessageMapper msgMapper, String userID, Message msg)
-			throws Exception {
-		logger.debug("sendSMS시작(msg=" + msg + ")");
-		UserMapper userMapper = bsBanksqlSession.getMapper(UserMapper.class);
-		User user = userMapper.get(userID);
-		logger.debug("user=" + user);
-
-		if (user == null) {
-			throw new NonExistentUserException("푸시사용자가존재하지않습니다.userID="
-					+ userID);
-		}
-
-		// Message message = msgMapper.get(msg.getId());
-		// 80문자이고 내용을 적절히 변경해야함
-		// 필요정보는 전화번호 ...
-		if (user.getMpno() != null) {
-			smsDao.post(user.getMpno(), "15441000", msg.getSender()
-					+ "님으로부터 메시지가도착하였습니다. 메시지앱으로확인바랍니다.");
-		} else {
-			throw new PhoneNumberNotFoundException("전화번호가존재하지않습니다.userID="
-					+ userID);
-		}
-		// mqttService.publish(message);
-		logger.debug("SMS메시지를전송하였습니다.");
+		logger.debug("doProcess종료()");
 	}
 }

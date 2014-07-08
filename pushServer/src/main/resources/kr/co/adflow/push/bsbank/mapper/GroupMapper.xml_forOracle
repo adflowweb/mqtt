@@ -20,25 +20,23 @@
 	</resultMap>
 
 	<select id="get" resultMap="GroupResult">
-		SELECT * FROM ${db.table.affiliate}
+		SELECT * FROM TB_OCRM_GW_SBSD_INFO
 	</select>
 
 	<select id="getTopic" parameterType="java.lang.String"
 		resultType="kr.co.adflow.push.domain.bsbank.User">
-		SELECT * FROM ${db.table.user}
+		SELECT * FROM TB_OCRM_GW_STF_INFO
 		WHERE gw_stf_cdnm =
 		#{gw_stf_cdnm}
 	</select>
 
 	<select id="getDept" parameterType="java.lang.String" resultMap="DeptResult">
-		SELECT * FROM ${db.table.department}
-		Where gw_sbsd_cdnm =
-		#{gw_sbsd_cdnm}
+		SELECT * FROM TB_OCRM_GW_DEPTMT_INFO
+		Where gw_sbsd_cdnm = #{gw_sbsd_cdnm}
 	</select>
 
 	<select id="getAllDept" resultMap="DeptResult">
-		SELECT * FROM
-		${db.table.department}
+		SELECT * FROM TB_OCRM_GW_DEPTMT_INFO
 	</select>
 </mapper>	
 	

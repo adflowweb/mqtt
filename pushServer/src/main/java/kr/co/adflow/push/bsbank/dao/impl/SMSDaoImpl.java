@@ -14,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
+import kr.co.adflow.push.bsbank.sms.SMSSender;
 import kr.co.adflow.push.dao.SMSDao;
 
 import org.slf4j.LoggerFactory;
@@ -24,7 +25,7 @@ import org.springframework.stereotype.Component;
  * @date 2014. 6. 23.
  */
 @Component
-public class SMSDaoImpl implements SMSDao {
+public class SMSDaoImpl implements SMSDao<SMSSender> {
 
 	private static final org.slf4j.Logger logger = LoggerFactory
 			.getLogger(SMSDaoImpl.class);
@@ -35,8 +36,7 @@ public class SMSDaoImpl implements SMSDao {
 
 	static {
 		try {
-			prop.load(MessageDaoImpl.class
-					.getResourceAsStream(CONFIG_PROPERTIES));
+			prop.load(SMSDaoImpl.class.getResourceAsStream(CONFIG_PROPERTIES));
 			logger.debug("속성값=" + prop);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -44,42 +44,42 @@ public class SMSDaoImpl implements SMSDao {
 	}
 
 	// PUBLIC DATA
-	private static final String P_USER_ID = "friends"; // 아이디
-	private static final String P_USER_PWD = "bsfriends1!"; // (BODY)패스워드
+	public static final String P_USER_ID = "friends"; // 아이디
+	public static final String P_USER_PWD = "bsfriends1!"; // (BODY)패스워드
 
 	// ALIVE CHECK
-	private static final String A_MSGLEN = "24";
-	private static final String A_MSGTYPE = "0009";
-	private static final String A_SN = "";
+	public static final String A_MSGLEN = "24";
+	public static final String A_MSGTYPE = "0009";
+	public static final String A_SN = "";
 
 	// BIND_DATA
-	private static final String B_MSGLEN = "68"; // (HEADER)body 64byte + 4byte
-	private static final String B_MSGTYPE = "0001"; // (HEADER)BIND MSGTYPE
-	private static final String B_TYPE = "S"; // (BODY)송,수신 타입 S : 송신 , R : 수신
-	private static final String B_VERSION = ""; // (BODY)버전명
+	public static final String B_MSGLEN = "68"; // (HEADER)body 64byte + 4byte
+	public static final String B_MSGTYPE = "0001"; // (HEADER)BIND MSGTYPE
+	public static final String B_TYPE = "S"; // (BODY)송,수신 타입 S : 송신 , R : 수신
+	public static final String B_VERSION = ""; // (BODY)버전명
 
 	// ACK PARAM
-	private static final String BIND_ACK = "1001";
-	private static final String RESULT_SUCCESS = "0000";
-	private static final int BIND_ACK_LENGTH = 66;
-	private static final int DELIVERY_SMS_LENGTH = 347;
-	private static final int ALIVE_ACK_LENGTH = 38;
+	public static final String BIND_ACK = "1001";
+	public static final String RESULT_SUCCESS = "0000";
+	public static final int BIND_ACK_LENGTH = 66;
+	public static final int DELIVERY_SMS_LENGTH = 347;
+	public static final int ALIVE_ACK_LENGTH = 38;
 
 	// SEND SMS
-	private static final String S_MSGLEN = "347"; // (HEADER)body 343byte +
+	public static final String S_MSGLEN = "347"; // (HEADER)body 343byte +
 													// 4byte
-	private static final String S_MSGTYPE = "0002"; // (HEADER)SMS MSGTYPE
-	private static final String S_COMP_CD = "001001"; // (BODY)점번
-	private static final String S_PLACE_CD = "SMS822"; // (BODY)부서(지점코드)
-	private static final String S_BIZ_ID1 = "SO"; // (BODY)대분류
-	private static final String S_BIZ_ID2 = "S18"; // (BODY)소분류
-	private static final String S_CUST_ID = ""; // (BODY)....
-	private static final String S_COMP_KEY = ""; // (BODY)부서 키???
-	private static final String S_SMS_TYPE = "0"; // (BODY)TEXT SMS 0,
+	public static final String S_MSGTYPE = "0002"; // (HEADER)SMS MSGTYPE
+	public static final String S_COMP_CD = "001001"; // (BODY)점번
+	public static final String S_PLACE_CD = "SMS822"; // (BODY)부서(지점코드)
+	public static final String S_BIZ_ID1 = "SO"; // (BODY)대분류
+	public static final String S_BIZ_ID2 = "S18"; // (BODY)소분류
+	public static final String S_CUST_ID = ""; // (BODY)....
+	public static final String S_COMP_KEY = ""; // (BODY)부서 키???
+	public static final String S_SMS_TYPE = "0"; // (BODY)TEXT SMS 0,
 													// URL_CALLBACK 1
-	private static final String S_SEND_TIME = ""; // (BODY)예약 전송 시간
+	public static final String S_SEND_TIME = ""; // (BODY)예약 전송 시간
 
-	private static final String ENCODING_TYPE = "EUC-KR";
+	public static final String ENCODING_TYPE = "EUC-KR";
 
 	private int sendChannelInterval = Integer.parseInt(prop
 			.getProperty("sendChannel.process.interval"));
@@ -101,7 +101,7 @@ public class SMSDaoImpl implements SMSDao {
 
 	private ServerSocket recvServer;
 	private Receiver receiver;
-	private Sender sender;
+	private SMSSender sender;
 
 	/**
 	 * initialize
@@ -211,7 +211,7 @@ public class SMSDaoImpl implements SMSDao {
 		logger.debug("소케연결기다림..(블락킹)");
 		Socket socket = new Socket(SERVER_IP, PORT);
 		logger.debug("소켓이연결되었습니다.socket=" + socket);
-		sender = new Sender(socket);
+		sender = new SMSSender(socket);
 		sender.connect();
 		// sender.start();
 		logger.debug("샌더가시작되었습니다. sender=" + sender);
@@ -222,7 +222,7 @@ public class SMSDaoImpl implements SMSDao {
 	 * @author nadir93
 	 * @date 2014. 6. 24.
 	 */
-	class Sender {
+	public class Sender {
 
 		private Socket socket;
 		private BufferedInputStream bis;
@@ -490,7 +490,7 @@ public class SMSDaoImpl implements SMSDao {
 	 * @param bos
 	 * @throws IOException
 	 */
-	private static void setAliveServerData(BufferedOutputStream bos)
+	public static void setAliveServerData(BufferedOutputStream bos)
 			throws IOException {
 		logger.debug("setAliveServerData시작(bos=" + bos + ")");
 		// HEADER
@@ -518,7 +518,7 @@ public class SMSDaoImpl implements SMSDao {
 	 * @param str
 	 * @throws UnsupportedEncodingException
 	 */
-	private static void setData(byte[] arryByte, String str)
+	public static void setData(byte[] arryByte, String str)
 			throws UnsupportedEncodingException {
 		logger.debug("setData시작(arryByte,=" + arryByte + ",str=" + str + ")");
 		// 문자열 값이 널이면 전부 공백으로 채우기 위해
@@ -556,7 +556,7 @@ public class SMSDaoImpl implements SMSDao {
 	 * @param bos
 	 * @throws IOException
 	 */
-	private static void setBindServerData(BufferedOutputStream bos)
+	public static void setBindServerData(BufferedOutputStream bos)
 			throws IOException {
 		logger.debug("setBindServerData시작(bos=" + bos + ")");
 		// HEADER
@@ -669,6 +669,16 @@ public class SMSDaoImpl implements SMSDao {
 		setData(TEXT, content);
 		bos.write(TEXT);
 		logger.debug("setDeliverSmsData종료()");
+	}
+
+	@Override
+	public void setSMSSender(SMSSender sender) {
+
+	}
+
+	@Override
+	public SMSSender getSMSSender() {
+		return null;
 	}
 
 }

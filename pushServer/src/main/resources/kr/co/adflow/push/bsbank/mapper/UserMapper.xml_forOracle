@@ -6,7 +6,7 @@
 
 	<select id="get" parameterType="java.lang.String"
 		resultType="kr.co.adflow.push.domain.bsbank.User">
-		SELECT * FROM ${db.table.user}
+		SELECT * FROM TB_OCRM_GW_STF_INFO
 		WHERE gw_stf_cdnm =
 		#{gw_stf_cdnm}
 	</select>
@@ -27,14 +27,14 @@
 
 	<select id="getUsersByDepartment" parameterType="java.lang.String"
 		resultMap="UserResult">
-		SELECT * FROM ${db.table.user}
+		SELECT * FROM TB_OCRM_GW_STF_INFO
 		WHERE gw_deptmt_cdnm =
 		#{gw_deptmt_cdnm}
 	</select>
 
 	<select id="getUsersBySBSD" parameterType="java.lang.String"
 		resultMap="UserResult">
-		SELECT * FROM ${db.table.user}
+		SELECT * FROM TB_OCRM_GW_STF_INFO
 		WHERE gw_sbsd_cdnm =
 		#{gw_sbsd_cdnm}
 	</select>
@@ -42,14 +42,13 @@
 
 	<select id="getUsersByName" parameterType="java.lang.String"
 		resultMap="UserResult">
-		SELECT * FROM ${db.table.user}
-		WHERE gw_user_nm like
-		${db.sql.getUsersByName}
+		SELECT * FROM TB_OCRM_GW_STF_INFO
+		WHERE gw_user_nm like '%'||#{name}||'%'
 		<!-- SELECT * FROM emp WHERE gw_user_nm like '%#{name}%' -->
 	</select>
 
 	<select id="getAllUser" resultMap="UserResult">
-		SELECT * FROM ${db.table.user}
+		SELECT * FROM TB_OCRM_GW_STF_INFO
 	</select>
 </mapper>	
 	
