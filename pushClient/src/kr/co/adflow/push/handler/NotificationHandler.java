@@ -118,6 +118,7 @@ public class NotificationHandler {
 							.setSmallIcon(R.drawable.icon)
 							.setTicker(noti.getString("ticker"))
 							.setLargeIcon(bmBigPicture)
+							.setContentIntent(intent)
 							.setLargeIcon(bmBigPicture)).bigText(
 					noti.getString("contentText")).build();
 			break;
@@ -145,7 +146,7 @@ public class NotificationHandler {
 		}
 
 		// notification.ledARGB = Color.YELLOW;
-		manager.notify(msgCnt++, notification);
+		manager.notify(msgCnt, notification);
 	}
 
 	private static Intent makeAddCalIntent(JSONObject event) throws Exception {
