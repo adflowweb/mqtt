@@ -91,7 +91,7 @@ public class AffiliateGroupControllerTest extends
 		msg.setType(Message.NOTIFICATION_GROUP_AFFILIATE); // 계열사그룹메시지타입 = 2
 
 		Response res = null;
-		for (int i = 0; i < 1000; i++) {
+		for (int i = 0; i < 1; i++) {
 			jsonString = "{\"notification\":{\"notificationStyle\":1,\"contentTitle\":\""
 					+ i
 					+ "교육장소공지\","

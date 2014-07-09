@@ -248,9 +248,9 @@
 				<version>2.2</version>
 				<configuration>
 					<path>/v1</path>
-					<url>http://192.168.0.21:8080/manager/text</url>
+					<url>http://127.0.0.1:8080/manager/text</url>
 					<username>root</username>
-					<password></password>
+					<password>!Bsbank@</password>
 					<warFile>target/pushServer-1.0.0-BUILD-SNAPSHOT.war</warFile>
 				</configuration>
 			</plugin>
@@ -305,7 +305,7 @@
 				<mq.server.url>ssl://adflow.net:8883</mq.server.url>
 
 				<!-- SMS 서버주소 -->
-				<sms.server.url>130.80.101.49</sms.server.url>
+				<sms.server.url>127.0.0.1</sms.server.url>
 
 				<!-- SMS 서버포트 -->
 				<sms.server.port>3000</sms.server.port>
@@ -350,7 +350,8 @@
 				<log.level>debug</log.level>
 
 				<db.driverClass>com.mysql.jdbc.Driver</db.driverClass>
-				<db.connectionURL>jdbc:mysql://localhost:3306/push?useUnicode=true&amp;characterEncoding=utf8</db.connectionURL>
+				<db.connectionURL>jdbc:mysql://localhost:3306/push?useUnicode=true<![CDATA[&amp;]]>characterEncoding=utf8
+				</db.connectionURL>
 				<db.username>root</db.username>
 				<db.password>passw0rd</db.password>
 				<db.maxActive>20</db.maxActive>
@@ -365,6 +366,80 @@
 				<db.table.user>emp</db.table.user>
 				<db.table.department>department</db.table.department>
 				<db.sql.getUsersByName>CONCAT('%', #{name}, '%')</db.sql.getUsersByName>
+
+			</properties>
+		</profile>
+		<profile>
+			<id>test</id>
+			<properties>
+
+				<!-- subscribe 해야하는 토픽 -->
+				<topic>/push/ack,/push/poll,/push/group</topic>
+
+				<!-- ibm mq 서버주소 -->
+				<mq.server.url>ssl://adflow.net:8883</mq.server.url>
+
+				<!-- SMS 서버주소 -->
+				<sms.server.url>130.80.101.49</sms.server.url>
+
+				<!-- SMS 서버포트 -->
+				<sms.server.port>3000</sms.server.port>
+
+				<!-- 헬스체크여부 -->
+				<health.enable>true</health.enable>
+
+				<!-- healthCheck interval (second) -->
+				<health.check.interval>10</health.check.interval>
+
+				<!-- messageProcess enable/disable -->
+				<message.enable>true</message.enable>
+
+				<!-- messageProcess interval (second) -->
+				<message.process.interval>15</message.process.interval>
+
+				<!--SMS process enable/disable -->
+				<sms.enable>true</sms.enable>
+
+				<!-- SMS processing interval (second) -->
+				<sms.process.interval>30</sms.process.interval>
+
+				<!-- SMS sending channel processing interval (second) -->
+				<sendChannel.process.interval>60</sendChannel.process.interval>
+
+				<!-- mqtt client socket connect timeout (second) -->
+				<connection.timeout>10</connection.timeout>
+
+				<!-- mqtt session keep alive interval (second) -->
+				<keep.alive.interval>5</keep.alive.interval>
+
+				<!-- mqtt session clean -->
+				<clean.session>false</clean.session>
+
+				<!-- paho logging level -->
+				<paho.log.level>SEVERE</paho.log.level>
+
+				<!-- 유니크한 클라이언트아이디 -->
+				<clientid>${env.HOSTNAME}</clientid>
+
+				<!-- application log level 설정 -->
+				<log.level>debug</log.level>
+
+				<db.driverClass>oracle.jdbc.OracleDriver</db.driverClass>
+				<db.connectionURL>jdbc:oracle:thin:@130.12.4.151:1621:DODSDB</db.connectionURL>
+				<db.username>MBO_AP</db.username>
+				<db.password>MBO99AP</db.password>
+				<db.maxActive>20</db.maxActive>
+				<db.maxIdle>10</db.maxIdle>
+				<db.maxWait>10000</db.maxWait>
+				<db.validationQuery>select 1 from dual</db.validationQuery>
+				<db.validationInterval>30000</db.validationInterval>
+				<db.testWhileIdle>true</db.testWhileIdle>
+				<db.testOnBorrow>false</db.testOnBorrow>
+
+				<db.table.affiliate>TB_OCRM_GW_SBSD_INFO</db.table.affiliate>
+				<db.table.user>TB_OCRM_GW_STF_INFO</db.table.user>
+				<db.table.department>TB_OCRM_GW_DEPTMT_INFO</db.table.department>
+				<db.sql.getUsersByName>'%'||#{name}||'%'</db.sql.getUsersByName>
 
 			</properties>
 		</profile>
