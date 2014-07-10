@@ -30,4 +30,12 @@ public interface PollService {
 	 * @throws Exception
 	 */
 	Poll get(int id) throws Exception;
+
+	/**
+	 * 모든설문조사가져오기
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	Poll[] getPolls() throws Exception;
 }

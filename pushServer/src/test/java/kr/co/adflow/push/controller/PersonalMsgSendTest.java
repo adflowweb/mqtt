@@ -83,7 +83,7 @@ public class PersonalMsgSendTest extends AbstractTestNGSpringContextTests {
 		logger.debug("==========메시지전송테스트시작()==========");
 		Message msg = new Message();
 		msg.setSender("nadir93");
-		msg.setReceiver("/users/1731124");
+		msg.setReceiver("/users/nadir93");
 		// msg.setReceiver("/users/chan");
 		// jsonString =
 		// "{\"notification\":{\"notificationStyle\":1,\"contentTitle\":\"교육장소공지\","
@@ -101,7 +101,7 @@ public class PersonalMsgSendTest extends AbstractTestNGSpringContextTests {
 		// + "}";
 		// msg.setContent(jsonString);
 		msg.setQos(1);
-		// msg.setSms(true);
+		msg.setSms(true);
 
 		// cal.set(cal.SECOND, 0);
 		// cal.add(cal.MINUTE, +2); // 2분뒤
@@ -109,7 +109,7 @@ public class PersonalMsgSendTest extends AbstractTestNGSpringContextTests {
 		// sendDate.setSeconds(0);
 		// msg.setReservation(sendDate); // 분단위 지정
 
-		// msg.setTimeOut(10);
+		msg.setTimeOut(10);
 		msg.setType(Message.NOTIFICATION_PERSONAL); // 개인메시지타입 = 0
 
 		Response res = null;

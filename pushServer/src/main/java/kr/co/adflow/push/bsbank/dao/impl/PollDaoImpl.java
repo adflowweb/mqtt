@@ -55,4 +55,38 @@ public class PollDaoImpl implements PollDao {
 		return result;
 	}
 
+	/*
+	 * 모든설문조사가져오기
+	 * 
+	 * (non-Javadoc)
+	 * 
+	 * @see kr.co.adflow.push.bsbank.dao.PollDao#getPolls()
+	 */
+	@Override
+	public Poll[] getPolls() throws Exception {
+		logger.debug("getPolls시작()");
+		PollMapper pollMapper = sqlSession.getMapper(PollMapper.class);
+		Poll[] poll = pollMapper.getPolls();
+		logger.debug("getPolls종료(poll=" + poll + ")");
+		return poll;
+	}
+
+	@Override
+	public int delete(int id) throws Exception {
+		logger.debug("delete시작(pollID=" + id + ")");
+		PollMapper pollMapper = sqlSession.getMapper(PollMapper.class);
+		int result = pollMapper.delete(id);
+		logger.debug("delete종료(result=" + result + ")");
+		return result;
+	}
+
+	@Override
+	public Poll get(int id) throws Exception {
+		logger.debug("get시작(pollID=" + id + ")");
+		PollMapper pollMapper = sqlSession.getMapper(PollMapper.class);
+		Poll poll = pollMapper.get(id);
+		logger.debug("get종료(poll=" + poll + ")");
+		return poll;
+	}
+
 }

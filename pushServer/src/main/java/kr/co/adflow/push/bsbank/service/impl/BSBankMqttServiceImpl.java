@@ -1,6 +1,7 @@
 package kr.co.adflow.push.bsbank.service.impl;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 
 import kr.co.adflow.push.bsbank.mapper.GroupMapper;
 import kr.co.adflow.push.domain.Acknowledge;
@@ -40,10 +41,22 @@ public class BSBankMqttServiceImpl extends AbstractMqttServiceImpl {
 	 */
 	@PostConstruct
 	public void initIt() throws Exception {
-		super.initIt();
+		super.initialize();
 		logger.info("BSBankMqttServiceImpl초기화시작()");
 		grpMapper = bsBanksqlSession.getMapper(GroupMapper.class);
 		logger.info("BSBankMqttServiceImpl초기화종료()");
+	}
+
+	/**
+	 * 모든리소스정리
+	 * 
+	 * @throws Exception
+	 */
+	@PreDestroy
+	public void cleanUp() throws Exception {
+		logger.info("cleanUp시작()");
+		destroy();
+		logger.info("cleanUp종료()");
 	}
 
 	@Override

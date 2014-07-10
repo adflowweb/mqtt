@@ -37,4 +37,29 @@ public interface PollMapper {
 	int postResponse(@Param("id") int id, @Param("answerid") int answerid,
 			@Param("userid") String userid) throws Exception;
 
+	/**
+	 * 모든설문조사가져오기
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	Poll[] getPolls() throws Exception;
+
+	/**
+	 * 설문조사삭제하기
+	 * 
+	 * @param id
+	 * @return
+	 * @throws Exception
+	 */
+	int delete(int id) throws Exception;
+
+	/**
+	 * 설문조사가져오기
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	Poll get(int id) throws Exception;
+
 }

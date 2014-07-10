@@ -13,8 +13,6 @@ import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
@@ -67,8 +65,14 @@ public abstract class AbstractMqttServiceImpl implements MqttCallback,
 	}
 
 	public static final String MQTT_PACKAGE = "org.eclipse.paho.client.mqttv3";
+
 	private static final String[] TOPIC = prop.getProperty("topic").split(",");
+
 	private static final String SERVERURL = prop.getProperty("mq.server.url");
+
+	private static final boolean ssl = Boolean.parseBoolean(prop
+			.getProperty("mq.server.ssl"));
+
 	private static String CLIENTID;// prop.getProperty("clientid");
 	static {
 		if (prop.getProperty("clientid") == null) {
@@ -134,8 +138,8 @@ public abstract class AbstractMqttServiceImpl implements MqttCallback,
 	 * 
 	 * @throws Exception
 	 */
-	@PostConstruct
-	public void initIt() throws Exception {
+	// @PostConstruct
+	public void initialize() throws Exception {
 		logger.info("mqttService초기화시작()");
 		setMqttClientLog();
 		mOpts = makeMqttOpts();
@@ -149,7 +153,7 @@ public abstract class AbstractMqttServiceImpl implements MqttCallback,
 	 * 
 	 * @throws Exception
 	 */
-	@PreDestroy
+	// @PreDestroy
 	public void cleanUp() throws Exception {
 		logger.info("cleanUp시작()");
 		destroy();
@@ -261,37 +265,41 @@ public abstract class AbstractMqttServiceImpl implements MqttCallback,
 		// mOpts.setSSLProperties(sslClientProperties);
 
 		// Imports: javax.net.ssl.TrustManager, javax.net.ssl.X509TrustManager
-		try {
-			// Create a trust manager that does not validate certificate chains
-			final TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
-				@Override
-				public void checkClientTrusted(final X509Certificate[] chain,
-						final String authType) throws CertificateException {
-				}
+		if (ssl) {
+			try {
+				// Create a trust manager that does not validate certificate
+				// chains
+				final TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
+					@Override
+					public void checkClientTrusted(
+							final X509Certificate[] chain, final String authType)
+							throws CertificateException {
+					}
 
-				@Override
-				public void checkServerTrusted(final X509Certificate[] chain,
-						final String authType) throws CertificateException {
-				}
+					@Override
+					public void checkServerTrusted(
+							final X509Certificate[] chain, final String authType)
+							throws CertificateException {
+					}
 
-				@Override
-				public X509Certificate[] getAcceptedIssuers() {
-					return null;
-				}
-			} };
+					@Override
+					public X509Certificate[] getAcceptedIssuers() {
+						return null;
+					}
+				} };
 
-			// Install the all-trusting trust manager
-			final SSLContext sslContext = SSLContext.getInstance("SSL");
-			sslContext.init(null, trustAllCerts,
-					new java.security.SecureRandom());
-			// Create an ssl socket factory with our all-trusting manager
-			final SSLSocketFactory sslSocketFactory = sslContext
-					.getSocketFactory();
-			mOpts.setSocketFactory(sslSocketFactory);
-		} catch (Exception e) {
-			logger.error("에러발생", e);
+				// Install the all-trusting trust manager
+				final SSLContext sslContext = SSLContext.getInstance("SSL");
+				sslContext.init(null, trustAllCerts,
+						new java.security.SecureRandom());
+				// Create an ssl socket factory with our all-trusting manager
+				final SSLSocketFactory sslSocketFactory = sslContext
+						.getSocketFactory();
+				mOpts.setSocketFactory(sslSocketFactory);
+			} catch (Exception e) {
+				logger.error("에러발생", e);
+			}
 		}
-
 		logger.debug("makeMqttOpts종료(mOpts=" + mOpts + ")");
 		return mOpts;
 	}
@@ -351,7 +359,8 @@ public abstract class AbstractMqttServiceImpl implements MqttCallback,
 	public void messageArrived(String topic, MqttMessage message)
 			throws Exception {
 		logger.debug("messageArrived시작(topic=" + topic + ",message=" + message
-				+ ",qos=" + message.getQos() + ")");
+				+ ",qos=" + message.getQos() + ", this=" + this + ")");
+
 		// 수신 tps 계산용
 		reqCnt++;
 

@@ -22,4 +22,30 @@ public interface PollDao {
 	 */
 	int postAnswer(int id, int answerid, String content) throws Exception;
 
+	/**
+	 * 설문조사가져오기
+	 * 
+	 * @param id
+	 * @return
+	 * @throws Exception
+	 */
+	Poll get(int id) throws Exception;
+
+	/**
+	 * 모든설문조사가져오기
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	Poll[] getPolls() throws Exception;
+
+	/**
+	 * 설문조사삭제하기
+	 * 
+	 * @param id
+	 * @return
+	 * @throws Exception
+	 */
+	int delete(int id) throws Exception;
+
 }

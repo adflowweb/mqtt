@@ -16,6 +16,11 @@
 		</selectKey>
 	</insert>
 
+	<delete id="delete" parameterType="java.lang.Integer">
+		DELETE from poll WHERE
+		id=#{id}
+	</delete>
+
 	<insert id="postAnswer" parameterType="map">
 		INSERT INTO
 		answer values (
@@ -32,6 +37,19 @@
 		#{id}, #{answerid}, #{userid}
 		)
 	</insert>
+
+	<resultMap id="PollResult" type="kr.co.adflow.push.domain.bsbank.Poll">
+		<result property="id" column="id" />
+		<result property="title" column="title" />
+		<result property="start" column="start" />
+		<result property="end" column="end" />
+		<result property="responses" column="responses" />
+		<result property="status" column="status" />
+	</resultMap>
+
+	<select id="getPolls" resultMap="PollResult">
+		SELECT * FROM poll
+	</select>
 </mapper>	
 	
 	

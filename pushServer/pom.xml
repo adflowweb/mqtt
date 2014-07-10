@@ -299,17 +299,22 @@
 			<properties>
 
 				<!-- subscribe 해야하는 토픽 -->
-				<topic>/push/ack,/push/poll,/push/group</topic>
+				<topic>/push/poll,/push/ack,/push/group</topic>
+				
+				<!-- ibm mq 서버주소 -->
+				<mq.server.ssl>false</mq.server.ssl>
 
 				<!-- ibm mq 서버주소 -->
-				<mq.server.url>ssl://adflow.net:8883</mq.server.url>
+				<mq.server.url>tcp://adflow.net:1883</mq.server.url>
+				
+				<!-- <mq.server.url>ssl://adflow.net:8883</mq.server.url> -->
 
 				<!-- SMS 서버주소 -->
 				<sms.server.url>127.0.0.1</sms.server.url>
 
 				<!-- SMS 서버포트 -->
 				<sms.server.port>3000</sms.server.port>
-				
+
 				<ldap.server.url>130.10.0.32</ldap.server.url>
 
 				<!-- 헬스체크여부 -->
@@ -340,7 +345,7 @@
 				<keep.alive.interval>5</keep.alive.interval>
 
 				<!-- mqtt session clean -->
-				<clean.session>false</clean.session>
+				<clean.session>true</clean.session>
 
 				<!-- paho logging level -->
 				<paho.log.level>SEVERE</paho.log.level>
@@ -376,7 +381,7 @@
 			<properties>
 
 				<!-- subscribe 해야하는 토픽 -->
-				<topic>/push/ack,/push/poll,/push/group</topic>
+				<topic>/push/#</topic>
 
 				<!-- ibm mq 서버주소 -->
 				<mq.server.url>ssl://adflow.net:8883</mq.server.url>
@@ -386,7 +391,7 @@
 
 				<!-- SMS 서버포트 -->
 				<sms.server.port>3000</sms.server.port>
-				
+
 				<!-- SMS 서버주소 -->
 				<ldap.server.url>130.10.0.32</ldap.server.url>
 
@@ -454,7 +459,7 @@
 			<properties>
 
 				<!-- subscribe 해야하는 토픽 -->
-				<topic>/push/ack,/push/poll,/push/group</topic>
+				<topic>/push/#</topic>
 
 				<!-- ibm mq 서버주소 -->
 				<mq.server.url>ssl://adflow.net:8883</mq.server.url>
@@ -464,7 +469,7 @@
 
 				<!-- SMS 서버포트 -->
 				<sms.server.port>3000</sms.server.port>
-				
+
 				<ldap.server.url>130.10.0.32</ldap.server.url>
 
 				<!-- 헬스체크여부 -->

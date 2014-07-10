@@ -47,14 +47,40 @@ public class PollServiceImpl implements PollService {
 		return count + insertCnt;
 	}
 
+	/*
+	 * 설문조사삭제하기
+	 * 
+	 * (non-Javadoc)
+	 * 
+	 * @see kr.co.adflow.push.bsbank.service.PollService#delete(int)
+	 */
 	@Override
 	public int delete(int id) throws Exception {
-		return 0;
+		logger.debug("delete시작(pollID=" + id + ")");
+		int result = pollDao.delete(id);
+		logger.debug("delete종료(result=" + result + ")");
+		return result;
 	}
 
 	@Override
 	public Poll get(int id) throws Exception {
-		return null;
+		logger.debug("get시작(pollID=" + id + ")");
+		Poll poll = pollDao.get(id);
+		logger.debug("get종료(poll=" + poll + ")");
+		return poll;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see kr.co.adflow.push.bsbank.service.PollService#getPolls()
+	 */
+	@Override
+	public Poll[] getPolls() throws Exception {
+		logger.debug("getPolls시작()");
+		Poll[] poll = pollDao.getPolls();
+		logger.debug("getPolls종료(poll=" + poll + ")");
+		return poll;
 	}
 
 }
