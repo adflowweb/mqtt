@@ -2,6 +2,7 @@ package kr.co.adflow.push.mapper;
 
 import kr.co.adflow.push.domain.bsbank.Answer;
 import kr.co.adflow.push.domain.bsbank.Poll;
+import kr.co.adflow.push.domain.bsbank.PollResponse;
 
 import org.apache.ibatis.annotations.Param;
 
@@ -71,5 +72,9 @@ public interface PollMapper {
 	 * @throws Exception
 	 */
 	Answer[] getAnswers(int id) throws Exception;
+
+	PollResponse[] getResults(int id) throws Exception;
+
+	int putResponseCount(int id) throws Exception;
 
 }

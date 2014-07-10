@@ -8,6 +8,7 @@ package kr.co.adflow.push.domain.bsbank;
 public class PollResponse {
 	private int id;
 	private int answerid;
+	private int count;
 	private String userid;
 
 	public int getId() {
@@ -34,10 +35,18 @@ public class PollResponse {
 		this.userid = userid;
 	}
 
+	public int getCount() {
+		return count;
+	}
+
+	public void setCount(int count) {
+		this.count = count;
+	}
+
 	@Override
 	public String toString() {
-		return "PollResponse [id=" + id + ", answerid=" + answerid
-				+ ", userid=" + userid + "]";
+		return "PollResponse [id=" + id + ", answerid=" + answerid + ", count="
+				+ count + ", userid=" + userid + "]";
 	}
 
 }

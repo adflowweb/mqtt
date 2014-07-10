@@ -140,7 +140,9 @@ public class BSBankMqttServiceImpl extends AbstractMqttServiceImpl {
 			PollMapper poolMapper = sqlSession.getMapper(PollMapper.class);
 			poolMapper.postResponse(response.getId(), response.getAnswerid(),
 					response.getUserid());
+			poolMapper.putResponseCount(response.getId());
 			logger.debug("설문조사결과메시지를등록하였습니다.");
+
 		} catch (Exception e) {
 			logger.error("에러발생", e);
 		}

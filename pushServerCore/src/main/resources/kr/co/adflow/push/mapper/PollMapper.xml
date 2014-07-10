@@ -67,6 +67,23 @@
 		resultMap="AnswerResult">
 		SELECT * FROM answer where id = #{id}
 	</select>
+
+	<resultMap id="ResponseResult" type="kr.co.adflow.push.domain.bsbank.PollResponse">
+		<result property="answerid" column="answerid" />
+		<result property="count" column="count" />
+	</resultMap>
+
+	<select id="getResults" parameterType="java.lang.Integer"
+		resultMap="ResponseResult">
+		select answerid,count(*) count from response where id =
+		#{id}
+		group by answerid
+	</select>
+
+	<update id="putResponseCount" parameterType="java.lang.Integer">
+		UPDATE poll set
+		responses = responses + 1 where id = #{id}
+	</update>
 </mapper>	
 	
 	

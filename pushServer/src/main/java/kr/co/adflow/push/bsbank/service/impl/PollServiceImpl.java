@@ -6,6 +6,7 @@ import kr.co.adflow.push.bsbank.dao.PollDao;
 import kr.co.adflow.push.bsbank.service.PollService;
 import kr.co.adflow.push.domain.bsbank.Answer;
 import kr.co.adflow.push.domain.bsbank.Poll;
+import kr.co.adflow.push.domain.bsbank.PollResponse;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -73,6 +74,20 @@ public class PollServiceImpl implements PollService {
 		logger.debug("get시작(pollID=" + id + ")");
 		Poll poll = pollDao.get(id);
 		Answer[] answers = pollDao.getAnswers(id);
+		String[] contents = new String[answers.length];
+		for (int i = 0; i < answers.length; i++) {
+			contents[i] = answers[i].getContent();
+		}
+		poll.setAnswers(contents);
+		PollResponse[] res = pollDao.getResults(id);
+		float[] result = new float[res.length];
+		for (int i = 0; i < res.length; i++) {
+			result[i] = ((float) res[i].getCount() / (float) poll
+					.getResponses()) * 100;
+			logger.debug(res[i].getCount() + "/" + poll.getResponses()
+					+ "* 100 = " + result[i]);
+		}
+		poll.setResult(result);
 		logger.debug("get종료(poll=" + poll + ")");
 		return poll;
 	}

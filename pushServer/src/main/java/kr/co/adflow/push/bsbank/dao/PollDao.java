@@ -2,6 +2,7 @@ package kr.co.adflow.push.bsbank.dao;
 
 import kr.co.adflow.push.domain.bsbank.Answer;
 import kr.co.adflow.push.domain.bsbank.Poll;
+import kr.co.adflow.push.domain.bsbank.PollResponse;
 
 public interface PollDao {
 
@@ -57,5 +58,14 @@ public interface PollDao {
 	 * @throws Exception
 	 */
 	Answer[] getAnswers(int id) throws Exception;
+
+	/**
+	 * 설문결과조회
+	 * 
+	 * @param id
+	 * @return
+	 * @throws Exception
+	 */
+	PollResponse[] getResults(int id) throws Exception;
 
 }

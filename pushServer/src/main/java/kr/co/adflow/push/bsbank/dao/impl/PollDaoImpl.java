@@ -3,6 +3,7 @@ package kr.co.adflow.push.bsbank.dao.impl;
 import kr.co.adflow.push.bsbank.dao.PollDao;
 import kr.co.adflow.push.domain.bsbank.Answer;
 import kr.co.adflow.push.domain.bsbank.Poll;
+import kr.co.adflow.push.domain.bsbank.PollResponse;
 import kr.co.adflow.push.mapper.PollMapper;
 
 import org.apache.ibatis.session.SqlSession;
@@ -99,11 +100,20 @@ public class PollDaoImpl implements PollDao {
 	 */
 	@Override
 	public Answer[] getAnswers(int id) throws Exception {
-		logger.debug("getAnswers시작()");
+		logger.debug("getAnswers시작(pollID=" + id + ")");
 		PollMapper pollMapper = sqlSession.getMapper(PollMapper.class);
 		Answer[] answers = pollMapper.getAnswers(id);
 		logger.debug("getAnswers종료(answers=" + answers + ")");
 		return answers;
+	}
+
+	@Override
+	public PollResponse[] getResults(int id) throws Exception {
+		logger.debug("getResult시작(pollID=" + id + ")");
+		PollMapper pollMapper = sqlSession.getMapper(PollMapper.class);
+		PollResponse[] res = pollMapper.getResults(id);
+		logger.debug("getResult종료(res=" + res + ")");
+		return res;
 	}
 
 }
