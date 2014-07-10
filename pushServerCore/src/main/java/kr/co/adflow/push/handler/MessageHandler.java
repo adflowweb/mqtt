@@ -130,12 +130,13 @@ public class MessageHandler implements Runnable {
 							// 아이폰 안드로이드 구별하여야함
 							// 아이폰일경우 전체 메시지 or 그룹메시지와 상관없이 apns로 전송해야함
 							// 즉시전송메시지
-							logger.debug("즉시전송대상입니다.");
+							logger.debug("즉시전송대상입니다.발송을시작합니다.");
 							publish(msgMapper, msg);
 						} else {
 							// 예약메시지
+							logger.debug("예약전송대상입니다.");
 							if (msg.getReservation().before(new Date())) {
-								logger.debug("예약전송대상입니다.");
+								logger.debug("예약발송을시작합니다.");
 								publish(msgMapper, msg);
 							}
 						}
@@ -170,6 +171,9 @@ public class MessageHandler implements Runnable {
 		Message message = msgMapper.get(msg.getId());
 		logger.debug("message(컨텐츠포함)=" + message);
 		IMqttDeliveryToken token = mqttService.publish(message);
+
+		// 토큰과 유저아이디를 hashmap에 저장한다
+
 		logger.debug("메시지를전송하였습니다.token=" + token);
 		// 모니터링용 송신 메시지 처리건수 계산 추가해야함
 

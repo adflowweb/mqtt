@@ -1,18 +1,10 @@
 package kr.co.adflow.push.bsbank.dao.impl;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.Properties;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 
 import kr.co.adflow.push.bsbank.sms.SMSSender;
 import kr.co.adflow.push.dao.SMSDao;
@@ -44,8 +36,8 @@ public class SMSDaoImpl implements SMSDao<SMSSender> {
 	}
 
 	// PUBLIC DATA
-	public static final String P_USER_ID = "friends"; // 아이디
-	public static final String P_USER_PWD = "bsfriends1!"; // (BODY)패스워드
+	public static final String P_USER_ID = "mqtt"; // 아이디
+	public static final String P_USER_PWD = "mqtt1!"; // (BODY)패스워드
 
 	// ALIVE CHECK
 	public static final String A_MSGLEN = "24";
@@ -97,58 +89,58 @@ public class SMSDaoImpl implements SMSDao<SMSSender> {
 	private final int PORT = smsPort;
 
 	private ScheduledExecutorService sendChannel;
-	private ScheduledExecutorService recvChannel;
+	// private ScheduledExecutorService recvChannel;
 
-	private ServerSocket recvServer;
-	private Receiver receiver;
+	// private ServerSocket recvServer;
+	// private Receiver receiver;
 	private SMSSender sender;
 
-	/**
-	 * initialize
-	 * 
-	 * @throws Exception
-	 */
-	@PostConstruct
-	public void initIt() throws Exception {
-		logger.info("SMSDAOImpl초기화시작()");
-		if (sms) {
-			sendChannel = Executors.newScheduledThreadPool(1);
-			sendChannel.scheduleWithFixedDelay(new SendChannelHandler(), 0,
-					sendChannelInterval, TimeUnit.SECONDS);
-			logger.info("sendChannel핸들러가시작되었습니다.");
-			// recvChannel = Executors.newScheduledThreadPool(1);
-			// recvChannel.scheduleWithFixedDelay(new RecvChannelHandler(), 0,
-			// recvChannelInterval, TimeUnit.SECONDS);
-			// logger.info("recvChannel핸들러가시작되었습니다.");
-		}
-		logger.info("SMSDAOImpl초기화종료()");
-	}
+	// /**
+	// * initialize
+	// *
+	// * @throws Exception
+	// */
+	// @PostConstruct
+	// public void initIt() throws Exception {
+	// logger.info("SMSDAOImpl초기화시작()");
+	// if (sms) {
+	// sendChannel = Executors.newScheduledThreadPool(1);
+	// sendChannel.scheduleWithFixedDelay(new SendChannelHandler(), 0,
+	// sendChannelInterval, TimeUnit.SECONDS);
+	// logger.info("sendChannel핸들러가시작되었습니다.");
+	// // recvChannel = Executors.newScheduledThreadPool(1);
+	// // recvChannel.scheduleWithFixedDelay(new RecvChannelHandler(), 0,
+	// // recvChannelInterval, TimeUnit.SECONDS);
+	// // logger.info("recvChannel핸들러가시작되었습니다.");
+	// }
+	// logger.info("SMSDAOImpl초기화종료()");
+	// }
 
-	/**
-	 * 모든리소스정리
-	 * 
-	 * @throws Exception
-	 */
-	@PreDestroy
-	public void cleanUp() throws Exception {
-		try {
-			logger.info("cleanUp시작()");
-			if (sms) {
-				sendChannel.shutdown();
-				logger.info("sendChannel핸들러가종료되었습니다.");
-				// recvChannel.shutdown();
-				// logger.info("recvChannel핸들러가종료되었습니다.");
-			}
-
-			// if (recvServer != null && !recvServer.isClosed()) {
-			// recvServer.close();
-			// logger.info("리시브서버가종료되었습니다.");
-			// }
-			logger.info("cleanUp종료()");
-		} catch (Exception e) {
-			logger.error("에러발생", e);
-		}
-	}
+	// /**
+	// * 모든리소스정리
+	// *
+	// * @throws Exception
+	// */
+	// @PreDestroy
+	// public void cleanUp() throws Exception {
+	// try {
+	// logger.info("cleanUp시작()");
+	// if (sms) {
+	// sendChannel.shutdown();
+	// logger.info("sendChannel핸들러가종료되었습니다.");
+	// // recvChannel.shutdown();
+	// // logger.info("recvChannel핸들러가종료되었습니다.");
+	// }
+	//
+	// // if (recvServer != null && !recvServer.isClosed()) {
+	// // recvServer.close();
+	// // logger.info("리시브서버가종료되었습니다.");
+	// // }
+	// logger.info("cleanUp종료()");
+	// } catch (Exception e) {
+	// logger.error("에러발생", e);
+	// }
+	// }
 
 	/*
 	 * sms message 전송
@@ -158,8 +150,8 @@ public class SMSDaoImpl implements SMSDao<SMSSender> {
 	 * @see kr.co.adflow.push.dao.SMSDAO#post()
 	 */
 	@Override
-	public void post(String phoneNum, String callbackNum, String msg)
-			throws Exception {
+	public synchronized void post(String phoneNum, String callbackNum,
+			String msg) throws Exception {
 		logger.info("post시작(phoneNum=" + phoneNum + ",callbackNum="
 				+ callbackNum + ", msg=" + msg + ")");
 		if (sender == null) {
@@ -169,320 +161,319 @@ public class SMSDaoImpl implements SMSDao<SMSSender> {
 		logger.info("post종료()");
 	}
 
-	/**
-	 * @author nadir93
-	 * @date 2014. 6. 24.
-	 */
-	class SendChannelHandler implements Runnable {
+	// /**
+	// * @author nadir93
+	// * @date 2014. 6. 24.
+	// */
+	// class SendChannelHandler implements Runnable {
+	//
+	// /*
+	// * (non-Javadoc)
+	// *
+	// * @see java.lang.Runnable#run()
+	// */
+	// @Override
+	// public void run() {
+	// logger.debug("sendChannel처리시작()");
+	// logger.debug("sender=" + sender);
+	// try {
+	// if (sender == null) {
+	// initSender();
+	// }
+	// sender.sendPING();
+	// } catch (Exception e) {
+	// logger.error("에러발생", e);
+	// }
+	// logger.debug("sendChannel처리종료()");
+	// }
+	// }
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.Runnable#run()
-		 */
-		@Override
-		public void run() {
-			logger.debug("sendChannel처리시작()");
-			logger.debug("sender=" + sender);
-			try {
-				if (sender == null) {
-					initSender();
-				}
-				sender.sendPING();
-			} catch (Exception e) {
-				logger.error("에러발생", e);
-			}
-			logger.debug("sendChannel처리종료()");
-		}
-	}
+	// /**
+	// * socket blocking
+	// *
+	// * @throws Exception
+	// */
+	// private void initSender() throws Exception {
+	// logger.debug("initSender시작()");
+	// if (sender != null) {
+	// logger.debug("sender가널값이아닙니다.");
+	// return;
+	// }
+	// logger.debug("sendSocket연결시작 서버주소=" + SERVER_IP + ", 포트=" + PORT);
+	// logger.debug("소케연결기다림..(블락킹)");
+	// Socket socket = new Socket(SERVER_IP, PORT);
+	// logger.debug("소켓이연결되었습니다.socket=" + socket);
+	// sender = new SMSSender(socket);
+	// sender.connect();
+	// logger.debug("샌더가시작되었습니다. sender=" + sender);
+	// logger.debug("initSender종료()");
+	// }
 
-	/**
-	 * socket blocking
-	 * 
-	 * @throws Exception
-	 */
-	private void initSender() throws Exception {
-		logger.debug("initSender시작()");
-		if (sender != null) {
-			logger.debug("sender가널값이아닙니다.");
-			return;
-		}
-		logger.debug("sendSocket연결시작 서버주소=" + SERVER_IP + ", 포트=" + PORT);
-		logger.debug("소케연결기다림..(블락킹)");
-		Socket socket = new Socket(SERVER_IP, PORT);
-		logger.debug("소켓이연결되었습니다.socket=" + socket);
-		sender = new SMSSender(socket);
-		sender.connect();
-		// sender.start();
-		logger.debug("샌더가시작되었습니다. sender=" + sender);
-		logger.debug("initSender종료()");
-	}
+	// /**
+	// * @author nadir93
+	// * @date 2014. 6. 24.
+	// */
+	// public class Sender {
+	//
+	// private Socket socket;
+	// private BufferedInputStream bis;
+	// private BufferedOutputStream bos;
+	// private boolean available = false;
+	//
+	// public Sender(Socket socket) throws Exception {
+	// logger.debug("Sender생성자시작(socket=" + socket + ")");
+	// this.socket = socket;
+	// bis = new BufferedInputStream(socket.getInputStream());
+	// bos = new BufferedOutputStream(socket.getOutputStream());
+	//
+	// // 기간계 시스템은 tcp/ip connect 성공즉시 bind 요청을 수행하여야 한다.
+	// // bind 요청은 최초 connect 접속시 한번만 수행하면 된다.
+	// setBindServerData(bos);
+	// bos.flush();
+	// logger.debug("bind메시지가전송되었습니다.");
+	// logger.debug("Sender생성자종료(this=" + this + ")");
+	// }
+	//
+	// public synchronized void sendPING() throws Exception {
+	// logger.debug("sendPING시작(샌더)");
+	// try {
+	// // healthCheck
+	// logger.debug("socket=" + socket);
+	// if (socket.isConnected()) {
+	// setAliveServerData(bos);
+	// bos.flush();
+	// logger.debug("AliveCheck메시지를전송하였습니다.");
+	// byte[] aliveAck = new byte[ALIVE_ACK_LENGTH];
+	// bis.read(aliveAck);
+	// String aliveAckString = new String(aliveAck);
+	// logger.debug("에크메시지=" + aliveAckString);
+	// }
+	// } catch (Exception e) {
+	// logger.error("에러발생", e);
+	// cleanup();
+	// }
+	// logger.debug("sendPING종료(샌더)");
+	// }
+	//
+	// /**
+	// * @param msg
+	// * @param msg2
+	// * @throws Exception
+	// */
+	// public synchronized void sendMsg(String phoneNum, String callbackNum,
+	// String msg) throws Exception {
+	// logger.debug("sendMsg시작(phoneNum=" + phoneNum + ",callbackNum="
+	// + callbackNum + ", msg=" + msg + ")");
+	// try {
+	// if (sender == null || !sender.isAvailable()) {
+	// throw new Exception("메시지를보낼수없습니다.");
+	// }
+	//
+	// setDeliverSmsData(bos, "", phoneNum, callbackNum, msg);
+	// bos.flush();
+	// logger.debug("SMS메시지를전송하였습니다.phone=" + phoneNum); // 수정요망
+	// byte[] deliveryAck = new byte[DELIVERY_SMS_LENGTH];
+	// bis.read(deliveryAck);
+	// String deliveryAckString = new String(deliveryAck);
+	// logger.debug("딜리버리에크메시지=" + deliveryAckString);
+	// } catch (Exception e) {
+	// logger.error("에러발생", e);
+	// cleanup();
+	// throw e;
+	// }
+	// logger.debug("sendMsg종료()");
+	// }
+	//
+	// /**
+	// *
+	// */
+	// public synchronized void connect() {
+	// try {
+	// logger.debug("SenderRun시작(블락킹...)");
+	// byte[] bindAck = new byte[BIND_ACK_LENGTH];
+	// bis.read(bindAck);
+	// String bindAckString = new String(bindAck);
+	// logger.debug("bindAckString=" + bindAckString);
+	// if (bindAckString.length() >= BIND_ACK_LENGTH) {
+	// String msgtype = "";
+	// msgtype = bindAckString.subSequence(10, 14).toString();
+	// logger.debug("msgtype=" + msgtype);
+	//
+	// if (BIND_ACK.equals(msgtype)) {
+	// String result = bindAckString.subSequence(14, 18)
+	// .toString();
+	// logger.debug("result=" + result);
+	// if (RESULT_SUCCESS.equals(result)) {
+	// available = true;
+	// logger.debug("소켓이이용가능하게되었습니다.");
+	// } else {
+	// throw new Exception("바인드실패로인한종료");
+	// }
+	// } else {
+	// throw new Exception("바인드ACK가아님소켓종료");
+	// }
+	// }
+	// logger.debug("SenderRun종료()");
+	// } catch (Exception e) {
+	// logger.error("에러발생", e);
+	// cleanup();
+	// }
+	// }
+	//
+	// /**
+	// * send소켓종료
+	// */
+	// private synchronized void cleanup() {
+	// logger.debug("cleanup시작()");
+	// try {
+	// logger.debug("socket=" + socket);
+	// if (socket != null && socket.isConnected()) {
+	// socket.close();
+	// logger.debug("socket을종료하였습니다.");
+	// }
+	// sender = null;
+	// } catch (Exception ex) {
+	// logger.error("에러발생", ex);
+	// }
+	// logger.debug("cleanup종료()");
+	// }
+	//
+	// public boolean isAvailable() {
+	// return available && socket.isConnected();
+	// }
+	//
+	// }
 
-	/**
-	 * @author nadir93
-	 * @date 2014. 6. 24.
-	 */
-	public class Sender {
+	// /**
+	// * @author nadir93
+	// * @date 2014. 6. 24.
+	// */
+	// class RecvChannelHandler implements Runnable {
+	//
+	// /*
+	// * (non-Javadoc)
+	// *
+	// * @see java.lang.Runnable#run()
+	// */
+	// @Override
+	// public void run() {
+	// logger.debug("recvChannel처리시작()");
+	// logger.debug("recvServer=" + recvServer);
+	// // logger.debug("recvSocket=" + recvSocket);
+	// try {
+	// if (recvServer == null) {
+	// initRecvServer();
+	// }
+	// if (receiver != null) {
+	// receiver.sendPING();
+	// }
+	// } catch (Exception e) {
+	// logger.error("에러발생", e);
+	// }
+	// logger.debug("recvChannel처리종료()");
+	// }
+	// }
 
-		private Socket socket;
-		private BufferedInputStream bis;
-		private BufferedOutputStream bos;
-		private boolean available = false;
+	// /**
+	// * socket blocking
+	// *
+	// * @throws Exception
+	// */
+	// private void initRecvServer() throws Exception {
+	// logger.debug("initRecvServer시작()");
+	// if (recvServer != null) {
+	// logger.debug("recvServer가널값이아닙니다.");
+	// return;
+	// }
+	// logger.debug("리시버서버 포트=" + PORT);
+	// recvServer = new ServerSocket(PORT);
+	// logger.debug("소케연결기다림..(블락킹)");
+	// Socket recvSocket = recvServer.accept();
+	// logger.debug("리시브소켓이연결되었습니다.recvSocket=" + recvSocket);
+	// receiver = new Receiver(recvSocket);
+	// receiver.start();
+	// logger.debug("리시버가시작되었습니다. receiver=" + receiver);
+	// logger.debug("initRecvServer종료()");
+	// }
 
-		public Sender(Socket socket) throws Exception {
-			logger.debug("Sender생성자시작(socket=" + socket + ")");
-			this.socket = socket;
-			bis = new BufferedInputStream(socket.getInputStream());
-			bos = new BufferedOutputStream(socket.getOutputStream());
-
-			// 기간계 시스템은 tcp/ip connect 성공즉시 bind 요청을 수행하여야 한다.
-			// bind 요청은 최초 connect 접속시 한번만 수행하면 된다.
-			setBindServerData(bos);
-			bos.flush();
-			logger.debug("bind메시지가전송되었습니다.");
-			logger.debug("Sender생성자종료(this=" + this + ")");
-		}
-
-		public synchronized void sendPING() throws Exception {
-			logger.debug("sendPING시작(샌더)");
-			try {
-				// healthCheck
-				logger.debug("socket=" + socket);
-				if (socket.isConnected()) {
-					setAliveServerData(bos);
-					bos.flush();
-					logger.debug("AliveCheck메시지를전송하였습니다.");
-					byte[] aliveAck = new byte[ALIVE_ACK_LENGTH];
-					bis.read(aliveAck);
-					String aliveAckString = new String(aliveAck);
-					logger.debug("에크메시지=" + aliveAckString);
-				}
-			} catch (Exception e) {
-				logger.error("에러발생", e);
-				cleanup();
-			}
-			logger.debug("sendPING종료(샌더)");
-		}
-
-		/**
-		 * @param msg
-		 * @param msg2
-		 * @throws Exception
-		 */
-		public synchronized void sendMsg(String phoneNum, String callbackNum,
-				String msg) throws Exception {
-			logger.debug("sendMsg시작(phoneNum=" + phoneNum + ",callbackNum="
-					+ callbackNum + ", msg=" + msg + ")");
-			try {
-				if (sender == null || !sender.isAvailable()) {
-					throw new Exception("메시지를보낼수없습니다.");
-				}
-
-				setDeliverSmsData(bos, "", phoneNum, callbackNum, msg);
-				bos.flush();
-				logger.debug("SMS메시지를전송하였습니다.phone=" + phoneNum); // 수정요망
-				byte[] deliveryAck = new byte[DELIVERY_SMS_LENGTH];
-				bis.read(deliveryAck);
-				String deliveryAckString = new String(deliveryAck);
-				logger.debug("딜리버리에크메시지=" + deliveryAckString);
-			} catch (Exception e) {
-				logger.error("에러발생", e);
-				cleanup();
-				throw e;
-			}
-			logger.debug("sendMsg종료()");
-		}
-
-		/**
-		 * 
-		 */
-		public synchronized void connect() {
-			try {
-				logger.debug("SenderRun시작(블락킹...)");
-				byte[] bindAck = new byte[BIND_ACK_LENGTH];
-				bis.read(bindAck);
-				String bindAckString = new String(bindAck);
-				logger.debug("bindAckString=" + bindAckString);
-				if (bindAckString.length() >= BIND_ACK_LENGTH) {
-					String msgtype = "";
-					msgtype = bindAckString.subSequence(10, 14).toString();
-					logger.debug("msgtype=" + msgtype);
-
-					if (BIND_ACK.equals(msgtype)) {
-						String result = bindAckString.subSequence(14, 18)
-								.toString();
-						logger.debug("result=" + result);
-						if (RESULT_SUCCESS.equals(result)) {
-							available = true;
-							logger.debug("소켓이이용가능하게되었습니다.");
-						} else {
-							throw new Exception("바인드실패로인한종료");
-						}
-					} else {
-						throw new Exception("바인드ACK가아님소켓종료");
-					}
-				}
-				logger.debug("SenderRun종료()");
-			} catch (Exception e) {
-				logger.error("에러발생", e);
-				cleanup();
-			}
-		}
-
-		/**
-		 * send소켓종료
-		 */
-		private synchronized void cleanup() {
-			logger.debug("cleanup시작()");
-			try {
-				logger.debug("socket=" + socket);
-				if (socket != null && socket.isConnected()) {
-					socket.close();
-					logger.debug("socket을종료하였습니다.");
-				}
-				sender = null;
-			} catch (Exception ex) {
-				logger.error("에러발생", ex);
-			}
-			logger.debug("cleanup종료()");
-		}
-
-		public boolean isAvailable() {
-			return available && socket.isConnected();
-		}
-
-	}
-
-	/**
-	 * @author nadir93
-	 * @date 2014. 6. 24.
-	 */
-	class RecvChannelHandler implements Runnable {
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.Runnable#run()
-		 */
-		@Override
-		public void run() {
-			logger.debug("recvChannel처리시작()");
-			logger.debug("recvServer=" + recvServer);
-			// logger.debug("recvSocket=" + recvSocket);
-			try {
-				if (recvServer == null) {
-					initRecvServer();
-				}
-				if (receiver != null) {
-					receiver.sendPING();
-				}
-			} catch (Exception e) {
-				logger.error("에러발생", e);
-			}
-			logger.debug("recvChannel처리종료()");
-		}
-	}
-
-	/**
-	 * socket blocking
-	 * 
-	 * @throws Exception
-	 */
-	private void initRecvServer() throws Exception {
-		logger.debug("initRecvServer시작()");
-		if (recvServer != null) {
-			logger.debug("recvServer가널값이아닙니다.");
-			return;
-		}
-		logger.debug("리시버서버 포트=" + PORT);
-		recvServer = new ServerSocket(PORT);
-		logger.debug("소케연결기다림..(블락킹)");
-		Socket recvSocket = recvServer.accept();
-		logger.debug("리시브소켓이연결되었습니다.recvSocket=" + recvSocket);
-		receiver = new Receiver(recvSocket);
-		receiver.start();
-		logger.debug("리시버가시작되었습니다. receiver=" + receiver);
-		logger.debug("initRecvServer종료()");
-	}
-
-	class Receiver extends Thread {
-		private Socket socket;
-		private BufferedInputStream bis;
-		private BufferedOutputStream bos;
-
-		public Receiver(Socket recvSocket) throws Exception {
-			logger.debug("Receiver생성자시작(recvSocket=" + recvSocket + ")");
-			socket = recvSocket;
-			bis = new BufferedInputStream(socket.getInputStream());
-			bos = new BufferedOutputStream(socket.getOutputStream());
-			logger.debug("Receiver생성자종료(this=" + this + ")");
-		}
-
-		public void sendPING() throws Exception {
-			logger.debug("sendPING시작(리시버)");
-			try {
-				// healthCheck
-				logger.debug("socket=" + socket);
-				if (socket.isConnected()) {
-					setAliveServerData(bos);
-					bos.flush();
-					logger.debug("AliveCheck메시지를전송하였습니다.");
-				}
-			} catch (Exception e) {
-				logger.error("에러발생", e);
-				cleanup();
-			}
-			logger.debug("sendPING종료(리시버)");
-		}
-
-		@Override
-		public void run() {
-			try {
-				while (true) {
-					logger.debug("receiverRun시작(블락킹...)");
-					byte[] bindAck = new byte[357];
-					bis.read(bindAck);
-					String msg = new String(bindAck);
-					logger.debug("받은메시지(리시버)=" + msg);
-					if (!msg.trim().equals("")) {
-						// 내용이 있으면 메시지로
-						// new DeliverySMS(msg).start();
-					} else {
-						// 내용이 없으면 소켓 강제로 닫고 다시 시작..
-						logger.error("데이타가존재하지않습니다.");
-						throw new Exception("데이타가존재하지않습니다.");
-					}
-					logger.debug("receiverRun종료()");
-				}
-			} catch (Exception e) {
-				logger.error("에러발생", e);
-				cleanup();
-			}
-		}
-
-		/**
-		 * 리시브소켓서버종료
-		 */
-		private void cleanup() {
-			logger.debug("cleanup시작()");
-			try {
-				logger.debug("socket=" + socket);
-				if (socket != null && socket.isConnected()) {
-					socket.close();
-					logger.debug("socket을종료하였습니다.");
-				}
-				logger.debug("recvServer=" + recvServer);
-				if (recvServer != null && !recvServer.isClosed()) {
-					recvServer.close();
-					logger.debug("recvServer를종료하였습니다.");
-				}
-				recvServer = null;
-			} catch (Exception ex) {
-				logger.error("에러발생", ex);
-			}
-			logger.debug("cleanup종료()");
-		}
-	}
+	// class Receiver extends Thread {
+	// private Socket socket;
+	// private BufferedInputStream bis;
+	// private BufferedOutputStream bos;
+	//
+	// public Receiver(Socket recvSocket) throws Exception {
+	// logger.debug("Receiver생성자시작(recvSocket=" + recvSocket + ")");
+	// socket = recvSocket;
+	// bis = new BufferedInputStream(socket.getInputStream());
+	// bos = new BufferedOutputStream(socket.getOutputStream());
+	// logger.debug("Receiver생성자종료(this=" + this + ")");
+	// }
+	//
+	// public void sendPING() throws Exception {
+	// logger.debug("sendPING시작(리시버)");
+	// try {
+	// // healthCheck
+	// logger.debug("socket=" + socket);
+	// if (socket.isConnected()) {
+	// setAliveServerData(bos);
+	// bos.flush();
+	// logger.debug("AliveCheck메시지를전송하였습니다.");
+	// }
+	// } catch (Exception e) {
+	// logger.error("에러발생", e);
+	// cleanup();
+	// }
+	// logger.debug("sendPING종료(리시버)");
+	// }
+	//
+	// @Override
+	// public void run() {
+	// try {
+	// while (true) {
+	// logger.debug("receiverRun시작(블락킹...)");
+	// byte[] bindAck = new byte[357];
+	// bis.read(bindAck);
+	// String msg = new String(bindAck);
+	// logger.debug("받은메시지(리시버)=" + msg);
+	// if (!msg.trim().equals("")) {
+	// // 내용이 있으면 메시지로
+	// // new DeliverySMS(msg).start();
+	// } else {
+	// // 내용이 없으면 소켓 강제로 닫고 다시 시작..
+	// logger.error("데이타가존재하지않습니다.");
+	// throw new Exception("데이타가존재하지않습니다.");
+	// }
+	// logger.debug("receiverRun종료()");
+	// }
+	// } catch (Exception e) {
+	// logger.error("에러발생", e);
+	// cleanup();
+	// }
+	// }
+	//
+	// /**
+	// * 리시브소켓서버종료
+	// */
+	// private void cleanup() {
+	// logger.debug("cleanup시작()");
+	// try {
+	// logger.debug("socket=" + socket);
+	// if (socket != null && socket.isConnected()) {
+	// socket.close();
+	// logger.debug("socket을종료하였습니다.");
+	// }
+	// logger.debug("recvServer=" + recvServer);
+	// if (recvServer != null && !recvServer.isClosed()) {
+	// recvServer.close();
+	// logger.debug("recvServer를종료하였습니다.");
+	// }
+	// recvServer = null;
+	// } catch (Exception ex) {
+	// logger.error("에러발생", ex);
+	// }
+	// logger.debug("cleanup종료()");
+	// }
+	// }
 
 	/**
 	 * Alive 시 데이터 채우기
@@ -672,13 +663,13 @@ public class SMSDaoImpl implements SMSDao<SMSSender> {
 	}
 
 	@Override
-	public void setSMSSender(SMSSender sender) {
-
+	public synchronized void setSMSSender(SMSSender sender) {
+		this.sender = sender;
 	}
 
 	@Override
-	public SMSSender getSMSSender() {
-		return null;
+	public synchronized SMSSender getSMSSender() {
+		return sender;
 	}
 
 }

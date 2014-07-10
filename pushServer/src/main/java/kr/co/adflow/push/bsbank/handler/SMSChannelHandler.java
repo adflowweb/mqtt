@@ -15,12 +15,14 @@ import kr.co.adflow.push.dao.SMSDao;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * @author nadir93
  * @date 2014. 7. 8.
  * 
  */
+@Component
 public class SMSChannelHandler implements Runnable {
 
 	private static final org.slf4j.Logger logger = LoggerFactory
@@ -116,7 +118,7 @@ public class SMSChannelHandler implements Runnable {
 	 * 
 	 * @throws Exception
 	 */
-	private void initSender() throws Exception {
+	private synchronized void initSender() throws Exception {
 		logger.debug("initSender시작()");
 		if (smsDao.getSMSSender() != null) {
 			logger.debug("sender가널값이아닙니다.");
@@ -126,14 +128,14 @@ public class SMSChannelHandler implements Runnable {
 		logger.debug("소케연결기다림..(블락킹)");
 		Socket socket = new Socket(SERVER_IP, PORT);
 		logger.debug("소켓이연결되었습니다.socket=" + socket);
-		smsDao.setSMSSender(new SMSSender(this, socket));
-		smsDao.getSMSSender().connect();
-		// sender.start();
+		SMSSender sender = new SMSSender(this, socket);
+		sender.connect();
+		smsDao.setSMSSender(sender);
 		logger.debug("샌더가시작되었습니다. sender=" + smsDao.getSMSSender());
 		logger.debug("initSender종료()");
 	}
 
-	public void setSMSSender(SMSSender sender) {
+	public synchronized void setSMSSender(SMSSender sender) {
 		smsDao.setSMSSender(sender);
 	}
 }

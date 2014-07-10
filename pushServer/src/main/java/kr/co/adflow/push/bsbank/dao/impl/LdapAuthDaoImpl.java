@@ -1,6 +1,8 @@
 package kr.co.adflow.push.bsbank.dao.impl;
 
+import java.io.IOException;
 import java.util.Hashtable;
+import java.util.Properties;
 
 import javax.naming.AuthenticationException;
 import javax.naming.Context;
@@ -29,7 +31,21 @@ public class LdapAuthDaoImpl implements LdapAuthDao {
 	private static final Logger logger = LoggerFactory
 			.getLogger(LdapAuthDaoImpl.class);
 
-	private String domain = "adpusan.co.kr";
+	private static final String CONFIG_PROPERTIES = "/config.properties";
+
+	private static Properties prop = new Properties();
+
+	static {
+		try {
+			prop.load(LdapAuthDaoImpl.class
+					.getResourceAsStream(CONFIG_PROPERTIES));
+			logger.debug("속성값=" + prop);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private String domain = prop.getProperty("ldap.server.url");
 	private String ldapUrl = "LDAP://" + domain;
 	private String ldapFactory = "com.sun.jndi.ldap.LdapCtxFactory";
 	private String ldapSecurity = "simple";
@@ -88,6 +104,7 @@ public class LdapAuthDaoImpl implements LdapAuthDao {
 
 			Hashtable<String, String> property = new Hashtable<String, String>();
 			property.put(Context.INITIAL_CONTEXT_FACTORY, ldapFactory);
+			property.put("com.sun.jndi.ldap.read.timeout", "5000");
 			property.put(Context.SECURITY_AUTHENTICATION, ldapSecurity);
 			property.put(Context.PROVIDER_URL, ldapUrl);
 			property.put(Context.SECURITY_PRINCIPAL, id + "@" + domain);
@@ -187,7 +204,7 @@ public class LdapAuthDaoImpl implements LdapAuthDao {
 
 			// ////testCode
 			// // Enable connection pooling
-			// env.put("com.sun.jndi.ldap.connect.pool", "true");
+			property.put("com.sun.jndi.ldap.connect.pool", "true");
 			// ////testCodeEnd
 
 			try {
@@ -210,8 +227,8 @@ public class LdapAuthDaoImpl implements LdapAuthDao {
 		}
 		logger.debug("auth종료(결과=" + isAuth + ")");
 		// return isAuth;
-		// //임시
+		// 임시코드
 		return true;
-		// //임시 end
+		// 임시코드끝
 	}
 }

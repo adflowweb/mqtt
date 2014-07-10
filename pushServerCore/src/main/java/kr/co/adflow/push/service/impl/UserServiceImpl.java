@@ -66,6 +66,8 @@ public class UserServiceImpl implements UserService {
 	}
 
 	/*
+	 * 푸시사용자 로그인
+	 * 
 	 * (non-Javadoc)
 	 * 
 	 * @see
@@ -86,6 +88,8 @@ public class UserServiceImpl implements UserService {
 	}
 
 	/*
+	 * 어드민 로그인
+	 * 
 	 * (non-Javadoc)
 	 * 
 	 * @see
@@ -95,6 +99,7 @@ public class UserServiceImpl implements UserService {
 	public Token adminAuth(User user) throws Exception {
 		logger.debug("auth시작(user=" + user + ")");
 
+		// ldap 인증
 		boolean rst = userDao.auth(user);
 		Token token = null;
 		if (rst) {

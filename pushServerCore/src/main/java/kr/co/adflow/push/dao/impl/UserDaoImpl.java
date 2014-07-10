@@ -82,6 +82,13 @@ public class UserDaoImpl implements UserDao {
 		return result;
 	}
 
+	/*
+	 * LDAP 인증
+	 * 
+	 * (non-Javadoc)
+	 * 
+	 * @see kr.co.adflow.push.dao.UserDao#auth(kr.co.adflow.push.domain.User)
+	 */
 	@Override
 	public boolean auth(User user) throws Exception {
 		logger.debug("auth시작(user=" + user + ")");

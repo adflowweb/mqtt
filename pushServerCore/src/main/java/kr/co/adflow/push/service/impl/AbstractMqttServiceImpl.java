@@ -126,6 +126,9 @@ public abstract class AbstractMqttServiceImpl implements MqttCallback,
 
 	private Level logLevel = Level.parse(prop.getProperty("paho.log.level"));
 
+	// mqtt wait timeout
+	private static long WAIT_TIMEOUT = 10000;
+
 	/**
 	 * initialize
 	 * 
@@ -302,7 +305,9 @@ public abstract class AbstractMqttServiceImpl implements MqttCallback,
 			throws MqttException {
 		logger.debug("subscribe시작(topic=" + topic + ",qos=" + qos + ")");
 		IMqttToken token = mqttClient.subscribe(topic, qos);
-		token.waitForCompletion();
+		// 동기방식으로 될 경우 행현상발생 가능성있음
+		// token.waitForCompletion();
+		token.waitForCompletion(WAIT_TIMEOUT);
 		logger.debug("토픽구독을완료하였습니다");
 		logger.debug("subscribe종료()");
 	}
@@ -331,7 +336,7 @@ public abstract class AbstractMqttServiceImpl implements MqttCallback,
 	 */
 	@Override
 	public void deliveryComplete(IMqttDeliveryToken token) {
-		logger.debug("deliveryComplete시작(deliveryComplete=" + token + ")");
+		logger.debug("deliveryComplete시작(token=" + token + ")");
 		logger.debug("deliveryComplete종료()");
 	}
 
@@ -387,7 +392,7 @@ public abstract class AbstractMqttServiceImpl implements MqttCallback,
 				+ (mqttClient.isConnected() ? "연결됨" : "끊어짐"));
 		if (mqttClient.isConnected()) {
 			IMqttToken token = mqttClient.disconnect();
-			token.waitForCompletion();
+			token.waitForCompletion(WAIT_TIMEOUT);
 			logger.debug("mqttClient연결을끊었습니다.");
 		}
 		mqttClient.close();
@@ -445,14 +450,11 @@ public abstract class AbstractMqttServiceImpl implements MqttCallback,
 				.append(",\"category\":\"").append(msg.getCategory())
 				.append("\",\"content\":").append(msg.getContent()).append("}");
 
-		logger.debug("pushMsg=" + pushMsg);
+		logger.debug("전송될메시지=" + pushMsg);
 
-		IMqttDeliveryToken token = mqttClient.publish(msg.getReceiver(), /*
-																		 * msg.
-																		 * getContent
-																		 * ()
-																		 */
+		IMqttDeliveryToken token = mqttClient.publish(msg.getReceiver(),
 				pushMsg.toString().getBytes(), msg.getQos(), msg.isRetained());
+		token.waitForCompletion(WAIT_TIMEOUT);
 		logger.debug("publish종료()");
 		return token;
 	}

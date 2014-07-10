@@ -309,6 +309,8 @@
 
 				<!-- SMS 서버포트 -->
 				<sms.server.port>3000</sms.server.port>
+				
+				<ldap.server.url>130.10.0.32</ldap.server.url>
 
 				<!-- 헬스체크여부 -->
 				<health.enable>true</health.enable>
@@ -380,10 +382,13 @@
 				<mq.server.url>ssl://adflow.net:8883</mq.server.url>
 
 				<!-- SMS 서버주소 -->
-				<sms.server.url>130.80.101.49</sms.server.url>
+				<sms.server.url>130.80.101.48</sms.server.url>
 
 				<!-- SMS 서버포트 -->
 				<sms.server.port>3000</sms.server.port>
+				
+				<!-- SMS 서버주소 -->
+				<ldap.server.url>130.10.0.32</ldap.server.url>
 
 				<!-- 헬스체크여부 -->
 				<health.enable>true</health.enable>
@@ -459,6 +464,8 @@
 
 				<!-- SMS 서버포트 -->
 				<sms.server.port>3000</sms.server.port>
+				
+				<ldap.server.url>130.10.0.32</ldap.server.url>
 
 				<!-- 헬스체크여부 -->
 				<health.enable>true</health.enable>
