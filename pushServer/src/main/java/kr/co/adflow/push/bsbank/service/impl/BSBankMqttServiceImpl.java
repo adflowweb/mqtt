@@ -6,6 +6,8 @@ import kr.co.adflow.push.bsbank.mapper.GroupMapper;
 import kr.co.adflow.push.domain.Acknowledge;
 import kr.co.adflow.push.domain.Message;
 import kr.co.adflow.push.domain.User;
+import kr.co.adflow.push.domain.bsbank.PollResponse;
+import kr.co.adflow.push.mapper.PollMapper;
 import kr.co.adflow.push.service.impl.AbstractMqttServiceImpl;
 
 import org.apache.ibatis.session.SqlSession;
@@ -46,7 +48,8 @@ public class BSBankMqttServiceImpl extends AbstractMqttServiceImpl {
 
 	@Override
 	protected void receiveAck(String topic, MqttMessage message) {
-		logger.debug("ack메시지가수신되었습니다.");
+		logger.debug("receiveAck시작(topic=" + topic + ", message=" + message
+				+ ")");
 		try {
 			// db insert ack
 			// convert json string to object
@@ -57,11 +60,13 @@ public class BSBankMqttServiceImpl extends AbstractMqttServiceImpl {
 		} catch (Exception e) {
 			logger.error("에러발생", e);
 		}
+		logger.debug("receiveAck종료()");
 	}
 
 	@Override
 	protected void receiveGroup(String topic, MqttMessage message) {
-		logger.debug("그룹정보요청메시지가수신되었습니다.");
+		logger.debug("receiveGroup시작(topic=" + topic + ", message=" + message
+				+ ")");
 		try {
 			// db select group info
 			// convert json string to object
@@ -106,11 +111,26 @@ public class BSBankMqttServiceImpl extends AbstractMqttServiceImpl {
 		} catch (Exception e) {
 			logger.error("에러발생", e);
 		}
+		logger.debug("receiveGroup종료()");
 	}
 
 	@Override
 	protected void receivePoll(String topic, MqttMessage message) {
-		logger.debug("설문조사메시지가수신되었습니다.");
-	}
+		logger.debug("receivePoll시작(topic=" + topic + ", message=" + message
+				+ ")");
+		try {
+			// db insert ack
+			// convert json string to object
+			PollResponse response = objectMapper.readValue(
+					message.getPayload(), PollResponse.class);
 
+			PollMapper poolMapper = sqlSession.getMapper(PollMapper.class);
+			poolMapper.postResponse(response.getId(), response.getAnswerid(),
+					response.getUserid());
+			logger.debug("설문조사결과메시지를등록하였습니다.");
+		} catch (Exception e) {
+			logger.error("에러발생", e);
+		}
+		logger.debug("receivePoll종료()");
+	}
 }

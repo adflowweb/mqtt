@@ -23,6 +23,15 @@
 		)
 	</insert>
 
+
+	<insert id="postResponse" parameterType="map">
+		INSERT INTO
+		response
+		values
+		(
+		#{id}, #{answerid}, #{userid}
+		)
+	</insert>
 </mapper>	
 	
 	

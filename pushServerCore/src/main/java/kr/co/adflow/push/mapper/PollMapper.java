@@ -27,4 +27,14 @@ public interface PollMapper {
 	int postAnswer(@Param("id") int id, @Param("answerid") int answerid,
 			@Param("content") String content) throws Exception;
 
+	/**
+	 * 설문조사결과입력
+	 * 
+	 * @param id
+	 * @param answerid
+	 * @param userid
+	 */
+	int postResponse(@Param("id") int id, @Param("answerid") int answerid,
+			@Param("userid") String userid) throws Exception;
+
 }

@@ -106,7 +106,7 @@ public abstract class AbstractMqttServiceImpl implements MqttCallback,
 	protected MessageDao messageDao;
 
 	@Autowired
-	private SqlSession sqlSession;
+	protected SqlSession sqlSession;
 
 	private MqttAsyncClient mqttClient;
 
@@ -212,7 +212,7 @@ public abstract class AbstractMqttServiceImpl implements MqttCallback,
 		logger.debug("clientID=" + CLIENTID);
 		mqttClient = new MqttAsyncClient(SERVERURL, CLIENTID,
 				new MemoryPersistence());
-		logger.debug("mqttClient인스턴스가생성되었습니다.::" + mqttClient);
+		logger.debug("mqttClient인스턴스가생성되었습니다.mqttClient=" + mqttClient);
 		mqttClient.setCallback(this);
 		IMqttToken token = mqttClient.connect(mOpts);
 		token.waitForCompletion();
@@ -230,7 +230,7 @@ public abstract class AbstractMqttServiceImpl implements MqttCallback,
 		mqttClient.close();
 		mqttClient = new MqttAsyncClient(SERVERURL, CLIENTID,
 				new MemoryPersistence());
-		logger.debug("mqttClient인스턴스가생성되었습니다.::" + mqttClient);
+		logger.debug("mqttClient인스턴스가생성되었습니다.mqttClient=" + mqttClient);
 		mqttClient.setCallback(this);
 		IMqttToken token = mqttClient.connect(mOpts);
 		token.waitForCompletion();
