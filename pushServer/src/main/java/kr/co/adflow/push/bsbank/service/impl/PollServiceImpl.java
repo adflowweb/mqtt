@@ -63,7 +63,7 @@ public class PollServiceImpl implements PollService {
 	}
 
 	/*
-	 * 설문조사가져오기
+	 * 설문조사가져오기(통계포함)
 	 * 
 	 * (non-Javadoc)
 	 * 
@@ -80,12 +80,17 @@ public class PollServiceImpl implements PollService {
 		}
 		poll.setAnswers(contents);
 		PollResponse[] res = pollDao.getResults(id);
-		float[] result = new float[res.length];
-		for (int i = 0; i < res.length; i++) {
-			result[i] = ((float) res[i].getCount() / (float) poll
-					.getResponses()) * 100;
-			logger.debug(res[i].getCount() + "/" + poll.getResponses()
-					+ "* 100 = " + result[i]);
+		float[] result = new float[answers.length];
+		for (int i = 0; i < answers.length; i++) {
+			if (i < res.length && res[i] != null) {
+				result[i] = ((float) res[i].getCount() / (float) poll
+						.getResponses()) * 100;
+				logger.debug(res[i].getCount() + " / " + poll.getResponses()
+						+ " * 100 = " + result[i]);
+			} else {
+				result[i] = 0;
+			}
+
 		}
 		poll.setResult(result);
 		logger.debug("get종료(poll=" + poll + ")");

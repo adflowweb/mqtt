@@ -384,6 +384,9 @@
 				<topic>/push/#</topic>
 
 				<!-- ibm mq 서버주소 -->
+				<mq.server.ssl>true</mq.server.ssl>
+				
+				<!-- ibm mq 서버주소 -->
 				<mq.server.url>ssl://adflow.net:8883</mq.server.url>
 
 				<!-- SMS 서버주소 -->
@@ -460,6 +463,9 @@
 
 				<!-- subscribe 해야하는 토픽 -->
 				<topic>/push/#</topic>
+				
+				<!-- ibm mq 서버주소 -->
+				<mq.server.ssl>true</mq.server.ssl>
 
 				<!-- ibm mq 서버주소 -->
 				<mq.server.url>ssl://adflow.net:8883</mq.server.url>
