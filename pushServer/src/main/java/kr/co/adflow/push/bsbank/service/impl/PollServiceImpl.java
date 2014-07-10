@@ -74,21 +74,26 @@ public class PollServiceImpl implements PollService {
 		logger.debug("get시작(pollID=" + id + ")");
 		Poll poll = pollDao.get(id);
 		Answer[] answers = pollDao.getAnswers(id);
+		logger.debug("answers.length=" + answers.length);
 		String[] contents = new String[answers.length];
+		logger.debug("contents.length=" + contents.length);
 		for (int i = 0; i < answers.length; i++) {
 			contents[i] = answers[i].getContent();
+			logger.debug("contents[" + i + "]" + contents[i]);
 		}
 		poll.setAnswers(contents);
 		PollResponse[] res = pollDao.getResults(id);
+		logger.debug("res.length=" + res.length);
 		float[] result = new float[answers.length];
 		for (int i = 0; i < answers.length; i++) {
-			if (i < res.length && res[i] != null) {
+			if (i < res.length) {
 				result[i] = ((float) res[i].getCount() / (float) poll
 						.getResponses()) * 100;
-				logger.debug(res[i].getCount() + " / " + poll.getResponses()
-						+ " * 100 = " + result[i]);
+				logger.debug("result[" + i + "] = " + res[i].getCount() + " / "
+						+ poll.getResponses() + " * 100 ");
 			} else {
 				result[i] = 0;
+				logger.debug("result[" + i + "] = " + result[i]);
 			}
 
 		}
