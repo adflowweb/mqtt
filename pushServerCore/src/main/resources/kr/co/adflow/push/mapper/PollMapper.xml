@@ -50,6 +50,23 @@
 	<select id="getPolls" resultMap="PollResult">
 		SELECT * FROM poll
 	</select>
+
+	<select id="get" parameterType="java.lang.Integer"
+		resultType="kr.co.adflow.push.domain.bsbank.Poll">
+		SELECT * FROM poll where id =
+		#{id}
+	</select>
+
+	<resultMap id="AnswerResult" type="kr.co.adflow.push.domain.bsbank.Answer">
+		<result property="id" column="id" />
+		<result property="answerid" column="answerid" />
+		<result property="content" column="content" />
+	</resultMap>
+
+	<select id="getAnswers" parameterType="java.lang.Integer"
+		resultMap="AnswerResult">
+		SELECT * FROM answer where id = #{id}
+	</select>
 </mapper>	
 	
 	

@@ -1,5 +1,6 @@
 package kr.co.adflow.push.bsbank.dao;
 
+import kr.co.adflow.push.domain.bsbank.Answer;
 import kr.co.adflow.push.domain.bsbank.Poll;
 
 public interface PollDao {
@@ -47,5 +48,14 @@ public interface PollDao {
 	 * @throws Exception
 	 */
 	int delete(int id) throws Exception;
+
+	/**
+	 * 설문항목가져오기
+	 * 
+	 * @param id
+	 * @return
+	 * @throws Exception
+	 */
+	Answer[] getAnswers(int id) throws Exception;
 
 }

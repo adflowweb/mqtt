@@ -4,6 +4,7 @@ import javax.annotation.Resource;
 
 import kr.co.adflow.push.bsbank.dao.PollDao;
 import kr.co.adflow.push.bsbank.service.PollService;
+import kr.co.adflow.push.domain.bsbank.Answer;
 import kr.co.adflow.push.domain.bsbank.Poll;
 
 import org.slf4j.LoggerFactory;
@@ -60,10 +61,18 @@ public class PollServiceImpl implements PollService {
 		return result;
 	}
 
+	/*
+	 * 설문조사가져오기
+	 * 
+	 * (non-Javadoc)
+	 * 
+	 * @see kr.co.adflow.push.bsbank.service.PollService#get(int)
+	 */
 	@Override
 	public Poll get(int id) throws Exception {
 		logger.debug("get시작(pollID=" + id + ")");
 		Poll poll = pollDao.get(id);
+		Answer[] answers = pollDao.getAnswers(id);
 		logger.debug("get종료(poll=" + poll + ")");
 		return poll;
 	}

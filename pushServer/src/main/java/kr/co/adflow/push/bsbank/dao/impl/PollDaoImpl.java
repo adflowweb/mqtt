@@ -1,6 +1,7 @@
 package kr.co.adflow.push.bsbank.dao.impl;
 
 import kr.co.adflow.push.bsbank.dao.PollDao;
+import kr.co.adflow.push.domain.bsbank.Answer;
 import kr.co.adflow.push.domain.bsbank.Poll;
 import kr.co.adflow.push.mapper.PollMapper;
 
@@ -87,6 +88,22 @@ public class PollDaoImpl implements PollDao {
 		Poll poll = pollMapper.get(id);
 		logger.debug("get종료(poll=" + poll + ")");
 		return poll;
+	}
+
+	/*
+	 * 설문항목가져오기
+	 * 
+	 * (non-Javadoc)
+	 * 
+	 * @see kr.co.adflow.push.bsbank.dao.PollDao#getAnswers(int)
+	 */
+	@Override
+	public Answer[] getAnswers(int id) throws Exception {
+		logger.debug("getAnswers시작()");
+		PollMapper pollMapper = sqlSession.getMapper(PollMapper.class);
+		Answer[] answers = pollMapper.getAnswers(id);
+		logger.debug("getAnswers종료(answers=" + answers + ")");
+		return answers;
 	}
 
 }
