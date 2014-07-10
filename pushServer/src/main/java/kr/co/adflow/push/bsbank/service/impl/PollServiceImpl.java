@@ -35,16 +35,14 @@ public class PollServiceImpl implements PollService {
 	@Override
 	public int post(Poll poll) throws Exception {
 		logger.debug("post시작(poll=" + poll + ")");
-		int count = pollDao.post(poll);
+		int pollID = pollDao.post(poll);
 
-		int insertCnt = 0;
 		for (int i = 0; i < poll.getAnswers().length; i++) {
 			pollDao.postAnswer(poll.getId(), i, poll.getAnswers()[i]);
-			insertCnt++;
 		}
 
-		logger.debug("post종료(insertCount=" + insertCnt + ")");
-		return count + insertCnt;
+		logger.debug("post종료(pollID=" + pollID + ")");
+		return pollID;
 	}
 
 	/*

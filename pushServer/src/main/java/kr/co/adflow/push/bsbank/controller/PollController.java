@@ -43,18 +43,15 @@ public class PollController {
 	 */
 	@RequestMapping(value = "/bsbank/polls", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
-	public Response post(@RequestBody Poll poll) throws Exception {
+	public Response<Poll> post(@RequestBody Poll poll) throws Exception {
 		logger.debug("설문조사=" + poll);
-		final int count = pollService.post(poll);
-		Result result = new Result();
+		final int pollID = pollService.post(poll);
+		Result<Poll> result = new Result<Poll>();
 		result.setSuccess(true);
-		List<String> messages = new ArrayList<String>() {
-			{
-				add("updates=" + count);
-			}
-		};
-		result.setInfo(messages);
-		Response res = new Response(result);
+		Poll rst = new Poll();
+		rst.setId(pollID);
+		result.setData(rst);
+		Response<Poll> res = new Response<Poll>(result);
 		logger.debug("response=" + res);
 		return res;
 	}

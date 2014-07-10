@@ -31,9 +31,9 @@ public class PollDaoImpl implements PollDao {
 	public int post(Poll poll) throws Exception {
 		logger.debug("post시작(poll=" + poll + ")");
 		PollMapper pollMapper = sqlSession.getMapper(PollMapper.class);
-		int result = pollMapper.post(poll);
-		logger.debug("post종료(result=" + result + ")");
-		return result;
+		pollMapper.post(poll);
+		logger.debug("post종료(poll=" + poll + ")");
+		return poll.getId();
 	}
 
 	/*
