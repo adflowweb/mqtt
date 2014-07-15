@@ -86,15 +86,26 @@ public class PollServiceImpl implements PollService {
 		logger.debug("res.length=" + res.length);
 		float[] result = new float[answers.length];
 		for (int i = 0; i < answers.length; i++) {
-			if (i < res.length) {
-				result[i] = ((float) res[i].getCount() / (float) poll
-						.getResponses()) * 100;
-				logger.debug("result[" + i + "] = " + res[i].getCount() + " / "
-						+ poll.getResponses() + " * 100 ");
-			} else {
-				result[i] = 0;
-				logger.debug("result[" + i + "] = " + result[i]);
+
+			result[i] = 0;
+			for (int j = 0; j < res.length; j++) {
+				if (i == res[j].getAnswerid()) {
+					result[i] = ((float) res[j].getCount() / (float) poll
+							.getResponses()) * 100;
+					logger.debug("result[" + i + "] = " + res[j].getCount()
+							+ " / " + poll.getResponses() + " * 100 ");
+				}
 			}
+
+			// if (i < res.length) {
+			// result[i] = ((float) res[i].getCount() / (float) poll
+			// .getResponses()) * 100;
+			// logger.debug("result[" + i + "] = " + res[i].getCount() + " / "
+			// + poll.getResponses() + " * 100 ");
+			// } else {
+			// result[i] = 0;
+			// logger.debug("result[" + i + "] = " + result[i]);
+			// }
 
 		}
 		poll.setResult(result);

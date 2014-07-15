@@ -26,14 +26,13 @@ import org.hyperic.sigar.SigarException;
 import org.hyperic.sigar.SigarLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Repository;
 
 /**
  * @author nadir93
  * @date 2014. 4. 14.
  * 
  */
-@Repository
+// @Repository
 public class ServerDaoImpl implements ServerDao {
 
 	private static final Logger logger = LoggerFactory

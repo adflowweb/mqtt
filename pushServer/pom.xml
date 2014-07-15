@@ -315,6 +315,7 @@
 				<!-- SMS 서버포트 -->
 				<sms.server.port>3000</sms.server.port>
 
+				<!-- LDAP 서버주소 -->
 				<ldap.server.url>130.10.0.32</ldap.server.url>
 
 				<!-- 헬스체크여부 -->
@@ -381,7 +382,7 @@
 			<properties>
 
 				<!-- subscribe 해야하는 토픽 -->
-				<topic>/push/#</topic>
+				<topic>/push/poll,/push/ack,/push/group</topic>
 
 				<!-- ibm mq 서버주소 -->
 				<mq.server.ssl>true</mq.server.ssl>
@@ -395,7 +396,7 @@
 				<!-- SMS 서버포트 -->
 				<sms.server.port>3000</sms.server.port>
 
-				<!-- SMS 서버주소 -->
+				<!-- LDAP 서버주소 -->
 				<ldap.server.url>130.10.0.32</ldap.server.url>
 
 				<!-- 헬스체크여부 -->
@@ -476,6 +477,7 @@
 				<!-- SMS 서버포트 -->
 				<sms.server.port>3000</sms.server.port>
 
+				<!-- LDAP 서버주소 -->
 				<ldap.server.url>130.10.0.32</ldap.server.url>
 
 				<!-- 헬스체크여부 -->

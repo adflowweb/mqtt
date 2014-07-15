@@ -42,8 +42,9 @@
 	<select id="getDeliveredMsgs" resultMap="MessageResult">
 		select * from message
 		where
-		issue is not null order by issue desc limit
-		100
+		issue is not null and type <![CDATA[ < ]]>
+		100 order by
+		issue desc limit 100
 		<!-- and reservation is not null -->
 	</select>
 

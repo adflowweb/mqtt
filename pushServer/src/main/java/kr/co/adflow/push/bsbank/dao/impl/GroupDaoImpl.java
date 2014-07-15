@@ -2,7 +2,6 @@ package kr.co.adflow.push.bsbank.dao.impl;
 
 import kr.co.adflow.push.bsbank.dao.GroupDao;
 import kr.co.adflow.push.bsbank.mapper.GroupMapper;
-import kr.co.adflow.push.domain.Topic;
 import kr.co.adflow.push.domain.bsbank.Affiliate;
 import kr.co.adflow.push.domain.bsbank.Department;
 import kr.co.adflow.push.domain.bsbank.User;

@@ -23,6 +23,9 @@ public class ServerInfo {
 	private boolean available;
 	private String message;
 
+	public ServerInfo() {
+	}
+
 	/**
 	 * @param available
 	 * @param message

@@ -11,6 +11,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+/**
+ * @author nadir93
+ * @date 2014. 6. 23.
+ */
 @Repository
 public class PollDaoImpl implements PollDao {
 

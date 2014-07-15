@@ -138,4 +138,5 @@ public class SMSChannelHandler implements Runnable {
 	public synchronized void setSMSSender(SMSSender sender) {
 		smsDao.setSMSSender(sender);
 	}
+
 }

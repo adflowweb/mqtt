@@ -104,7 +104,7 @@ public class LdapAuthDaoImpl implements LdapAuthDao {
 
 			Hashtable<String, String> property = new Hashtable<String, String>();
 			property.put(Context.INITIAL_CONTEXT_FACTORY, ldapFactory);
-			property.put("com.sun.jndi.ldap.read.timeout", "5000");
+			// property.put("com.sun.jndi.ldap.read.timeout", "5000");
 			property.put(Context.SECURITY_AUTHENTICATION, ldapSecurity);
 			property.put(Context.PROVIDER_URL, ldapUrl);
 			property.put(Context.SECURITY_PRINCIPAL, id + "@" + domain);
@@ -189,7 +189,7 @@ public class LdapAuthDaoImpl implements LdapAuthDao {
 	 */
 	@Override
 	public boolean auth(String id, String pw) throws Exception {
-		logger.debug("auth시작(id=" + id + ")");
+		logger.debug("auth시작(id=" + id + ", pw=" + pw + ")");
 		boolean isAuth = false;
 
 		if (pw != null && !pw.equals("")) {
@@ -199,19 +199,20 @@ public class LdapAuthDaoImpl implements LdapAuthDao {
 			property.put(Context.INITIAL_CONTEXT_FACTORY, ldapFactory);
 			property.put(Context.SECURITY_AUTHENTICATION, ldapSecurity);
 			property.put(Context.PROVIDER_URL, ldapUrl);
+			logger.debug("ldapUrl=" + ldapUrl);
 			property.put(Context.SECURITY_PRINCIPAL, id + "@" + domain);
 			property.put(Context.SECURITY_CREDENTIALS, pw);
 
 			// ////testCode
 			// // Enable connection pooling
-			property.put("com.sun.jndi.ldap.connect.pool", "true");
+			// property.put("com.sun.jndi.ldap.connect.pool", "true");
 			// ////testCodeEnd
 
 			try {
 				ctx = new InitialDirContext(property);
 				isAuth = true;
 				// "Login Success";
-
+				logger.debug("Login Success");
 			} catch (Exception e) {
 				logger.error("에러발생", e);
 				// "Login Failure";
