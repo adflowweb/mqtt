@@ -46,6 +46,8 @@ public class LdapAuthDaoImpl implements LdapAuthDao {
 	}
 
 	private String domain = prop.getProperty("ldap.server.url");
+	private boolean ldap = Boolean.parseBoolean(prop
+			.getProperty("ldap.server.enable"));
 	private String ldapUrl = "LDAP://" + domain;
 	private String ldapFactory = "com.sun.jndi.ldap.LdapCtxFactory";
 	private String ldapSecurity = "simple";
@@ -191,6 +193,10 @@ public class LdapAuthDaoImpl implements LdapAuthDao {
 	public boolean auth(String id, String pw) throws Exception {
 		logger.debug("auth시작(id=" + id + ", pw=" + pw + ")");
 		boolean isAuth = false;
+
+		if (!ldap) {
+			return true;
+		}
 
 		if (pw != null && !pw.equals("")) {
 			DirContext ctx = null;
