@@ -10,6 +10,8 @@
 		<testng.version>6.8.7</testng.version>
 		<org.aspectj-version>1.7.1</org.aspectj-version>
 		<org.slf4j-version>1.6.6</org.slf4j-version>
+		<maven.compiler.target>1.6</maven.compiler.target>
+		<maven.compiler.source>1.6</maven.compiler.source>
 	</properties>
 	<dependencies>
 		<!-- added by nadir93 -->
