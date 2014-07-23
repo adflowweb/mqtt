@@ -9,6 +9,7 @@ import kr.co.adflow.push.bsbank.service.PollService;
 import kr.co.adflow.push.domain.Response;
 import kr.co.adflow.push.domain.Result;
 import kr.co.adflow.push.domain.bsbank.Poll;
+import kr.co.adflow.push.domain.bsbank.PollResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -108,6 +109,64 @@ public class PollController {
 		}
 
 		Response<Poll> res = new Response<Poll>(result);
+		logger.debug("response=" + res);
+		return res;
+	}
+
+	/**
+	 * 설문조사응답결과가져오기
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/bsbank/polls/{pollID}", params = "result=all", method = RequestMethod.GET)
+	@ResponseBody
+	public Response<PollResponse[]> getResult(@PathVariable int pollID)
+			throws Exception {
+		Result<PollResponse[]> result = new Result<PollResponse[]>();
+		result.setSuccess(true);
+		PollResponse[] response = pollService.getResults(pollID);
+		if (response == null) {
+			List<String> messages = new ArrayList<String>() {
+				{
+					add("results not found");
+				}
+			};
+			result.setInfo(messages);
+		} else {
+			result.setData(response);
+		}
+
+		Response<PollResponse[]> res = new Response<PollResponse[]>(result);
+		logger.debug("response=" + res);
+		return res;
+	}
+
+	/**
+	 * 해당사용자설문조사결과가져오기
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/bsbank/polls/{pollID}/{userID}", method = RequestMethod.GET)
+	@ResponseBody
+	public Response<PollResponse> getByUser(@PathVariable int pollID,
+			@PathVariable String userID) throws Exception {
+		Result<PollResponse> result = new Result<PollResponse>();
+		result.setSuccess(true);
+		PollResponse poll = pollService.getResult(pollID, userID);
+		if (poll == null) {
+			List<String> messages = new ArrayList<String>() {
+				{
+					add("result not found");
+				}
+			};
+			result.setInfo(messages);
+		} else {
+			result.setData(poll);
+		}
+
+		Response<PollResponse> res = new Response<PollResponse>(result);
 		logger.debug("response=" + res);
 		return res;
 	}

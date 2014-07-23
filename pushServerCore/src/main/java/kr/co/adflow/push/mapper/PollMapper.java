@@ -75,6 +75,11 @@ public interface PollMapper {
 
 	PollResponse[] getResults(int id) throws Exception;
 
+	PollResponse[] getSum(int id) throws Exception;
+
 	int putResponseCount(int id) throws Exception;
+
+	PollResponse getResult(@Param("id") int id, @Param("userid") String userid)
+			throws Exception;
 
 }

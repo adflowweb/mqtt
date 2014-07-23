@@ -6,9 +6,11 @@
 	<insert id="post" parameterType="kr.co.adflow.push.domain.bsbank.Poll">
 		INSERT INTO
 		poll (title, start,
-		end, responses, status) values (
+		end, responses, status, anonymous)
+		values (
 		#{title}, #{start}, #{end},
-		#{responses}, #{status}
+		#{responses}, #{status},
+		#{anonymous}
 		)
 		<selectKey keyProperty="id" resultType="Integer" order="AFTER">
 			SELECT
@@ -45,6 +47,7 @@
 		<result property="end" column="end" />
 		<result property="responses" column="responses" />
 		<result property="status" column="status" />
+		<result property="anonymous" column="anonymous" />
 	</resultMap>
 
 	<select id="getPolls" resultMap="PollResult">
@@ -68,16 +71,35 @@
 		SELECT * FROM answer where id = #{id}
 	</select>
 
-	<resultMap id="ResponseResult" type="kr.co.adflow.push.domain.bsbank.PollResponse">
+	<resultMap id="ResponseResults" type="kr.co.adflow.push.domain.bsbank.PollResponse">
+		<result property="id" column="id" />
+		<result property="answerid" column="answerid" />
+		<result property="userid" column="userid" />
+	</resultMap>
+
+	<select id="getResults" parameterType="java.lang.Integer"
+		resultMap="ResponseResults">
+		select * from response where id =
+		#{id}
+	</select>
+
+	<resultMap id="SumResults" type="kr.co.adflow.push.domain.bsbank.PollResponse">
 		<result property="answerid" column="answerid" />
 		<result property="count" column="count" />
 	</resultMap>
 
-	<select id="getResults" parameterType="java.lang.Integer"
-		resultMap="ResponseResult">
+	<select id="getSum" parameterType="java.lang.Integer" resultMap="SumResults">
 		select answerid,count(*) count from response where id =
 		#{id}
-		group by answerid
+		group by
+		answerid
+	</select>
+
+	<select id="getResult" parameterType="map"
+		resultType="kr.co.adflow.push.domain.bsbank.PollResponse">
+		select *
+		from response where id = #{id} and userid =
+		#{userid} limit 1
 	</select>
 
 	<update id="putResponseCount" parameterType="java.lang.Integer">

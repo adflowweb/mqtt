@@ -68,4 +68,23 @@ public interface PollDao {
 	 */
 	PollResponse[] getResults(int id) throws Exception;
 
+	/**
+	 * 설문결과조회
+	 * 
+	 * @param id
+	 * @return
+	 * @throws Exception
+	 */
+	PollResponse[] getSum(int id) throws Exception;
+
+	/**
+	 * 해당유저설문결과조회
+	 * 
+	 * @param id
+	 * @param userID
+	 * @return
+	 * @throws Exception
+	 */
+	PollResponse getResult(int id, String userID) throws Exception;
+
 }

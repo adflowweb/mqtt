@@ -21,6 +21,7 @@ public class Poll {
 	private Date end;
 	private int responses;
 	private int status;
+	private int anonymous;
 	private String[] answers;
 	private float[] result;
 
@@ -72,6 +73,14 @@ public class Poll {
 		this.status = status;
 	}
 
+	public int getAnonymous() {
+		return anonymous;
+	}
+
+	public void setAnonymous(int anonymous) {
+		this.anonymous = anonymous;
+	}
+
 	public String[] getAnswers() {
 		return answers;
 	}
@@ -92,8 +101,9 @@ public class Poll {
 	public String toString() {
 		return "Poll [id=" + id + ", title=" + title + ", start=" + start
 				+ ", end=" + end + ", responses=" + responses + ", status="
-				+ status + ", answers=" + Arrays.toString(answers)
-				+ ", result=" + Arrays.toString(result) + "]";
+				+ status + ", anonymous=" + anonymous + ", answers="
+				+ Arrays.toString(answers) + ", result="
+				+ Arrays.toString(result) + "]";
 	}
 
 }

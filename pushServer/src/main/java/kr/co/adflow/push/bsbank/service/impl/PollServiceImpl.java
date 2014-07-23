@@ -82,7 +82,7 @@ public class PollServiceImpl implements PollService {
 			logger.debug("contents[" + i + "]" + contents[i]);
 		}
 		poll.setAnswers(contents);
-		PollResponse[] res = pollDao.getResults(id);
+		PollResponse[] res = pollDao.getSum(id);
 		logger.debug("res.length=" + res.length);
 		float[] result = new float[answers.length];
 		for (int i = 0; i < answers.length; i++) {
@@ -124,6 +124,22 @@ public class PollServiceImpl implements PollService {
 		Poll[] poll = pollDao.getPolls();
 		logger.debug("getPolls종료(poll=" + poll + ")");
 		return poll;
+	}
+
+	@Override
+	public PollResponse getResult(int id, String userID) throws Exception {
+		logger.debug("getResult시작(pollID=" + id + ", userID=" + userID + ")");
+		PollResponse res = pollDao.getResult(id, userID);
+		logger.debug("getResult종료(PollResponse=" + res + ")");
+		return res;
+	}
+
+	@Override
+	public PollResponse[] getResults(int pollID) throws Exception {
+		logger.debug("getResults시작(pollID=" + pollID + ")");
+		PollResponse[] res = pollDao.getResults(pollID);
+		logger.debug("getResults종료(PollResponse=" + res + ")");
+		return res;
 	}
 
 }
