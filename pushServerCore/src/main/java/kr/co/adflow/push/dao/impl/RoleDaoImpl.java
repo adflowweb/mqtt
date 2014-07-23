@@ -32,4 +32,13 @@ public class RoleDaoImpl implements RoleDao {
 		return result;
 	}
 
+	@Override
+	public Role[] get() throws Exception {
+		logger.debug("get시작()");
+		RoleMapper roleMapper = sqlSession.getMapper(RoleMapper.class);
+		Role[] result = roleMapper.getRoles();
+		logger.debug("get종료(result=" + result + ")");
+		return result;
+	}
+
 }

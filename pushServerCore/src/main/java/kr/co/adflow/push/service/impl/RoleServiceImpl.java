@@ -28,10 +28,26 @@ public class RoleServiceImpl implements RoleService {
 	UserDao userDao;
 
 	@Override
-	public Role[] get(String userID) throws Exception {
+	public Role[] getByUser(String userID) throws Exception {
 		logger.debug("get시작(userID=" + userID + ")");
 		User user = userDao.get(userID);
 		Role[] rst = roleDao.get(user.getRole());
+		logger.debug("get종료(rst=" + rst + ")");
+		return rst;
+	}
+
+	@Override
+	public Role[] get() throws Exception {
+		logger.debug("get시작()");
+		Role[] rst = roleDao.get();
+		logger.debug("get종료(rst=" + rst + ")");
+		return rst;
+	}
+
+	@Override
+	public Role[] getByRole(String roleID) throws Exception {
+		logger.debug("get시작(roleID=" + roleID + ")");
+		Role[] rst = roleDao.get(roleID);
 		logger.debug("get종료(rst=" + rst + ")");
 		return rst;
 	}

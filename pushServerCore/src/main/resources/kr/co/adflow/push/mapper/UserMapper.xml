@@ -21,8 +21,8 @@
 	</resultMap>
 
 	<select id="getAdmin" resultMap="UserResult">
-		SELECT * FROM user WHERE admin =
-		1
+		SELECT * FROM user WHERE role =
+		'admin'
 	</select>
 
 	<select id="getAllUser" resultMap="UserResult">
@@ -42,7 +42,7 @@
 		set name = #{name},
 		title = #{title}, dept = #{dept}, email = #{email},
 		phone = #{phone},
-		admin = #{admin} where userid =#{userID}
+		role = #{role} where userid =#{userID}
 	</update>
 
 	<delete id="delete" parameterType="java.lang.String">

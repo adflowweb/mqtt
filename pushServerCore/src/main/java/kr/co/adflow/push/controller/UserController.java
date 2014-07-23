@@ -206,7 +206,7 @@ public class UserController {
 			};
 			result.setErrors(messages);
 		} else {
-			token.setRole(roleService.get(user.getUserID()));
+			token.setRole(roleService.getByUser(user.getUserID()));
 			result.setData(token);
 		}
 
