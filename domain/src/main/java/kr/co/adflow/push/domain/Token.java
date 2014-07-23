@@ -1,6 +1,7 @@
 package kr.co.adflow.push.domain;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 
 import org.codehaus.jackson.map.annotate.JsonSerialize;
@@ -70,7 +71,7 @@ public class Token {
 	public String toString() {
 		return "Token [tokenID=" + tokenID + ", userID=" + userID
 				+ ", deviceID=" + deviceID + ", issue=" + issue + ", role="
-				+ role + "]";
+				+ Arrays.toString(role) + "]";
 	}
 
 }

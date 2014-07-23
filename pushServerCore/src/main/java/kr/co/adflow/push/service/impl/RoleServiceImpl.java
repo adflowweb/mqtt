@@ -29,10 +29,10 @@ public class RoleServiceImpl implements RoleService {
 
 	@Override
 	public Role[] getByUser(String userID) throws Exception {
-		logger.debug("get시작(userID=" + userID + ")");
+		logger.debug("getByUser시작(userID=" + userID + ")");
 		User user = userDao.get(userID);
 		Role[] rst = roleDao.get(user.getRole());
-		logger.debug("get종료(rst=" + rst + ")");
+		logger.debug("getByUser종료(rst=" + rst + ")");
 		return rst;
 	}
 
@@ -46,9 +46,9 @@ public class RoleServiceImpl implements RoleService {
 
 	@Override
 	public Role[] getByRole(String roleID) throws Exception {
-		logger.debug("get시작(roleID=" + roleID + ")");
+		logger.debug("getByRole시작(roleID=" + roleID + ")");
 		Role[] rst = roleDao.get(roleID);
-		logger.debug("get종료(rst=" + rst + ")");
+		logger.debug("getByRole종료(rst=" + rst + ")");
 		return rst;
 	}
 

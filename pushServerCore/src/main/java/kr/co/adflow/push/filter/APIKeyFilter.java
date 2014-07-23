@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Enumeration;
 
 import javax.naming.InitialContext;
 import javax.servlet.Filter;
@@ -60,6 +61,23 @@ public class APIKeyFilter implements Filter {
 
 		final HttpServletRequest httpRequest = (HttpServletRequest) request;
 		final HttpServletResponse httpResponse = (HttpServletResponse) response;
+
+		logger.debug("requestURI=" + httpRequest.getRequestURI());
+		logger.debug("requestMethod=" + httpRequest.getMethod());
+		logger.debug("contentType=" + httpRequest.getContentType());
+
+		// req parameter
+		for (Enumeration e = httpRequest.getParameterNames(); e
+				.hasMoreElements();) {
+			String param = (String) e.nextElement();
+			logger.debug(param + ":" + httpRequest.getParameter(param));
+		}
+
+		// req header
+		for (Enumeration e = httpRequest.getHeaderNames(); e.hasMoreElements();) {
+			String headerNames = (String) e.nextElement();
+			logger.debug(headerNames + ":" + httpRequest.getHeader(headerNames));
+		}
 
 		String appContext = httpRequest.getRequestURI().substring(
 				httpRequest.getRequestURI().lastIndexOf("/") + 1);
