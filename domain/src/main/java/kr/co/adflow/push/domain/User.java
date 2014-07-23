@@ -19,7 +19,7 @@ public class User {
 	private String password;
 	private String deviceID;
 	private String apnsToken;
-	private boolean admin;
+	private String role;
 
 	public User() {
 	}
@@ -96,12 +96,12 @@ public class User {
 		this.apnsToken = apnsToken;
 	}
 
-	public boolean isAdmin() {
-		return admin;
+	public String getRole() {
+		return role;
 	}
 
-	public void setAdmin(boolean admin) {
-		this.admin = admin;
+	public void setRole(String role) {
+		this.role = role;
 	}
 
 	@Override
@@ -109,7 +109,7 @@ public class User {
 		return "User [userID=" + userID + ", name=" + name + ", title=" + title
 				+ ", dept=" + dept + ", email=" + email + ", phone=" + phone
 				+ ", password=" + password + ", deviceID=" + deviceID
-				+ ", apnsToken=" + apnsToken + ", admin=" + admin + "]";
+				+ ", apnsToken=" + apnsToken + ", role=" + role + "]";
 	}
 
 }

@@ -19,7 +19,7 @@ public interface UserService {
 
 	Token auth(User user) throws Exception;;
 
-	Token adminAuth(User user) throws Exception;
+	// Token adminAuth(User user) throws Exception;
 
 	User[] getAdmin() throws Exception;
 }

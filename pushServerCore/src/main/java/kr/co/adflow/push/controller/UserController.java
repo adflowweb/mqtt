@@ -10,6 +10,7 @@ import kr.co.adflow.push.domain.Response;
 import kr.co.adflow.push.domain.Result;
 import kr.co.adflow.push.domain.Token;
 import kr.co.adflow.push.domain.User;
+import kr.co.adflow.push.service.RoleService;
 import kr.co.adflow.push.service.TokenService;
 import kr.co.adflow.push.service.UserService;
 
@@ -40,6 +41,9 @@ public class UserController {
 
 	@Resource
 	private TokenService tokenService;
+
+	@Resource
+	private RoleService roleService;
 
 	/**
 	 * 유저정보 가져오기
@@ -202,6 +206,7 @@ public class UserController {
 			};
 			result.setErrors(messages);
 		} else {
+			token.setRole(roleService.get(user.getUserID()));
 			result.setData(token);
 		}
 
@@ -210,37 +215,38 @@ public class UserController {
 		return res;
 	}
 
-	/**
-	 * 유저인증
-	 * 
-	 * @param msg
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping(value = "adminAuth", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-	@ResponseBody
-	public Response<Token> adminAuth(@RequestBody User user,
-			HttpServletRequest request,
-			@RequestHeader("User-Agent") String userAgent) throws Exception {
-		logger.debug("유저=" + user);
-		Token token = userService.adminAuth(user);
-		Result<Token> result = new Result<Token>();
-		result.setSuccess(true);
-		if (token == null) {
-			List<String> messages = new ArrayList<String>() {
-				{
-					add("user not found or invalid password");
-				}
-			};
-			result.setErrors(messages);
-		} else {
-			result.setData(token);
-		}
-
-		Response<Token> res = new Response<Token>(result);
-		logger.debug("response=" + res);
-		return res;
-	}
+	// /**
+	// * 유저인증
+	// *
+	// * @param msg
+	// * @return
+	// * @throws Exception
+	// */
+	// @RequestMapping(value = "adminAuth", method = RequestMethod.POST,
+	// consumes = "application/json", produces = "application/json")
+	// @ResponseBody
+	// public Response<Token> adminAuth(@RequestBody User user,
+	// HttpServletRequest request,
+	// @RequestHeader("User-Agent") String userAgent) throws Exception {
+	// logger.debug("유저=" + user);
+	// Token token = userService.adminAuth(user);
+	// Result<Token> result = new Result<Token>();
+	// result.setSuccess(true);
+	// if (token == null) {
+	// List<String> messages = new ArrayList<String>() {
+	// {
+	// add("user not found or invalid password");
+	// }
+	// };
+	// result.setErrors(messages);
+	// } else {
+	// result.setData(token);
+	// }
+	//
+	// Response<Token> res = new Response<Token>(result);
+	// logger.debug("response=" + res);
+	// return res;
+	// }
 
 	/**
 	 * 유저인증

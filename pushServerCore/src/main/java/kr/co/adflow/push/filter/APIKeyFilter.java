@@ -71,7 +71,8 @@ public class APIKeyFilter implements Filter {
 			chain.doFilter(httpRequest, httpResponse);
 			long stop = System.currentTimeMillis();
 			logger.debug("걸린시간=" + (stop - start) + " ms");
-			logger.debug("doFilter종료()");
+			logger.debug("doFilter종료(responseCode=" + httpResponse.getStatus()
+					+ ")");
 			return;
 		}
 

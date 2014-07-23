@@ -20,6 +20,7 @@ public class Token {
 	private String userID;
 	private String deviceID;
 	private Date issue;
+	private Role[] role;
 
 	public Token() {
 	}
@@ -57,10 +58,19 @@ public class Token {
 		this.issue = issue;
 	}
 
+	public Role[] getRole() {
+		return role;
+	}
+
+	public void setRole(Role[] role) {
+		this.role = role;
+	}
+
 	@Override
 	public String toString() {
 		return "Token [tokenID=" + tokenID + ", userID=" + userID
-				+ ", deviceID=" + deviceID + ", issue=" + issue + "]";
+				+ ", deviceID=" + deviceID + ", issue=" + issue + ", role="
+				+ role + "]";
 	}
 
 }

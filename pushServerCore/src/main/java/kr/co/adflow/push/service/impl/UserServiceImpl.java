@@ -87,33 +87,34 @@ public class UserServiceImpl implements UserService {
 		return token;
 	}
 
-	/*
-	 * 어드민 로그인
-	 * 
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * kr.co.adflow.push.service.UserService#auth(kr.co.adflow.push.domain.User)
-	 */
-	@Override
-	public Token adminAuth(User user) throws Exception {
-		logger.debug("auth시작(user=" + user + ")");
-
-		// ldap 인증
-		boolean rst = userDao.auth(user);
-		Token token = null;
-		if (rst) {
-			// token 발급
-			token = tokenService.post(user);
-		}
-		User adminUser = userDao.get(user.getUserID());
-		if (!adminUser.isAdmin()) {
-			token = null;
-		}
-
-		logger.debug("auth종료(token=" + token + ")");
-		return token;
-	}
+	// /*
+	// * 어드민 로그인
+	// *
+	// * (non-Javadoc)
+	// *
+	// * @see
+	// *
+	// kr.co.adflow.push.service.UserService#auth(kr.co.adflow.push.domain.User)
+	// */
+	// @Override
+	// public Token adminAuth(User user) throws Exception {
+	// logger.debug("auth시작(user=" + user + ")");
+	//
+	// // ldap 인증
+	// boolean rst = userDao.auth(user);
+	// Token token = null;
+	// if (rst) {
+	// // token 발급
+	// token = tokenService.post(user);
+	// }
+	// User adminUser = userDao.get(user.getUserID());
+	// if (!adminUser.isAdmin()) {
+	// token = null;
+	// }
+	//
+	// logger.debug("auth종료(token=" + token + ")");
+	// return token;
+	// }
 
 	@Override
 	public User[] getAdmin() throws Exception {
