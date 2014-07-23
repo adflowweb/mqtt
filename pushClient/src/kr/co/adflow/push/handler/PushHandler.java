@@ -185,7 +185,6 @@ public class PushHandler implements MqttCallback {
 				NotificationHandler.notify(context, noti);
 				break;
 			case 100: // subscribe
-			case 101: // unsubscribe
 				// command msg
 				// 그룹정보변경 (전체토픽을 구독취소하고 다시 전체토픽구독)
 				// (토픽=/users/nadir93,메시지={"id":5,"ack":false,"type":1,"content":{"userID":"nadir93","groups":["dev","adflow"]}},qos=2)
@@ -226,6 +225,8 @@ public class PushHandler implements MqttCallback {
 				// }
 				// }
 				// }.start();
+				break;
+			case 101: // unsubscribe
 				break;
 			default:
 				Log.e(TAG, "메시지타입이없습니다.");
