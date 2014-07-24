@@ -10,6 +10,7 @@ public class PollResponse {
 	private int answerid;
 	private int count;
 	private String userid;
+	private String content;
 
 	public int getId() {
 		return id;
@@ -43,10 +44,18 @@ public class PollResponse {
 		this.count = count;
 	}
 
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
 	@Override
 	public String toString() {
 		return "PollResponse [id=" + id + ", answerid=" + answerid + ", count="
-				+ count + ", userid=" + userid + "]";
+				+ count + ", userid=" + userid + ", content=" + content + "]";
 	}
 
 }

@@ -75,12 +75,15 @@
 		<result property="id" column="id" />
 		<result property="answerid" column="answerid" />
 		<result property="userid" column="userid" />
+		<result property="content" column="content" />
 	</resultMap>
 
 	<select id="getResults" parameterType="java.lang.Integer"
 		resultMap="ResponseResults">
-		select * from response where id =
-		#{id}
+		select a.id id, a.answerid answerid,a.content content,
+		b.userid userid from
+		answer a, response b where a.id = b.id and
+		a.answerid = b.answerid and b.id = #{id};
 	</select>
 
 	<resultMap id="SumResults" type="kr.co.adflow.push.domain.bsbank.PollResponse">
@@ -96,10 +99,10 @@
 	</select>
 
 	<select id="getResult" parameterType="map"
-		resultType="kr.co.adflow.push.domain.bsbank.PollResponse">
-		select *
-		from response where id = #{id} and userid =
-		#{userid} limit 1
+		resultType="kr.co.adflow.push.domain.bsbank.Answer">
+		select a.id id, a.answerid answerid, a.content content from
+		answer a, response b where a.id = b.id and a.answerid = b.answerid and
+		b.id = #{id} and b.userid = #{userid}
 	</select>
 
 	<update id="putResponseCount" parameterType="java.lang.Integer">

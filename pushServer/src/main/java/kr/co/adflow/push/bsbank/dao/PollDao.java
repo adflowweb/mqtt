@@ -85,6 +85,6 @@ public interface PollDao {
 	 * @return
 	 * @throws Exception
 	 */
-	PollResponse getResult(int id, String userID) throws Exception;
+	Answer getResult(int id, String userID) throws Exception;
 
 }

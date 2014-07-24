@@ -79,7 +79,7 @@ public interface PollMapper {
 
 	int putResponseCount(int id) throws Exception;
 
-	PollResponse getResult(@Param("id") int id, @Param("userid") String userid)
+	Answer getResult(@Param("id") int id, @Param("userid") String userid)
 			throws Exception;
 
 }

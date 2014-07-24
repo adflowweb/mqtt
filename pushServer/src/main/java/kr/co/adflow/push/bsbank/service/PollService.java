@@ -1,5 +1,6 @@
 package kr.co.adflow.push.bsbank.service;
 
+import kr.co.adflow.push.domain.bsbank.Answer;
 import kr.co.adflow.push.domain.bsbank.Poll;
 import kr.co.adflow.push.domain.bsbank.PollResponse;
 
@@ -39,7 +40,7 @@ public interface PollService {
 	 * @return
 	 * @throws Exception
 	 */
-	PollResponse getResult(int id, String userID) throws Exception;
+	Answer getResult(int id, String userID) throws Exception;
 
 	/**
 	 * 모든설문조사가져오기

@@ -127,9 +127,9 @@ public class PollServiceImpl implements PollService {
 	}
 
 	@Override
-	public PollResponse getResult(int id, String userID) throws Exception {
+	public Answer getResult(int id, String userID) throws Exception {
 		logger.debug("getResult시작(pollID=" + id + ", userID=" + userID + ")");
-		PollResponse res = pollDao.getResult(id, userID);
+		Answer res = pollDao.getResult(id, userID);
 		logger.debug("getResult종료(PollResponse=" + res + ")");
 		return res;
 	}

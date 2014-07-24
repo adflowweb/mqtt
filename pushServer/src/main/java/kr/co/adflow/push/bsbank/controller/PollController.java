@@ -8,6 +8,7 @@ import javax.annotation.Resource;
 import kr.co.adflow.push.bsbank.service.PollService;
 import kr.co.adflow.push.domain.Response;
 import kr.co.adflow.push.domain.Result;
+import kr.co.adflow.push.domain.bsbank.Answer;
 import kr.co.adflow.push.domain.bsbank.Poll;
 import kr.co.adflow.push.domain.bsbank.PollResponse;
 
@@ -150,11 +151,11 @@ public class PollController {
 	 */
 	@RequestMapping(value = "/bsbank/polls/{pollID}/{userID}", method = RequestMethod.GET)
 	@ResponseBody
-	public Response<PollResponse> getByUser(@PathVariable int pollID,
+	public Response<Answer> getByUser(@PathVariable int pollID,
 			@PathVariable String userID) throws Exception {
-		Result<PollResponse> result = new Result<PollResponse>();
+		Result<Answer> result = new Result<Answer>();
 		result.setSuccess(true);
-		PollResponse poll = pollService.getResult(pollID, userID);
+		Answer poll = pollService.getResult(pollID, userID);
 		if (poll == null) {
 			List<String> messages = new ArrayList<String>() {
 				{
@@ -166,7 +167,7 @@ public class PollController {
 			result.setData(poll);
 		}
 
-		Response<PollResponse> res = new Response<PollResponse>(result);
+		Response<Answer> res = new Response<Answer>(result);
 		logger.debug("response=" + res);
 		return res;
 	}

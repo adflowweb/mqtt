@@ -121,10 +121,10 @@ public class PollDaoImpl implements PollDao {
 	}
 
 	@Override
-	public PollResponse getResult(int id, String userID) throws Exception {
+	public Answer getResult(int id, String userID) throws Exception {
 		logger.debug("getResult시작(pollID=" + id + ", userID=" + userID + ")");
 		PollMapper pollMapper = sqlSession.getMapper(PollMapper.class);
-		PollResponse res = pollMapper.getResult(id, userID);
+		Answer res = pollMapper.getResult(id, userID);
 		logger.debug("getResult종료(res=" + res + ")");
 		return res;
 	}
