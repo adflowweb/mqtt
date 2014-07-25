@@ -9,6 +9,7 @@ import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
+import kr.co.adflow.push.PushApp;
 import kr.co.adflow.service.PushService;
 import kr.co.adflow.sqlite.Job;
 import kr.co.adflow.sqlite.PushDBHelper;
@@ -50,7 +51,7 @@ public class PushHandler implements MqttCallback {
 	// private static final int connectionTimeout = 5; // second
 	// private static final int connectionTimeout = 2; // second
 	private static final int keepAliveInterval = 480; // second 현재의미없음
-	private static final boolean cleanSession = true;
+	private static final boolean cleanSession = false;
 	// mqttClient 세션로그
 	private static final boolean clientSessionLog = false;
 
@@ -199,6 +200,18 @@ public class PushHandler implements MqttCallback {
 					JSONObject noti = content.getJSONObject("notification");
 					// showNotify
 					NotificationHandler.notify(context, noti);
+					// sendIntent
+					Log.d(TAG, "푸시앱상태=" + PushApp.isActivityVisible());
+
+					if (PushApp.isActivityVisible()) {
+						Intent intent = new Intent(context,
+								kr.co.adflow.push.MainActivity.class);
+						intent.putExtra("category", msg.getString("category"));
+						intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+						// context.sendBroadcast(intent);
+						context.startActivity(intent);
+					}
+
 				} else {
 					Log.d(TAG, "알림을표시하지않습니다.");
 				}

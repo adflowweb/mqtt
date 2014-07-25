@@ -27,6 +27,7 @@ public class MainActivity extends WLDroidGap {
 	public void onPause() {
 		Log.d(DEBUGTAG, "onPause시작()");
 		super.onPause();
+		PushApp.activityPaused();
 		Log.d(DEBUGTAG, "onPause종료()");
 	}
 
@@ -41,6 +42,7 @@ public class MainActivity extends WLDroidGap {
 		// }
 
 		super.onResume();
+		PushApp.activityResumed();
 		Log.d(DEBUGTAG, "onResume종료()");
 	}
 
@@ -95,9 +97,13 @@ public class MainActivity extends WLDroidGap {
 				// Log.d(DEBUGTAG, "image::" + extras.get("image"));
 				// super.loadUrl("javascript:$.mobile.changePage('#education',{transition:'slide'});");
 
-				super.loadUrl("javascript:loadEducation('"
-						+ extras.get("image") + "');");
-				Log.d(DEBUGTAG, "calledLoadEducation");
+				Log.d(DEBUGTAG, "카테고리=" + extras.get("category"));
+				super.loadUrl("javascript:refreshFunction('"
+						+ extras.get("category") + "');");
+
+				// super.loadUrl("javascript:loadEducation('"
+				// + extras.get("image") + "');");
+				Log.d(DEBUGTAG, "리프레쉬호출됨");
 				// super.loadUrl("javascript:alert('hello');");
 				// webView.loadUrl("javascript:alert('hello');")
 			}
