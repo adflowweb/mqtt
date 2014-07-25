@@ -68,7 +68,8 @@ public abstract class AbstractMqttServiceImpl implements MqttCallback,
 
 	private static final String[] TOPIC = prop.getProperty("topic").split(",");
 
-	private static final String SERVERURL = prop.getProperty("mq.server.url");
+	private static final String[] SERVERURL = prop.getProperty("mq.server.url")
+			.split(",");
 
 	private static final boolean ssl = Boolean.parseBoolean(prop
 			.getProperty("mq.server.ssl"));
@@ -189,6 +190,7 @@ public abstract class AbstractMqttServiceImpl implements MqttCallback,
 	}
 
 	public void healthCheck() throws Exception {
+
 		if (mqttClient == null) {
 			logger.debug("mqtt연결을처음시도합니다.");
 			connect();
@@ -214,7 +216,8 @@ public abstract class AbstractMqttServiceImpl implements MqttCallback,
 		logger.debug("connect시작()");
 		logger.debug("serverURL=" + SERVERURL);
 		logger.debug("clientID=" + CLIENTID);
-		mqttClient = new MqttAsyncClient(SERVERURL, CLIENTID,
+
+		mqttClient = new MqttAsyncClient(SERVERURL[0], CLIENTID,
 				new MemoryPersistence());
 		logger.debug("mqttClient인스턴스가생성되었습니다.mqttClient=" + mqttClient);
 		mqttClient.setCallback(this);
@@ -232,7 +235,7 @@ public abstract class AbstractMqttServiceImpl implements MqttCallback,
 		logger.debug("serverURL=" + SERVERURL);
 		logger.debug("clientID=" + CLIENTID);
 		mqttClient.close();
-		mqttClient = new MqttAsyncClient(SERVERURL, CLIENTID,
+		mqttClient = new MqttAsyncClient(SERVERURL[0], CLIENTID,
 				new MemoryPersistence());
 		logger.debug("mqttClient인스턴스가생성되었습니다.mqttClient=" + mqttClient);
 		mqttClient.setCallback(this);
@@ -253,6 +256,13 @@ public abstract class AbstractMqttServiceImpl implements MqttCallback,
 		mOpts.setConnectionTimeout(connectionTimeout);
 		mOpts.setKeepAliveInterval(keepAliveInterval);
 		mOpts.setCleanSession(cleanSession);
+
+		// 이중화시 필요함
+		mOpts.setServerURIs(SERVERURL);
+
+		// mOpts.setServerURIs(new String[] { "ssl://adflow.net:1111",
+		// "ssl://adflow.net:2222" });
+
 		// mOpts.setUserName("mqttPushServer");
 		// mOpts.setPassword("password".toCharArray());
 

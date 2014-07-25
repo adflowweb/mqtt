@@ -14,6 +14,7 @@ import javax.annotation.Resource;
 
 import kr.co.adflow.push.domain.Message;
 import kr.co.adflow.push.mapper.MessageMapper;
+import kr.co.adflow.push.service.HAService;
 import kr.co.adflow.push.service.MqttService;
 
 import org.apache.ibatis.session.SqlSession;
@@ -59,6 +60,9 @@ public class MessageHandler implements Runnable {
 
 	@Resource
 	MqttService mqttService;
+
+	@Resource
+	HAService haService;
 
 	@Autowired
 	private SqlSession sqlSession;
@@ -111,6 +115,13 @@ public class MessageHandler implements Runnable {
 			final String orgName = Thread.currentThread().getName();
 			Thread.currentThread().setName("MessagePrecessing " + orgName);
 			first = !first;
+		}
+
+		// 이중화요건
+		// 마스터이면 메시지 처리
+		if (!haService.isActive()) {
+			logger.debug("마스터가아닙니다.");
+			return;
 		}
 
 		logger.debug("메시지처리시작()");

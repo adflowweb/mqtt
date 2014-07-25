@@ -8,6 +8,9 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
+
+import kr.co.adflow.push.service.HAService;
 
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +48,9 @@ public abstract class DefaultSMSHandler implements Runnable {
 			.getProperty("sms.process.interval"));
 
 	private static boolean first = true; // thread name 세팅용
+
+	@Resource
+	HAService haService;
 
 	/**
 	 * initialize
@@ -86,6 +92,14 @@ public abstract class DefaultSMSHandler implements Runnable {
 			Thread.currentThread().setName("SMSPrecessing " + orgName);
 			first = !first;
 		}
+
+		// 이중화요건
+		// 마스터이면 SMS처리
+		if (!haService.isActive()) {
+			logger.debug("마스터가아닙니다.");
+			return;
+		}
+
 		doProcess();
 	}
 

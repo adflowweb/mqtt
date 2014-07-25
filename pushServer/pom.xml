@@ -307,7 +307,8 @@
 				<mq.server.ssl>false</mq.server.ssl>
 
 				<!-- ibm mq 서버주소 -->
-				<mq.server.url>tcp://adflow.net:1883</mq.server.url>
+				<mq.server.url>tcp://adflow.net:3881,tcp://adflow.net:3882</mq.server.url>
+				<!-- <mq.server.url>tcp://adflow.net:1883</mq.server.url> -->
 
 				<!-- <mq.server.url>ssl://adflow.net:8883</mq.server.url> -->
 
@@ -351,7 +352,7 @@
 				<keep.alive.interval>5</keep.alive.interval>
 
 				<!-- mqtt session clean -->
-				<clean.session>true</clean.session>
+				<clean.session>false</clean.session>
 
 				<!-- paho logging level -->
 				<paho.log.level>SEVERE</paho.log.level>

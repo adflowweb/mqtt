@@ -10,6 +10,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 
+import kr.co.adflow.push.service.HAService;
 import kr.co.adflow.push.service.MqttService;
 
 import org.slf4j.LoggerFactory;
@@ -55,6 +56,9 @@ public class HealthCheckHandler implements Runnable {
 	@Resource
 	private MqttService mqttService;
 
+	@Resource
+	HAService haService;
+
 	/**
 	 * initialize
 	 * 
@@ -94,6 +98,13 @@ public class HealthCheckHandler implements Runnable {
 			final String orgName = Thread.currentThread().getName();
 			Thread.currentThread().setName("HealthCheckPrecessing " + orgName);
 			first = !first;
+		}
+
+		// 이중화요건
+		// 마스터이면 헬스체크
+		if (!haService.isActive()) {
+			logger.debug("마스터가아닙니다.");
+			return;
 		}
 
 		logger.debug("healthCheck시작()");

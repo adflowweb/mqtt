@@ -9,9 +9,11 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
 
 import kr.co.adflow.push.bsbank.sms.SMSSender;
 import kr.co.adflow.push.dao.SMSDao;
+import kr.co.adflow.push.service.HAService;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +64,9 @@ public class SMSChannelHandler implements Runnable {
 	@Autowired
 	private SMSDao<SMSSender> smsDao;
 
+	@Resource
+	HAService haService;
+
 	/**
 	 * initialize
 	 * 
@@ -100,6 +105,14 @@ public class SMSChannelHandler implements Runnable {
 
 	@Override
 	public void run() {
+
+		// 이중화요건
+		// 마스터이면 sms채널처리
+		if (!haService.isActive()) {
+			logger.debug("마스터가아닙니다.");
+			return;
+		}
+
 		logger.debug("sendChannel처리시작()");
 		logger.debug("sender=" + smsDao.getSMSSender());
 		try {

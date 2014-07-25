@@ -18,6 +18,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
+import kr.co.adflow.push.service.impl.HAServiceImpl;
+
 import org.slf4j.LoggerFactory;
 
 /**
@@ -82,6 +84,15 @@ public class APIKeyFilter implements Filter {
 		String appContext = httpRequest.getRequestURI().substring(
 				httpRequest.getRequestURI().lastIndexOf("/") + 1);
 		logger.debug("appContext=" + appContext);
+
+		// L4존재하면 필요없음
+		// if (!HAServiceImpl.active) {
+		// logger.debug("마스터가아닙니다.");
+		// httpResponse.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+		// logger.debug("doFilter종료(responseCode=" + httpResponse.getStatus()
+		// + ")");
+		// return;
+		// }
 
 		// /v1/auth 요청일 경우는 X-ApiKey를 체크하지 않음
 		// 이유는 ApiKey를 발급받는 요청이므로 ...
