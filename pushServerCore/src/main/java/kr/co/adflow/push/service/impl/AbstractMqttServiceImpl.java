@@ -5,6 +5,8 @@ import java.net.InetAddress;
 import java.security.MessageDigest;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Properties;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
@@ -46,6 +48,9 @@ public abstract class AbstractMqttServiceImpl implements MqttCallback,
 		MqttService {
 
 	private static final String CONFIG_PROPERTIES = "/config.properties";
+
+	private static SimpleDateFormat formatter = new SimpleDateFormat(
+			"yyyy.MM.dd HH:mm:ss");
 
 	private static final org.slf4j.Logger logger = LoggerFactory
 			.getLogger(AbstractMqttServiceImpl.class);
@@ -464,10 +469,18 @@ public abstract class AbstractMqttServiceImpl implements MqttCallback,
 		// String pushMsg = objectMapper.writeValueAsString(rootNode);
 
 		StringBuffer pushMsg = new StringBuffer();
+
+		Date sendDate = new Date();
+		if (msg.getReservation() != null) {
+			sendDate = msg.getReservation();
+		}
+
 		pushMsg.append("{\"id\":").append(msg.getId()).append(",\"ack\":")
 				.append(msg.isSms()).append(",\"type\":").append(msg.getType())
 				.append(",\"category\":\"").append(msg.getCategory())
-				.append("\",\"content\":").append(msg.getContent()).append("}");
+				.append("\",\"sendDate\":\"")
+				.append(formatter.format(sendDate)).append("\",\"content\":")
+				.append(msg.getContent()).append("}");
 
 		logger.debug("전송될메시지=" + pushMsg);
 

@@ -1,5 +1,8 @@
 package kr.co.adflow.push.handler;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
@@ -47,9 +50,14 @@ public class PushHandler implements MqttCallback {
 	// private static final int connectionTimeout = 5; // second
 	// private static final int connectionTimeout = 2; // second
 	private static final int keepAliveInterval = 480; // second 현재의미없음
-	private static final boolean cleanSession = false;
+	private static final boolean cleanSession = true;
 	// mqttClient 세션로그
 	private static final boolean clientSessionLog = false;
+
+	private static SimpleDateFormat formatter = new SimpleDateFormat(
+			"yyyy.MM.dd HH:mm:ss");
+
+	private static Calendar cal = Calendar.getInstance();
 
 	private Context context;
 	private ADFMqttClient client;
@@ -131,6 +139,9 @@ public class PushHandler implements MqttCallback {
 			final JSONObject content = msg.getJSONObject("content");
 			int msgType = msg.getInt("type");
 
+			Date sendDate = formatter.parse(msg.getString("sendDate"));
+			Log.d(TAG, "sendDate=" + sendDate);
+
 			// 메시지 저장 (SQLite)
 			pushdb.addMessage(userID, msg);
 			// Message result = pushdb.getMessage(msg.getInt("id"));
@@ -180,9 +191,18 @@ public class PushHandler implements MqttCallback {
 					// }.start();
 				}
 
-				JSONObject noti = content.getJSONObject("notification");
-				// showNotify
-				NotificationHandler.notify(context, noti);
+				cal.setTime(new Date());
+				cal.add(cal.HOUR_OF_DAY, -24); // 24시간전
+				Date time = cal.getTime();
+				Log.d(TAG, "기준시간=" + time);
+				if (time.before(sendDate)) {
+					JSONObject noti = content.getJSONObject("notification");
+					// showNotify
+					NotificationHandler.notify(context, noti);
+				} else {
+					Log.d(TAG, "알림을표시하지않습니다.");
+				}
+
 				break;
 			case 100: // subscribe
 				// command msg
