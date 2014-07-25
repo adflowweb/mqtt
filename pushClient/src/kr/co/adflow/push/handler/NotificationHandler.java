@@ -111,7 +111,8 @@ public class NotificationHandler {
 		case BIG_TEXT_STYLE:
 			// bigTextStyle
 			notification = new Notification.BigTextStyle(
-					new Notification.Builder(context).setSound(alarmSound)
+					new Notification.Builder(context).setAutoCancel(true)
+							.setSound(alarmSound)
 							.setLights(Color.BLUE, 500, 500)
 							.setContentTitle(noti.getString("contentTitle"))
 							.setContentText(noti.getString("contentText"))
