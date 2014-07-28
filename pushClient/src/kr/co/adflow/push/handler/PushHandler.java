@@ -43,7 +43,8 @@ public class PushHandler implements MqttCallback {
 	// TAG for debug
 	public static final String TAG = "푸시핸들러";
 	// public static final int alarmInterval = 240; // 4분
-	public static final int alarmInterval = 60; // 1분 for debug
+	// public static final int alarmInterval = 60; // 1분 for debug
+	public static final int alarmInterval = 240; // 4분 for production
 	// private static final String SERVERURL = "ssl://adflow.net:8883";
 	private static final String SERVERURL = "ssl://adflow.net:8883";
 	private static final String MQTT_PACKAGE = "org.eclipse.paho.client.mqttv3";

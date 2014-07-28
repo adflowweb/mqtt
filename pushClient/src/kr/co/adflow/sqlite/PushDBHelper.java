@@ -12,6 +12,7 @@ import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.provider.Settings.Secure;
 import android.util.Log;
 
 /**
@@ -47,6 +48,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
 			"content" };
 	private static final String[] TOPIC_COLUMNS = { "userid", "topic",
 			"subscribe" };
+	private String androidID;
 
 	// create table message ( id int unsigned not null auto_increment, sender
 	// varchar(50), receiver varchar(50), issue datetime, issueSms datetime, sms
@@ -57,6 +59,8 @@ public class PushDBHelper extends SQLiteOpenHelper {
 	public PushDBHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 		Log.d(TAG, "PushDBHelper생성자시작(context=" + context + ")");
+		androidID = Secure.getString(context.getContentResolver(),
+				Secure.ANDROID_ID);
 		Log.d(TAG, "PushDBHelper생성자종료()");
 	}
 
@@ -92,6 +96,13 @@ public class PushDBHelper extends SQLiteOpenHelper {
 				+ "userid TEXT, topic TEXT, subscribe INTEGER, PRIMARY KEY(userid, topic))";
 		// create topic table
 		db.execSQL(CREATE_TOPIC_TABLE);
+
+		String CREATE_DEVICE_TABLE = "CREATE TABLE device ( "
+				+ "id TEXT, PRIMARY KEY(id))";
+		// create device table
+		db.execSQL(CREATE_DEVICE_TABLE);
+
+		db.execSQL("insert into device values (\"" + androidID + "\")");
 
 		Log.d(TAG, "onCreate종료()");
 	}
