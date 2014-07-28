@@ -4,9 +4,31 @@
      "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.co.adflow.push.mapper.DeviceMapper">
 
-	<select id="get" parameterType="java.lang.String" resultType="kr.co.adflow.push.domain.Device">
-		SELECT * FROM device WHERE deviceid =
-		#{deviceID}
+	<select id="get" parameterType="map" resultType="kr.co.adflow.push.domain.Device">
+		SELECT * FROM
+		device WHERE deviceid =
+		#{deviceID} and userid = #{userID}
+	</select>
+
+	<resultMap id="DeviceResult" type="kr.co.adflow.push.domain.Device">
+		<result property="deviceID" column="deviceid" />
+		<result property="userID" column="userid" />
+		<result property="deviceInfo" column="deviceinfo" />
+		<result property="apnsToken" column="apnstoken" />
+		<result property="unRead" column="unread" />
+	</resultMap>
+
+	<select id="getAppleDevicesByUser" parameterType="java.lang.String"
+		resultMap="DeviceResult">
+		SELECT * FROM device WHERE userid =
+		#{userID} and apnstoken
+		is not null
+	</select>
+
+	<select id="getAllAppleDevices" resultMap="DeviceResult">
+		SELECT * FROM device
+		WHERE apnstoken
+		is not null
 	</select>
 
 	<insert id="post" parameterType="kr.co.adflow.push.domain.Device">
@@ -22,6 +44,23 @@
 		WHERE
 		deviceid=#{deviceID}
 	</delete>
+
+	<update id="increaseUnread" parameterType="map">
+		UPDATE device
+		set
+		unread = unread + 1 where deviceid =
+		#{deviceID} and userid =
+		#{userID}
+	</update>
+
+	<update id="putUnread" parameterType="map">
+		UPDATE device
+		set
+		unread =
+		#{unRead} where deviceid =
+		#{deviceID} and userid =
+		#{userID}
+	</update>
 </mapper>	
 	
 	

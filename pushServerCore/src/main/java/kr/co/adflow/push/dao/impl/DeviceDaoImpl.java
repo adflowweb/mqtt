@@ -2,7 +2,9 @@ package kr.co.adflow.push.dao.impl;
 
 import kr.co.adflow.push.dao.DeviceDao;
 import kr.co.adflow.push.domain.Device;
+import kr.co.adflow.push.domain.User;
 import kr.co.adflow.push.mapper.DeviceMapper;
+import kr.co.adflow.push.mapper.UserMapper;
 
 import org.apache.ibatis.session.SqlSession;
 import org.slf4j.LoggerFactory;
@@ -48,6 +50,15 @@ public class DeviceDaoImpl implements DeviceDao {
 		int result = deviceMapper.delete(deviceID);
 		logger.debug("delete종료(result=" + result + ")");
 		return result;
+	}
+
+	@Override
+	public Device[] getByUser(String userID) throws Exception {
+		logger.debug("getByUser시작(userID=" + userID + ")");
+		DeviceMapper dvcMapper = sqlSession.getMapper(DeviceMapper.class);
+		Device[] devices = dvcMapper.getAppleDevicesByUser(userID);
+		logger.debug("getByUser종료(devices=" + devices + ")");
+		return devices;
 	}
 
 }

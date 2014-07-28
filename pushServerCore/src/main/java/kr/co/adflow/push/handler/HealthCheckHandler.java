@@ -104,6 +104,8 @@ public class HealthCheckHandler implements Runnable {
 		// 마스터이면 헬스체크
 		if (!haService.isActive()) {
 			logger.debug("마스터가아닙니다.");
+			// check mqttClient& disconnect
+			//
 			return;
 		}
 

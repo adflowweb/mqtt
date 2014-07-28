@@ -5,9 +5,11 @@ import javax.annotation.PreDestroy;
 
 import kr.co.adflow.push.bsbank.mapper.GroupMapper;
 import kr.co.adflow.push.domain.Acknowledge;
+import kr.co.adflow.push.domain.Device;
 import kr.co.adflow.push.domain.Message;
 import kr.co.adflow.push.domain.User;
 import kr.co.adflow.push.domain.bsbank.PollResponse;
+import kr.co.adflow.push.mapper.DeviceMapper;
 import kr.co.adflow.push.mapper.PollMapper;
 import kr.co.adflow.push.service.impl.AbstractMqttServiceImpl;
 
@@ -147,5 +149,27 @@ public class BSBankMqttServiceImpl extends AbstractMqttServiceImpl {
 			logger.error("에러발생", e);
 		}
 		logger.debug("receivePoll종료()");
+	}
+
+	@Override
+	protected void receiveBadge(String topic, MqttMessage message) {
+		logger.debug("receiveBadge시작(topic=" + topic + ", message=" + message
+				+ ")");
+		try {
+			// db insert ack
+			// convert json string to object
+			Device device = objectMapper.readValue(message.getPayload(),
+					Device.class);
+
+			DeviceMapper deviceMapper = sqlSession
+					.getMapper(DeviceMapper.class);
+			deviceMapper.putUnread(device.getUnRead(), device.getUserID(),
+					device.getDeviceID());
+
+			logger.debug("unRead카운트를 업데이트하였습니다. device=" + device);
+		} catch (Exception e) {
+			logger.error("에러발생", e);
+		}
+		logger.debug("receiveBadge종료()");
 	}
 }

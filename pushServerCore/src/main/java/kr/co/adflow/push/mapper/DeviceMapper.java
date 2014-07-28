@@ -1,10 +1,23 @@
 package kr.co.adflow.push.mapper;
 
+import org.apache.ibatis.annotations.Param;
+
 import kr.co.adflow.push.domain.Device;
 
 public interface DeviceMapper {
 
-	Device get(String deviceID) throws Exception;
+	Device get(@Param("userID") String userID,
+			@Param("deviceID") String deviceID) throws Exception;
+
+	int increaseUnread(@Param("userID") String userID,
+			@Param("deviceID") String deviceID) throws Exception;
+
+	int putUnread(@Param("unRead") int unRead, @Param("userID") String userID,
+			@Param("deviceID") String deviceID) throws Exception;
+
+	Device[] getAppleDevicesByUser(String userID) throws Exception;
+
+	Device[] getAllAppleDevices() throws Exception;
 
 	int post(Device device) throws Exception;
 

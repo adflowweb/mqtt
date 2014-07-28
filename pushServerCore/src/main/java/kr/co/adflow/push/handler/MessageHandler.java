@@ -8,11 +8,15 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import javapns.Push;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 
+import kr.co.adflow.push.domain.Device;
 import kr.co.adflow.push.domain.Message;
+import kr.co.adflow.push.mapper.DeviceMapper;
 import kr.co.adflow.push.mapper.MessageMapper;
 import kr.co.adflow.push.service.HAService;
 import kr.co.adflow.push.service.MqttService;
@@ -20,6 +24,8 @@ import kr.co.adflow.push.service.MqttService;
 import org.apache.ibatis.session.SqlSession;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttException;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -56,6 +62,11 @@ public class MessageHandler implements Runnable {
 	private int messageInterval = Integer.parseInt(prop
 			.getProperty("message.process.interval"));
 
+	// apns key file
+	private String apnsKeyFile = prop.getProperty("apns.key.file");
+
+	private String apnsKeyFilePassword = prop.getProperty("apns.key.password");
+
 	private static boolean first = true;
 
 	@Resource
@@ -68,6 +79,10 @@ public class MessageHandler implements Runnable {
 	private SqlSession sqlSession;
 
 	protected ScheduledExecutorService messageLooper;
+
+	private MessageMapper msgMapper;
+
+	private JSONParser parser = new JSONParser();
 
 	/**
 	 * initialize
@@ -85,6 +100,8 @@ public class MessageHandler implements Runnable {
 					messageInterval, TimeUnit.SECONDS);
 			logger.info("메시지핸들러가시작되었습니다.");
 		}
+
+		msgMapper = sqlSession.getMapper(MessageMapper.class);
 		logger.info("MessageHandler초기화종료()");
 	}
 
@@ -130,8 +147,6 @@ public class MessageHandler implements Runnable {
 			String errMsg = mqttService.getErrorMsg();
 			if (errMsg == null) {
 				// mqtt connection이 정상일때만 처리함
-				MessageMapper msgMapper = sqlSession
-						.getMapper(MessageMapper.class);
 				List<Message> list = (List<Message>) msgMapper
 						.getUndeliveredMsgs();
 				for (Message msg : list) {
@@ -142,13 +157,17 @@ public class MessageHandler implements Runnable {
 							// 아이폰일경우 전체 메시지 or 그룹메시지와 상관없이 apns로 전송해야함
 							// 즉시전송메시지
 							logger.debug("즉시전송대상입니다.발송을시작합니다.");
-							publish(msgMapper, msg);
+							publish(msg);
+							// apns 발송
+							sendAPNS(msg);
 						} else {
 							// 예약메시지
 							logger.debug("예약전송대상입니다.");
 							if (msg.getReservation().before(new Date())) {
 								logger.debug("예약발송을시작합니다.");
-								publish(msgMapper, msg);
+								publish(msg);
+								// apns 발송
+								sendAPNS(msg);
 							}
 						}
 					} catch (MqttException e) {
@@ -177,8 +196,79 @@ public class MessageHandler implements Runnable {
 		logger.debug("메시지처리종료()");
 	}
 
-	private void publish(MessageMapper msgMapper, Message msg) throws Exception {
-		logger.debug("publish시작(msgMapper=" + msgMapper + ", msg=" + msg + ")");
+	private void sendAPNS(Message msg) throws Exception {
+		logger.debug("sendAPNS시작(msg=" + msg + ")");
+		// send apns
+		if (msg.getReceiver().equals("/users")) {
+			// 전체메시지
+			logger.debug("전체메시APNS전송입니다.");
+			// device 테이블에서 apns token 리스트를 가져온다.
+			DeviceMapper deviceMapper = sqlSession
+					.getMapper(DeviceMapper.class);
+			Device[] devices = deviceMapper.getAllAppleDevices();
+			// 가져온리스트로 apns를 발송한다.
+			Message message = msgMapper.get(msg.getId());
+			logger.debug("message(컨텐츠포함)=" + message);
+
+			JSONObject obj = (JSONObject) parser.parse(message.getContent());
+			JSONObject noti = (JSONObject) (obj.get("notification"));
+			String title = (String) (noti.get("contentTitle"));
+			logger.debug("title=" + title);
+
+			for (int i = 0; i < devices.length; i++) {
+				logger.debug("apnsSend. apnsToken=" + devices[i].getApnsToken());
+				Push.combined(title, devices[i].getUnRead() + 1, "default",
+						apnsKeyFile, apnsKeyFilePassword, false,
+						devices[i].getApnsToken());
+				logger.debug("APNS완료.userID=" + devices[i].getUserID()
+						+ ", deivceID=" + devices[i].getDeviceID()
+						+ ", unreadCount=" + (devices[i].getUnRead() + 1));
+				deviceMapper.increaseUnread(devices[i].getUserID(),
+						devices[i].getDeviceID());
+				logger.debug("unread카운트증가완료");
+			}
+
+		} else if (msg.getReceiver().startsWith("/groups")) {
+			// 그룹메시지
+			// 해당그룹사용자를 가져온다.
+			// user 테이블과 맵핑하여 apns token list 를 가져온다.
+			// list기반으로 apns발송한다.
+		} else {
+			logger.debug("개인메시지APNS전송입니다.");
+			// 개인메시지
+			// device 테이블에서 apns token이 있는지 확인후
+			// 있으면 apns발송 아니면 스킵한다.
+			DeviceMapper deviceMapper = sqlSession
+					.getMapper(DeviceMapper.class);
+			String userID = msg.getReceiver().substring(7);
+			logger.debug("userID=" + userID);
+			Device[] devices = deviceMapper.getAppleDevicesByUser(userID);
+
+			Message message = msgMapper.get(msg.getId());
+			logger.debug("message(컨텐츠포함)=" + message);
+
+			JSONObject obj = (JSONObject) parser.parse(message.getContent());
+			JSONObject noti = (JSONObject) (obj.get("notification"));
+			String title = (String) (noti.get("contentTitle"));
+			logger.debug("title=" + title);
+
+			for (int i = 0; i < devices.length; i++) {
+				logger.debug("apnsSend. apnsToken=" + devices[i].getApnsToken());
+				Push.combined(title, devices[i].getUnRead() + 1, "default",
+						apnsKeyFile, apnsKeyFilePassword, false,
+						devices[i].getApnsToken());
+				logger.debug("APNS완료.userID=" + userID + ", deivceID="
+						+ devices[i].getDeviceID() + ", unreadCount="
+						+ (devices[i].getUnRead() + 1));
+				deviceMapper.increaseUnread(userID, devices[i].getDeviceID());
+				logger.debug("unread카운트증가완료");
+			}
+		}
+		logger.debug("sendAPNS종료()");
+	}
+
+	private void publish(Message msg) throws Exception {
+		logger.debug("publish시작(msg=" + msg + ")");
 		Message message = msgMapper.get(msg.getId());
 		logger.debug("message(컨텐츠포함)=" + message);
 		IMqttDeliveryToken token = mqttService.publish(message);

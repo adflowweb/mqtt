@@ -301,7 +301,7 @@
 			<properties>
 
 				<!-- subscribe 해야하는 토픽 -->
-				<topic>/push/poll,/push/ack,/push/group</topic>
+				<topic>/push/poll,/push/ack,/push/group,/push/badge</topic>
 
 				<!-- ibm mq 서버주소 -->
 				<mq.server.ssl>false</mq.server.ssl>

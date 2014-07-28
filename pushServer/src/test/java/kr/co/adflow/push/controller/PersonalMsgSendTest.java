@@ -84,7 +84,7 @@ public class PersonalMsgSendTest extends AbstractTestNGSpringContextTests {
 		Message msg = new Message();
 		msg.setSender("nadir93");
 		//msg.setReceiver("/users/1881059");
-		msg.setReceiver("/users/nadir93");
+		msg.setReceiver("/users/1731124");
 		// msg.setReceiver("/users/chan");
 		// jsonString =
 		// "{\"notification\":{\"notificationStyle\":1,\"contentTitle\":\"교육장소공지\","
