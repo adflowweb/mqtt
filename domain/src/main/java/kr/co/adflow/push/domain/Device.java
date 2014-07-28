@@ -14,6 +14,7 @@ public class Device {
 	private String userID;
 	private String deviceInfo;
 	private String apnsToken;
+	private int unRead;
 
 	public String getDeviceID() {
 		return deviceID;
@@ -47,11 +48,19 @@ public class Device {
 		this.apnsToken = apnsToken;
 	}
 
+	public int getUnRead() {
+		return unRead;
+	}
+
+	public void setUnRead(int unRead) {
+		this.unRead = unRead;
+	}
+
 	@Override
 	public String toString() {
 		return "Device [deviceID=" + deviceID + ", userID=" + userID
 				+ ", deviceInfo=" + deviceInfo + ", apnsToken=" + apnsToken
-				+ "]";
+				+ ", unRead=" + unRead + "]";
 	}
 
 }
