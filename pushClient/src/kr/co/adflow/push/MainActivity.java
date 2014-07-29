@@ -12,6 +12,8 @@ import android.os.Bundle;
 import android.provider.Settings.Secure;
 import android.util.Log;
 
+import com.shortcutBadger.ShortcutBadgeException;
+import com.shortcutBadger.ShortcutBadger;
 import com.worklight.androidgap.WLDroidGap;
 
 /**
@@ -43,6 +45,7 @@ public class MainActivity extends WLDroidGap {
 
 		super.onResume();
 		PushApp.activityResumed();
+
 		Log.d(DEBUGTAG, "onResume종료()");
 	}
 

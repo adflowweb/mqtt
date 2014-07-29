@@ -191,6 +191,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
 			user.setCurrentUser(cursor.getInt(3) != 0);
 			// log
 			Log.d(TAG, "getUser종료(user=" + user + ")");
+			db.close();
 			// 5. return user
 		} catch (CursorIndexOutOfBoundsException e) {
 			Log.e(TAG, "에러발생", e);
@@ -233,6 +234,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
 			user.setCurrentUser(cursor.getInt(3) != 0);
 			// log
 			Log.d(TAG, "getCurrentUser종료(user=" + user + ")");
+			db.close();
 
 		} catch (CursorIndexOutOfBoundsException e) {
 			Log.e(TAG, "에러발생", e);
@@ -353,6 +355,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
 		job.setContent(cursor.getString(3));
 		// log
 		Log.d(TAG, "getJob종료(job=" + job + ")");
+		db.close();
 		// 5. return job
 		return job;
 	}
@@ -425,6 +428,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
 
 		// log
 		Log.d(TAG, "getJobList종료(req=" + req + ")");
+		db.close();
 		// 5. return req
 		return req;
 	}
@@ -453,6 +457,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
 		if (msg.has("category")) {
 			values.put("category", msg.getString("category"));
 		}
+		values.put("read", 1); // 찬호 요청
 
 		// 3. insert
 		db.insertOrThrow(TABLE_MESSAGE, // table
@@ -493,6 +498,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
 		msg.setRead(cursor.getInt(7) != 0);
 		// log
 		Log.d(TAG, "getMessage종료(msg=" + msg + ")");
+		db.close();
 		// 5. return user
 		return msg;
 	}
@@ -543,6 +549,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
 
 		// log
 		Log.d(TAG, "getMessage종료(msg=" + msg + ")");
+		db.close();
 		// 5. return user
 		return msg;
 	}
@@ -592,6 +599,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
 
 		// log
 		Log.d(TAG, "getTopic종료(topic=" + topic + ")");
+		db.close();
 		// 5. return user
 		return topic;
 	}
@@ -667,5 +675,33 @@ public class PushDBHelper extends SQLiteOpenHelper {
 			Log.d(TAG, "getMsgCount종료(count=" + cursor.getString(0) + ")");
 			cursor.moveToNext();
 		}
+		db.close();
+	}
+
+	public synchronized int getUnreadCount() {
+		Log.d(TAG, "getUnreadCount시작()");
+		// 1. get reference to readable DB
+		SQLiteDatabase db = this.getReadableDatabase();
+		// 2. build query
+		Cursor cursor = db.query(TABLE_MESSAGE, // a. table
+				new String[] { "count(*)" }, // b. column names
+				"read = 1", // c. selections //안읽은 메시지 = 1 , 읽은 메시지 = 0
+				null, // d. selections args
+				null, // e. group by
+				null, // f. having
+				null, // g. order by
+				null); // h. limit
+		// 3. if we got results get the first one
+		if (cursor != null)
+			cursor.moveToFirst();
+
+		int count = 0;
+		while (cursor.isAfterLast() == false) {
+			count = Integer.parseInt(cursor.getString(0));
+			// 4. build Topic object
+			Log.d(TAG, "getUnreadCount종료(count=" + count + ")");
+			cursor.moveToNext();
+		}
+		return count;
 	}
 }

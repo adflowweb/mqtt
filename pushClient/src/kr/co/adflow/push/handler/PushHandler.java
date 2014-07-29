@@ -34,6 +34,9 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteConstraintException;
 import android.util.Log;
 
+import com.shortcutBadger.ShortcutBadgeException;
+import com.shortcutBadger.ShortcutBadger;
+
 /**
  * @author nadir93
  * @date 2014. 6. 19.
@@ -44,7 +47,7 @@ public class PushHandler implements MqttCallback {
 	public static final String TAG = "푸시핸들러";
 	// public static final int alarmInterval = 240; // 4분
 	// public static final int alarmInterval = 60; // 1분 for debug
-	public static final int alarmInterval = 240; // 4분 for production
+	public static final int alarmInterval = 60; // 4분 for production
 	// private static final String SERVERURL = "ssl://adflow.net:8883";
 	private static final String SERVERURL = "ssl://adflow.net:8883";
 	private static final String MQTT_PACKAGE = "org.eclipse.paho.client.mqttv3";
@@ -201,10 +204,25 @@ public class PushHandler implements MqttCallback {
 					JSONObject noti = content.getJSONObject("notification");
 					// showNotify
 					NotificationHandler.notify(context, noti);
+
+					// testCode
+					int badgeCount = pushdb.getUnreadCount();
+
+					try {
+						ShortcutBadger.setBadge(context, badgeCount);
+						Log.d(TAG, "뱃지를달았습니다.badgeCount=" + badgeCount);
+					} catch (ShortcutBadgeException e) {
+						e.printStackTrace();
+					}
+
+					// testCodeEnd
+
 					// sendIntent
 					Log.d(TAG, "푸시앱상태=" + PushApp.isActivityVisible());
 
 					if (PushApp.isActivityVisible()) {
+						// 앱활성화 상태일 경우 자바스크립트 호출
+						Log.d(TAG, "자바스크립트(refresh)호출합니다.");
 						Intent intent = new Intent(context,
 								kr.co.adflow.push.MainActivity.class);
 						intent.putExtra("category", msg.getString("category"));
