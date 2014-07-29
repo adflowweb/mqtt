@@ -20,7 +20,7 @@ public class PushService extends Service {
 	// TAG for debug
 	public static final String TAG = "푸시서비스";
 	private static PowerManager.WakeLock wakeLock;
-	private PushHandler pushHandler;
+	public static PushHandler pushHandler;
 
 	public PushService() {
 		Log.d(TAG, "PushService생성자시작()");

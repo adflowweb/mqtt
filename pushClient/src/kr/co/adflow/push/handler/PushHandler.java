@@ -67,7 +67,7 @@ public class PushHandler implements MqttCallback {
 	private Context context;
 	private ADFMqttClient client;
 	private MqttDeliveryToken token;
-	private PushDBHelper pushdb;
+	public static PushDBHelper pushdb;
 	private String tokenID;
 	private String userID;
 

@@ -2,6 +2,7 @@ package kr.co.adflow.push;
 
 import kr.co.adflow.push.handler.PushHandler;
 import kr.co.adflow.receiver.PushBroadcastReceiver;
+import kr.co.adflow.service.PushService;
 import kr.co.adflow.sqlite.PushDBHelper;
 import kr.co.adflow.sqlite.User;
 import android.app.AlarmManager;
@@ -30,6 +31,19 @@ public class MainActivity extends WLDroidGap {
 		Log.d(DEBUGTAG, "onPause시작()");
 		super.onPause();
 		PushApp.activityPaused();
+		// refresh badge
+		PushDBHelper pushDb = PushService.pushHandler.pushdb;
+		Log.d(DEBUGTAG, "pushDb=" + pushDb);
+		if (pushDb != null) {
+			int badgeCount = pushDb.getUnreadCount();
+			try {
+				ShortcutBadger.setBadge(this, badgeCount);
+				Log.d(TAG, "뱃지를달았습니다.badgeCount=" + badgeCount);
+			} catch (ShortcutBadgeException e) {
+				e.printStackTrace();
+			}
+		}
+
 		Log.d(DEBUGTAG, "onPause종료()");
 	}
 
@@ -46,6 +60,9 @@ public class MainActivity extends WLDroidGap {
 		super.onResume();
 		PushApp.activityResumed();
 
+		// refresh
+		super.loadUrl("javascript:andResumeFunction();");
+		Log.d(DEBUGTAG, "andResumeFunction호출됨");
 		Log.d(DEBUGTAG, "onResume종료()");
 	}
 
