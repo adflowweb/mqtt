@@ -685,7 +685,8 @@ public class PushDBHelper extends SQLiteOpenHelper {
 		// 2. build query
 		Cursor cursor = db.query(TABLE_MESSAGE, // a. table
 				new String[] { "count(*)" }, // b. column names
-				"read = 1", // c. selections //안읽은 메시지 = 1 , 읽은 메시지 = 0
+				" read = 1 and type < 100 ", // c. selections //안읽은 메시지 = 1 , 읽은
+												// 메시지 = 0
 				null, // d. selections args
 				null, // e. group by
 				null, // f. having
