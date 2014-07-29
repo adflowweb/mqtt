@@ -22,6 +22,8 @@ public interface UserDao {
 	 */
 	User[] getUsersByDepartment(String dept) throws Exception;
 
+	User[] getUsersBySBSD(String affiliate) throws Exception;
+
 	/**
 	 * @param name
 	 * @return

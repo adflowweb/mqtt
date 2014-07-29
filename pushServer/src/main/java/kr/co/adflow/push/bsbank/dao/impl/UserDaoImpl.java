@@ -56,4 +56,13 @@ public class UserDaoImpl implements UserDao {
 		logger.debug("getUsersByName종료(user=" + user + ")");
 		return user;
 	}
+
+	@Override
+	public User[] getUsersBySBSD(String affiliate) throws Exception {
+		logger.debug("getUsersByDepartment시작(affiliate=" + affiliate + ")");
+		UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+		User[] user = userMapper.getUsersBySBSD(affiliate);
+		logger.debug("getUsersByDepartment종료(user=" + user + ")");
+		return user;
+	}
 }

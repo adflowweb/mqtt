@@ -36,7 +36,20 @@ public class MessageHandler extends AbstractMessageHandler {
 		// 해당그룹사용자를 가져온다.
 		String group = msg.getReceiver().substring(8);
 		logger.debug("group=" + group);
-		User[] users = userDao.getUsersByDepartment(group);
+		int type = msg.getType();
+
+		User[] users = null;
+		if (type == 2) {
+			// 2:계열사
+			logger.debug("계열사메시지입니다.");
+			users = userDao.getUsersBySBSD(group);
+		} else if (type == 3) {
+			// 3:부서
+			logger.debug("부서메시지입니다.");
+			users = userDao.getUsersByDepartment(group);
+		} else {
+			logger.debug("해당타입의처리자가없습니다.");
+		}
 
 		Message message = msgMapper.get(msg.getId());
 		logger.debug("message(컨텐츠포함)=" + message);
@@ -69,5 +82,4 @@ public class MessageHandler extends AbstractMessageHandler {
 		// list기반으로 apns발송한다.
 		logger.debug("sendGroupAPNS종료()");
 	}
-
 }
