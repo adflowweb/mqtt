@@ -324,6 +324,12 @@
 				<!-- LDAP 서버주소 -->
 				<ldap.server.url>130.10.0.32</ldap.server.url>
 
+				<apns.key.file>/Users/nadir93/tmp/cho_push.p12</apns.key.file>
+
+				<apns.key.password>test1234</apns.key.password>
+
+				<apns.production>false</apns.production>
+
 				<!-- 헬스체크여부 -->
 				<health.enable>true</health.enable>
 
@@ -408,6 +414,12 @@
 				<!-- LDAP 서버주소 -->
 				<ldap.server.url>adpusan.co.kr</ldap.server.url>
 
+				<apns.key.file>d:/temp/bsbankpush/keyfile/cho_push.p12</apns.key.file>
+
+				<apns.key.password>test1234</apns.key.password>
+
+				<apns.production>false</apns.production>
+
 				<!-- 헬스체크여부 -->
 				<health.enable>true</health.enable>
 
@@ -491,6 +503,12 @@
 				<!-- <ldap.server.url>130.10.0.32</ldap.server.url> -->
 				<ldap.server.enable>true</ldap.server.enable>
 				<ldap.server.url>adpusan.co.kr</ldap.server.url>
+
+				<apns.key.file>d:/temp/bsbankpush/keyfile/cho_push.p12</apns.key.file>
+
+				<apns.key.password>test1234</apns.key.password>
+
+				<apns.production>false</apns.production>
 
 				<!-- 헬스체크여부 -->
 				<health.enable>true</health.enable>

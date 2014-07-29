@@ -24,6 +24,7 @@ import kr.co.adflow.push.service.MqttService;
 import org.apache.ibatis.session.SqlSession;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.slf4j.LoggerFactory;
@@ -36,10 +37,10 @@ import org.springframework.stereotype.Component;
  * @author nadir93
  * @date 2014. 6. 12.
  */
-@Component
-public class MessageHandler implements Runnable {
+// @Component
+abstract public class AbstractMessageHandler implements Runnable {
 	private static final org.slf4j.Logger logger = LoggerFactory
-			.getLogger(MessageHandler.class);
+			.getLogger(AbstractMessageHandler.class);
 
 	private static final String CONFIG_PROPERTIES = "/config.properties";
 
@@ -47,7 +48,7 @@ public class MessageHandler implements Runnable {
 
 	static {
 		try {
-			prop.load(MessageHandler.class
+			prop.load(AbstractMessageHandler.class
 					.getResourceAsStream(CONFIG_PROPERTIES));
 			logger.debug("속성값=" + prop);
 		} catch (IOException e) {
@@ -63,9 +64,13 @@ public class MessageHandler implements Runnable {
 			.getProperty("message.process.interval"));
 
 	// apns key file
-	private String apnsKeyFile = prop.getProperty("apns.key.file");
+	protected String apnsKeyFile = prop.getProperty("apns.key.file");
 
-	private String apnsKeyFilePassword = prop.getProperty("apns.key.password");
+	protected String apnsKeyFilePassword = prop
+			.getProperty("apns.key.password");
+
+	protected boolean apnsProduction = Boolean.parseBoolean(prop
+			.getProperty("apns.production"));
 
 	private static boolean first = true;
 
@@ -80,9 +85,9 @@ public class MessageHandler implements Runnable {
 
 	protected ScheduledExecutorService messageLooper;
 
-	private MessageMapper msgMapper;
+	protected MessageMapper msgMapper;
 
-	private JSONParser parser = new JSONParser();
+	protected JSONParser parser = new JSONParser();
 
 	/**
 	 * initialize
@@ -207,7 +212,7 @@ public class MessageHandler implements Runnable {
 		// send apns
 		if (msg.getReceiver().equals("/users")) {
 			// 전체메시지
-			logger.debug("전체메시APNS전송입니다.");
+			logger.debug("전체메시APNS전송시작");
 			// device 테이블에서 apns token 리스트를 가져온다.
 			DeviceMapper deviceMapper = sqlSession
 					.getMapper(DeviceMapper.class);
@@ -224,7 +229,7 @@ public class MessageHandler implements Runnable {
 			for (int i = 0; i < devices.length; i++) {
 				logger.debug("apnsSend. apnsToken=" + devices[i].getApnsToken());
 				Push.combined(title, devices[i].getUnRead() + 1, "default",
-						apnsKeyFile, apnsKeyFilePassword, false,
+						apnsKeyFile, apnsKeyFilePassword, apnsProduction,
 						devices[i].getApnsToken());
 				logger.debug("APNS완료.userID=" + devices[i].getUserID()
 						+ ", deivceID=" + devices[i].getDeviceID()
@@ -233,14 +238,16 @@ public class MessageHandler implements Runnable {
 						devices[i].getDeviceID());
 				logger.debug("unread카운트증가완료");
 			}
+			logger.debug("전체메시APNS전송종료");
 
 		} else if (msg.getReceiver().startsWith("/groups")) {
-			// 그룹메시지
-			// 해당그룹사용자를 가져온다.
-			// user 테이블과 맵핑하여 apns token list 를 가져온다.
-			// list기반으로 apns발송한다.
+			logger.debug("그룹메시지APNS전송시작");
+			DeviceMapper deviceMapper = sqlSession
+					.getMapper(DeviceMapper.class);
+			sendGroupAPNS(deviceMapper, msg);
+			logger.debug("그룹메시지APNS전송종료");
 		} else {
-			logger.debug("개인메시지APNS전송입니다.");
+			logger.debug("개인메시지APNS전송시작");
 			// 개인메시지
 			// device 테이블에서 apns token이 있는지 확인후
 			// 있으면 apns발송 아니면 스킵한다.
@@ -261,7 +268,7 @@ public class MessageHandler implements Runnable {
 			for (int i = 0; i < devices.length; i++) {
 				logger.debug("apnsSend. apnsToken=" + devices[i].getApnsToken());
 				Push.combined(title, devices[i].getUnRead() + 1, "default",
-						apnsKeyFile, apnsKeyFilePassword, false,
+						apnsKeyFile, apnsKeyFilePassword, apnsProduction,
 						devices[i].getApnsToken());
 				logger.debug("APNS완료.userID=" + userID + ", deivceID="
 						+ devices[i].getDeviceID() + ", unreadCount="
@@ -272,6 +279,9 @@ public class MessageHandler implements Runnable {
 		}
 		logger.debug("sendAPNS종료()");
 	}
+
+	abstract protected void sendGroupAPNS(DeviceMapper deviceMapper, Message msg)
+			throws Exception;
 
 	private void publish(Message msg) throws Exception {
 		logger.debug("publish시작(msg=" + msg + ")");
