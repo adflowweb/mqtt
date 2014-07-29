@@ -158,16 +158,22 @@ public class MessageHandler implements Runnable {
 							// 즉시전송메시지
 							logger.debug("즉시전송대상입니다.발송을시작합니다.");
 							publish(msg);
-							// apns 발송
-							sendAPNS(msg);
+							if (msg.getType() < 100) {
+								// command message 제외
+								// apns 발송
+								sendAPNS(msg);
+							}
+
 						} else {
 							// 예약메시지
 							logger.debug("예약전송대상입니다.");
 							if (msg.getReservation().before(new Date())) {
 								logger.debug("예약발송을시작합니다.");
 								publish(msg);
-								// apns 발송
-								sendAPNS(msg);
+								if (msg.getType() < 100) {
+									// apns 발송
+									sendAPNS(msg);
+								}
 							}
 						}
 					} catch (MqttException e) {
