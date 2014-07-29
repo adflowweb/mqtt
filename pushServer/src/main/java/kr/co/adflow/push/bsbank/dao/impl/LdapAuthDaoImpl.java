@@ -233,9 +233,6 @@ public class LdapAuthDaoImpl implements LdapAuthDao {
 			// "Password Fail";
 		}
 		logger.debug("auth종료(결과=" + isAuth + ")");
-		// return isAuth;
-		// 임시코드
-		return true;
-		// 임시코드끝
+		return isAuth;
 	}
 }
