@@ -109,4 +109,13 @@ public class UserDaoImpl implements UserDao {
 		logger.debug("getAdmin종료(user=" + users + ")");
 		return users;
 	}
+
+	@Override
+	public int putWithoutRole(User user) throws Exception {
+		logger.debug("putWithoutRole시작(user=" + user + ")");
+		UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+		int result = userMapper.putWithoutRole(user);
+		logger.debug("putWithoutRole종료(result=" + result + ")");
+		return result;
+	}
 }

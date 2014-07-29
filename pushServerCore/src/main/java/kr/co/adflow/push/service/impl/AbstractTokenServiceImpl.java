@@ -21,16 +21,16 @@ import org.springframework.transaction.annotation.Transactional;
  * @date 2014. 4. 14.
  * 
  */
-@Service
-public class TokenServiceImpl implements TokenService {
+// @Service
+abstract public class AbstractTokenServiceImpl implements TokenService {
 	private static final org.slf4j.Logger logger = LoggerFactory
-			.getLogger(TokenServiceImpl.class);
+			.getLogger(AbstractTokenServiceImpl.class);
 
 	@Resource
 	TokenDao tokenDao;
 
 	@Resource
-	UserDao userDao;
+	protected UserDao userDao;
 
 	@Resource
 	DeviceDao deviceDao;

@@ -45,6 +45,16 @@
 		role = #{role} where userid =#{userID}
 	</update>
 
+	<update id="putWithoutRole" parameterType="kr.co.adflow.push.domain.User">
+		UPDATE user
+		set name =
+		#{name},
+		title = #{title}, dept = #{dept}, email = #{email},
+		phone =
+		#{phone}
+		where userid =#{userID}
+	</update>
+
 	<delete id="delete" parameterType="java.lang.String">
 		DELETE from
 		user

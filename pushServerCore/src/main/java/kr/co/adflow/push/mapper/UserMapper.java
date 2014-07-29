@@ -14,6 +14,8 @@ public interface UserMapper {
 
 	int put(User user) throws Exception;
 
+	int putWithoutRole(User user) throws Exception;
+
 	int delete(String userID) throws Exception;
 
 	boolean auth(User user) throws Exception;

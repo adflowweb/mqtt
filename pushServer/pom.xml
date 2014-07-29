@@ -388,7 +388,7 @@
 			<properties>
 
 				<!-- subscribe 해야하는 토픽 -->
-				<topic>/push/poll,/push/ack,/push/group</topic>
+				<topic>/push/poll,/push/ack,/push/group,/push/badge</topic>
 
 				<!-- ibm mq 서버주소 -->
 				<mq.server.ssl>true</mq.server.ssl>
@@ -472,7 +472,8 @@
 			<properties>
 
 				<!-- subscribe 해야하는 토픽 -->
-				<topic>/push/#</topic>
+				<!-- <topic>/push/#</topic> -->
+				<topic>/push/poll,/push/ack,/push/group,/push/badge</topic>
 
 				<!-- ibm mq 서버주소 -->
 				<mq.server.ssl>true</mq.server.ssl>
@@ -488,6 +489,7 @@
 
 				<!-- LDAP 서버주소 -->
 				<!-- <ldap.server.url>130.10.0.32</ldap.server.url> -->
+				<ldap.server.enable>true</ldap.server.enable>
 				<ldap.server.url>adpusan.co.kr</ldap.server.url>
 
 				<!-- 헬스체크여부 -->
