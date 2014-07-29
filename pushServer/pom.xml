@@ -403,7 +403,7 @@
 				<sms.server.port>3000</sms.server.port>
 
 				<!-- LDAP 서버주소 -->
-				<ldap.server.url>130.10.0.32</ldap.server.url>
+				<ldap.server.url>adpusan.co.kr</ldap.server.url>
 
 				<!-- 헬스체크여부 -->
 				<health.enable>true</health.enable>
@@ -484,7 +484,8 @@
 				<sms.server.port>3000</sms.server.port>
 
 				<!-- LDAP 서버주소 -->
-				<ldap.server.url>130.10.0.32</ldap.server.url>
+				<!-- <ldap.server.url>130.10.0.32</ldap.server.url> -->
+				<ldap.server.url>adpusan.co.kr</ldap.server.url>
 
 				<!-- 헬스체크여부 -->
 				<health.enable>true</health.enable>
