@@ -43,21 +43,21 @@ for (i = 0; i < clientCount; i++) {
   //clients[i].subscribe('/push/test');
   clients[i].on('message', function (topic, message) {
 
-    //    if (index == 1) {
-    //      start = new Date().getTime();
-    //      console.log('시작시간=' + start);
-    //    }
+    if (index == 1) {
+      start = new Date().getTime();
+      console.log('시작시간=' + start);
+    }
 
     //var j = message.substring(0,1);
     //index = index + parseInt(j);
     console.log('index=' + (index++));
     //console.log(message);
 
-    //    if (index == 100000) {
-    //      end = new Date().getTime();
-    //      time = end - start;
-    //      console.log('걸린시간=' + time + " ms");
-    //    }
+    if (index == 10000) {
+      end = new Date().getTime();
+      time = end - start;
+      console.log('걸린시간=' + time + " ms");
+    }
   });
 
 }
