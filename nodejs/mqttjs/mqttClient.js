@@ -7,7 +7,7 @@ var mqtt = require('../../../MQTT.js');
 var util = require('util');
 var index = 1;
 var clients = new Array();
-var clientCount = 100;
+var clientCount = 1;
 var connectedCnt = 1;
 var cluster = require('cluster');
 var numCPUs = require('os').cpus().length;
@@ -23,17 +23,27 @@ if (cluster.isMaster) {
     console.log('worker ' + worker.process.pid + ' died');
   });
 
-  cluster.on('fork', function (worker) {
-    console.log('worker=' + worker.process.pid);
-  });
 
 } else {
+
+
+
+}
+
+cluster.on('fork', function (worker) {
+  console.log('workerID=' + worker.id);
+  console.log('worker=' + worker.process.pid);
+  setTimeout(initConnection, worker.id * 10000);
+});
+
+
+function initConnection() {
   for (i = 0; i < clientCount; i++) {
 
     //clients[i] = mqtt.createClient(1883, 'adflow.net');
     //clients[i] = mqtt.createClient(1883, '192.168.0.21', {clientId: 'example' + i, clean: false});
     //clients[i] = mqtt.createClient(1883, '14.63.216.249', {clientId: 'examples' + i, clean: false});
-    clients[i] = mqtt.createClient(1883, '14.63.216.249', {keepalive: 5});
+    clients[i] = mqtt.createClient(1883, '14.63.216.249', {keepalive: 10});
 
     //clients[i] = mqtt.createClient(1883, '172.30.1.60');
     //clients[i] = mqtt.createClient(1883, 'test.mosquitto.org');
@@ -71,8 +81,7 @@ if (cluster.isMaster) {
   }
 
   console.log('clientsInited=' + clients.length);
-
-}
+};
 
 
 
