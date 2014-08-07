@@ -15,76 +15,22 @@ var keepalive = 30;
 var ping = new Buffer('c000',
   'hex').toString('binary');
 
-//process.on('uncaughtException', function (err) {
-//  console.log('에러발생: ' + err);
-//});
+process.on('uncaughtException', function (err) {
+  console.log('에러발생: ' + err);
+});
 
-//for (var i = 0; i < 1; i++) {
-//  setTimeout(socketInit, i * 1000);
-//}
-
+for (var i = 0; i < 10; i++) {
+  setTimeout(socketInit, i * 10000);
+}
 
 function socketClient() {
-  this.start = 0;
-  this.end = 0;
-  this.timer = null;
-  this.clientID = "";
-  this.sock = new net.Socket();
-  that = this;
+  var start;
+  var end;
+  var timer;
+  var clientID;
+  var client = new net.Socket();
 
-
-  // Add a 'data' event handler for the client socket
-  // data is what the server sent to this socket
-  this.sock.on('data', function (data) {
-    var dataHex = new Buffer(data, 'binary').toString('hex');
-    console.log('DATA: ' + dataHex);
-
-    if (dataHex == '20020000') {
-      console.log('mqtt브로커연결에성공하였습니다.');
-      that.sendPING();
-      console.log('start=' + start);
-    } else if (dataHex == 'd000') {
-      console.log('핑을받았습니다.');
-      that.resetTimer();
-      end = new Date();
-      console.log('걸린시간=' + (end - start) + 'ms');
-      setTimeout(that.sendPING, keepalive * 1000);
-    }
-    // Close the client socket completely
-    //client.destroy();
-  });
-
-  // Add a 'close' event handler for the client socket
-  this.sock.on('close', function () {
-    console.log('Connection closed');
-  });
-
-
-  this.sendPING = function () {
-    console.log('핑을보냅니다.c000');
-    that.sock.write(ping);
-    that.start = new Date();
-    that.setTimer();
-  };
-
-  this.setTimer = function () {
-    console.log('타이머를설정합니다..');
-    that.timer = setTimeout(that.closeClient, keepalive * 1000);
-  };
-
-  this.resetTimer = function () {
-    console.log('타이머를제거합니다.');
-    clearTimeout(that.timer);
-  };
-
-  this.closeClient = function () {
-    console.log('연결을종료합니다.');
-    that.sock.destroy();
-  };
-};
-
-socketClient.prototype.connect = function () {
-  this.sock.connect(PORT, HOST, function () {
+  client.connect(PORT, HOST, function () {
     console.log('CONNECTED TO: ' + HOST + ':' + PORT);
     //var keepaliveHex = keepalive.toString(16);
     console.log('keepalive=' + keepalive + '초');
@@ -96,36 +42,82 @@ socketClient.prototype.connect = function () {
       'hex').toString('binary');
 
     //console.log('that='+that);
-    //console.log('that.sock=' + util.inspect(that.sock));
-    console.log('addr=' + util.inspect(that.sock.address()));
-
-    that.sock.write(data);
+    console.log('client=' + util.inspect(client.address()));
+    client.write(data);
   });
+
+  // Add a 'data' event handler for the client socket
+  // data is what the server sent to this socket
+  client.on('data', function (data) {
+    var dataHex = new Buffer(data, 'binary').toString('hex');
+    console.log('DATA: ' + dataHex);
+
+    if (dataHex == '20020000') {
+      console.log('mqtt브로커연결에성공하였습니다.');
+      sendPING();
+      console.log('start=' + start);
+    } else if (dataHex == 'd000') {
+      console.log('핑을받았습니다.');
+      resetTimer();
+      end = new Date();
+      console.log('걸린시간=' + (end - start) + 'ms');
+      setTimeout(sendPING, keepalive * 1000);
+    }
+    // Close the client socket completely
+    //client.destroy();
+  });
+
+  // Add a 'close' event handler for the client socket
+  client.on('close', function () {
+    console.log('Connection closed');
+  });
+
+  var generateClientID = function () {
+    return 'adflow_' + crypto.randomBytes(8).toString('hex');
+  };
+
+  var decimalToHex = function (d, padding) {
+    var hex = Number(d).toString(16);
+    padding = typeof (padding) === "undefined" || padding === null ? padding = 2 : padding;
+
+    while (hex.length < padding) {
+      hex = "0" + hex;
+    }
+    return hex;
+  };
+
+  var sendPING = function () {
+    console.log('핑을보냅니다.c000');
+    client.write(ping);
+    start = new Date();
+    setTimer();
+  };
+
+  var setTimer = function () {
+    console.log('타이머를설정합니다..');
+    timer = setTimeout(closeClient, keepalive * 1000);
+  };
+
+  var resetTimer = function () {
+    console.log('타이머를제거합니다.');
+    clearTimeout(timer);
+  };
+
+  var closeClient = function () {
+    console.log('연결을종료합니다.');
+    client.destroy();
+  };
 };
 
-var decimalToHex = function (d, padding) {
-  var hex = Number(d).toString(16);
-  padding = typeof (padding) === "undefined" || padding === null ? padding = 2 : padding;
-
-  while (hex.length < padding) {
-    hex = "0" + hex;
+function socketInit() {
+  for (var i = 0; i < 100; i++) {
+    socketClient();
   }
-  return hex;
-};
-
-var generateClientID = function () {
-  return 'adflow_' + crypto.randomBytes(8).toString('hex');
-};
-
-//function socketInit() {
-//  for (var i = 0; i < 2; i++) {
-//    new socketClient().connect();
-//  }
-//}
+}
 
 
 //socketClient.prototype
 
 //new socketClient();
-module.exports = socketClient;
+//module.exports = socketClient;
 
