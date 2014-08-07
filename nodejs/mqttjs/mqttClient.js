@@ -25,15 +25,15 @@ if (cluster.isMaster) {
 
 
 } else {
-
-
+  console.log('workerID=' + cluster.worker.id);
+  setTimeout(initConnection, cluster.worker.id * 100000);
 
 }
 
 cluster.on('fork', function (worker) {
   console.log('workerID=' + worker.id);
   console.log('worker=' + worker.process.pid);
-  setTimeout(initConnection, worker.id * 10000);
+
 });
 
 
@@ -43,7 +43,7 @@ function initConnection() {
     //clients[i] = mqtt.createClient(1883, 'adflow.net');
     //clients[i] = mqtt.createClient(1883, '192.168.0.21', {clientId: 'example' + i, clean: false});
     //clients[i] = mqtt.createClient(1883, '14.63.216.249', {clientId: 'examples' + i, clean: false});
-    clients[i] = mqtt.createClient(1883, '14.63.216.249', {keepalive: 10});
+    clients[i] = mqtt.createClient(1883, '14.63.216.249', {keepalive: 60});
 
     //clients[i] = mqtt.createClient(1883, '172.30.1.60');
     //clients[i] = mqtt.createClient(1883, 'test.mosquitto.org');

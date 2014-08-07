@@ -5,7 +5,7 @@
  */
 var mqtt = require('mqtt');
 var index = 0;
-var loopCount = 10000;
+var loopCount = 1;
 //var client = mqtt.createClient(1883, '192.168.0.21');
 var client = mqtt.createClient(1883, '14.63.216.249');
 var callbackCnt = 1;
@@ -30,9 +30,9 @@ function publish() {
 
   for (var i = 0; i < loopCount; i++) {
     //console.log('index::' + (index + 1));
-    client.publish('/push/test001', (index + 1) + ' 0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789', {'qos': 2}, function (err) {
+    client.publish('/push/test002', (index + 1) + ' 0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789', {'qos': 2}, function (err) {
       console.log('callbacked' + (callbackCnt++));
-      if (callbackCnt == 10000) {
+      if ((callbackCnt % 100) == 0) {
         var end = new Date().getTime();
         var time = end - start;
         console.log('걸린시간=' + time);
@@ -41,8 +41,6 @@ function publish() {
     });
     index++;
   }
-
-
 
 
   //  if (index < loopCount) {
