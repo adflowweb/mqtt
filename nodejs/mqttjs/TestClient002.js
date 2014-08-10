@@ -1,7 +1,7 @@
 /**
  * User: nadir93
  * Date: 2014. 8. 7.
- * Time: 오전 9:54
+ * Time: 오후 5:56
  */
 var net = require('net');
 var crypto = require('crypto');
@@ -11,7 +11,7 @@ var util = require('util');
 //var HOST = '172.30.1.39';
 var HOST = '175.209.8.188';
 var PORT = 1883;
-var keepalive = 30;
+var keepalive = 600;
 var ping = new Buffer('c000',
   'hex').toString('binary');
 
@@ -19,11 +19,11 @@ process.on('uncaughtException', function (err) {
   console.log('에러발생: ' + err);
 });
 
-for (var i = 0; i < 20; i++) {
-  setTimeout(socketInit, i * 10000);
-}
+//for (var i = 0; i < 10; i++) {
+//  setTimeout(socketInit, i * 10000);
+//}
 
-function socketClient() {
+function mqttClient() {
   var start;
   var end;
   var timer;
@@ -31,18 +31,19 @@ function socketClient() {
   var client = new net.Socket();
 
   client.connect(PORT, HOST, function () {
-    console.log('CONNECTED TO: ' + HOST + ':' + PORT);
+    console.log('소켓이연결되었습니다.' + HOST + ':' + PORT);
     //var keepaliveHex = keepalive.toString(16);
     console.log('keepalive=' + keepalive + '초');
-    var hex1 = '102500064d5149736470030200' + decimalToHex(keepalive) + '0017';
+    var connectHexStr = '102500064d51497364700302' + decimalToHex(keepalive, 4) + '0017';
+    console.log('connectHexString=' + connectHexStr);
     clientID = generateClientID();
     console.log('clientID=' + clientID);
     var cliendIDHex = new Buffer(clientID).toString('hex');
-    var data = new Buffer(hex1 + cliendIDHex,
+    var data = new Buffer(connectHexStr + cliendIDHex,
       'hex').toString('binary');
 
-    //console.log('that='+that);
-    console.log('client=' + util.inspect(client.address()));
+    //console.log('data=' + data.toString('hex'));
+    console.log('socket=' + util.inspect(client.address()));
     client.write(data);
   });
 
@@ -50,7 +51,7 @@ function socketClient() {
   // data is what the server sent to this socket
   client.on('data', function (data) {
     var dataHex = new Buffer(data, 'binary').toString('hex');
-    console.log('DATA: ' + dataHex);
+    console.log('RECEIVED=' + dataHex);
 
     if (dataHex == '20020000') {
       console.log('mqtt브로커연결에성공하였습니다.');
@@ -109,15 +110,16 @@ function socketClient() {
   };
 };
 
-function socketInit() {
-  for (var i = 0; i < 100; i++) {
-    socketClient();
-  }
-}
+//function socketInit() {
+//  for (var i = 0; i < 100; i++) {
+//    socketClient();
+//  }
+//}
 
 
 //socketClient.prototype
 
 //new socketClient();
-//module.exports = socketClient;
+module.exports = mqttClient;
+
 
