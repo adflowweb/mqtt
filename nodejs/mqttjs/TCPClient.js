@@ -7,41 +7,56 @@ var client = require('./TestClient003');
 var util = require('util');
 var clients = new Array();
 
-global.adflow = {
+adflow = {
   start: 0,
   end: 0,
   pingCount: 0,
   max: 0,
   min: 0,
   avg: 0,
-  clientCount: 100
+  clientCount: 100,
+  keepalive: 30,
+  host: '175.209.8.188',
+  port: 1883
 };
+
+console.log('adflow=' + util.inspect(adflow));
 
 //process.on('uncaughtException', function (err) {
 //  console.log('에러발생: ' + err);
 //});
 
 setInterval(function () {
-  if (global.adflow.pingCount > 0) {
-    console.log('pingCount=' + global.adflow.pingCount);
-    console.log('max=' + global.adflow.max + ' ms');
-    console.log('min=' + global.adflow.min + ' ms');
-    console.log('avg=' + (global.adflow.avg / global.adflow.pingCount) + ' ms');
+  if (adflow.pingCount > 0) {
+    console.log('pingRespCount=' + adflow.pingCount);
+    console.log('max=' + adflow.max + ' ms');
+    console.log('min=' + adflow.min + ' ms');
+    console.log('avg=' + (adflow.avg / adflow.pingCount) + ' ms');
 
-    global.adflow.min = 0;
-    global.adflow.max = 0;
-    global.adflow.avg = 0;
-    global.adflow.pingCount = 0;
+    adflow.min = 0;
+    adflow.max = 0;
+    adflow.avg = 0;
+    adflow.pingCount = 0;
   }
 }, 1000);
 
 
-for (var i = 0; i < global.adflow.clientCount; i++) {
-  clients[i] = new client();
-  clients[i].connect();
-  clients[i].on('data', clients[i].receivedData);
-  clients[i].on('close', clients[i].close);
+for (var i = 0; i < adflow.clientCount; i++) {
+
+  setTimeout(initClient, i * 1);
+  //clients[i] = new client();
+  //clients[i].connect();
+  //clients[i].on('data', clients[i].receivedData);
+  //clients[i].on('close', clients[i].close);
+
   //  clients[i] = new client();
   //  clients[i].connect();
   //client();
+}
+
+function initClient() {
+  var mqttClient = new client();
+  mqttClient.connect();
+  mqttClient.on('data', mqttClient.receivedData);
+  mqttClient.on('close', mqttClient.close);
 }

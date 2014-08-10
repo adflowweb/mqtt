@@ -10,9 +10,9 @@ var EventEmitter = require('events').EventEmitter;
 
 //var HOST = '14.63.216.254';
 //var HOST = '172.30.1.39';
-var HOST = '175.209.8.188';
-var PORT = 1883;
-var keepalive = 15;
+//var HOST = '175.209.8.188';
+//var PORT = 1883;
+//var keepalive = 15;
 var ping = new Buffer('c000',
   'hex').toString('binary');
 
@@ -43,13 +43,13 @@ MqttClient.prototype.connect = function () {
   //console.log('connect시작.');
   //console.log('this=' + util.inspect(this));
   var that = this;
-  this.client.connect(PORT, HOST, function () {
+  this.client.connect(adflow.port, adflow.host, function () {
     //console.log('connect콜백시작');
     //console.log('소켓이연결되었습니다.' + HOST + ':' + PORT);
     //var keepaliveHex = keepalive.toString(16);
 
     //console.log('keepalive=' + keepalive + '초');
-    var connectHexStr = '102500064d51497364700302' + decimalToHex(keepalive, 4) + '0017';
+    var connectHexStr = '102500064d51497364700302' + decimalToHex(adflow.keepalive, 4) + '0017';
     //console.log('connectHexString=' + connectHexStr);
     that.clientID = generateClientID();
     //console.log('clientID=' + that.clientID);
@@ -88,17 +88,17 @@ MqttClient.prototype.receivedData = function (data) {
     var elapsedTime = this.end - this.start;
     //console.log('걸린시간=' + elapsedTime + 'ms');
 
-    global.adflow.avg = global.adflow.avg + elapsedTime;
+    adflow.avg = adflow.avg + elapsedTime;
 
-    if (global.adflow.max < elapsedTime) {
-      global.adflow.max = elapsedTime;
+    if (adflow.max < elapsedTime) {
+      adflow.max = elapsedTime;
     }
 
-    if (global.adflow.min > elapsedTime) {
-      global.adflow.min = elapsedTime;
+    if (adflow.min > elapsedTime) {
+      adflow.min = elapsedTime;
     }
 
-    global.adflow.pingCount++;
+    adflow.pingCount++;
 
     //setTimeout(this.sendPING, keepalive * 1000);
     var that = this;
@@ -108,7 +108,7 @@ MqttClient.prototype.receivedData = function (data) {
       that.client.write(ping);
       that.start = new Date();
       that.setTimer();
-    }, keepalive * 1000);
+    }, adflow.keepalive * 1000);
   }
   // Close the client socket completely
   //client.destroy();
@@ -132,7 +132,7 @@ MqttClient.prototype.setTimer = function () {
     console.log('destroy시작');
     that.client.destroy();
     console.log('destroy종료');
-  }, keepalive * 1000);
+  }, adflow.keepalive * 1000);
   // console.log('setTimer종료');
 };
 
