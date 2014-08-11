@@ -101,7 +101,7 @@ MqttClient.prototype.receivedData = function (data) {
       //console.log('ping=' + ping.toString('hex'));
       that.client.write(ping);
       that.start = new Date();
-      that.setTimer();
+      that.setTimer(that);
     }, adflow.keepalive * 1000);
 
 
@@ -131,7 +131,7 @@ MqttClient.prototype.receivedData = function (data) {
       //console.log('client=' + that.clientID);
       that.client.write(ping);
       that.start = new Date();
-      that.setTimer();
+      that.setTimer(that);
     }, adflow.keepalive * 1000);
   } else if (dataHex == '9003265c02') {
     //console.log('subscribe성공');
@@ -157,19 +157,19 @@ MqttClient.prototype.receivedData = function (data) {
   //console.log('receiveData종료');
 };
 
-MqttClient.prototype.sendPING = function () {
-  //console.log('sendPING시작');
-  //console.log('client=' + this.clientID);
-  this.client.write(ping);
-  this.start = new Date();
-  this.setTimer();
-  //console.log('sendPING종료');
-};
+//MqttClient.prototype.sendPING = function () {
+//  //console.log('sendPING시작');
+//  //console.log('client=' + this.clientID);
+//  this.client.write(ping);
+//  this.start = new Date();
+//  this.setTimer();
+//  //console.log('sendPING종료');
+//};
 
-MqttClient.prototype.setTimer = function () {
+MqttClient.prototype.setTimer = function (that) {
   // console.log('setTimer시작');
-  var that = this;
-  this.timer = setTimeout(function () {
+  //var that = this;
+  that.timer = setTimeout(function () {
     console.log('타임아웃(pingResp가오지않음)');
     that.client.destroy();
   }, adflow.keepalive * 1000);
