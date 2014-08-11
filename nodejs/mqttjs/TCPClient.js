@@ -63,6 +63,7 @@ function initClient() {
   mqttClient.connect();
   mqttClient.on('data', mqttClient.receivedData);
   mqttClient.on('close', mqttClient.close);
+  clients.push(mqttClient);
 }
 
 if (typeof String.prototype.startsWith != 'function') {
