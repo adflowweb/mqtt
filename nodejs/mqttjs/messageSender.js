@@ -3,11 +3,12 @@
  * Date: 2014. 2. 7.
  * Time: 오후 1:33
  */
-var mqtt = require('mqtt');
+var mqtt = require('../../../MQTT.js');
 var index = 0;
 var loopCount = 1;
 //var client = mqtt.createClient(1883, '192.168.0.21');
-var client = mqtt.createClient(1883, '14.63.216.249');
+//var client = mqtt.createClient(1883, '14.63.216.249');
+var client = mqtt.createClient(1883, '175.209.8.188');
 var callbackCnt = 1;
 //var client = mqtt.createClient(3881, 'adflow.net');
 //var client = mqtt.createClient(1883, 'test.mosquitto.org');

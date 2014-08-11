@@ -14,11 +14,12 @@ adflow = {
   max: 0,
   min: 0,
   avg: 0,
-  clientCount: 100,
-  keepalive: 30,
+  clientCount: 1,
+  keepalive: 15,
   host: '175.209.8.188',
   port: 1883,
-  topic: '/users'
+  topic: '/push/test002',
+  recvMsgCount: 0
 };
 
 console.log('adflow=' + util.inspect(adflow));
@@ -33,11 +34,13 @@ setInterval(function () {
     console.log('max=' + adflow.max + ' ms');
     console.log('min=' + adflow.min + ' ms');
     console.log('avg=' + (adflow.avg / adflow.pingCount) + ' ms');
+    console.log('recvMsgCount=' + adflow.recvMsgCount);
 
     adflow.min = 0;
     adflow.max = 0;
     adflow.avg = 0;
     adflow.pingCount = 0;
+    adflow.recvMsgCount = 0;
   }
 }, 1000);
 
@@ -60,4 +63,11 @@ function initClient() {
   mqttClient.connect();
   mqttClient.on('data', mqttClient.receivedData);
   mqttClient.on('close', mqttClient.close);
+}
+
+if (typeof String.prototype.startsWith != 'function') {
+  // see below for better implementation!
+  String.prototype.startsWith = function (str) {
+    return this.indexOf(str) == 0;
+  };
 }

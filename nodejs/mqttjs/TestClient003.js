@@ -32,6 +32,7 @@ function MqttClient() {
   this.timer = null;
   this.clientID;
   this.client = new net.Socket();
+  this.msgID = '0001';
 
   this.client.on('data', this.emit.bind(this, 'data'));
   this.client.on('close', this.emit.bind(this, 'close'));
@@ -50,7 +51,9 @@ MqttClient.prototype.connect = function () {
     //var keepaliveHex = keepalive.toString(16);
 
     //console.log('keepalive=' + keepalive + '초');
-    var connectHexStr = '102500064d51497364700302' + decimalToHex(adflow.keepalive, 4) + '0017';
+    //cleansesssion = true
+    var connectFlags = '02';
+    var connectHexStr = '102500064d514973647003' + connectFlags + decimalToHex(adflow.keepalive, 4) + '0017';
     //console.log('connectHexString=' + connectHexStr);
     that.clientID = generateClientID();
     //console.log('clientID=' + that.clientID);
@@ -83,7 +86,8 @@ MqttClient.prototype.receivedData = function (data) {
     //console.log('mqtt브로커연결에성공하였습니다.');
 
     //send subscribe
-    var subscribeHexStr = '8212265c000d2f707573682f7465737430303202';
+    var msgID = '1226';
+    var subscribeHexStr = '82' + msgID + '5c000d2f707573682f7465737430303202';
     var subscribe = new Buffer(subscribeHexStr, 'hex');
     //.toString('binary');
     //console.log('subscribe=' + subscribe.toString('hex'));
@@ -131,7 +135,22 @@ MqttClient.prototype.receivedData = function (data) {
     }, adflow.keepalive * 1000);
   } else if (dataHex == '9003265c02') {
     //console.log('subscribe성공');
+  } else if (dataHex.substring(0, 4) == '3475') {
+    this.msgID = dataHex.substring(34, 38);
+    //console.log('msgID=' + this.msgID);
+    //console.log('pubrecSend');
+    var pubrec = new Buffer('5002' + this.msgID, 'hex');
+    this.client.write(pubrec);
+  } else if (dataHex == '6202' + this.msgID) {
+    // console.log('pubcompSend');
+    var pubcomp = new Buffer('7002' + this.msgID, 'hex');
+    this.client.write(pubcomp);
+    adflow.recvMsgCount++;
   }
+
+  //console.log('type=' + typeof dataHex);
+
+
   // Close the client socket completely
   //client.destroy();
 
