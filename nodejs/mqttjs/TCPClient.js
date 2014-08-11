@@ -29,19 +29,19 @@ console.log('adflow=' + util.inspect(adflow));
 //});
 
 setInterval(function () {
-  if (adflow.pingCount > 0) {
-    console.log('pingRespCount=' + adflow.pingCount);
-    console.log('max=' + adflow.max + ' ms');
-    console.log('min=' + adflow.min + ' ms');
-    console.log('avg=' + (adflow.avg / adflow.pingCount) + ' ms');
-    console.log('recvMsgCount=' + adflow.recvMsgCount);
+  //if (adflow.pingCount > 0) {
+  console.log('pingRespCount=' + adflow.pingCount);
+  console.log('max=' + adflow.max + ' ms');
+  console.log('min=' + adflow.min + ' ms');
+  console.log('avg=' + (adflow.avg / adflow.pingCount) + ' ms');
+  console.log('recvMsgCount=' + adflow.recvMsgCount);
 
-    adflow.min = 0;
-    adflow.max = 0;
-    adflow.avg = 0;
-    adflow.pingCount = 0;
-    adflow.recvMsgCount = 0;
-  }
+  adflow.min = 0;
+  adflow.max = 0;
+  adflow.avg = 0;
+  adflow.pingCount = 0;
+  adflow.recvMsgCount = 0;
+  //}
 }, 1000);
 
 

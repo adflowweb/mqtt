@@ -170,9 +170,8 @@ MqttClient.prototype.setTimer = function () {
   // console.log('setTimer시작');
   var that = this;
   this.timer = setTimeout(function () {
-    console.log('destroy시작');
+    console.log('타임아웃(pingResp가오지않음)');
     that.client.destroy();
-    console.log('destroy종료');
   }, adflow.keepalive * 1000);
   // console.log('setTimer종료');
 };
@@ -184,7 +183,7 @@ MqttClient.prototype.resetTimer = function () {
 };
 
 MqttClient.prototype.close = function () {
-  console.log('연결이종료됩니댜.');
+  console.log('연결이종료되었습니다.');
 };
 
 //function socketInit() {
