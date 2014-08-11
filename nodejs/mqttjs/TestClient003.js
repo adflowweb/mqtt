@@ -13,8 +13,9 @@ var EventEmitter = require('events').EventEmitter;
 //var HOST = '175.209.8.188';
 //var PORT = 1883;
 //var keepalive = 15;
-var ping = new Buffer('c000',
-  'hex').toString('binary');
+var ping = new Buffer('c000', 'hex'
+);
+//.toString('binary');
 
 process.on('uncaughtException', function (err) {
   console.log('에러발생: ' + err);
@@ -55,13 +56,15 @@ MqttClient.prototype.connect = function () {
     //console.log('clientID=' + that.clientID);
     var cliendIDHex = new Buffer(that.clientID).toString('hex');
     var data = new Buffer(connectHexStr + cliendIDHex,
-      'hex').toString('binary');
+      'hex');
+    //.toString('binary');
     //console.log('data=' + data.toString('hex'));
     //console.log('client=' + util.inspect(this.address()));
     //console.log('that=' + util.inspect(that));
 
 
     // console.log('socket=' + util.inspect(that.client.address()));
+    //send mqtt connect
     that.client.write(data);
     //console.log('connect콜백종료');
   });
@@ -78,7 +81,26 @@ MqttClient.prototype.receivedData = function (data) {
 
   if (dataHex == '20020000') {
     //console.log('mqtt브로커연결에성공하였습니다.');
-    this.sendPING();
+
+    //send subscribe
+    var subscribeHexStr = '8212265c000d2f707573682f7465737430303202';
+    var subscribe = new Buffer(subscribeHexStr, 'hex');
+    //.toString('binary');
+    //console.log('subscribe=' + subscribe.toString('hex'));
+    this.client.write(subscribe);
+
+    //send ping
+    var that = this;
+    setTimeout(function () {
+      //console.log('핑을보냅니다.c000');
+      //console.log('client=' + that.clientID);
+      //console.log('ping=' + ping.toString('hex'));
+      that.client.write(ping);
+      that.start = new Date();
+      that.setTimer();
+    }, adflow.keepalive * 1000);
+
+
     //console.log('start=' + this.start);
   } else if (dataHex == 'd000') {
     //console.log('핑을받았습니다.');
@@ -89,7 +111,6 @@ MqttClient.prototype.receivedData = function (data) {
     //console.log('걸린시간=' + elapsedTime + 'ms');
 
     adflow.avg = adflow.avg + elapsedTime;
-
     if (adflow.max < elapsedTime) {
       adflow.max = elapsedTime;
     }
@@ -97,7 +118,6 @@ MqttClient.prototype.receivedData = function (data) {
     if (adflow.min > elapsedTime) {
       adflow.min = elapsedTime;
     }
-
     adflow.pingCount++;
 
     //setTimeout(this.sendPING, keepalive * 1000);
@@ -109,6 +129,8 @@ MqttClient.prototype.receivedData = function (data) {
       that.start = new Date();
       that.setTimer();
     }, adflow.keepalive * 1000);
+  } else if (dataHex == '9003265c02') {
+    //console.log('subscribe성공');
   }
   // Close the client socket completely
   //client.destroy();

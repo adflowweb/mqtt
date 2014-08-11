@@ -17,7 +17,8 @@ adflow = {
   clientCount: 100,
   keepalive: 30,
   host: '175.209.8.188',
-  port: 1883
+  port: 1883,
+  topic: '/users'
 };
 
 console.log('adflow=' + util.inspect(adflow));

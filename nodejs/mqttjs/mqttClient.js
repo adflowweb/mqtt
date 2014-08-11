@@ -26,7 +26,7 @@ if (cluster.isMaster) {
 
 } else {
   console.log('workerID=' + cluster.worker.id);
-  setTimeout(initConnection, cluster.worker.id * 100000);
+  setTimeout(initConnection, cluster.worker.id * 1000);
 
 }
 
