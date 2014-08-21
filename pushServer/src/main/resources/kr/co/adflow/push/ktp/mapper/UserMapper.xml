@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.adflow.push.ktp.mapper.UserMapper">
+
+	<select id="get" parameterType="java.lang.String"
+		resultType="kr.co.adflow.push.domain.ktp.User">
+		SELECT * FROM ${db.table.user}
+		WHERE gw_stf_cdnm =
+		#{gw_stf_cdnm}
+	</select>
+
+	<resultMap id="UserResult" type="kr.co.adflow.push.domain.ktp.User">
+		<result property="gw_sbsd_cdnm" column="gw_sbsd_cdnm" />
+		<result property="gw_stf_cdnm" column="gw_stf_cdnm" />
+		<result property="gw_deptmt_cdnm" column="gw_deptmt_cdnm" />
+		<result property="gw_user_nm" column="gw_user_nm" />
+		<result property="gw_psit_cdnm" column="gw_psit_cdnm" />
+		<result property="gw_psinm" column="gw_psinm" />
+		<result property="gw_jgd_cdnm" column="gw_jgd_cdnm" />
+		<result property="gw_jgd_nm" column="gw_jgd_nm" />
+		<result property="gw_rsb_cdnm" column="gw_rsb_cdnm" />
+		<result property="gw_rsb_nm" column="gw_rsb_nm" />
+		<result property="mpno" column="mpno" />
+	</resultMap>
+
+	<select id="getUsersByDepartment" parameterType="java.lang.String"
+		resultMap="UserResult">
+		SELECT * FROM ${db.table.user}
+		WHERE gw_deptmt_cdnm =
+		#{gw_deptmt_cdnm}
+	</select>
+
+	<select id="getUsersBySBSD" parameterType="java.lang.String"
+		resultMap="UserResult">
+		SELECT * FROM ${db.table.user}
+		WHERE gw_sbsd_cdnm =
+		#{gw_sbsd_cdnm}
+	</select>
+
+
+	<select id="getUsersByName" parameterType="java.lang.String"
+		resultMap="UserResult">
+		SELECT * FROM ${db.table.user}
+		WHERE gw_user_nm like
+		${db.sql.getUsersByName}
+		<!-- SELECT * FROM emp WHERE gw_user_nm like '%#{name}%' -->
+	</select>
+
+	<select id="getAllUser" resultMap="UserResult">
+		SELECT * FROM ${db.table.user}
+	</select>
+</mapper>	
+	
+	

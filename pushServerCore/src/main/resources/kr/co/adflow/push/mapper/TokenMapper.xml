@@ -12,15 +12,14 @@
 	<select id="getLatest" parameterType="kr.co.adflow.push.domain.Token"
 		resultType="kr.co.adflow.push.domain.Token">
 		SELECT * FROM token WHERE
-		userid= #{userID} and deviceid=
-		#{deviceID} order
+		userid= #{userID} order
 		by issue desc limit 1
 	</select>
 
 	<insert id="post" parameterType="kr.co.adflow.push.domain.Token">
 		INSERT INTO
 		token
-		values(#{tokenID}, #{userID}, #{deviceID}, now())
+		values(#{tokenID}, #{userID}, now())
 	</insert>
 
 	<select id="validate" resultType="boolean">

@@ -77,7 +77,10 @@ public class UserServiceImpl implements UserService {
 	public Token auth(User user) throws Exception {
 		logger.debug("auth시작(user=" + user + ")");
 
-		boolean rst = userDao.auth(user);
+		// KTP - Ldap 인증 무
+		//boolean rst = userDao.auth(user);
+		boolean rst = true;
+		
 		Token token = null;
 		if (rst) {
 			// token 발급

@@ -71,9 +71,9 @@
 	<bean id="bsBanksqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSourceBSBank" />
 		<!-- 아래부분은 매핑할 xml파일이 있는 패키지경로를 설정한다. -->
-		<property name="typeAliasesPackage" value="kr.co.adflow.push.bsbank.mapper" />
+		<property name="typeAliasesPackage" value="kr.co.adflow.push.ktp.mapper" />
 		<property name="mapperLocations"
-			value="classpath:kr/co/adflow/push/bsbank/mapper/*.xml" />
+			value="classpath:kr/co/adflow/push/ktp/mapper/*.xml" />
 	</bean>
 
 	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">

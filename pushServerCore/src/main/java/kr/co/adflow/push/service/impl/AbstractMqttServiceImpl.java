@@ -383,9 +383,9 @@ public abstract class AbstractMqttServiceImpl implements MqttCallback,
 			receiveAck(topic, message);
 		} else if (topic.equals("/push/group")) {
 			receiveGroup(topic, message);
-		} else if (topic.equals("/push/poll")) {
-			// 설문조사용
-			receivePoll(topic, message);
+//		} else if (topic.equals("/push/poll")) {
+//			// 설문조사용
+//			receivePoll(topic, message);
 		} else if (topic.equals("/push/badge")) {
 			receiveBadge(topic, message);
 		} else {
@@ -398,7 +398,7 @@ public abstract class AbstractMqttServiceImpl implements MqttCallback,
 
 	abstract protected void receiveGroup(String topic, MqttMessage message);
 
-	abstract protected void receivePoll(String topic, MqttMessage message);
+//	abstract protected void receivePoll(String topic, MqttMessage message);
 
 	abstract protected void receiveBadge(String topic, MqttMessage message);
 

@@ -277,9 +277,9 @@
 							<targetPath>META-INF</targetPath>
 						</resource>
 						<resource>
-							<directory>src/main/resources/kr/co/adflow/push/bsbank/mapper</directory>
+							<directory>src/main/resources/kr/co/adflow/push/ktp/mapper</directory>
 							<filtering>true</filtering>
-							<targetPath>WEB-INF/classes/kr/co/adflow/push/bsbank/mapper</targetPath>
+							<targetPath>WEB-INF/classes/kr/co/adflow/push/ktp/mapper</targetPath>
 						</resource>
 					</webResources>
 				</configuration>
@@ -308,7 +308,8 @@
 
 				<!-- ibm mq 서버주소 -->
 				<!-- <mq.server.url>tcp://adflow.net:3881,tcp://adflow.net:3882</mq.server.url> -->
-				<mq.server.url>tcp://adflow.net:1883</mq.server.url>
+				<!-- <mq.server.url>tcp://adflow.net:1883</mq.server.url> -->
+				<mq.server.url>tcp://14.63.216.249:1883</mq.server.url>
 
 				<!-- <mq.server.url>ssl://adflow.net:8883</mq.server.url> -->
 
@@ -343,7 +344,7 @@
 				<message.process.interval>15</message.process.interval>
 
 				<!--SMS process enable/disable -->
-				<sms.enable>true</sms.enable>
+				<sms.enable>false</sms.enable>
 
 				<!-- SMS processing interval (second) -->
 				<sms.process.interval>30</sms.process.interval>
