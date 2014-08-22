@@ -105,4 +105,11 @@ public class TokenDaoImpl implements TokenDao {
 	// logger.debug("validate종료(true)");
 	// return true;
 	// }
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see kr.co.adflow.push.dao.TokenDAO#get(java.lang.String)
+	 */
+	
 }

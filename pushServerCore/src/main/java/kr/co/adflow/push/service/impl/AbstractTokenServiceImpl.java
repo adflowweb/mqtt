@@ -91,7 +91,12 @@ abstract public class AbstractTokenServiceImpl implements TokenService {
 		Device device = new Device();
 		device.setDeviceID(user.getDeviceID());
 		device.setUserID(user.getUserID());
-		device.setApnsToken(user.getApnsToken());
+		
+		//KTP-skip-start
+//		device.setApnsToken(user.getApnsToken());
+		//KTP-skip-end
+		
+		
 		try {
 			deviceDao.post(device);
 		} catch (DuplicateKeyException e) {
@@ -103,7 +108,11 @@ abstract public class AbstractTokenServiceImpl implements TokenService {
 		// issue desc limit 1;
 		Token token = new Token();
 		token.setUserID(user.getUserID());
-		token.setDeviceID(user.getDeviceID());
+		
+		//KTP-skip-start
+//		token.setDeviceID(user.getDeviceID());
+		//KTP-skip-end
+		
 		Token rst = tokenDao.getLatest(token);
 
 		// 발급시간에 따른 토큰 재발급로직... 추가해야함

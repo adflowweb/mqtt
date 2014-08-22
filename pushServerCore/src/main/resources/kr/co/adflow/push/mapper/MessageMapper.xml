@@ -24,7 +24,7 @@
 		<result property="type" column="type" />
 		<result property="content" column="content" />
 		<result property="status" column="status" />
-		<result property="category" column="category" />
+		<result property="serviceID" column="serviceID" />
 	</resultMap>
 
 	<select id="getUndeliveredMsgs" resultMap="MessageResult">
@@ -64,14 +64,14 @@
 	<insert id="postMsg" parameterType="kr.co.adflow.push.domain.Message">
 		INSERT INTO
 		message (sender, receiver, sms, timeOut, qos, retained,
-		reservation, type, status, category) values(
+		reservation, type, status, serviceID) values(
 		#{sender}, #{receiver},
 		#{sms},
 		#{timeOut},
 		#{qos},
 		#{retained}, #{reservation}, #{type},
 		#{status},
-		#{category}
+		#{serviceID}
 		)
 		<selectKey keyProperty="id" resultType="Integer" order="AFTER">
 			SELECT
@@ -86,7 +86,7 @@
 		timeOut = #{timeOut}, qos = #{qos}, retained = #{retained},
 		reservation =
 		#{reservation}, type = #{type}, status = #{status} ,
-		category = #{category} where
+		serviceID = #{serviceID} where
 		id = #{id}
 	</update>
 

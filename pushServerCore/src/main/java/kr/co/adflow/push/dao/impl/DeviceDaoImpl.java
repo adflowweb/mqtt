@@ -34,7 +34,7 @@ public class DeviceDaoImpl implements DeviceDao {
 		logger.debug("post시작(device=" + device + ")");
 		DeviceMapper deviceMapper = sqlSession.getMapper(DeviceMapper.class);
 		int result = deviceMapper.post(device);
-		logger.debug("post종료(updates=" + device + ")");
+		logger.debug("post종료(insert=" + device + ")");
 		return result;
 	}
 
@@ -53,12 +53,12 @@ public class DeviceDaoImpl implements DeviceDao {
 	}
 
 	@Override
-	public Device[] getByUser(String userID) throws Exception {
+	public Device getByUser(String userID) throws Exception {
 		logger.debug("getByUser시작(userID=" + userID + ")");
 		DeviceMapper dvcMapper = sqlSession.getMapper(DeviceMapper.class);
-		Device[] devices = dvcMapper.getAppleDevicesByUser(userID);
-		logger.debug("getByUser종료(devices=" + devices + ")");
-		return devices;
+		Device device = dvcMapper.getByUser(userID);
+		logger.debug("getByUser종료(devices=" + device + ")");
+		return device;
 	}
 
 }

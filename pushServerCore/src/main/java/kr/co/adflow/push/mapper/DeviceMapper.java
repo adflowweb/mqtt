@@ -15,7 +15,7 @@ public interface DeviceMapper {
 	int putUnread(@Param("unRead") int unRead, @Param("userID") String userID,
 			@Param("deviceID") String deviceID) throws Exception;
 
-	Device[] getAppleDevicesByUser(String userID) throws Exception;
+	Device getByUser(String userID) throws Exception;
 
 	Device[] getAllAppleDevices() throws Exception;
 

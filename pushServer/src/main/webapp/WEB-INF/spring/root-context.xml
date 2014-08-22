@@ -19,14 +19,14 @@
 		<property name="resourceRef" value="true" />
 	</bean>
 
-	<bean id="dataSourceBSBank" class="org.springframework.jndi.JndiObjectFactoryBean"
+<!-- 	<bean id="dataSourceBSBank" class="org.springframework.jndi.JndiObjectFactoryBean"
 		scope="singleton">
 		<property name="jndiName">
 			<value>java:comp/env/jdbc/bsbank</value>
 		</property>
 		<property name="resourceRef" value="true" />
 	</bean>
-
+ -->
 	<!-- <bean id="dataSourceBSBank" class="org.springframework.jndi.JndiObjectFactoryBean" 
 		scope="singleton"> <property name="jndiName"> <value>java:comp/env/jdbc/bsbank</value> 
 		</property> <property name="resourceRef" value="true" /> </bean> -->
@@ -37,10 +37,10 @@
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 
-	<bean id="transactionManagerBSBank"
+<!-- 	<bean id="transactionManagerBSBank"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSourceBSBank" />
-	</bean>
+	</bean> -->
 
 	<!-- <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean"> 
 		<property name="dataSource" ref="dataSource" /> <property name="typeAliasesPackage" 
@@ -54,19 +54,19 @@
 		<property name="mapperLocations" value="classpath:kr/co/adflow/push/mapper/*.xml" />
 	</bean>
 
-	<bean id="bsBanksqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+<!-- 	<bean id="bsBanksqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSourceBSBank" />
-		<!-- 아래부분은 매핑할 xml파일이 있는 패키지경로를 설정한다. -->
+		아래부분은 매핑할 xml파일이 있는 패키지경로를 설정한다.
 		<property name="typeAliasesPackage" value="kr.co.adflow.push.ktp.mapper" />
 		<property name="mapperLocations"
 			value="classpath:kr/co/adflow/push/ktp/mapper/*.xml" />
-	</bean>
+	</bean> -->
 
 	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
 		<constructor-arg name="sqlSessionFactory" ref="sqlSessionFactory" />
 	</bean>
 
-	<bean id="bsBanksqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+<!-- 	<bean id="bsBanksqlSession" class="org.mybatis.spring.SqlSessionTemplate">
 		<constructor-arg name="sqlSessionFactory" ref="bsBanksqlSessionFactory" />
-	</bean>
+	</bean> -->
 </beans>

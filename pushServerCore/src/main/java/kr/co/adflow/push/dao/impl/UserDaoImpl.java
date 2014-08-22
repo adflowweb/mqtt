@@ -2,7 +2,6 @@ package kr.co.adflow.push.dao.impl;
 
 import javax.annotation.Resource;
 
-import kr.co.adflow.push.dao.LdapAuthDao;
 import kr.co.adflow.push.dao.UserDao;
 import kr.co.adflow.push.domain.User;
 import kr.co.adflow.push.mapper.UserMapper;
@@ -26,8 +25,8 @@ public class UserDaoImpl implements UserDao {
 	@Autowired
 	private SqlSession sqlSession;
 
-	@Resource
-	private LdapAuthDao ldap;
+//	@Resource
+//	private LdapAuthDao ldap;
 
 	/*
 	 * (non-Javadoc)
@@ -96,9 +95,10 @@ public class UserDaoImpl implements UserDao {
 		// boolean rst = userMapper.auth(user);
 
 		// ldap 인증
-		boolean rst = ldap.auth(user.getUserID(), user.getPassword());
-		logger.debug("auth종료(result=" + rst + ")");
-		return rst;
+//		boolean rst = ldap.auth(user.getUserID(), user.getPassword());
+//		logger.debug("auth종료(result=" + rst + ")");
+//		return rst;
+		return true;
 	}
 
 	@Override
@@ -110,12 +110,14 @@ public class UserDaoImpl implements UserDao {
 		return users;
 	}
 
-	@Override
-	public int putWithoutRole(User user) throws Exception {
-		logger.debug("putWithoutRole시작(user=" + user + ")");
-		UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
-		int result = userMapper.putWithoutRole(user);
-		logger.debug("putWithoutRole종료(result=" + result + ")");
-		return result;
-	}
+	//KTP-skip-start
+//	@Override
+//	public int putWithoutRole(User user) throws Exception {
+//		logger.debug("putWithoutRole시작(user=" + user + ")");
+//		UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+//		int result = userMapper.putWithoutRole(user);
+//		logger.debug("putWithoutRole종료(result=" + result + ")");
+//		return result;
+//	}
+	//KTP-skip-end
 }

@@ -68,7 +68,7 @@ public class Message {
 
 	private int status;
 
-	private String category;
+	private String serviceID;
 
 	public int getId() {
 		return id;
@@ -180,12 +180,12 @@ public class Message {
 		this.status = status;
 	}
 
-	public String getCategory() {
-		return category;
+	public String getServiceID() {
+		return serviceID;
 	}
 
-	public void setCategory(String category) {
-		this.category = category;
+	public void setServiceID(String serviceID) {
+		this.serviceID = serviceID;
 	}
 
 	@Override
@@ -195,7 +195,7 @@ public class Message {
 				+ ", issueSms=" + issueSms + ", qos=" + qos + ", retained="
 				+ retained + ", sms=" + sms + ", timeOut=" + timeOut
 				+ ", reservation=" + reservation + ", type=" + type
-				+ ", status=" + status + ", category=" + category + "]";
+				+ ", status=" + status + ", serviceID=" + serviceID + "]";
 	}
 
 }

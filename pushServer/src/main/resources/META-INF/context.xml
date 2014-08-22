@@ -7,11 +7,4 @@
 		username="root" password="passw0rd" maxActive="20" maxIdle="10"
 		maxWait="10000" validationQuery="SELECT 1" validationInterval="30000"
 		testWhileIdle="true" />
-	<Resource type="javax.sql.DataSource" name="jdbc/bsbank"
-		factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
-		driverClassName="${db.driverClass}" url="${db.connectionURL}"
-		username="${db.username}" password="${db.password}" maxActive="${db.maxActive}"
-		maxIdle="${db.maxIdle}" maxWait="${db.maxWait}" validationQuery="${db.validationQuery}"
-		validationInterval="${db.validationInterval}" testWhileIdle="${db.testWhileIdle}"
-		testOnBorrow="${db.testOnBorrow}" />
 </Context>

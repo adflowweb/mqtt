@@ -45,6 +45,8 @@
 		role = #{role} where userid =#{userID}
 	</update>
 
+
+<!-- KTP-skip-start 
 	<update id="putWithoutRole" parameterType="kr.co.adflow.push.domain.User">
 		UPDATE user
 		set name =
@@ -53,7 +55,9 @@
 		phone =
 		#{phone}
 		where userid =#{userID}
-	</update>
+	</update> 
+	
+	KTP-skip-end -->
 
 	<delete id="delete" parameterType="java.lang.String">
 		DELETE from

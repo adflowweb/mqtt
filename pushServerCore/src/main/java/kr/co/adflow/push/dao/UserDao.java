@@ -14,7 +14,9 @@ public interface UserDao {
 
 	int put(User user) throws Exception;
 
-	int putWithoutRole(User user) throws Exception;
+	//KTP-skip-start
+//	int putWithoutRole(User user) throws Exception;
+	//KTP-skip-end
 
 	int delete(String userID) throws Exception;
 

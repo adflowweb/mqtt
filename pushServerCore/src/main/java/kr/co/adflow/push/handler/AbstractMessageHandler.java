@@ -38,7 +38,7 @@ import org.springframework.stereotype.Component;
  * @date 2014. 6. 12.
  */
 // @Component
-abstract public class AbstractMessageHandler implements Runnable {
+public class AbstractMessageHandler implements Runnable {
 	private static final org.slf4j.Logger logger = LoggerFactory
 			.getLogger(AbstractMessageHandler.class);
 
@@ -163,11 +163,14 @@ abstract public class AbstractMessageHandler implements Runnable {
 							// 즉시전송메시지
 							logger.debug("즉시전송대상입니다.발송을시작합니다.");
 							publish(msg);
-							if (msg.getType() < 100) {
-								// command message 제외
-								// apns 발송
-								sendAPNS(msg);
-							}
+							
+							//KTP-skip-start
+//							if (msg.getType() < 100) {
+//								// command message 제외
+//								// apns 발송
+//								sendAPNS(msg);
+//							}
+							//KTP-skip-end
 
 						} else {
 							// 예약메시지
@@ -175,10 +178,13 @@ abstract public class AbstractMessageHandler implements Runnable {
 							if (msg.getReservation().before(new Date())) {
 								logger.debug("예약발송을시작합니다.");
 								publish(msg);
-								if (msg.getType() < 100) {
-									// apns 발송
-									sendAPNS(msg);
-								}
+								
+								//KTP-skip-start
+//								if (msg.getType() < 100) {
+//									// apns 발송
+//									sendAPNS(msg);
+//								}
+								//KTP-skip-end
 							}
 						}
 					} catch (MqttException e) {
@@ -207,81 +213,81 @@ abstract public class AbstractMessageHandler implements Runnable {
 		logger.debug("메시지처리종료()");
 	}
 
-	private void sendAPNS(Message msg) throws Exception {
-		logger.debug("sendAPNS시작(msg=" + msg + ")");
-		// send apns
-		if (msg.getReceiver().equals("/users")) {
-			// 전체메시지
-			logger.debug("전체메시APNS전송시작");
-			// device 테이블에서 apns token 리스트를 가져온다.
-			DeviceMapper deviceMapper = sqlSession
-					.getMapper(DeviceMapper.class);
-			Device[] devices = deviceMapper.getAllAppleDevices();
-			// 가져온리스트로 apns를 발송한다.
-			Message message = msgMapper.get(msg.getId());
-			logger.debug("message(컨텐츠포함)=" + message);
+	//KTP-skip-start
+//	private void sendAPNS(Message msg) throws Exception {
+//		logger.debug("sendAPNS시작(msg=" + msg + ")");
+//		// send apns
+//		if (msg.getReceiver().equals("/users")) {
+//			// 전체메시지
+//			logger.debug("전체메시APNS전송시작");
+//			// device 테이블에서 apns token 리스트를 가져온다.
+//			DeviceMapper deviceMapper = sqlSession
+//					.getMapper(DeviceMapper.class);
+//			Device[] devices = deviceMapper.getAllAppleDevices();
+//			// 가져온리스트로 apns를 발송한다.
+//			Message message = msgMapper.get(msg.getId());
+//			logger.debug("message(컨텐츠포함)=" + message);
+//
+//			JSONObject obj = (JSONObject) parser.parse(message.getContent());
+//			JSONObject noti = (JSONObject) (obj.get("notification"));
+//			String title = (String) (noti.get("contentTitle"));
+//			logger.debug("title=" + title);
+//
+//			for (int i = 0; i < devices.length; i++) {
+//				logger.debug("apnsSend. apnsToken=" + devices[i].getApnsToken());
+//				Push.combined(title, devices[i].getUnRead() + 1, "default",
+//						apnsKeyFile, apnsKeyFilePassword, apnsProduction,
+//						devices[i].getApnsToken());
+//				logger.debug("APNS완료.userID=" + devices[i].getUserID()
+//						+ ", deivceID=" + devices[i].getDeviceID()
+//						+ ", unreadCount=" + (devices[i].getUnRead() + 1));
+//				deviceMapper.increaseUnread(devices[i].getUserID(),
+//						devices[i].getDeviceID());
+//				logger.debug("unread카운트증가완료");
+//			}
+//			logger.debug("전체메시APNS전송종료");
+//
+//		} else if (msg.getReceiver().startsWith("/groups")) {
+//			logger.debug("그룹메시지APNS전송시작");
+//			DeviceMapper deviceMapper = sqlSession
+//					.getMapper(DeviceMapper.class);
+////			sendGroupAPNS(deviceMapper, msg);
+//			logger.debug("그룹메시지APNS전송종료");
+//		} else {
+//			logger.debug("개인메시지APNS전송시작");
+//			// 개인메시지
+//			// device 테이블에서 apns token이 있는지 확인후
+//			// 있으면 apns발송 아니면 스킵한다.
+//			DeviceMapper deviceMapper = sqlSession
+//					.getMapper(DeviceMapper.class);
+//			String userID = msg.getReceiver().substring(7);
+//			logger.debug("userID=" + userID);
+//			Device[] devices = deviceMapper.getAppleDevicesByUser(userID);
+//
+//			Message message = msgMapper.get(msg.getId());
+//			logger.debug("message(컨텐츠포함)=" + message);
+//
+//			JSONObject obj = (JSONObject) parser.parse(message.getContent());
+//			JSONObject noti = (JSONObject) (obj.get("notification"));
+//			String title = (String) (noti.get("contentTitle"));
+//			logger.debug("title=" + title);
+//
+//			for (int i = 0; i < devices.length; i++) {
+//				logger.debug("apnsSend. apnsToken=" + devices[i].getApnsToken());
+//				Push.combined(title, devices[i].getUnRead() + 1, "default",
+//						apnsKeyFile, apnsKeyFilePassword, apnsProduction,
+//						devices[i].getApnsToken());
+//				logger.debug("APNS완료.userID=" + userID + ", deivceID="
+//						+ devices[i].getDeviceID() + ", unreadCount="
+//						+ (devices[i].getUnRead() + 1));
+//				deviceMapper.increaseUnread(userID, devices[i].getDeviceID());
+//				logger.debug("unread카운트증가완료");
+//			}
+//		}
+//		logger.debug("sendAPNS종료()");
+//	}
+	//KTP-skip-end
 
-			JSONObject obj = (JSONObject) parser.parse(message.getContent());
-			JSONObject noti = (JSONObject) (obj.get("notification"));
-			String title = (String) (noti.get("contentTitle"));
-			logger.debug("title=" + title);
-
-			for (int i = 0; i < devices.length; i++) {
-				logger.debug("apnsSend. apnsToken=" + devices[i].getApnsToken());
-				Push.combined(title, devices[i].getUnRead() + 1, "default",
-						apnsKeyFile, apnsKeyFilePassword, apnsProduction,
-						devices[i].getApnsToken());
-				logger.debug("APNS완료.userID=" + devices[i].getUserID()
-						+ ", deivceID=" + devices[i].getDeviceID()
-						+ ", unreadCount=" + (devices[i].getUnRead() + 1));
-				deviceMapper.increaseUnread(devices[i].getUserID(),
-						devices[i].getDeviceID());
-				logger.debug("unread카운트증가완료");
-			}
-			logger.debug("전체메시APNS전송종료");
-
-		} else if (msg.getReceiver().startsWith("/groups")) {
-			logger.debug("그룹메시지APNS전송시작");
-			DeviceMapper deviceMapper = sqlSession
-					.getMapper(DeviceMapper.class);
-			sendGroupAPNS(deviceMapper, msg);
-			logger.debug("그룹메시지APNS전송종료");
-		} else {
-			logger.debug("개인메시지APNS전송시작");
-			// 개인메시지
-			// device 테이블에서 apns token이 있는지 확인후
-			// 있으면 apns발송 아니면 스킵한다.
-			DeviceMapper deviceMapper = sqlSession
-					.getMapper(DeviceMapper.class);
-			String userID = msg.getReceiver().substring(7);
-			logger.debug("userID=" + userID);
-			Device[] devices = deviceMapper.getAppleDevicesByUser(userID);
-
-			Message message = msgMapper.get(msg.getId());
-			logger.debug("message(컨텐츠포함)=" + message);
-
-			JSONObject obj = (JSONObject) parser.parse(message.getContent());
-			JSONObject noti = (JSONObject) (obj.get("notification"));
-			String title = (String) (noti.get("contentTitle"));
-			logger.debug("title=" + title);
-
-			for (int i = 0; i < devices.length; i++) {
-				logger.debug("apnsSend. apnsToken=" + devices[i].getApnsToken());
-				Push.combined(title, devices[i].getUnRead() + 1, "default",
-						apnsKeyFile, apnsKeyFilePassword, apnsProduction,
-						devices[i].getApnsToken());
-				logger.debug("APNS완료.userID=" + userID + ", deivceID="
-						+ devices[i].getDeviceID() + ", unreadCount="
-						+ (devices[i].getUnRead() + 1));
-				deviceMapper.increaseUnread(userID, devices[i].getDeviceID());
-				logger.debug("unread카운트증가완료");
-			}
-		}
-		logger.debug("sendAPNS종료()");
-	}
-
-	abstract protected void sendGroupAPNS(DeviceMapper deviceMapper, Message msg)
-			throws Exception;
 
 	private void publish(Message msg) throws Exception {
 		logger.debug("publish시작(msg=" + msg + ")");

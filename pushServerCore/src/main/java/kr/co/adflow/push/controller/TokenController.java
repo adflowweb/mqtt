@@ -65,9 +65,7 @@ public class TokenController {
 	@ResponseBody
 	public Response post(@RequestBody Token token) throws Exception {
 		logger.debug("token=" + token);
-		if (token.getUserID() == null || token.getDeviceID() == null
-				|| token.getUserID().equals("")
-				|| token.getDeviceID().equals("")) {
+		if (token.getUserID() == null || token.getUserID().equals("")) {
 			Result<Object> result = new Result<Object>();
 			result.setSuccess(true);
 			List<String> messages = new ArrayList<String>() {
@@ -81,7 +79,11 @@ public class TokenController {
 
 		User user = new User();
 		user.setUserID(token.getUserID());
-		user.setDeviceID(token.getDeviceID());
+		
+		//KTP-skip-start
+//		user.setDeviceID(token.getDeviceID());
+		//KTP-skip-end
+		
 		Token rst = tokenService.post(user);
 		Result<Token> result = new Result<Token>();
 		result.setSuccess(true);

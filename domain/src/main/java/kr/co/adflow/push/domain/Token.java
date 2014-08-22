@@ -19,7 +19,6 @@ public class Token {
 
 	private String tokenID;
 	private String userID;
-	private String deviceID;
 	private Date issue;
 	private Role[] role;
 
@@ -42,14 +41,6 @@ public class Token {
 		this.userID = userID;
 	}
 
-	public String getDeviceID() {
-		return deviceID;
-	}
-
-	public void setDeviceID(String deviceID) {
-		this.deviceID = deviceID;
-	}
-
 	public Date getIssue() {
 		// return sdf.format(issue);
 		return issue;
@@ -70,7 +61,7 @@ public class Token {
 	@Override
 	public String toString() {
 		return "Token [tokenID=" + tokenID + ", userID=" + userID
-				+ ", deviceID=" + deviceID + ", issue=" + issue + ", role="
+				+ ", issue=" + issue + ", role="
 				+ Arrays.toString(role) + "]";
 	}
 

@@ -10,7 +10,7 @@ import kr.co.adflow.push.domain.Device;
 public interface DeviceDao {
 	Device get(String deviceID) throws Exception;
 
-	Device[] getByUser(String userID) throws Exception;
+	Device getByUser(String userID) throws Exception;
 
 	int post(Device device) throws Exception;
 

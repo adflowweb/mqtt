@@ -381,13 +381,13 @@ public abstract class AbstractMqttServiceImpl implements MqttCallback,
 
 		if (topic.equals("/push/ack")) {
 			receiveAck(topic, message);
-		} else if (topic.equals("/push/group")) {
-			receiveGroup(topic, message);
-//		} else if (topic.equals("/push/poll")) {
-//			// 설문조사용
-//			receivePoll(topic, message);
-		} else if (topic.equals("/push/badge")) {
-			receiveBadge(topic, message);
+//		} else if (topic.equals("/push/group")) {
+//			receiveGroup(topic, message);
+////		} else if (topic.equals("/push/poll")) {
+////			// 설문조사용
+////			receivePoll(topic, message);
+//		} else if (topic.equals("/push/badge")) {
+//			receiveBadge(topic, message);
 		} else {
 			logger.error("적절한토픽처리자가없습니다.");
 		}
@@ -396,11 +396,11 @@ public abstract class AbstractMqttServiceImpl implements MqttCallback,
 
 	abstract protected void receiveAck(String topic, MqttMessage message);
 
-	abstract protected void receiveGroup(String topic, MqttMessage message);
-
-//	abstract protected void receivePoll(String topic, MqttMessage message);
-
-	abstract protected void receiveBadge(String topic, MqttMessage message);
+//	abstract protected void receiveGroup(String topic, MqttMessage message);
+//
+////	abstract protected void receivePoll(String topic, MqttMessage message);
+//
+//	abstract protected void receiveBadge(String topic, MqttMessage message);
 
 	/*
 	 * (non-Javadoc)
@@ -481,7 +481,7 @@ public abstract class AbstractMqttServiceImpl implements MqttCallback,
 
 		pushMsg.append("{\"id\":").append(msg.getId()).append(",\"ack\":")
 				.append(msg.isSms()).append(",\"type\":").append(msg.getType())
-				.append(",\"category\":\"").append(msg.getCategory())
+				.append(",\"serviceID\":\"").append(msg.getServiceID())
 				.append("\",\"sendDate\":\"")
 				.append(formatter.format(sendDate)).append("\",\"content\":")
 				.append(msg.getContent()).append("}");

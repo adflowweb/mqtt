@@ -18,11 +18,10 @@
 		<result property="unRead" column="unread" />
 	</resultMap>
 
-	<select id="getAppleDevicesByUser" parameterType="java.lang.String"
-		resultMap="DeviceResult">
+	<select id="getByUser" parameterType="java.lang.String"
+		resultType="kr.co.adflow.push.domain.Device">
 		SELECT * FROM device WHERE userid =
-		#{userID} and apnstoken
-		is not null
+		#{userID}
 	</select>
 
 	<select id="getAllAppleDevices" resultMap="DeviceResult">
