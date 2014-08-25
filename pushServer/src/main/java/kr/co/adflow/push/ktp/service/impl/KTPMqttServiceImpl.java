@@ -24,10 +24,10 @@ import org.springframework.stereotype.Service;
  * @date 2014. 3. 21.
  */
 @Service
-public class BSBankMqttServiceImpl extends AbstractMqttServiceImpl {
+public class KTPMqttServiceImpl extends AbstractMqttServiceImpl {
 
 	private static final org.slf4j.Logger logger = LoggerFactory
-			.getLogger(BSBankMqttServiceImpl.class);
+			.getLogger(KTPMqttServiceImpl.class);
 
 //	@Autowired
 //	@Qualifier("bsBanksqlSession")
@@ -43,9 +43,9 @@ public class BSBankMqttServiceImpl extends AbstractMqttServiceImpl {
 	@PostConstruct
 	public void initIt() throws Exception {
 		super.initialize();
-		logger.info("BSBankMqttServiceImpl초기화시작()");
+		logger.info("KTPMqttServiceImpl초기화시작()");
 //		grpMapper = bsBanksqlSession.getMapper(GroupMapper.class);
-		logger.info("BSBankMqttServiceImpl초기화종료()");
+		logger.info("KTPkMqttServiceImpl초기화종료()");
 	}
 
 	/**

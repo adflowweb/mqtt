@@ -207,6 +207,41 @@
 			<version>3.0.1</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>kr.co.adflow.push.pcf</groupId>
+			<artifactId>com.ibm.mq.commonservices</artifactId>
+			<version>1.6</version>
+		</dependency>
+		<dependency>
+			<groupId>kr.co.adflow.push.pcf</groupId>
+			<artifactId>com.ibm.mq.headers</artifactId>
+			<version>1.6</version>
+		</dependency>
+		<dependency>
+			<groupId>kr.co.adflow.push.pcf</groupId>
+			<artifactId>com.ibm.mq</artifactId>
+			<version>1.6</version>
+		</dependency>
+		<dependency>
+			<groupId>kr.co.adflow.push.pcf</groupId>
+			<artifactId>com.ibm.mq.jmqi</artifactId>
+			<version>1.6</version>
+		</dependency>
+		<dependency>
+			<groupId>kr.co.adflow.push.pcf</groupId>
+			<artifactId>com.ibm.mq.pcf</artifactId>
+			<version>1.6</version>
+		</dependency>
+		<dependency>
+			<groupId>kr.co.adflow.push.pcf</groupId>
+			<artifactId>connector</artifactId>
+			<version>1.6</version>
+		</dependency>
+		<dependency>
+			<groupId>kr.co.adflow.push.pcf</groupId>
+			<artifactId>jta</artifactId>
+			<version>1.6</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
