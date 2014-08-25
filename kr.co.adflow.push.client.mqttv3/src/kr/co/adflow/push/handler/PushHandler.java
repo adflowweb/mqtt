@@ -31,6 +31,8 @@ import android.util.Log;
  */
 public class PushHandler implements MqttCallback {
 
+	private static final int MQTTVERSION_3 = 3;
+
 	// TAG for debug
 	public static final String TAG = "PushHandler";
 
@@ -282,6 +284,7 @@ public class PushHandler implements MqttCallback {
 		Log.d(TAG, "keepAlive=" + keepAlive);
 		mOpts.setKeepAliveInterval(keepAlive);
 		mOpts.setCleanSession(cleanSession);
+		mOpts.setMqttVersion(MQTTVERSION_3);
 		// ssl 처리
 		if (server.startsWith("ssl")) {
 			mOpts.setSocketFactory(ADFSSLSocketFactory.getSSLSokcetFactory());
