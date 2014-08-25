@@ -316,4 +316,20 @@ public class PushServiceImpl extends Service implements PushService {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see kr.co.adflow.push.service.PushService#auth(java.lang.String,
+	 * java.lang.String)
+	 */
+	@Override
+	public String auth(String url, String userID, String deviceID)
+			throws Exception {
+		Log.d(TAG, "auth시작(url=" + url + ", userID=" + userID + ", deviceID="
+				+ deviceID + ")");
+		String ret = pushHandler.auth(url, userID, deviceID);
+		Log.d(TAG, "auth종료(return=" + ret + ")");
+		return ret;
+	}
+
 }
