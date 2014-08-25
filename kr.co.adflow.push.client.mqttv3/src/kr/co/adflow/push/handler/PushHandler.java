@@ -349,7 +349,8 @@ public class PushHandler implements MqttCallback {
 	 */
 	public synchronized void publish(String topic, byte[] payload, int qos,
 			boolean retained) throws Exception {
-		Log.d(TAG, "publish시작(토픽=" + topic + ")");
+		Log.d(TAG, "publish시작(토픽=" + topic + ", payload=" + new String(payload)
+				+ ", qos=" + qos + ", retained=" + retained + ")");
 		IMqttDeliveryToken token = mqttClient.publish(topic, payload, qos,
 				retained);
 		token.waitForCompletion();

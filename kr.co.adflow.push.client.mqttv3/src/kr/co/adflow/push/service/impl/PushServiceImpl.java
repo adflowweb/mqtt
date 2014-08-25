@@ -7,6 +7,9 @@ import kr.co.adflow.push.PushPreference;
 import kr.co.adflow.push.handler.PushHandler;
 import kr.co.adflow.push.receiver.PushReceiver;
 import kr.co.adflow.push.service.PushService;
+
+import org.json.JSONObject;
+
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -259,9 +262,15 @@ public class PushServiceImpl extends Service implements PushService {
 	 * @see kr.co.adflow.push.service.PushService#preCheck(java.lang.String)
 	 */
 	@Override
-	public void preCheck(String topic) throws Exception {
-		Log.d(TAG, "preCheck시작(토픽=" + topic + ")");
-		pushHandler.publish(topic, "preCheck".getBytes(), 0, false);
+	public void preCheck(String sender, String topic) throws Exception {
+		Log.d(TAG, "preCheck시작(sender=" + sender + ", 토픽=" + topic + ")");
+		JSONObject data = new JSONObject();
+		data.put("sender", sender);
+		data.put("receiver", topic);
+		data.put("type", 103); // 103 : precheck
+		Log.d(TAG, "보낼메시지=" + data.toString());
+		// qos:0
+		pushHandler.publish(topic, data.toString().getBytes(), 0, false);
 		Log.d(TAG, "preCheck종료()");
 	}
 

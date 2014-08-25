@@ -8,7 +8,7 @@ public interface PushService {
 
 	public void publish(String topic, byte[] payload, int qos) throws Exception;
 
-	public void preCheck(String topic) throws Exception;
+	public void preCheck(String sender, String topic) throws Exception;
 
 	public boolean isConnected();
 
