@@ -230,6 +230,8 @@ public class PushHandler implements MqttCallback {
 						preference.getValue(PushPreference.SERVERURL, null));
 				context.startService(i);
 				break;
+			case 103: // preCheck
+				break;
 			default:
 				Log.e(TAG, "메시지타입이없습니다.");
 				break;
