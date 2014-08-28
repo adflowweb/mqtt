@@ -6,6 +6,9 @@ package kr.co.adflow.push.service;
  */
 public interface PushService {
 
+	public String auth(String url, String userID, String deviceID)
+			throws Exception;
+
 	public void publish(String topic, byte[] payload, int qos) throws Exception;
 
 	public void preCheck(String sender, String topic) throws Exception;
