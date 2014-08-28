@@ -71,7 +71,7 @@ public class UserControllerTest extends AbstractTestNGSpringContextTests {
 //		user.setEmail("typark@adflow.co.kr");
 //		user.setPhone("01040269329");
 //		user.setTitle("manager");
-		Response<Token> res = userController.auth(user, null, null);
+		Response<Token> res = userController.auth(user, null);
 		logger.debug("호출결과=" + res);
 		
 		tokenID = res.getResult().getData().getTokenID();

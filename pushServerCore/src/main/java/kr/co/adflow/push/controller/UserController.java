@@ -192,8 +192,7 @@ public class UserController {
 	@RequestMapping(value = "auth", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
 	public Response<Token> auth(@RequestBody User user,
-			HttpServletRequest request,
-			@RequestHeader("User-Agent") String userAgent) throws Exception {
+			HttpServletRequest request) throws Exception {
 		logger.debug("유저=" + user);
 		Token token = userService.auth(user);
 		Result<Token> result = new Result<Token>();

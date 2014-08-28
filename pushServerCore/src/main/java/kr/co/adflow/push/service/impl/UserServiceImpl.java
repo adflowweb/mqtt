@@ -87,6 +87,7 @@ public class UserServiceImpl implements UserService {
 			token = tokenService.post(user);
 		}
 		logger.debug("auth종료(token=" + token + ")");
+//		logger.debug("=============   Issue =" + token.getIssue().toString() + ")");
 		return token;
 	}
 

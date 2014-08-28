@@ -47,7 +47,7 @@ public class SubscribeController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "subscribeList/{token:.+}", method = RequestMethod.GET)
+	@RequestMapping(value = "subscriptions/{token:.+}", method = RequestMethod.GET)
 	@ResponseBody
 	public Response<Subscribe[]> get(@PathVariable String token) throws Exception {
 		logger.debug("token=" + token);

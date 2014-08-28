@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 
 import com.ibm.mq.MQEnvironment;
 import com.ibm.mq.MQException;
-import com.ibm.mq.pcf.CMQCFC;
+import com.ibm.mq.constants.MQConstants;
 import com.ibm.mq.pcf.PCFException;
 import com.ibm.mq.pcf.PCFMessage;
 import com.ibm.mq.pcf.PCFMessageAgent;
@@ -63,26 +63,32 @@ public class SubscribeServiceImpl implements SubscribeService {
 			
 //			PCFMessageAgent agent = new PCFMessageAgent("adflow.net", 1414, "ADFlowAdminPCF");
 			PCFMessageAgent agent = new PCFMessageAgent(pcfHost, pcfPort, pcfChannel);
-			PCFMessage request = new PCFMessage(CMQCFC.MQCMD_INQUIRE_SUBSCRIPTION);
-			request.addParameter(CMQCFC.MQCACF_SUB_NAME, token+":*");
+			PCFMessage request = new PCFMessage(MQConstants.MQCMD_INQUIRE_SUBSCRIPTION);
+			request.addParameter(MQConstants.MQCACF_SUB_NAME, token+":*");
 
 			PCFMessage[] responses = agent.send(request);
 
-			System.out.println("responses.length ::" + responses.length);
+//			System.out.println("responses.length ::" + responses.length);
 			subsList = new Subscribe[responses.length];
 			String topic = "";
 			
 			for (int i = 0; i < responses.length; i++) {
-				topic = responses[i].getParameterValue(CMQCFC.MQCACF_SUB_NAME).toString();
+				topic = responses[i].getParameterValue(MQConstants.MQCA_TOPIC_STRING).toString();
 
-				topic = topic.substring(token.length() + 1);
+//				topic = topic.substring(token.length() + 1);
 				
 				System.out.println("topic :: " + topic);
 				subsList[i] = new Subscribe();
 				subsList[i].setTopic(topic);
 			}
 		} catch (PCFException pcfe) {
-			System.err.println("PCF error: " + pcfe);
+			if (pcfe.getMessage().indexOf("2428") > 0) {
+				System.err.println("해당 토큰관련 subscriptions 가 없습니다. -errorcode:2428");
+				
+			} else {
+				System.err.println("PCF error: " + pcfe);
+			}
+			
 		} catch (MQException mqe) {
 			System.err.println(mqe);
 		} catch (IOException ioe) {
