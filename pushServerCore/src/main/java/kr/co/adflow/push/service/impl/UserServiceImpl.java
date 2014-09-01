@@ -146,16 +146,18 @@ public class UserServiceImpl implements UserService {
 	//140901 <kicho> - start 
 	//어드민 암호 변
 	@Override
-	public int changePassword(User user, String changePW) throws Exception {
+	public int changePassword(User user) throws Exception {
 		logger.debug("put시작(user=" + user + ")");
 		
-		boolean resultAuth = userDao.auth(user);
+//		boolean resultAuth = userDao.auth(user);
+//		
+//		int result=0;
+//		if (resultAuth) {
+//			user.setPassword(changePW);
+//			result = userDao.changePassword(user);
+//		}
 		
-		int result=0;
-		if (resultAuth) {
-			user.setPassword(changePW);
-			result = userDao.changePassword(user);
-		}
+		int result = userDao.changePassword(user);
 
 		logger.debug("put종료(result=" + result + ")");
 		return result;

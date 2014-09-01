@@ -1,5 +1,6 @@
 package kr.co.adflow.push.ktp.service.impl;
 
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Properties;
@@ -8,7 +9,7 @@ import javax.annotation.Resource;
 
 import kr.co.adflow.push.domain.ktp.Subscribe;
 import kr.co.adflow.push.handler.AbstractMessageHandler;
-import kr.co.adflow.push.ktp.service.SubscribeService;
+import kr.co.adflow.push.ktp.service.PCFService;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -26,10 +27,10 @@ import com.ibm.mq.pcf.PCFMessageAgent;
  * 
  */
 @Service
-public class SubscribeServiceImpl implements SubscribeService {
+public class PCFServiceImpl implements PCFService {
 
 	private static final org.slf4j.Logger logger = LoggerFactory
-			.getLogger(SubscribeServiceImpl.class);
+			.getLogger(PCFServiceImpl.class);
 	
 	private static final String CONFIG_PROPERTIES = "/config.properties";
 
@@ -95,11 +96,66 @@ public class SubscribeServiceImpl implements SubscribeService {
 			System.err.println(ioe);
 		}
 		
-		
-		
-		
 //		logger.debug("get종료(Subscribe result=" + subsList + ")");
 		return subsList;
+	}
+	
+	@Override
+	public String mQTTClinetStatus(String token) throws Exception {
+		logger.debug("get시작(token=" + token + ")");
+
+		String status = "";
+		try {
+			
+//			MQEnvironment.userID = "adflow";
+			MQEnvironment.userID = prop.getProperty("mq.pcf.id");
+//			MQEnvironment.password = "!ADFlow@";
+			MQEnvironment.password = prop.getProperty("mq.pcf.password");
+			
+			String pcfHost = prop.getProperty("mq.pcf.host");
+			int pcfPort = Integer.parseInt(prop.getProperty("mq.pcf.port"));
+			String pcfChannel = prop.getProperty("mq.pcf.channel");
+			
+//			PCFMessageAgent agent = new PCFMessageAgent("adflow.net", 1414, "ADFlowAdminPCF");
+			PCFMessageAgent agent = new PCFMessageAgent(pcfHost, pcfPort, pcfChannel);
+			PCFMessage request = new PCFMessage(MQConstants.MQCMD_INQUIRE_CHANNEL_STATUS);
+			request.addParameter(MQConstants.MQCACH_CHANNEL_NAME, "*");
+			request.addParameter(MQConstants.MQIACH_CHANNEL_TYPE, MQConstants.MQCHT_MQTT);
+			request.addParameter(MQConstants.MQCACH_CLIENT_ID, token);
+
+			PCFMessage[] responses = agent.send(request);
+
+			int chStatus = ((Integer) (responses[0]
+			          .getParameterValue(MQConstants.MQIACH_CHANNEL_STATUS))).intValue();
+			
+			if (chStatus == 3) {
+				status = "MQTT Connetted";
+			} else {
+				status = "MQTT Disconnetted";
+
+			}
+
+//			String[] chStatusText = {"", "MQCHS_BINDING", "MQCHS_STARTING", "MQCHS_RUNNING",
+//			          "MQCHS_STOPPING", "MQCHS_RETRYING", "MQCHS_STOPPED", "MQCHS_REQUESTING", "MQCHS_PAUSED",
+//			          "", "", "", "", "MQCHS_INITIALIZING"};
+//			status = chStatusText[chStatus];
+			
+		} catch (PCFException pcfe) {
+			if (pcfe.getMessage().indexOf("3065") > 0) {
+				logger.debug("해당 토큰관련 클라이언트가 Pending 메시지가 없을 경우 채널상태는 없음. -errorcode:3065");
+				status = "MQTT Disconnetted";
+			} else {
+				logger.debug("PCF error: " + pcfe);
+				status = pcfe.toString();
+			}
+		} catch (MQException mqe) {
+			System.err.println(mqe);
+		} catch (IOException ioe) {
+			System.err.println(ioe);
+		}
+		
+//		logger.debug("get종료(Subscribe result=" + subsList + ")");
+		return status;
 	}
 
 }

@@ -23,5 +23,5 @@ public interface UserService {
 
 	User[] getAdmin() throws Exception;
 	
-	int changePassword(User user, String changePW) throws Exception;
+	int changePassword(User user) throws Exception;
 }

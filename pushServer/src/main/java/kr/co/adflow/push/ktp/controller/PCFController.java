@@ -12,7 +12,7 @@ import kr.co.adflow.push.domain.Result;
 import kr.co.adflow.push.domain.Token;
 import kr.co.adflow.push.domain.User;
 import kr.co.adflow.push.domain.ktp.Subscribe;
-import kr.co.adflow.push.ktp.service.SubscribeService;
+import kr.co.adflow.push.ktp.service.PCFService;
 import kr.co.adflow.push.service.GroupService;
 
 import org.slf4j.Logger;
@@ -32,13 +32,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * 
  */
 @Controller
-public class SubscribeController {
+public class PCFController {
 
 	private static final Logger logger = LoggerFactory
-			.getLogger(SubscribeController.class);
+			.getLogger(PCFController.class);
 
 	@Resource
-	private SubscribeService subscribeService;
+	private PCFService pCFService;
 
 	/**
 	 * subscription List 가져오기
@@ -53,7 +53,7 @@ public class SubscribeController {
 		logger.debug("token=" + token);
 		Result<Subscribe[]> result = new Result<Subscribe[]>();
 		result.setSuccess(true);
-		Subscribe[] subscribe = subscribeService.get(token);
+		Subscribe[] subscribe = pCFService.get(token);
 		if (subscribe == null) {
 			List<String> messages = new ArrayList<String>() {
 				{
@@ -66,6 +66,32 @@ public class SubscribeController {
 		}
 
 		Response<Subscribe[]> res = new Response<Subscribe[]>(result);
+		logger.debug("response=" + res);
+		return res;
+	}
+	
+	/**
+	 * MQTT Client 연결 상 가져오기
+	 * 
+	 * @param token
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "mQTTClinetStatus/{token:.+}", method = RequestMethod.GET)
+	@ResponseBody
+	public Response mQTTClinetStatus(@PathVariable String token) throws Exception {
+		logger.debug("token=" + token);
+		final String status = pCFService.mQTTClinetStatus(token);
+		
+		Result result = new Result();
+		result.setSuccess(true);
+		List<String> messages = new ArrayList<String>() {
+			{
+				add("status=" + status);
+			}
+		};
+		result.setInfo(messages);
+		Response res = new Response(result);
 		logger.debug("response=" + res);
 		return res;
 	}

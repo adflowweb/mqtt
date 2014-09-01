@@ -7,8 +7,10 @@ import kr.co.adflow.push.domain.ktp.Subscribe;;
  * @date 2014. 4. 14.
  * 
  */
-public interface SubscribeService {
+public interface PCFService {
 
 	Subscribe[] get(String token) throws Exception;
+	
+	String mQTTClinetStatus(String token) throws Exception;
 
 }
