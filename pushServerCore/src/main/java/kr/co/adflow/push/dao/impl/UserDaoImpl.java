@@ -91,14 +91,13 @@ public class UserDaoImpl implements UserDao {
 	@Override
 	public boolean auth(User user) throws Exception {
 		logger.debug("auth시작(user=" + user + ")");
-		// UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
-		// boolean rst = userMapper.auth(user);
+		 UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+		 boolean rst = userMapper.auth(user);
 
 		// ldap 인증
 //		boolean rst = ldap.auth(user.getUserID(), user.getPassword());
 //		logger.debug("auth종료(result=" + rst + ")");
-//		return rst;
-		return true;
+		return rst;
 	}
 
 	@Override
@@ -120,4 +119,20 @@ public class UserDaoImpl implements UserDao {
 //		return result;
 //	}
 	//KTP-skip-end
+	
+	//140901 <kicho> - start
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see kr.co.adflow.push.dao.UserDAO#changePassword(kr.co.adflow.push.domain.User)
+	 */
+	@Override
+	public int changePassword(User user) throws Exception {
+		logger.debug("changePassword시작(user=" + user + ")");
+		UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+		int result = userMapper.changePassword(user);
+		logger.debug("changePassword종료(result=" + result + ")");
+		return result;
+	}
+	//140901 <kicho> - end
 }
