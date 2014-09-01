@@ -5,6 +5,7 @@ import javax.annotation.Resource;
 import kr.co.adflow.push.dao.DeviceDao;
 import kr.co.adflow.push.dao.TokenDao;
 import kr.co.adflow.push.dao.UserDao;
+import kr.co.adflow.push.dao.impl.DeviceDaoImpl;
 import kr.co.adflow.push.domain.Device;
 import kr.co.adflow.push.domain.Token;
 import kr.co.adflow.push.domain.User;
@@ -12,9 +13,12 @@ import kr.co.adflow.push.service.TokenService;
 import kr.co.adflow.util.TokenGenerator;
 
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+
 
 /**
  * @author nadir93
@@ -28,12 +32,15 @@ abstract public class AbstractTokenServiceImpl implements TokenService {
 
 	@Resource
 	TokenDao tokenDao;
-
+	
 	@Resource
 	protected UserDao userDao;
 
 	@Resource
 	DeviceDao deviceDao;
+	
+	@Autowired
+	AbstractMqttServiceImpl mqttServiceImpl;
 
 	/*
 	 * (non-Javadoc)
@@ -141,9 +148,33 @@ abstract public class AbstractTokenServiceImpl implements TokenService {
 	@Override
 	public int delete(String token) throws Exception {
 		logger.debug("delete시작(token=" + token + ")");
+		
+		
+		//140829 - 토큰 삭제시 해당 토큰 cleansession = true 로 conneciton 후 disconnection 시도 - start
+		mqttServiceImpl.mqttConnectionClean(token);
+		//140829 - 토큰 삭제시 해당 토큰 cleansession = true 로 conneciton 후 disconnection 시도 - end
+		
 		int count = tokenDao.delete(token);
 		logger.debug("delete종료(updates=" + count + ")");
+		
 		return count;
 	}
+	
+
+	 // update : 140901 <kicho> - start
+	/*
+	 * user의 Tokens 가져오기 
+	 * (non-Javadoc)
+	 * 
+	 */
+	@Override
+	public Token[] getByUser(String userID) throws Exception {
+		logger.debug("getByUser시작(userID=" + userID + ")");
+		
+		Token[] tokens = tokenDao.getByUser(userID);
+		logger.debug("getByUser종료(tokens=" + tokens + ")");
+		return tokens;
+	}
+	// update : 140901 <kicho> - end
 
 }

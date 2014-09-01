@@ -501,5 +501,36 @@ public abstract class AbstractMqttServiceImpl implements MqttCallback,
 		logger.debug("isConnected종료(" + mqttClient.isConnected() + ")");
 		return mqttClient.isConnected();
 	}
+	
+	
+	/**
+	 * @throws MqttException
+	 */
+	public void mqttConnectionClean(String clientID) throws MqttException {
+		logger.debug("mqttConnectionClean시작()");
+		logger.debug("serverURL=" + SERVERURL);
+		logger.debug("clientID=" + clientID);
+		
+		MqttConnectOptions mOpts2 = makeMqttOpts();
+		mOpts2.setCleanSession(true);
+
+		MqttAsyncClient mqttClient2 = new MqttAsyncClient(SERVERURL[0], clientID,
+				new MemoryPersistence());
+		logger.debug("mqttClient2인스턴스가생성되었습니다.mqttClient2=" + mqttClient2);
+		mqttClient2.setCallback(this);
+		IMqttToken token = mqttClient2.connect(mOpts2);
+		token.waitForCompletion();
+		logger.debug("mqttConnectionClean 세션연결을완료하였습니다.");
+		if (mqttClient2.isConnected()) {
+			token = mqttClient2.disconnect();
+			token.waitForCompletion(WAIT_TIMEOUT);
+			logger.debug("mqttClient연결을끊었습니다.");
+		}
+		mqttClient2.close();
+		mqttClient2 = null;
+		logger.debug("mqttClient가종료되었습니다.");
+
+		logger.debug("mqttConnectionClean종료()");
+	}
 
 }

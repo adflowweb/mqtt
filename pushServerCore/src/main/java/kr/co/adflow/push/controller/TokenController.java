@@ -121,7 +121,34 @@ public class TokenController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "tokens/{token}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "tokensByUser/{userID}", method = RequestMethod.DELETE)
+	@ResponseBody
+	public Response tokensByUser(@PathVariable String token) throws Exception {
+		logger.debug("token=" + token);
+		final int count = tokenService.delete(token);
+		Result result = new Result();
+		result.setSuccess(true);
+		List<String> messages = new ArrayList<String>() {
+			{
+				add("updates=" + count);
+			}
+		};
+		result.setInfo(messages);
+		Response res = new Response(result);
+		logger.debug("response=" + res);
+		return res;
+	}
+	
+	
+	/**
+	 * 토큰정보 삭제하기
+	 * 
+	 * 
+	 * @param token
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "token/{token}", method = RequestMethod.DELETE)
 	@ResponseBody
 	public Response delete(@PathVariable String token) throws Exception {
 		logger.debug("token=" + token);

@@ -60,6 +60,18 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public int delete(String userID) throws Exception {
 		logger.debug("delete시작(userID=" + userID + ")");
+		
+		//140901 <kicho> -start
+		//해당 토큰을 읽어와 삭제.
+		Token[] tokens = tokenService.getByUser(userID);
+		int resultToken;
+		for (int i = 0; i < tokens.length; i++) {
+			resultToken = tokenService.delete(tokens[i].getTokenID());
+			logger.debug(" token["+tokens[i].getTokenID()+"] delete result=" + resultToken + ")");
+		}
+		//140901 <kicho> -end
+		
+		
 		int result = userDao.delete(userID);
 		logger.debug("delete종료(result=" + result + ")");
 		return result;

@@ -17,4 +17,8 @@ public interface TokenMapper {
 	int put(Token token) throws Exception;
 
 	int delete(String token) throws Exception;
+	
+	//140901 <kicho> - start
+	Token[] getByUser(String userID) throws Exception;
+	//140901 <kicho> - end
 }
