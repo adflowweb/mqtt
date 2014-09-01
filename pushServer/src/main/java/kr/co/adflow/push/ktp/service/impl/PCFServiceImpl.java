@@ -8,6 +8,7 @@ import java.util.Properties;
 import javax.annotation.Resource;
 
 import kr.co.adflow.push.domain.ktp.Subscribe;
+import kr.co.adflow.push.domain.ktp.Status;
 import kr.co.adflow.push.handler.AbstractMessageHandler;
 import kr.co.adflow.push.ktp.service.PCFService;
 
@@ -101,10 +102,10 @@ public class PCFServiceImpl implements PCFService {
 	}
 	
 	@Override
-	public String mQTTClinetStatus(String token) throws Exception {
+	public Status mQTTClinetStatus(String token) throws Exception {
 		logger.debug("get시작(token=" + token + ")");
 
-		String status = "";
+		Status status = new Status();
 		try {
 			
 //			MQEnvironment.userID = "adflow";
@@ -129,9 +130,9 @@ public class PCFServiceImpl implements PCFService {
 			          .getParameterValue(MQConstants.MQIACH_CHANNEL_STATUS))).intValue();
 			
 			if (chStatus == 3) {
-				status = "MQTT Connetted";
+				status.setStatus("MQTT Connetted");
 			} else {
-				status = "MQTT Disconnetted";
+				status.setStatus("MQTT Disconnetted");
 
 			}
 
@@ -143,10 +144,10 @@ public class PCFServiceImpl implements PCFService {
 		} catch (PCFException pcfe) {
 			if (pcfe.getMessage().indexOf("3065") > 0) {
 				logger.debug("해당 토큰관련 클라이언트가 Pending 메시지가 없을 경우 채널상태는 없음. -errorcode:3065");
-				status = "MQTT Disconnetted";
+				status.setStatus("MQTT Disconnetted");
 			} else {
 				logger.debug("PCF error: " + pcfe);
-				status = pcfe.toString();
+				status.setStatus(pcfe.toString());
 			}
 		} catch (MQException mqe) {
 			System.err.println(mqe);

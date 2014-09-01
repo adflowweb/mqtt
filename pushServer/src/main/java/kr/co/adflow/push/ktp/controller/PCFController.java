@@ -11,6 +11,7 @@ import kr.co.adflow.push.domain.Response;
 import kr.co.adflow.push.domain.Result;
 import kr.co.adflow.push.domain.Token;
 import kr.co.adflow.push.domain.User;
+import kr.co.adflow.push.domain.ktp.Status;
 import kr.co.adflow.push.domain.ktp.Subscribe;
 import kr.co.adflow.push.ktp.service.PCFService;
 import kr.co.adflow.push.service.GroupService;
@@ -79,19 +80,14 @@ public class PCFController {
 	 */
 	@RequestMapping(value = "mQTTClinetStatus/{token:.+}", method = RequestMethod.GET)
 	@ResponseBody
-	public Response mQTTClinetStatus(@PathVariable String token) throws Exception {
+	public Response<Status> mQTTClinetStatus(@PathVariable String token) throws Exception {
 		logger.debug("token=" + token);
-		final String status = pCFService.mQTTClinetStatus(token);
+		Status status = pCFService.mQTTClinetStatus(token);
 		
-		Result result = new Result();
+		Result<Status> result = new Result<Status>();
 		result.setSuccess(true);
-		List<String> messages = new ArrayList<String>() {
-			{
-				add("status=" + status);
-			}
-		};
-		result.setInfo(messages);
-		Response res = new Response(result);
+		result.setData(status);
+		Response<Status> res = new Response<Status>(result);
 		logger.debug("response=" + res);
 		return res;
 	}
