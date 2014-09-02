@@ -192,8 +192,7 @@ public class UserController {
 	@RequestMapping(value = "auth", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
 	public Response<Token> auth(@RequestBody User user,
-			HttpServletRequest request,
-			@RequestHeader("User-Agent") String userAgent) throws Exception {
+			HttpServletRequest request) throws Exception {
 		logger.debug("유저=" + user);
 		Token token = userService.auth(user);
 		Result<Token> result = new Result<Token>();
@@ -206,7 +205,7 @@ public class UserController {
 			};
 			result.setErrors(messages);
 		} else {
-			token.setRole(roleService.getByUser(user.getUserID()));
+//			token.setRole(roleService.getByUser(user.getUserID()));
 			result.setData(token);
 		}
 
@@ -215,38 +214,38 @@ public class UserController {
 		return res;
 	}
 
-	// /**
-	// * 유저인증
-	// *
-	// * @param msg
-	// * @return
-	// * @throws Exception
-	// */
-	// @RequestMapping(value = "adminAuth", method = RequestMethod.POST,
-	// consumes = "application/json", produces = "application/json")
-	// @ResponseBody
-	// public Response<Token> adminAuth(@RequestBody User user,
-	// HttpServletRequest request,
-	// @RequestHeader("User-Agent") String userAgent) throws Exception {
-	// logger.debug("유저=" + user);
-	// Token token = userService.adminAuth(user);
-	// Result<Token> result = new Result<Token>();
-	// result.setSuccess(true);
-	// if (token == null) {
-	// List<String> messages = new ArrayList<String>() {
-	// {
-	// add("user not found or invalid password");
-	// }
-	// };
-	// result.setErrors(messages);
-	// } else {
-	// result.setData(token);
-	// }
-	//
-	// Response<Token> res = new Response<Token>(result);
-	// logger.debug("response=" + res);
-	// return res;
-	// }
+	 /**
+	 * 어드민 인증
+	 *
+	 * @param msg
+	 * @return
+	 * @throws Exception
+	 */
+	 @RequestMapping(value = "adminAuth", method = RequestMethod.POST,
+	 consumes = "application/json", produces = "application/json")
+	 @ResponseBody
+	 public Response<Token> adminAuth(@RequestBody User user,
+	 HttpServletRequest request,
+	 @RequestHeader("User-Agent") String userAgent) throws Exception {
+		 logger.debug("유저=" + user);
+		 Token token = userService.adminAuth(user);
+		 Result<Token> result = new Result<Token>();
+		 result.setSuccess(true);
+		 if (token == null) {
+			 List<String> messages = new ArrayList<String>() {
+				 {
+					 add("user not found or invalid password");
+				 }
+			 };
+			 result.setErrors(messages);
+		 } else {
+			 result.setData(token);
+		 }
+		
+		 Response<Token> res = new Response<Token>(result);
+		 logger.debug("response=" + res);
+		 return res;
+	 }
 
 	/**
 	 * 유저인증
@@ -283,6 +282,58 @@ public class UserController {
 		logger.debug("LDAP테스트종료");
 		return res;
 	}
+	
+	/**
+	 * 유저암호 수정하기
+	 * 
+	 * @param User
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "changePassword", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
+	@ResponseBody
+	public Response changePassword(@RequestBody User user) throws Exception {
+		logger.debug("유저=" + user);
+		final int count = userService.changePassword(user);
+		Result result = new Result();
+		result.setSuccess(true);
+		List<String> messages = new ArrayList<String>() {
+			{
+				add("updates=" + count);
+			}
+		};
+		result.setInfo(messages);
+		Response res = new Response(result);
+		logger.debug("response=" + res);
+		return res;
+	}
+	
+	/**
+	 * 어드민 유저정보 입력
+	 * 
+	 * @param msg
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "users", params = "type=admin", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	@ResponseBody
+	public Response postAdmin(@RequestBody User user) throws Exception {
+		logger.debug("유저=" + user);
+		user.setRole("admin");
+		final int count = userService.post(user);
+		Result result = new Result();
+		result.setSuccess(true);
+		List<String> messages = new ArrayList<String>() {
+			{
+				add("updates=" + count);
+			}
+		};
+		result.setInfo(messages);
+		Response res = new Response(result);
+		logger.debug("response=" + res);
+		return res;
+	}
+	
 
 	/**
 	 * 예외처리

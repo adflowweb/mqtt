@@ -73,6 +73,12 @@
 		where userid = #{userID} and password =
 		#{password}
 	</select>
+	
+	<update id="changePassword" parameterType="kr.co.adflow.push.domain.User">
+		UPDATE user
+		set password = #{password} where userid =#{userID}
+	</update>
+	
 </mapper>	
 	
 	

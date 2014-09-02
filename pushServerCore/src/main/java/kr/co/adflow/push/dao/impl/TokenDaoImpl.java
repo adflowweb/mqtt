@@ -106,10 +106,30 @@ public class TokenDaoImpl implements TokenDao {
 	// return true;
 	// }
 	
+
+	//140901 <kicho> - start
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see kr.co.adflow.push.dao.TokenDAO#get(java.lang.String)
+	 * @see kr.co.adflow.push.dao.TokenDAO#getByUser(java.lang.String)
 	 */
+	@Override
+	public Token[] getByUser(String userID) throws Exception {
+		TokenMapper tokenMapper = sqlSession.getMapper(TokenMapper.class);
+		return tokenMapper.getByUser(userID);
+	}
+	//140901 <kicho> - end
 	
+	//140902 <kicho> - start
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see kr.co.adflow.push.dao.TokenDAO#getMultiByUser(java.lang.String)
+	 */
+	@Override
+	public Token[] getMultiByUser(String userID) throws Exception {
+		TokenMapper tokenMapper = sqlSession.getMapper(TokenMapper.class);
+		return tokenMapper.getMultiByUser(userID);
+	}
+	//140902 <kicho> - end	
 }

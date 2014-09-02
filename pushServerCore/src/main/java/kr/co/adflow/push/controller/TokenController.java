@@ -113,6 +113,34 @@ public class TokenController {
 		return res;
 	}
 
+	//140829 <kicho> - start
+	/**
+	 * userID로 토큰정보 삭제하기
+	 * 
+	 * 
+	 * @param userID
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "tokensByUser/{userID}", method = RequestMethod.DELETE)
+	@ResponseBody
+	public Response tokensByUser(@PathVariable String token) throws Exception {
+		logger.debug("token=" + token);
+		final int count = tokenService.delete(token);
+		Result result = new Result();
+		result.setSuccess(true);
+		List<String> messages = new ArrayList<String>() {
+			{
+				add("updates=" + count);
+			}
+		};
+		result.setInfo(messages);
+		Response res = new Response(result);
+		logger.debug("response=" + res);
+		return res;
+	}
+	//140829 <kicho> - end
+	
 	/**
 	 * 토큰정보 삭제하기
 	 * 
@@ -121,7 +149,7 @@ public class TokenController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "tokens/{token}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "token/{token}", method = RequestMethod.DELETE)
 	@ResponseBody
 	public Response delete(@PathVariable String token) throws Exception {
 		logger.debug("token=" + token);
@@ -138,6 +166,70 @@ public class TokenController {
 		logger.debug("response=" + res);
 		return res;
 	}
+	
+	//140902 <kicho> - start
+	/**
+	 * 여러 토큰 가져오기
+	 * 
+	 * @param userID
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "tokenMulti/{userID}", method = RequestMethod.GET)
+	@ResponseBody
+	public Response<Token[]> getMultiByUser(@PathVariable String userID) throws Exception {
+		Result<Token[]> result = new Result<Token[]>();
+		result.setSuccess(true);
+		Token[] tokens = tokenService.getMultiByUser(userID);
+		if (tokens == null) {
+			List<String> messages = new ArrayList<String>() {
+				{
+					add("admin not found");
+				}
+			};
+			result.setInfo(messages);
+		} else {
+			result.setData(tokens);
+		}
+
+		Response<Token[]> res = new Response<Token[]>(result);
+		logger.debug("response=" + res);
+		return res;
+	}
+	//140902 <kicho> - end
+	
+	//140902 <kicho> - start
+	/**
+	 * 토큰정보가져오기
+	 * 
+	 * @param userID
+	 * @param clientID
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "tokensByUser/{userID}", method = RequestMethod.GET)
+	@ResponseBody
+	public Response getByUser(@PathVariable String userID) throws Exception {
+		Result<Token[]> result = new Result<Token[]>();
+		result.setSuccess(true);
+		Token[] tokens = tokenService.getByUser(userID);
+		if (tokens == null) {
+			List<String> messages = new ArrayList<String>() {
+				{
+					add("admin not found");
+				}
+			};
+			result.setInfo(messages);
+		} else {
+			result.setData(tokens);
+		}
+
+		Response<Token[]> res = new Response<Token[]>(result);
+		logger.debug("response=" + res);
+		return res;
+	}
+	
+	//140902 <kicho> - end
 
 	/**
 	 * 예외처리

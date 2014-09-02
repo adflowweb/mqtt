@@ -20,5 +20,9 @@ public interface TokenDao {
 	int delete(String token) throws Exception;
 
 	// boolean validate(String token) throws Exception;
+	
+	Token[] getByUser(String userID) throws Exception;
+	
+	Token[] getMultiByUser(String userID) throws Exception;
 
 }

@@ -23,4 +23,6 @@ public interface UserDao {
 	boolean auth(User user) throws Exception;
 
 	User[] getAdmin() throws Exception;
+	
+	int changePassword(User user) throws Exception;
 }

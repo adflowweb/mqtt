@@ -23,4 +23,6 @@ public interface UserMapper {
 	User[] getAdmin() throws Exception;
 
 	User[] getAllUser() throws Exception;
+	
+	int changePassword(User user) throws Exception;
 }

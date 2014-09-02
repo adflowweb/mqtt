@@ -44,4 +44,24 @@ public interface TokenService {
 	 * @throws Exception
 	 */
 	boolean validate(String token) throws Exception;
+	
+	
+	
+	//140901 - update:kicho -start
+	/**
+	 * @param userID
+	 * @return
+	 * @throws Exception
+	 */
+	Token[] getByUser(String userID) throws Exception;
+	//140901 - update:kicho -end
+	
+	//140901 - update:kicho -start
+	/**
+	 * @param userID
+	 * @return
+	 * @throws Exception
+	 */
+	Token[] getMultiByUser(String userID) throws Exception;
+	//140901 - update:kicho -end
 }
