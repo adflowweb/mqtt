@@ -55,4 +55,13 @@ public interface TokenService {
 	 */
 	Token[] getByUser(String userID) throws Exception;
 	//140901 - update:kicho -end
+	
+	//140901 - update:kicho -start
+	/**
+	 * @param userID
+	 * @return
+	 * @throws Exception
+	 */
+	Token[] getMultiByUser(String userID) throws Exception;
+	//140901 - update:kicho -end
 }

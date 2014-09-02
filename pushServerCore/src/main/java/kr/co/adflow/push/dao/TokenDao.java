@@ -22,5 +22,7 @@ public interface TokenDao {
 	// boolean validate(String token) throws Exception;
 	
 	Token[] getByUser(String userID) throws Exception;
+	
+	Token[] getMultiByUser(String userID) throws Exception;
 
 }

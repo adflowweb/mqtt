@@ -176,5 +176,21 @@ abstract public class AbstractTokenServiceImpl implements TokenService {
 		return tokens;
 	}
 	// update : 140901 <kicho> - end
+	
+	// update : 140902 <kicho> - start
+	/*
+	 * user의 Tokens 가져오기 
+	 * (non-Javadoc)
+	 * 
+	 */
+	@Override
+	public Token[] getMultiByUser(String userID) throws Exception {
+		logger.debug("getMultiByUser시작(userID=" + userID + ")");
+		
+		Token[] tokens = tokenDao.getMultiByUser(userID);
+		logger.debug("getMultiByUser종료(tokens=" + tokens + ")");
+		return tokens;
+	}
+	// update : 140902 <kicho> - end
 
 }

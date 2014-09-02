@@ -21,4 +21,8 @@ public interface TokenMapper {
 	//140901 <kicho> - start
 	Token[] getByUser(String userID) throws Exception;
 	//140901 <kicho> - end
+	
+	//140902 <kicho> - start
+	Token[] getMultiByUser(String userID) throws Exception;
+	//140902 <kicho> - end
 }

@@ -38,5 +38,9 @@
 		SELECT * FROM token WHERE userid =
 		#{userID}
 	</select>
+	
+	<select id="getMultiByUser" resultType="kr.co.adflow.push.domain.Token">
+		SELECT * FROM token WHERE userid like CONCAT(#{userID}, '%')
+	</select>
 
 </mapper>
