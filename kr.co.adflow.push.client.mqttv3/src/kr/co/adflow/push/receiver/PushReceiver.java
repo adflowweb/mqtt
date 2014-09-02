@@ -1,7 +1,7 @@
 package kr.co.adflow.push.receiver;
 
 import kr.co.adflow.push.handler.PushHandler;
-import kr.co.adflow.push.service.impl.PushServiceImpl;
+import kr.co.adflow.push.service.PushService;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -20,6 +20,10 @@ public class PushReceiver extends BroadcastReceiver {
 	// Debug TAG
 	private static final String TAG = "PushReceiver";
 	private static final int wakeLockHoldTime = 10000; // 웨이크락홀드타임 10초
+
+	public PushReceiver() {
+		super();
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -66,13 +70,16 @@ public class PushReceiver extends BroadcastReceiver {
 						.getSystemService(Context.POWER_SERVICE);
 				WakeLock wakeLock = pm.newWakeLock(
 						PowerManager.PARTIAL_WAKE_LOCK, "KTPWakeLock");
-				PushServiceImpl.setWakeLock(wakeLock);
+				((PushService) PushHandler.getContext()).setWakeLock(wakeLock);
 				Log.d(TAG, "웨이크락상태=" + wakeLock.isHeld());
 				if (!wakeLock.isHeld()) {
 					wakeLock.acquire(wakeLockHoldTime);
 					// ..screen will stay on during this section..
 					Log.d(TAG, "웨이크락=" + wakeLock);
-					Intent i = new Intent(context, PushServiceImpl.class);
+					Log.d(TAG, "PushServiceClass="
+							+ PushHandler.getContext().getClass());
+					Intent i = new Intent(context, PushHandler.getContext()
+							.getClass()/* PushServiceImpl.class */);
 					i.setAction("kr.co.adflow.push.service.KEEPALIVE");
 					context.startService(i);
 					// wakeLock.release();

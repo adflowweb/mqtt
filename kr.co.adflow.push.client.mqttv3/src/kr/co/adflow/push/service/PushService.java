@@ -1,5 +1,7 @@
 package kr.co.adflow.push.service;
 
+import android.os.PowerManager;
+
 /**
  * @author nadir93
  * 
@@ -20,5 +22,9 @@ public interface PushService {
 	public void subscribe(String topic, int qos) throws Exception;
 
 	public int getLostCout();
+
+	public PowerManager.WakeLock getWakeLock();
+
+	public void setWakeLock(PowerManager.WakeLock lock);
 
 }

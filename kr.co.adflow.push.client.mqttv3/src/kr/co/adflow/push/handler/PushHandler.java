@@ -10,7 +10,7 @@ import java.util.logging.SimpleFormatter;
 
 import kr.co.adflow.push.PingSender;
 import kr.co.adflow.push.PushPreference;
-import kr.co.adflow.push.service.impl.PushServiceImpl;
+import kr.co.adflow.push.service.PushService;
 import kr.co.adflow.ssl.ADFSSLSocketFactory;
 import kr.co.adflow.ssl.SFSSLSocketFactory;
 
@@ -64,7 +64,7 @@ public class PushHandler implements MqttCallback {
 	private static final boolean clientSessionDebug = false; // default false
 	private static int connlostCount;
 
-	private Context context;
+	private static Context context;
 	private MqttAsyncClient mqttClient;
 	private PushPreference preference;
 	private PingSender pingSender;
@@ -82,6 +82,10 @@ public class PushHandler implements MqttCallback {
 		preference = new PushPreference(context);
 		Log.d(TAG, "preference=" + preference);
 		Log.d(TAG, "PushHandler생성자종료()");
+	}
+
+	public static Context getContext() {
+		return context;
 	}
 
 	/**
@@ -151,9 +155,10 @@ public class PushHandler implements MqttCallback {
 			pingSender.ping();
 		} catch (Exception e) {
 			Log.e(TAG, "예외상황발생", e);
-			if (PushServiceImpl.getWakeLock() != null) {
-				PushServiceImpl.getWakeLock().release();
-				Log.d(TAG, "웨이크락을해재했습니다." + PushServiceImpl.getWakeLock());
+			if (((PushService) context).getWakeLock() != null) {
+				((PushService) context).getWakeLock().release();
+				Log.d(TAG,
+						"웨이크락을해재했습니다." + ((PushService) context).getWakeLock());
 			}
 		}
 		Log.d(TAG, "keepAlive종료()");
@@ -237,14 +242,16 @@ public class PushHandler implements MqttCallback {
 				break;
 			case 101: // unsubscribe
 				break;
-			case 102: // keepAlive
+			case 102: // keepAlive 설정변경
 				JSONObject content = data.getJSONObject("content");
-				Log.e(TAG, "content=" + content);
+				Log.d(TAG, "content=" + content);
 				int keepAlive = content.getInt("keepAlive");
 				// store keepalive
 				preference.put(PushPreference.KEEPALIVE, keepAlive);
 				// restart mqtt session
-				Intent i = new Intent(context, PushServiceImpl.class);
+				Log.d(TAG, "PushServiceClass=" + context.getClass());
+				Intent i = new Intent(context, /* PushServiceImpl.class */
+				context.getClass());
 				i.setAction("kr.co.adflow.push.service.START");
 				i.putExtra(PushPreference.TOKEN,
 						preference.getValue(PushPreference.TOKEN, null));

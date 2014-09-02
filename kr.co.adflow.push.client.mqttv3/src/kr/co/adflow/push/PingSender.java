@@ -5,7 +5,7 @@ import java.util.Date;
 
 import kr.co.adflow.push.handler.PushHandler;
 import kr.co.adflow.push.receiver.PushReceiver;
-import kr.co.adflow.push.service.impl.PushServiceImpl;
+import kr.co.adflow.push.service.PushService;
 
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
@@ -125,7 +125,7 @@ public class PingSender implements MqttPingSender {
 	 */
 	private void releaseLock() {
 		Log.d(TAG, "releaseLock시작()");
-		WakeLock lock = PushServiceImpl.getWakeLock();
+		WakeLock lock = ((PushService) context).getWakeLock();
 		Log.d(TAG, "웨이크락=" + lock);
 		if (lock != null && lock.isHeld()) {
 			lock.release();

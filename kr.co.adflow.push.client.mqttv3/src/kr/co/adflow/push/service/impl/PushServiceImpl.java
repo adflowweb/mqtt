@@ -67,7 +67,6 @@ public class PushServiceImpl extends Service implements PushService {
 				+ ", startId=" + startId + ")");
 
 		try {
-			// for galaxy s3
 			if (intent == null) {
 				Log.e(TAG, "intent가 존재하지않습니다.");
 				return Service.START_STICKY;
@@ -112,6 +111,8 @@ public class PushServiceImpl extends Service implements PushService {
 							System.currentTimeMillis() + 1000,
 							1000 * PushHandler.alarmInterval, pending);
 					Log.d(TAG, "알람이설정되었습니다");
+				} else {
+
 				}
 			} else if (intent.getAction().equals(
 					"kr.co.adflow.push.service.STOP")) {
@@ -145,6 +146,8 @@ public class PushServiceImpl extends Service implements PushService {
 	@Override
 	public void onDestroy() {
 		Log.d(TAG, "onDestroy시작()");
+		pushHandler.stop();
+		// 알람제거해야함
 		Log.d(TAG, "onDestroy종료()");
 	}
 
@@ -197,7 +200,7 @@ public class PushServiceImpl extends Service implements PushService {
 	/**
 	 * @return
 	 */
-	public static PowerManager.WakeLock getWakeLock() {
+	public PowerManager.WakeLock getWakeLock() {
 		Log.d(TAG, "getWakeLock시작()");
 		Log.d(TAG, "getWakeLock종료(wakeLock=" + wakeLock + ")");
 		return wakeLock;
@@ -206,7 +209,7 @@ public class PushServiceImpl extends Service implements PushService {
 	/**
 	 * @param lock
 	 */
-	public static void setWakeLock(PowerManager.WakeLock lock) {
+	public void setWakeLock(PowerManager.WakeLock lock) {
 		Log.d(TAG, "setWakeLock시작(lock=" + lock + ")");
 		wakeLock = lock;
 		Log.d(TAG, "setWakeLock종료(wakeLock=" + wakeLock + ")");
@@ -221,6 +224,8 @@ public class PushServiceImpl extends Service implements PushService {
 	@Override
 	public void publish(String topic, byte[] payload, int qos) throws Exception {
 		Log.d(TAG, "publish시작(토픽=" + topic + ", qos=" + qos + ")");
+		Log.d(TAG, "service=" + this);
+		Log.d(TAG, "pushHandler=" + pushHandler);
 		if (pushHandler != null || pushHandler.isConnected()) {
 			// 일단 retained = false로 세팅
 			pushHandler.publish(topic, payload, qos, false);
