@@ -310,6 +310,8 @@ public class PushHandler implements MqttCallback {
 		int keepAlive = preference.getValue(PushPreference.KEEPALIVE, 60);
 		Log.d(TAG, "keepAlive=" + keepAlive);
 		mOpts.setKeepAliveInterval(keepAlive);
+		boolean cleanSession = preference.getValue(PushPreference.CLEANSESSION,
+				false);
 		mOpts.setCleanSession(cleanSession);
 		mOpts.setMqttVersion(MQTTVERSION_3);
 		// ssl 처리

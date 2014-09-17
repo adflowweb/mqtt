@@ -93,11 +93,17 @@ public class PushServiceImpl extends Service implements PushService {
 				String server = bundle.getString(PushPreference.SERVERURL);
 				Log.d(TAG, "server=" + server);
 
+				boolean cleanSession = bundle
+						.getBoolean(PushPreference.CLEANSESSION);
+				Log.d(TAG, "cleanSession=" + cleanSession);
+
 				if (token != null) {
 					// 토큰저장
 					preference.put(PushPreference.TOKEN, token);
 					// server url 저장
 					preference.put(PushPreference.SERVERURL, server);
+					// cleanSession 저장
+					preference.put(PushPreference.CLEANSESSION, cleanSession);
 					pushHandler.start();
 
 					Log.d(TAG, "알람을설정합니다.");

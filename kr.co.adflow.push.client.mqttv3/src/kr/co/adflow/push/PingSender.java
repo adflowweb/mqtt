@@ -125,6 +125,7 @@ public class PingSender implements MqttPingSender {
 	 */
 	private void releaseLock() {
 		Log.d(TAG, "releaseLock시작()");
+		Log.d(TAG, "context=" + context);
 		WakeLock lock = ((PushService) context).getWakeLock();
 		Log.d(TAG, "웨이크락=" + lock);
 		if (lock != null && lock.isHeld()) {
