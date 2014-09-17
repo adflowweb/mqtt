@@ -1,5 +1,7 @@
 package kr.co.adflow.util;
 
+import java.net.InetAddress;
+import java.security.MessageDigest;
 import java.util.UUID;
 
 import org.slf4j.LoggerFactory;
@@ -25,4 +27,37 @@ public class TokenGenerator {
 		logger.debug("generate종료(토큰=" + token + ")");
 		return token;
 	}
+
+	
+	
+	
+	//140912 <kicho> userid로 토큰생성 -start
+	public static String generate(String userID) {
+		
+		String token=null;
+		try {
+			MessageDigest md = MessageDigest.getInstance("MD5");
+			logger.debug("userID=" + userID);
+			md.update(userID.getBytes());
+			byte[] mdbytes = md.digest();
+
+			// convert the byte to hex format method 1
+			StringBuffer sb = new StringBuffer();
+			logger.debug("mdbytes.length=" + mdbytes.length);
+			for (int i = 0; i < mdbytes.length; i++) {
+				sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16)
+						.substring(1));
+			}
+			logger.debug("deviceIDHexString=" + sb);
+			token = sb.toString().substring(0, 23);
+//			logger.debug("clientID=" + CLIENTID);
+			logger.debug("generate종료(토큰=" + token + ")");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return token;
+	}
+	//140912 <kicho> userid로 토큰생성 -end
 }
