@@ -130,9 +130,9 @@ public class PCFServiceImpl implements PCFService {
 			          .getParameterValue(MQConstants.MQIACH_CHANNEL_STATUS))).intValue();
 			
 			if (chStatus == 3) {
-				status.setStatus("MQTT Connetted");
+				status.setStatus("MQTT Connected");
 			} else {
-				status.setStatus("MQTT Disconnetted");
+				status.setStatus("MQTT Disconnected");
 
 			}
 
@@ -144,7 +144,7 @@ public class PCFServiceImpl implements PCFService {
 		} catch (PCFException pcfe) {
 			if (pcfe.getMessage().indexOf("3065") > 0) {
 				logger.debug("해당 토큰관련 클라이언트가 Pending 메시지가 없을 경우 채널상태는 없음. -errorcode:3065");
-				status.setStatus("MQTT Disconnetted");
+				status.setStatus("MQTT Disconnected");
 			} else {
 				logger.debug("PCF error: " + pcfe);
 				status.setStatus(pcfe.toString());
