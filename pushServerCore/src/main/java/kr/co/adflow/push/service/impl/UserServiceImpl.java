@@ -87,6 +87,24 @@ public class UserServiceImpl implements UserService {
 		return token;
 	}
 
+	/*
+	 * 푸시사용자 로그인(VIP)
+	 * 
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * kr.co.adflow.push.service.UserService#authVIP(kr.co.adflow.push.domain
+	 * .User)
+	 */
+	@Override
+	public Token authVIP(User user) throws Exception {
+		logger.debug("authVIP시작(user=" + user + ")");
+		// token 발급
+		Token token = tokenService.post(user);
+		logger.debug("authVIP종료(token=" + token + ")");
+		return token;
+	}
+
 	// /*
 	// * 어드민 로그인
 	// *
@@ -123,4 +141,5 @@ public class UserServiceImpl implements UserService {
 		logger.debug("getAdmin종료(user=" + user + ")");
 		return user;
 	}
+
 }

@@ -195,21 +195,30 @@ public class UserController {
 			HttpServletRequest request,
 			@RequestHeader("User-Agent") String userAgent) throws Exception {
 		logger.debug("유저=" + user);
-		Token token = userService.auth(user);
+
 		Result<Token> result = new Result<Token>();
-		result.setSuccess(true);
-		if (token == null) {
-			List<String> messages = new ArrayList<String>() {
-				{
-					add("user not found or invalid password");
-				}
-			};
-			result.setErrors(messages);
-		} else {
-			token.setRole(roleService.getByUser(user.getUserID()));
+
+		if (user.isVIP()) {
+			// vip 유저
+			Token token = userService.authVIP(user);
 			result.setData(token);
+		} else {
+			Token token = userService.auth(user);
+
+			if (token == null) {
+				List<String> messages = new ArrayList<String>() {
+					{
+						add("user not found or invalid password");
+					}
+				};
+				result.setErrors(messages);
+			} else {
+				token.setRole(roleService.getByUser(user.getUserID()));
+				result.setData(token);
+			}
 		}
 
+		result.setSuccess(true);
 		Response<Token> res = new Response<Token>(result);
 		logger.debug("response=" + res);
 		return res;
@@ -249,7 +258,7 @@ public class UserController {
 	// }
 
 	/**
-	 * 유저인증
+	 * 유저인증 for test
 	 * 
 	 * @param msg
 	 * @return

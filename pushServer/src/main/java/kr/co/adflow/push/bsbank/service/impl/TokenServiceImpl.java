@@ -29,12 +29,17 @@ public class TokenServiceImpl extends AbstractTokenServiceImpl {
 		Token tk = super.post(user);
 		kr.co.adflow.push.domain.bsbank.User bsUser = uDao
 				.get(user.getUserID());
-		user.setName(bsUser.getGw_user_nm());
-		// user.setDept(bsUser.getGw_deptmt_cdnm());
-		user.setPhone(bsUser.getMpno());
-		logger.debug("user=" + user);
-		// update user table
-		userDao.putWithoutRole(user);
+
+		logger.debug("부산은행사용자=" + bsUser);
+		if (bsUser != null) {
+			// 부산은행디비를 이용해 사용자이름과 전화번호 업데이트
+			user.setName(bsUser.getGw_user_nm());
+			// user.setDept(bsUser.getGw_deptmt_cdnm());
+			user.setPhone(bsUser.getMpno());
+			logger.debug("user=" + user);
+			// update user table
+			userDao.putWithoutRole(user);
+		}
 		logger.debug("post종료(token=" + tk + ")");
 		return tk;
 	}

@@ -20,6 +20,7 @@ public class User {
 	private String deviceID;
 	private String apnsToken;
 	private String role;
+	private boolean VIP;
 
 	public User() {
 	}
@@ -104,12 +105,21 @@ public class User {
 		this.role = role;
 	}
 
+	public boolean isVIP() {
+		return VIP;
+	}
+
+	public void setVIP(boolean vIP) {
+		VIP = vIP;
+	}
+
 	@Override
 	public String toString() {
 		return "User [userID=" + userID + ", name=" + name + ", title=" + title
 				+ ", dept=" + dept + ", email=" + email + ", phone=" + phone
 				+ ", password=" + password + ", deviceID=" + deviceID
-				+ ", apnsToken=" + apnsToken + ", role=" + role + "]";
+				+ ", apnsToken=" + apnsToken + ", role=" + role + ", VIP="
+				+ VIP + "]";
 	}
 
 }
