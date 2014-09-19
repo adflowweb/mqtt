@@ -5,18 +5,10 @@ import javax.annotation.PreDestroy;
 
 //import kr.co.adflow.push.ktp.mapper.GroupMapper;
 import kr.co.adflow.push.domain.Acknowledge;
-import kr.co.adflow.push.domain.Device;
-import kr.co.adflow.push.domain.Message;
-import kr.co.adflow.push.domain.User;
-import kr.co.adflow.push.domain.ktp.PollResponse;
-import kr.co.adflow.push.mapper.DeviceMapper;
 import kr.co.adflow.push.service.impl.AbstractMqttServiceImpl;
 
-import org.apache.ibatis.session.SqlSession;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 /**
@@ -29,11 +21,11 @@ public class KTPMqttServiceImpl extends AbstractMqttServiceImpl {
 	private static final org.slf4j.Logger logger = LoggerFactory
 			.getLogger(KTPMqttServiceImpl.class);
 
-//	@Autowired
-//	@Qualifier("bsBanksqlSession")
-//	private SqlSession bsBanksqlSession;
+	// @Autowired
+	// @Qualifier("bsBanksqlSession")
+	// private SqlSession bsBanksqlSession;
 
-//	private GroupMapper grpMapper;
+	// private GroupMapper grpMapper;
 
 	/**
 	 * initialize
@@ -44,7 +36,7 @@ public class KTPMqttServiceImpl extends AbstractMqttServiceImpl {
 	public void initIt() throws Exception {
 		super.initialize();
 		logger.info("KTPMqttServiceImpl초기화시작()");
-//		grpMapper = bsBanksqlSession.getMapper(GroupMapper.class);
+		// grpMapper = bsBanksqlSession.getMapper(GroupMapper.class);
 		logger.info("KTPkMqttServiceImpl초기화종료()");
 	}
 
@@ -76,6 +68,5 @@ public class KTPMqttServiceImpl extends AbstractMqttServiceImpl {
 		}
 		logger.debug("receiveAck종료()");
 	}
-
 
 }

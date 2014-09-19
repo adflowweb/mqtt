@@ -1,19 +1,11 @@
 package kr.co.adflow.push.ktp.handler;
 
-import javapns.Push;
-
-import javax.annotation.Resource;
-
-//import kr.co.adflow.push.ktp.dao.UserDao;
-import kr.co.adflow.push.domain.Device;
-import kr.co.adflow.push.domain.Message;
-import kr.co.adflow.push.domain.ktp.User;
 import kr.co.adflow.push.handler.AbstractMessageHandler;
-import kr.co.adflow.push.mapper.DeviceMapper;
 
-import org.json.simple.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+//import kr.co.adflow.push.ktp.dao.UserDao;
 
 /**
  * @author nadir93

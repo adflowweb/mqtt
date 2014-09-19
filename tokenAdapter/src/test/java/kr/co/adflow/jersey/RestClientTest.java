@@ -49,7 +49,7 @@ public class RestClientTest {
 		// webResource.setProperty("X-ApiKey", API_KEY);
 
 		Token token = new Token();
-		token.setDeviceID(deviceID);
+		// token.setDeviceID(deviceID);
 		token.setUserID(userID);
 		token.setIssue(new Date());
 		Response<Token> data = webResource.path("tokens")

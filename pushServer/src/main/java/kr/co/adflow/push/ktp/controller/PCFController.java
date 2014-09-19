@@ -4,25 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
-import kr.co.adflow.push.domain.Message;
 import kr.co.adflow.push.domain.Response;
 import kr.co.adflow.push.domain.Result;
-import kr.co.adflow.push.domain.Token;
-import kr.co.adflow.push.domain.User;
 import kr.co.adflow.push.domain.ktp.Status;
 import kr.co.adflow.push.domain.ktp.Subscribe;
 import kr.co.adflow.push.ktp.service.PCFService;
-import kr.co.adflow.push.service.GroupService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -50,7 +43,8 @@ public class PCFController {
 	 */
 	@RequestMapping(value = "subscriptions/{token:.+}", method = RequestMethod.GET)
 	@ResponseBody
-	public Response<Subscribe[]> get(@PathVariable String token) throws Exception {
+	public Response<Subscribe[]> get(@PathVariable String token)
+			throws Exception {
 		logger.debug("token=" + token);
 		Result<Subscribe[]> result = new Result<Subscribe[]>();
 		result.setSuccess(true);
@@ -58,7 +52,7 @@ public class PCFController {
 		if (subscribe == null) {
 			List<String> messages = new ArrayList<String>() {
 				{
-					add("subscribe not found");
+					add("subscription not found");
 				}
 			};
 			result.setInfo(messages);
@@ -70,20 +64,21 @@ public class PCFController {
 		logger.debug("response=" + res);
 		return res;
 	}
-	
+
 	/**
-	 * MQTT Client 연결 상 가져오기
+	 * MQTT Client 연결상태 가져오기
 	 * 
 	 * @param token
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "mQTTClinetStatus/{token:.+}", method = RequestMethod.GET)
+	@RequestMapping(value = "clients/{token:.+}", method = RequestMethod.GET)
 	@ResponseBody
-	public Response<Status> mQTTClinetStatus(@PathVariable String token) throws Exception {
+	public Response<Status> getStatus(@PathVariable String token)
+			throws Exception {
 		logger.debug("token=" + token);
-		Status status = pCFService.mQTTClinetStatus(token);
-		
+		Status status = pCFService.getStatus(token);
+
 		Result<Status> result = new Result<Status>();
 		result.setSuccess(true);
 		result.setData(status);
@@ -91,11 +86,7 @@ public class PCFController {
 		logger.debug("response=" + res);
 		return res;
 	}
-	
-	
 
-	
-	
 	/**
 	 * 예외처리
 	 * 
