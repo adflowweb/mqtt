@@ -57,6 +57,7 @@ public class PushHandler implements MqttCallback {
 	public static final String TAG = "PushHandler";
 
 	public static final int alarmInterval = 60;
+	public static final int DEFAULT_KEEP_ALIVE_TIME_OUT = 240;
 	private static final String MQTT_PACKAGE = "org.eclipse.paho.client.mqttv3";
 	private static final int connectionTimeout = 10; // second
 	private static final boolean cleanSession = false;
@@ -130,6 +131,12 @@ public class PushHandler implements MqttCallback {
 			if (mqttClient == null) {
 				String token = preference.getValue(PushPreference.TOKEN, null);
 				Log.d(TAG, "token=" + token);
+
+				// token이 null일경우 종료
+				// if (token == null) {
+				// return;
+				// }
+
 				String server = preference.getValue(PushPreference.SERVERURL,
 						null);
 				Log.d(TAG, "server=" + server);
@@ -156,10 +163,23 @@ public class PushHandler implements MqttCallback {
 		} catch (Exception e) {
 			Log.e(TAG, "예외상황발생", e);
 			if (((PushService) context).getWakeLock() != null) {
-				((PushService) context).getWakeLock().release();
-				Log.d(TAG,
-						"웨이크락을해재했습니다." + ((PushService) context).getWakeLock());
+				try {
+					((PushService) context).getWakeLock().release();
+					Log.d(TAG,
+							"웨이크락을해재했습니다."
+									+ ((PushService) context).getWakeLock());
+				} catch (Exception ex) {
+					Log.e(TAG, "예외상황발생", e);
+				}
 			}
+
+			// send event
+			Intent i = new Intent(context, /* PushServiceImpl.class */
+			context.getClass());
+			i.setAction("kr.co.adflow.push.service.EVENT");
+			i.putExtra("event", e.getMessage());
+			context.startService(i);
+			// send event end
 		}
 		Log.d(TAG, "keepAlive종료()");
 	}
@@ -307,7 +327,8 @@ public class PushHandler implements MqttCallback {
 		// mOpts.setUserName("testUser");
 		// mOpts.setPassword("testPasswd".toCharArray());
 		mOpts.setConnectionTimeout(connectionTimeout);
-		int keepAlive = preference.getValue(PushPreference.KEEPALIVE, 60);
+		int keepAlive = preference.getValue(PushPreference.KEEPALIVE,
+				DEFAULT_KEEP_ALIVE_TIME_OUT);
 		Log.d(TAG, "keepAlive=" + keepAlive);
 		mOpts.setKeepAliveInterval(keepAlive);
 		boolean cleanSession = preference.getValue(PushPreference.CLEANSESSION,
@@ -329,6 +350,13 @@ public class PushHandler implements MqttCallback {
 		IMqttToken token = mqttClient.connect(mOpts);
 		token.waitForCompletion();
 		Log.d(TAG, "세션이연결되었습니다.");
+		// send event
+		Intent i = new Intent(context, /* PushServiceImpl.class */
+		context.getClass());
+		i.setAction("kr.co.adflow.push.service.EVENT");
+		i.putExtra("event", "connected");
+		context.startService(i);
+		// send event end
 		Log.d(TAG, "connect종료()");
 	}
 
