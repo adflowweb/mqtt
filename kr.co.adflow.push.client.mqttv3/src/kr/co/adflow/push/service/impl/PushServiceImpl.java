@@ -31,6 +31,7 @@ public class PushServiceImpl extends Service implements PushService {
 	private PushPreference preference;
 	// Binder given to clients
 	private final IBinder binder = new LocalBinder();
+	public static PushServiceImpl instance;
 
 	public PushServiceImpl() {
 		Log.d(TAG, "PushService생성자시작()");
@@ -39,7 +40,12 @@ public class PushServiceImpl extends Service implements PushService {
 		Log.d(TAG, "pushHandler=" + pushHandler);
 		preference = new PushPreference(this);
 		Log.d(TAG, "preference=" + preference);
+		instance = this;
 		Log.d(TAG, "PushService생성자종료()");
+	}
+
+	public static PushServiceImpl getInstance() {
+		return instance;
 	}
 
 	@Override
@@ -84,8 +90,7 @@ public class PushServiceImpl extends Service implements PushService {
 				}
 
 				for (String key : bundle.keySet()) {
-					Log.d(TAG, key + " is a key in the bundle");
-					Log.d(TAG, "value=" + bundle.get(key));
+					Log.d(TAG, key + "=" + bundle.get(key));
 				}
 				String token = bundle.getString(PushPreference.TOKEN);
 				Log.d(TAG, "token=" + token);
@@ -98,27 +103,9 @@ public class PushServiceImpl extends Service implements PushService {
 				Log.d(TAG, "cleanSession=" + cleanSession);
 
 				if (token != null) {
-					// 토큰저장
-					preference.put(PushPreference.TOKEN, token);
-					// server url 저장
-					preference.put(PushPreference.SERVERURL, server);
-					// cleanSession 저장
-					preference.put(PushPreference.CLEANSESSION, cleanSession);
-					pushHandler.start();
-
-					Log.d(TAG, "알람을설정합니다.");
-					AlarmManager service = (AlarmManager) this
-							.getSystemService(Context.ALARM_SERVICE);
-					Intent i = new Intent(this, PushReceiver.class);
-					i.setAction("kr.co.adflow.push.service.KEEPALIVE");
-					PendingIntent pending = PendingIntent.getBroadcast(this, 0,
-							i, PendingIntent.FLAG_UPDATE_CURRENT);
-					service.setRepeating(AlarmManager.RTC_WAKEUP,
-							System.currentTimeMillis() + 1000,
-							1000 * PushHandler.alarmInterval, pending);
-					Log.d(TAG, "알람이설정되었습니다");
+					startPushHandler(token, server, cleanSession);
 				} else {
-
+					// 토큰이널일경우
 				}
 			} else if (intent.getAction().equals(
 					"kr.co.adflow.push.service.STOP")) {
@@ -128,7 +115,6 @@ public class PushServiceImpl extends Service implements PushService {
 					"kr.co.adflow.push.service.KEEPALIVE")) {
 				Log.d(TAG, "keepalive체크를시작합니다.");
 				pushHandler.keepAlive();
-
 			}
 			// else if (intent.getAction().equals("kr.co.adflow.action.login"))
 			// {
@@ -147,6 +133,37 @@ public class PushServiceImpl extends Service implements PushService {
 		int ret = super.onStartCommand(intent, flags, startId);
 		Log.d(TAG, "onStartCommand종료(리턴코드=" + ret + ")");
 		return ret;
+	}
+
+	/**
+	 * @param token
+	 * @param server
+	 * @param cleanSession
+	 */
+	public void startPushHandler(String token, String server,
+			boolean cleanSession) throws Exception {
+		Log.d(TAG, "startPushHandler시작()");
+		// 토큰저장
+		preference.put(PushPreference.TOKEN, token);
+		// server url 저장
+		preference.put(PushPreference.SERVERURL, server);
+		// cleanSession 저장
+		preference.put(PushPreference.CLEANSESSION, cleanSession);
+
+		Log.d(TAG, "알람을설정합니다.");
+		AlarmManager service = (AlarmManager) this
+				.getSystemService(Context.ALARM_SERVICE);
+		Intent i = new Intent(this, PushReceiver.class);
+		i.setAction("kr.co.adflow.push.service.KEEPALIVE");
+		PendingIntent pending = PendingIntent.getBroadcast(this, 0, i,
+				PendingIntent.FLAG_UPDATE_CURRENT);
+		service.setRepeating(AlarmManager.RTC_WAKEUP,
+				System.currentTimeMillis() + 1000,
+				1000 * PushHandler.alarmInterval, pending);
+		Log.d(TAG, "알람이설정되었습니다");
+		// 푸시핸들러 시작
+		pushHandler.start();
+		Log.d(TAG, "startPushHandler종료()");
 	}
 
 	@Override
@@ -206,7 +223,7 @@ public class PushServiceImpl extends Service implements PushService {
 	/**
 	 * @return
 	 */
-	public PowerManager.WakeLock getWakeLock() {
+	public static PowerManager.WakeLock getWakeLock() {
 		Log.d(TAG, "getWakeLock시작()");
 		Log.d(TAG, "getWakeLock종료(wakeLock=" + wakeLock + ")");
 		return wakeLock;
@@ -215,7 +232,7 @@ public class PushServiceImpl extends Service implements PushService {
 	/**
 	 * @param lock
 	 */
-	public void setWakeLock(PowerManager.WakeLock lock) {
+	public static void setWakeLock(PowerManager.WakeLock lock) {
 		Log.d(TAG, "setWakeLock시작(lock=" + lock + ")");
 		wakeLock = lock;
 		Log.d(TAG, "setWakeLock종료(wakeLock=" + wakeLock + ")");

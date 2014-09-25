@@ -11,6 +11,7 @@ import java.util.logging.SimpleFormatter;
 import kr.co.adflow.push.PingSender;
 import kr.co.adflow.push.PushPreference;
 import kr.co.adflow.push.service.PushService;
+import kr.co.adflow.push.service.impl.PushServiceImpl;
 import kr.co.adflow.ssl.ADFSSLSocketFactory;
 import kr.co.adflow.ssl.SFSSLSocketFactory;
 
@@ -57,7 +58,8 @@ public class PushHandler implements MqttCallback {
 	public static final String TAG = "PushHandler";
 
 	public static final int alarmInterval = 60;
-	public static final int DEFAULT_KEEP_ALIVE_TIME_OUT = 240;
+	// public static final int DEFAULT_KEEP_ALIVE_TIME_OUT = 240;
+	public static final int DEFAULT_KEEP_ALIVE_TIME_OUT = 60;
 	private static final String MQTT_PACKAGE = "org.eclipse.paho.client.mqttv3";
 	private static final int connectionTimeout = 10; // second
 	private static final boolean cleanSession = false;
@@ -133,9 +135,10 @@ public class PushHandler implements MqttCallback {
 				Log.d(TAG, "token=" + token);
 
 				// token이 null일경우 종료
-				// if (token == null) {
-				// return;
-				// }
+				if (token == null) {
+					Log.d(TAG, "keepAlive종료(token=null)");
+					return;
+				}
 
 				String server = preference.getValue(PushPreference.SERVERURL,
 						null);
@@ -145,6 +148,11 @@ public class PushHandler implements MqttCallback {
 						new MemoryPersistence(), pingSender);
 				// 연결
 				connect();
+
+				// testCode
+				// subscribe("/users", 2);
+				// testCodeEnd
+
 				// default subscribe
 				// subscribe("/users", 2);
 				// subscribe("/users/" + userID, 2);
@@ -162,23 +170,21 @@ public class PushHandler implements MqttCallback {
 			pingSender.ping();
 		} catch (Exception e) {
 			Log.e(TAG, "예외상황발생", e);
-			if (((PushService) context).getWakeLock() != null) {
+			if (PushServiceImpl.getWakeLock() != null) {
 				try {
-					((PushService) context).getWakeLock().release();
-					Log.d(TAG,
-							"웨이크락을해재했습니다."
-									+ ((PushService) context).getWakeLock());
+					PushServiceImpl.getWakeLock().release();
+					Log.d(TAG, "웨이크락을해재했습니다." + PushServiceImpl.getWakeLock());
 				} catch (Exception ex) {
 					Log.e(TAG, "예외상황발생", e);
 				}
 			}
 
 			// send event
-			Intent i = new Intent(context, /* PushServiceImpl.class */
-			context.getClass());
-			i.setAction("kr.co.adflow.push.service.EVENT");
-			i.putExtra("event", e.getMessage());
-			context.startService(i);
+			// Intent i = new Intent(context, /* PushServiceImpl.class */
+			// context.getClass());
+			// i.setAction("kr.co.adflow.push.service.EVENT");
+			// i.putExtra("event", e.getMessage());
+			// context.startService(i);
 			// send event end
 		}
 		Log.d(TAG, "keepAlive종료()");
@@ -300,6 +306,8 @@ public class PushHandler implements MqttCallback {
 		Log.d(TAG, "sendBroadcast시작(data=" + data + ")");
 		Log.d(TAG, "serviceID=" + data.getString("serviceID"));
 		Intent i = new Intent(data.getString("serviceID"));
+		// sender
+		// receiver
 		// i.putExtra("topic", topic);
 		i.putExtra("data", data.getString("content"));
 		// i.putExtra("qos", message.getQos());
@@ -351,11 +359,11 @@ public class PushHandler implements MqttCallback {
 		token.waitForCompletion();
 		Log.d(TAG, "세션이연결되었습니다.");
 		// send event
-		Intent i = new Intent(context, /* PushServiceImpl.class */
-		context.getClass());
-		i.setAction("kr.co.adflow.push.service.EVENT");
-		i.putExtra("event", "connected");
-		context.startService(i);
+		// Intent i = new Intent(context, /* PushServiceImpl.class */
+		// context.getClass());
+		// i.setAction("kr.co.adflow.push.service.EVENT");
+		// i.putExtra("event", "connected");
+		// context.startService(i);
 		// send event end
 		Log.d(TAG, "connect종료()");
 	}
@@ -483,6 +491,7 @@ public class PushHandler implements MqttCallback {
 			SchemeRegistry registry = new SchemeRegistry();
 			registry.register(new Scheme("http", PlainSocketFactory
 					.getSocketFactory(), 80));
+			// 현재 https 인데 8080으로 서비스하고 있음
 			registry.register(new Scheme("https", sf, 8080));
 
 			ClientConnectionManager ccm = new ThreadSafeClientConnManager(

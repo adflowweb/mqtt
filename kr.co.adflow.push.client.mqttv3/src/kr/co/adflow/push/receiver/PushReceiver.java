@@ -1,7 +1,8 @@
 package kr.co.adflow.push.receiver;
 
+import kr.co.adflow.push.PushPreference;
 import kr.co.adflow.push.handler.PushHandler;
-import kr.co.adflow.push.service.PushService;
+import kr.co.adflow.push.service.impl.PushServiceImpl;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -43,6 +44,18 @@ public class PushReceiver extends BroadcastReceiver {
 			if (intent.getAction().equals(
 					"android.intent.action.BOOT_COMPLETED")) {
 				Log.d(TAG, "부팅완료작업을시작합니다.");
+
+				// // testCode
+				// PushPreference preference = new PushPreference(context);
+				// // 토큰저장
+				// preference.put(PushPreference.TOKEN, "ADF_CLIENT_NADIR");
+				// Log.d(TAG, "토큰저장 token=ADF_CLIENT_NADIR");
+				// // server url 저장
+				// preference.put(PushPreference.SERVERURL,
+				// "ssl://14.63.216.249");
+				// Log.d(TAG, "서버주소저장 server=ssl://14.63.216.249");
+				// // testCodeEnd
+
 				Log.d(TAG, "keepAlive알람을설정합니다.");
 				AlarmManager service = (AlarmManager) context
 						.getSystemService(Context.ALARM_SERVICE);
@@ -57,6 +70,7 @@ public class PushReceiver extends BroadcastReceiver {
 				Log.d(TAG, "부팅완료작업을종료합니다.");
 			} else if (intent.getAction().equals(
 					"kr.co.adflow.push.service.KEEPALIVE")) {
+
 				// keepalive
 				Log.d(TAG, "keepAlive체크를시작합니다.");
 				Bundle bundle = intent.getExtras();
@@ -70,16 +84,13 @@ public class PushReceiver extends BroadcastReceiver {
 						.getSystemService(Context.POWER_SERVICE);
 				WakeLock wakeLock = pm.newWakeLock(
 						PowerManager.PARTIAL_WAKE_LOCK, "KTPWakeLock");
-				((PushService) PushHandler.getContext()).setWakeLock(wakeLock);
+				PushServiceImpl.setWakeLock(wakeLock);
 				Log.d(TAG, "웨이크락상태=" + wakeLock.isHeld());
 				if (!wakeLock.isHeld()) {
 					wakeLock.acquire(wakeLockHoldTime);
 					// ..screen will stay on during this section..
 					Log.d(TAG, "웨이크락=" + wakeLock);
-					Log.d(TAG, "PushServiceClass="
-							+ PushHandler.getContext().getClass());
-					Intent i = new Intent(context, PushHandler.getContext()
-							.getClass()/* PushServiceImpl.class */);
+					Intent i = new Intent(context, PushServiceImpl.class);
 					i.setAction("kr.co.adflow.push.service.KEEPALIVE");
 					context.startService(i);
 					// wakeLock.release();
