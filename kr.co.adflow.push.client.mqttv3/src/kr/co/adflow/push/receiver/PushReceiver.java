@@ -75,8 +75,7 @@ public class PushReceiver extends BroadcastReceiver {
 				Log.d(TAG, "keepAlive체크를시작합니다.");
 				Bundle bundle = intent.getExtras();
 				for (String key : bundle.keySet()) {
-					Log.d(TAG, key + " is a key in the bundle");
-					Log.d(TAG, "value=" + bundle.get(key));
+					Log.d(TAG, key + "=" + bundle.get(key));
 				}
 
 				// get wakelock

@@ -10,7 +10,6 @@ import java.util.logging.SimpleFormatter;
 
 import kr.co.adflow.push.PingSender;
 import kr.co.adflow.push.PushPreference;
-import kr.co.adflow.push.service.PushService;
 import kr.co.adflow.push.service.impl.PushServiceImpl;
 import kr.co.adflow.ssl.ADFSSLSocketFactory;
 import kr.co.adflow.ssl.SFSSLSocketFactory;
@@ -39,6 +38,7 @@ import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -261,6 +261,36 @@ public class PushHandler implements MqttCallback {
 			case 0: // 개인메시지
 			case 1: // 전체메시지
 			case 2: // 그룹메시지
+
+				// 수신확인처리
+				if (data.has("ack") && data.getBoolean("ack")) {
+					//
+					// ack message
+					int id = data.getInt("id");
+					String userID = preference.getValue(PushPreference.USERID,
+							null);
+
+					if (userID != null) {
+						final String ackMsg = "{\"userID\":\"" + userID
+								+ "\",\"id\":" + id + "}";
+						new Thread() {
+							@Override
+							public void run() {
+								try {
+									publish("/push/ack", ackMsg.getBytes(), 1,
+											false);
+									Log.d(TAG, "ack메시지를전송하였습니다. 메시지=" + ackMsg);
+								} catch (Exception e) {
+									Log.e(TAG, "예외상황발생", e);
+								}
+							}
+						}.start();
+					} else {
+						Log.e(TAG, "userID가존재하지않습니다.");
+					}
+				}
+
+				// 브로드캐스팅
 				sendBroadcast(data);
 				break;
 			case 100: // subscribe
@@ -309,9 +339,13 @@ public class PushHandler implements MqttCallback {
 		// sender
 		// receiver
 		// i.putExtra("topic", topic);
-		i.putExtra("data", data.getString("content"));
+		i.putExtra("action", "kr.co.adflow.push.service.RECEIVE");
+		if (data.has("contentType")) {
+			i.putExtra("contentType", data.getString("contentType"));
+		}
+		i.putExtra("content", data.getString("content"));
 		// i.putExtra("qos", message.getQos());
-		i.putExtra("ack", data.getBoolean("ack"));
+		// i.putExtra("ack", data.getBoolean("ack"));
 
 		context.sendBroadcast(i);
 		Log.d(TAG, "sendBroadcast종료()");
@@ -365,6 +399,8 @@ public class PushHandler implements MqttCallback {
 		// i.putExtra("event", "connected");
 		// context.startService(i);
 		// send event end
+
+		PushServiceImpl.setStatus(PushServiceImpl.SERVICE_STARTED);
 		Log.d(TAG, "connect종료()");
 	}
 
@@ -454,6 +490,9 @@ public class PushHandler implements MqttCallback {
 			throws Exception {
 		Log.d(TAG, "auth시작(url=" + url + ", userID=" + userID + ", deviceID="
 				+ deviceID + ")");
+		// store userID
+		preference.put(PushPreference.USERID, userID);
+
 		JSONObject data = new JSONObject();
 		data.put("userID", userID);
 		data.put("deviceID", deviceID);

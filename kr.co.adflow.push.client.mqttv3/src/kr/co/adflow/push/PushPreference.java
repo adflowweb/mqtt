@@ -13,6 +13,7 @@ public class PushPreference {
 	public static final String SERVERURL = "serverURL";
 	public static final String KEEPALIVE = "keepAlive";
 	public static final String CLEANSESSION = "cleanSession";
+	public static final String USERID = "userID";
 
 	private final String PREF_NAME = "kr.co.adflow.push";
 

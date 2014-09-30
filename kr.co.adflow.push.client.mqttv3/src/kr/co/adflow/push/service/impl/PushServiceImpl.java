@@ -26,12 +26,17 @@ public class PushServiceImpl extends Service implements PushService {
 
 	// TAG for debug
 	public static final String TAG = "PushService";
+
+	public static final int SERVICE_NOT_STARTED = 0;
+	public static final int SERVICE_STARTED = 1;
+
 	private static PowerManager.WakeLock wakeLock;
 	private PushHandler pushHandler;
 	private PushPreference preference;
 	// Binder given to clients
 	private final IBinder binder = new LocalBinder();
 	public static PushServiceImpl instance;
+	public static int status;
 
 	public PushServiceImpl() {
 		Log.d(TAG, "PushService생성자시작()");
@@ -46,6 +51,14 @@ public class PushServiceImpl extends Service implements PushService {
 
 	public static PushServiceImpl getInstance() {
 		return instance;
+	}
+
+	public static int getStatus() {
+		return status;
+	}
+
+	public static void setStatus(int val) {
+		status = val;
 	}
 
 	@Override
