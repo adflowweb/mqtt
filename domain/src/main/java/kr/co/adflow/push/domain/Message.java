@@ -35,6 +35,7 @@ public class Message {
 	private String receiver;
 	private Date issue;
 	private Date issueSms;
+	private String contentType;
 
 	/**
 	 * quality of service qos0 : at most once qos1 : at least once qos2 :
@@ -188,14 +189,23 @@ public class Message {
 		this.serviceID = serviceID;
 	}
 
+	public String getContentType() {
+		return contentType;
+	}
+
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
+	}
+
 	@Override
 	public String toString() {
 		return "Message [id=" + id + ", content=" + content + ", sender="
 				+ sender + ", receiver=" + receiver + ", issue=" + issue
-				+ ", issueSms=" + issueSms + ", qos=" + qos + ", retained="
-				+ retained + ", sms=" + sms + ", timeOut=" + timeOut
-				+ ", reservation=" + reservation + ", type=" + type
-				+ ", status=" + status + ", serviceID=" + serviceID + "]";
+				+ ", issueSms=" + issueSms + ", contentType=" + contentType
+				+ ", qos=" + qos + ", retained=" + retained + ", sms=" + sms
+				+ ", timeOut=" + timeOut + ", reservation=" + reservation
+				+ ", type=" + type + ", status=" + status + ", serviceID="
+				+ serviceID + "]";
 	}
 
 }

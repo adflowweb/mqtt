@@ -23,6 +23,7 @@
 		<result property="timeOut" column="timeOut" />
 		<result property="type" column="type" />
 		<result property="content" column="content" />
+		<result property="contentType" column="contenttype" />
 		<result property="status" column="status" />
 		<result property="serviceID" column="serviceID" />
 	</resultMap>
@@ -65,11 +66,13 @@
 		INSERT INTO
 		message (sender, receiver, sms, timeOut, qos, retained,
 		reservation, type, status, serviceID) values(
-		#{sender}, #{receiver},
+		#{sender},
+		#{receiver},
 		#{sms},
 		#{timeOut},
 		#{qos},
-		#{retained}, #{reservation}, #{type},
+		#{retained}, #{reservation},
+		#{type},
 		#{status},
 		#{serviceID}
 		)
@@ -108,14 +111,15 @@
 
 	<insert id="putContent" parameterType="kr.co.adflow.push.domain.Message">
 		UPDATE content set content
-		= #{content} where id = #{id}
+		= #{content}, contenttype = #{contentType}
+		where id = #{id}
 	</insert>
 
 	<insert id="postContent" parameterType="kr.co.adflow.push.domain.Message">
 		INSERT INTO
 		content
 		values(
-		#{id}, #{content}
+		#{id}, #{content}, #{contentType}
 		)
 	</insert>
 

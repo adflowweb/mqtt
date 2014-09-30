@@ -381,13 +381,13 @@ public abstract class AbstractMqttServiceImpl implements MqttCallback,
 
 		if (topic.equals("/push/ack")) {
 			receiveAck(topic, message);
-//		} else if (topic.equals("/push/group")) {
-//			receiveGroup(topic, message);
-////		} else if (topic.equals("/push/poll")) {
-////			// 설문조사용
-////			receivePoll(topic, message);
-//		} else if (topic.equals("/push/badge")) {
-//			receiveBadge(topic, message);
+			// } else if (topic.equals("/push/group")) {
+			// receiveGroup(topic, message);
+			// // } else if (topic.equals("/push/poll")) {
+			// // // 설문조사용
+			// // receivePoll(topic, message);
+			// } else if (topic.equals("/push/badge")) {
+			// receiveBadge(topic, message);
 		} else {
 			logger.error("적절한토픽처리자가없습니다.");
 		}
@@ -396,11 +396,12 @@ public abstract class AbstractMqttServiceImpl implements MqttCallback,
 
 	abstract protected void receiveAck(String topic, MqttMessage message);
 
-//	abstract protected void receiveGroup(String topic, MqttMessage message);
-//
-////	abstract protected void receivePoll(String topic, MqttMessage message);
-//
-//	abstract protected void receiveBadge(String topic, MqttMessage message);
+	// abstract protected void receiveGroup(String topic, MqttMessage message);
+	//
+	// // abstract protected void receivePoll(String topic, MqttMessage
+	// message);
+	//
+	// abstract protected void receiveBadge(String topic, MqttMessage message);
 
 	/*
 	 * (non-Javadoc)
@@ -483,8 +484,25 @@ public abstract class AbstractMqttServiceImpl implements MqttCallback,
 				.append(msg.isSms()).append(",\"type\":").append(msg.getType())
 				.append(",\"serviceID\":\"").append(msg.getServiceID())
 				.append("\",\"sendDate\":\"")
-				.append(formatter.format(sendDate)).append("\",\"content\":")
-				.append(msg.getContent()).append("}");
+				.append(formatter.format(sendDate))
+				.append("\",\"contentType\":\"").append(msg.getContentType())
+				.append("\",\"content\":");
+
+		// modified by nadir93
+		// 2014.9.26
+		// 마임타입추가
+		logger.debug("contentType=" + msg.getContentType());
+		if (msg.getContentType().equals("text/plain")) {
+			pushMsg.append("\"").append(msg.getContent()).append("\"");
+		} else if (msg.getContentType().equals("application/base64")) {
+			pushMsg.append("\"").append(msg.getContent()).append("\"");
+		} else if (msg.getContentType().equals("application/json")) {
+			pushMsg.append(msg.getContent());
+		} else {
+			logger.error("마임타입이부적절합니다.");
+		}
+		// modified end
+		pushMsg.append("}");
 
 		logger.debug("전송될메시지=" + pushMsg);
 
@@ -501,8 +519,7 @@ public abstract class AbstractMqttServiceImpl implements MqttCallback,
 		logger.debug("isConnected종료(" + mqttClient.isConnected() + ")");
 		return mqttClient.isConnected();
 	}
-	
-	
+
 	/**
 	 * @throws MqttException
 	 */
@@ -510,12 +527,12 @@ public abstract class AbstractMqttServiceImpl implements MqttCallback,
 		logger.debug("mqttConnectionClean시작()");
 		logger.debug("serverURL=" + SERVERURL);
 		logger.debug("clientID=" + clientID);
-		
+
 		MqttConnectOptions mOpts2 = makeMqttOpts();
 		mOpts2.setCleanSession(true);
 
-		MqttAsyncClient mqttClient2 = new MqttAsyncClient(SERVERURL[0], clientID,
-				new MemoryPersistence());
+		MqttAsyncClient mqttClient2 = new MqttAsyncClient(SERVERURL[0],
+				clientID, new MemoryPersistence());
 		logger.debug("mqttClient2인스턴스가생성되었습니다.mqttClient2=" + mqttClient2);
 		mqttClient2.setCallback(this);
 		IMqttToken token = mqttClient2.connect(mOpts2);
