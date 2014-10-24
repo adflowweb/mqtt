@@ -324,11 +324,13 @@
 				<!-- LDAP 서버주소 -->
 				<ldap.server.url>130.10.0.32</ldap.server.url>
 
-				<apns.key.file>/Users/nadir93/tmp/cho_push.p12</apns.key.file>
+				<apns.key.file>/home/nadir93/tmp/cho_push.p12</apns.key.file>
 
 				<apns.key.password>test1234</apns.key.password>
 
 				<apns.production>false</apns.production>
+
+				<apns.queue.threads>10</apns.queue.threads>
 
 				<!-- 헬스체크여부 -->
 				<health.enable>true</health.enable>
@@ -419,6 +421,9 @@
 				<apns.key.password>test1234</apns.key.password>
 
 				<apns.production>false</apns.production>
+
+				<apns.queue.threads>10</apns.queue.threads>
+
 
 				<!-- 헬스체크여부 -->
 				<health.enable>true</health.enable>

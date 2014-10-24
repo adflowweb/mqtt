@@ -1,6 +1,7 @@
 package kr.co.adflow.push.bsbank.handler;
 
 import javapns.Push;
+import javapns.notification.PushNotificationPayload;
 
 import javax.annotation.Resource;
 
@@ -66,9 +67,14 @@ public class MessageHandler extends AbstractMessageHandler {
 
 			for (int j = 0; j < devices.length; j++) {
 				logger.debug("apnsSend. apnsToken=" + devices[j].getApnsToken());
-				Push.combined(title, devices[j].getUnRead() + 1, "default",
-						apnsKeyFile, apnsKeyFilePassword, apnsProduction,
-						devices[j].getApnsToken());
+				
+				PushNotificationPayload payload = PushNotificationPayload
+						.combined(title, devices[i].getUnRead() + 1, "default");
+				pushQueue.add(payload, devices[i].getApnsToken());
+				
+				// Push.combined(title, devices[j].getUnRead() + 1, "default",
+				// apnsKeyFile, apnsKeyFilePassword, apnsProduction,
+				// devices[j].getApnsToken());
 				logger.debug("APNS완료.userID=" + userID + ", deivceID="
 						+ devices[j].getDeviceID() + ", unreadCount="
 						+ (devices[j].getUnRead() + 1));

@@ -9,6 +9,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import javapns.Push;
+import javapns.notification.PushNotificationPayload;
+import javapns.notification.transmission.PushQueue;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -24,12 +26,10 @@ import kr.co.adflow.push.service.MqttService;
 import org.apache.ibatis.session.SqlSession;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
  * 메시지처리
@@ -72,6 +72,9 @@ abstract public class AbstractMessageHandler implements Runnable {
 	protected boolean apnsProduction = Boolean.parseBoolean(prop
 			.getProperty("apns.production"));
 
+	private int queueThreads = Integer.parseInt(prop
+			.getProperty("apns.queue.threads"));
+
 	private static boolean first = true;
 
 	@Resource
@@ -89,6 +92,8 @@ abstract public class AbstractMessageHandler implements Runnable {
 
 	protected JSONParser parser = new JSONParser();
 
+	protected PushQueue pushQueue;
+
 	/**
 	 * initialize
 	 * 
@@ -103,6 +108,9 @@ abstract public class AbstractMessageHandler implements Runnable {
 			messageLooper = Executors.newScheduledThreadPool(1);
 			messageLooper.scheduleWithFixedDelay(this, messageInterval,
 					messageInterval, TimeUnit.SECONDS);
+			// javaPns queue 초기화
+			pushQueue = Push.queue(apnsKeyFile, apnsKeyFilePassword,
+					apnsProduction, queueThreads);
 			logger.info("메시지핸들러가시작되었습니다.");
 		}
 
@@ -228,9 +236,14 @@ abstract public class AbstractMessageHandler implements Runnable {
 
 			for (int i = 0; i < devices.length; i++) {
 				logger.debug("apnsSend. apnsToken=" + devices[i].getApnsToken());
-				Push.combined(title, devices[i].getUnRead() + 1, "default",
-						apnsKeyFile, apnsKeyFilePassword, apnsProduction,
-						devices[i].getApnsToken());
+
+				PushNotificationPayload payload = PushNotificationPayload
+						.combined(title, devices[i].getUnRead() + 1, "default");
+				pushQueue.add(payload, devices[i].getApnsToken());
+
+				// Push.combined(title, devices[i].getUnRead() + 1, "default",
+				// apnsKeyFile, apnsKeyFilePassword, apnsProduction,
+				// devices[i].getApnsToken());
 				logger.debug("APNS완료.userID=" + devices[i].getUserID()
 						+ ", deivceID=" + devices[i].getDeviceID()
 						+ ", unreadCount=" + (devices[i].getUnRead() + 1));
@@ -267,9 +280,14 @@ abstract public class AbstractMessageHandler implements Runnable {
 
 			for (int i = 0; i < devices.length; i++) {
 				logger.debug("apnsSend. apnsToken=" + devices[i].getApnsToken());
-				Push.combined(title, devices[i].getUnRead() + 1, "default",
-						apnsKeyFile, apnsKeyFilePassword, apnsProduction,
-						devices[i].getApnsToken());
+
+				PushNotificationPayload payload = PushNotificationPayload
+						.combined(title, devices[i].getUnRead() + 1, "default");
+				pushQueue.add(payload, devices[i].getApnsToken());
+
+				// Push.combined(title, devices[i].getUnRead() + 1, "default",
+				// apnsKeyFile, apnsKeyFilePassword, apnsProduction,
+				// devices[i].getApnsToken());
 				logger.debug("APNS완료.userID=" + userID + ", deivceID="
 						+ devices[i].getDeviceID() + ", unreadCount="
 						+ (devices[i].getUnRead() + 1));

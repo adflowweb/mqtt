@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import kr.co.adflow.push.bsbank.controller.MessageController;
 import kr.co.adflow.push.domain.Message;
 import kr.co.adflow.push.domain.Response;
 
@@ -14,6 +15,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.AfterClass;
@@ -38,6 +40,7 @@ public class MessageControllerTest extends AbstractTestNGSpringContextTests {
 	private Calendar cal = Calendar.getInstance();
 
 	@Autowired
+	@Qualifier("bsBankMessageController")
 	MessageController messageController;
 
 	@BeforeClass
@@ -298,5 +301,25 @@ public class MessageControllerTest extends AbstractTestNGSpringContextTests {
 		logger.debug("errors=" + errors);
 		assertNull(errors);
 		logger.debug("==========메시지가져오기테스트종료()==========");
+	}
+
+	/**
+	 * 부산은행 메시지 전처리 전송하기 테스트
+	 * 
+	 * @throws Exception
+	 */
+	@Test(priority = 7)
+	void 부산은행메시지전처리전송하기테스트() throws Exception {
+		logger.debug("==========부산은행메시지전처리전송하기테스트시작()==========");
+		// sender, receiver, sms, timeOut, qos, retained, reservation,
+		// type, content, status, category
+		String content = "00000748120141006deaiap1 1021551261193501US                                                   P   00EAI00                                        EAIPMSON00011SS                 1000000000                 11000              KR  0000                                                                     01000   000000010100000000011                                                 11111211                  111 11111111                                                                                                1000000002Command=SEND_SMS&sender=6423300&receiver=/users/11778833,/groups/adflow,/groups/adflow/websphere&content=[10:18] [FEBIFSON0001]- 130.10.101.213:16001 - 130.10.101.213:16001 Connection Timeout&Security=0&RecvNotify=1&Company=001001&DepartMent=SMS982&ProjectNum=TO&JobCode=T15@@";
+
+		Response res = messageController.post(content);
+		logger.debug("호출결과=" + res);
+		List<String> errors = res.getResult().getErrors();
+		logger.debug("errors=" + errors);
+		assertNull(errors);
+		logger.debug("==========부산은행메시지전처리전송하기테스트종료()==========");
 	}
 }

@@ -32,7 +32,7 @@ public class GroupMsgSendTest extends AbstractTestNGSpringContextTests {
 	private Calendar cal = Calendar.getInstance();
 
 	@Autowired
-	MessageController messageController;
+	AbstractMessageController messageController;
 
 	@BeforeClass
 	void beforeclass() throws Exception {

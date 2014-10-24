@@ -1,7 +1,11 @@
 package kr.co.adflow.push.controller;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -18,7 +22,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
@@ -26,14 +29,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @date 2014. 4. 14.
  * 
  */
-@Controller
-public class MessageController {
+// @Controller
+abstract public class AbstractMessageController {
 
 	private static final Logger logger = LoggerFactory
-			.getLogger(MessageController.class);
+			.getLogger(AbstractMessageController.class);
 
 	@Resource
-	private MessageService msgService;
+	protected MessageService msgService;
 
 	/**
 	 * 메시지 전송하기
@@ -42,10 +45,70 @@ public class MessageController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "messages", method = RequestMethod.POST)
+	@RequestMapping(value = "messages", method = RequestMethod.POST, consumes = "application/json")
 	@ResponseBody
 	public Response post(@RequestBody Message msg) throws Exception {
 		logger.debug("메시지=" + msg);
+		// 다중수신자처리
+
+		final int count = msgService.post(msg);
+		Result result = new Result();
+		result.setSuccess(true);
+		List<String> messages = new ArrayList<String>() {
+			{
+				add("updates=" + count);
+			}
+		};
+		result.setInfo(messages);
+		Response res = new Response(result);
+		logger.debug("response=" + res);
+		return res;
+	}
+
+	/**
+	 * 메시지 전송하기
+	 * 
+	 * @param msg
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "messages", method = RequestMethod.POST, consumes = "text/plain")
+	@ResponseBody
+	public Response post(@RequestBody String requestBody) throws Exception {
+		logger.debug("메시지=" + requestBody);
+		// message parsing
+		String msgStr = requestBody.substring(522);
+		logger.debug("msgStr=" + msgStr);
+
+		Map<String, String> map = getQueryMap(msgStr);
+		Set<String> keys = map.keySet();
+		for (String key : keys) {
+			logger.debug("Name=" + key);
+			logger.debug("Value=" + map.get(key));
+		}
+
+		// sender, receiver, sms, timeOut, qos, retained, reservation,
+		// type, content, status, category
+
+		Message msg = new Message();
+		msg.setSender(map.get("sender"));
+		msg.setReceiver(map.get("receiver"));
+		// 다중수신자처리 요망
+		msg.setSms(Boolean.parseBoolean(map.get("sms")));
+		if (map.containsKey("timeOut")) {
+			msg.setTimeOut(Integer.parseInt(map.get("timeOut")));
+		}
+		if (map.containsKey("reservation")) {
+			msg.setReservation(new Date(map.get("reservation")));
+		}
+
+		if (map.containsKey("type")) {
+			msg.setType(Integer.parseInt(map.get("type")));
+		}
+
+		msg.setContent(map.get("content"));
+		msg.setCategory(map.get("category"));
+
 		final int count = msgService.post(msg);
 		Result result = new Result();
 		result.setSuccess(true);
@@ -318,6 +381,17 @@ public class MessageController {
 		result.setErrors(messages);
 		Response res = new Response(result);
 		return res;
+	}
+
+	public static Map<String, String> getQueryMap(String query) {
+		String[] params = query.split("&");
+		Map<String, String> map = new HashMap<String, String>();
+		for (String param : params) {
+			String name = param.split("=")[0];
+			String value = param.split("=")[1];
+			map.put(name, value);
+		}
+		return map;
 	}
 
 	// /**

@@ -104,7 +104,10 @@ public class BSBankMqttServiceImpl extends AbstractMqttServiceImpl {
 				content.append(bsbankUser.getGw_sbsd_cdnm());
 				content.append("\"");
 				content.append(",\"");
-				content.append(bsbankUser.getGw_deptmt_cdnm());
+				// modified by nadir93
+				// 부서명은 계열사 아래 depth로 변경
+				content.append(bsbankUser.getGw_sbsd_cdnm() + "/"
+						+ bsbankUser.getGw_deptmt_cdnm());
 				content.append("\"");
 				// for (int i = 0; i < grp.length; i++) {
 				// content.append("\"");
