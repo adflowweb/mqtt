@@ -276,8 +276,12 @@ public class PushServiceImpl extends Service implements PushService {
 	public void preCheck(String sender, String topic) throws Exception {
 		Log.d(TAG, "preCheck시작(sender=" + sender + ", 토픽=" + topic + ")");
 		JSONObject data = new JSONObject();
-		data.put("sender", sender);
-		data.put("receiver", topic);
+
+		// modified by nadir
+		// 메시지 크기를 줄이기 위해 삭제 요청됨
+		// data.put("sender", sender);
+		// data.put("receiver", topic);
+		// modified end
 		data.put("type", 103); // 103 : precheck
 		Log.d(TAG, "보낼메시지=" + data.toString());
 		// qos:0
