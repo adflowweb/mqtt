@@ -43,7 +43,7 @@ public class NotificationHandler {
 		Notification notification = null;
 		Intent resultIntent = new Intent(context,
 				kr.co.adflow.push.MainActivity.class);
-		resultIntent.putExtra("image", noti.getString("image"));
+		// resultIntent.putExtra("image", noti.getString("image"));
 		resultIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP
 				| Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		// resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -73,81 +73,104 @@ public class NotificationHandler {
 					makeAddCalIntent(event), PendingIntent.FLAG_UPDATE_CURRENT);
 		}
 
-		byte[] data = Base64.decodeBase64(noti.getString("image").getBytes());
-		Bitmap bmBigPicture = BitmapFactory.decodeByteArray(data, 0,
-				data.length);
+		// byte[] data =
+		// Base64.decodeBase64(noti.getString("image").getBytes());
+		// Bitmap bmBigPicture = BitmapFactory.decodeByteArray(data, 0,
+		// data.length);
 
-		int notificationStyle = noti.getInt("notificationStyle");
+		// int notificationStyle = noti.getInt("notificationStyle");
 		Uri alarmSound = RingtoneManager
 				.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
-		switch (notificationStyle) {
-		case BIG_PICTURE_STYLE:
-			// bmBigPicture = BitmapFactory.decodeResource(getResources(),
-			// R.drawable.android_jellybean);
-			// byte[] data = message.getPayload();
+		// String contentUri = noti.getString("contentUri");
 
-			// bigPictureStyle
-			notification = new Notification.BigPictureStyle(
-					new Notification.Builder(context)
-							.setSound(alarmSound)
-							// .setLights(Color.parseColor("#5858FA"), 500, 500)
-							.setLights(Color.BLUE, 500, 500)
-							.setContentTitle(noti.getString("contentTitle"))
-							.setContentText(noti.getString("contentText"))
-							.setSmallIcon(R.drawable.ic_action_event)
-							.setLargeIcon(bmBigPicture)
-							.setTicker(noti.getString("ticker"))
-							.addAction(R.drawable.ic_action_search, DETAILVIEW,
-									intent)
-							.addAction(R.drawable.ic_action_new_event,
-									ADDCALENDAR, addCalPendingIntent)
+		// PendingIntent detailIntent = null;
 
-			).bigPicture(bmBigPicture)
-					.setBigContentTitle(noti.getString("contentTitle"))
-					.setSummaryText(noti.getString("summaryText")).build();
+		// if (contentUri != null) {
+		// detailIntent = PendingIntent.getActivity(context, 0, new Intent(
+		// Intent.ACTION_VIEW).setData(Uri.parse(contentUri)), 0);
+		// }
 
-			break;
-		case BIG_TEXT_STYLE:
-			// bigTextStyle
-			notification = new Notification.BigTextStyle(
-					new Notification.Builder(context).setAutoCancel(true)
-							.setSound(alarmSound)
-							.setLights(Color.BLUE, 500, 500)
-							.setContentTitle(noti.getString("contentTitle"))
-							.setContentText(noti.getString("contentText"))
-							.setSmallIcon(R.drawable.icon)
-							.setTicker(noti.getString("ticker"))
-							.setLargeIcon(bmBigPicture)
-							.setContentIntent(intent)
-							.setLargeIcon(bmBigPicture)).bigText(
-					noti.getString("contentText")).build();
-			break;
-		case NORMAL_STYLE:
+		notification = new Notification.Builder(context)
+				.setSound(alarmSound)
+				.setLights(Color.BLUE, 500, 500)
+				.setContentTitle("실내미세먼지")
+				.setContentText(
+						"PM:" + noti.getString("aqi") + " "
+								+ noti.getString("unit"))
+				// .setContentIntent(detailIntent)
+				.setTicker(
+						"PM:" + noti.getString("aqi") + " "
+								+ noti.getString("unit"))
+				.setSmallIcon(R.drawable.icon).build();
 
-			String contentUri = noti.getString("contentUri");
-
-			PendingIntent detailIntent = null;
-
-			if (contentUri != null) {
-				detailIntent = PendingIntent.getActivity(context, 0,
-						new Intent(Intent.ACTION_VIEW).setData(Uri
-								.parse(contentUri)), 0);
-			}
-
-			notification = new Notification.Builder(context)
-					.setSound(alarmSound).setLights(Color.BLUE, 500, 500)
-					.setContentTitle(noti.getString("contentTitle"))
-					.setContentText(noti.getString("contentText"))
-					.setLargeIcon(bmBigPicture).setContentIntent(detailIntent)
-					.setTicker(noti.getString("ticker"))
-					.setSmallIcon(R.drawable.icon).build();
-		default:
-
-		}
+		// switch (notificationStyle) {
+		// case BIG_PICTURE_STYLE:
+		// // bmBigPicture = BitmapFactory.decodeResource(getResources(),
+		// // R.drawable.android_jellybean);
+		// // byte[] data = message.getPayload();
+		//
+		// // bigPictureStyle
+		// notification = new Notification.BigPictureStyle(
+		// new Notification.Builder(context)
+		// .setSound(alarmSound)
+		// // .setLights(Color.parseColor("#5858FA"), 500, 500)
+		// .setLights(Color.BLUE, 500, 500)
+		// .setContentTitle(noti.getString("contentTitle"))
+		// .setContentText(noti.getString("contentText"))
+		// .setSmallIcon(R.drawable.ic_action_event)
+		// .setLargeIcon(bmBigPicture)
+		// .setTicker(noti.getString("ticker"))
+		// .addAction(R.drawable.ic_action_search, DETAILVIEW,
+		// intent)
+		// .addAction(R.drawable.ic_action_new_event,
+		// ADDCALENDAR, addCalPendingIntent)
+		//
+		// ).bigPicture(bmBigPicture)
+		// .setBigContentTitle(noti.getString("contentTitle"))
+		// .setSummaryText(noti.getString("summaryText")).build();
+		//
+		// break;
+		// case BIG_TEXT_STYLE:
+		// // bigTextStyle
+		// notification = new Notification.BigTextStyle(
+		// new Notification.Builder(context).setAutoCancel(true)
+		// .setSound(alarmSound)
+		// .setLights(Color.BLUE, 500, 500)
+		// .setContentTitle(noti.getString("contentTitle"))
+		// .setContentText(noti.getString("contentText"))
+		// .setSmallIcon(R.drawable.icon)
+		// .setTicker(noti.getString("ticker"))
+		// .setLargeIcon(bmBigPicture)
+		// .setContentIntent(intent)
+		// .setLargeIcon(bmBigPicture)).bigText(
+		// noti.getString("contentText")).build();
+		// break;
+		// case NORMAL_STYLE:
+		//
+		// String contentUri = noti.getString("contentUri");
+		//
+		// PendingIntent detailIntent = null;
+		//
+		// if (contentUri != null) {
+		// detailIntent = PendingIntent.getActivity(context, 0,
+		// new Intent(Intent.ACTION_VIEW).setData(Uri
+		// .parse(contentUri)), 0);
+		// }
+		//
+		// notification = new Notification.Builder(context)
+		// .setSound(alarmSound).setLights(Color.BLUE, 500, 500)
+		// .setContentTitle(noti.getString("contentTitle"))
+		// .setContentText(noti.getString("contentText"))
+		// .setLargeIcon(bmBigPicture).setContentIntent(detailIntent)
+		// .setTicker(noti.getString("ticker"))
+		// .setSmallIcon(R.drawable.icon).build();
+		// default:
+		//
+		// }
 
 		// notification.ledARGB = Color.YELLOW;
-		manager.notify(msgCnt, notification);
+		manager.notify(msgCnt++, notification);
 	}
 
 	private static Intent makeAddCalIntent(JSONObject event) throws Exception {

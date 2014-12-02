@@ -30,39 +30,39 @@ public class MainActivity extends WLDroidGap {
 	public void onPause() {
 		Log.d(DEBUGTAG, "onPause시작()");
 		super.onPause();
-		PushApp.activityPaused();
-		// refresh badge
-		PushDBHelper pushDb = PushService.pushHandler.pushdb;
-		Log.d(DEBUGTAG, "pushDb=" + pushDb);
-		if (pushDb != null) {
-			int badgeCount = pushDb.getUnreadCount();
-			try {
-				ShortcutBadger.setBadge(this, badgeCount);
-				Log.d(TAG, "뱃지를달았습니다.badgeCount=" + badgeCount);
-			} catch (ShortcutBadgeException e) {
-				e.printStackTrace();
-			}
-		}
-
+		// PushApp.activityPaused();
+		// // refresh badge
+		// PushDBHelper pushDb = PushService.pushHandler.pushdb;
+		// Log.d(DEBUGTAG, "pushDb=" + pushDb);
+		// if (pushDb != null) {
+		// int badgeCount = pushDb.getUnreadCount();
+		// try {
+		// ShortcutBadger.setBadge(this, badgeCount);
+		// Log.d(TAG, "뱃지를달았습니다.badgeCount=" + badgeCount);
+		// } catch (ShortcutBadgeException e) {
+		// e.printStackTrace();
+		// }
+		// }
+		//
 		Log.d(DEBUGTAG, "onPause종료()");
 	}
 
 	@Override
 	public void onResume() {
 		Log.d(DEBUGTAG, "onResume시작()");
-		Bundle extras = getIntent().getExtras();
-		Log.d(DEBUGTAG, "intent::" + getIntent());
-		Log.d(DEBUGTAG, "extras::" + extras);
-		// if (extras != null) {
-		// Log.d(DEBUGTAG, "image::" + extras.get("image"));
-		// }
-
+		// Bundle extras = getIntent().getExtras();
+		// Log.d(DEBUGTAG, "intent::" + getIntent());
+		// Log.d(DEBUGTAG, "extras::" + extras);
+		// // if (extras != null) {
+		// // Log.d(DEBUGTAG, "image::" + extras.get("image"));
+		// // }
+		//
 		super.onResume();
-		PushApp.activityResumed();
-
-		// refresh
-		super.loadUrl("javascript:andResumeFunction();");
-		Log.d(DEBUGTAG, "andResumeFunction호출됨");
+		// PushApp.activityResumed();
+		//
+		// // refresh
+		// super.loadUrl("javascript:andResumeFunction();");
+		// Log.d(DEBUGTAG, "andResumeFunction호출됨");
 		Log.d(DEBUGTAG, "onResume종료()");
 	}
 
@@ -173,7 +173,7 @@ public class MainActivity extends WLDroidGap {
 					user = new User();
 					user.setUserID("nadir93");
 					// user.setPassword("passw0rd");
-					user.setTokenID("08be01ba2e1f4e2e8216725");
+					user.setTokenID("18be01ba2e1f4e2e8216721");
 					user.setCurrentUser(true);
 					pushdb.addUser(user);
 					Log.d(TAG, "임시유저가등록되었습니다. user=" + user);

@@ -47,14 +47,16 @@ public class PushHandler implements MqttCallback {
 	public static final String TAG = "푸시핸들러";
 	// public static final int alarmInterval = 240; // 4분
 	// public static final int alarmInterval = 60; // 1분 for debug
-	public static final int alarmInterval = 60; // 4분 for production
+	public static final int alarmInterval = 30; // 4분 for production
 	// private static final String SERVERURL = "ssl://adflow.net:8883";
-	private static final String SERVERURL = "ssl://adflow.net:8883";
+	// private static final String SERVERURL = "ssl://adflow.net:8883";
+	// private static final String SERVERURL = "tcp://175.209.8.188:1883";
+	private static final String SERVERURL = "tcp://adflow.net:31883";
 	private static final String MQTT_PACKAGE = "org.eclipse.paho.client.mqttv3";
 	private static final int connectionTimeout = 10; // second
 	// private static final int connectionTimeout = 5; // second
 	// private static final int connectionTimeout = 2; // second
-	private static final int keepAliveInterval = 480; // second 현재의미없음
+	private static final int keepAliveInterval = 30; // second
 	private static final boolean cleanSession = false;
 	// mqttClient 세션로그
 	private static final boolean clientSessionLog = false;
@@ -141,6 +143,13 @@ public class PushHandler implements MqttCallback {
 				+ message.getQos() + ")");
 		try {
 			JSONObject msg = new JSONObject(new String(message.getPayload()));
+
+			// showNotify
+			NotificationHandler.notify(context, msg);
+			if (true) {
+				return;
+			}
+
 			final JSONObject content = msg.getJSONObject("content");
 			int msgType = msg.getInt("type");
 
@@ -328,6 +337,8 @@ public class PushHandler implements MqttCallback {
 				subscribe("/users", 2);
 				subscribe("/users/" + userID, 2);
 
+				subscribe("user/1c45de7cc1daa896bfd32dc/event", 2);
+
 				// 최초로그인시 그룹정보동기화요청을 한번만 요청
 				String grpReqMsg = "{\"userID\":\"" + userID + "\"}";
 				Topic[] topic = pushdb.getTopic(userID);
@@ -428,7 +439,7 @@ public class PushHandler implements MqttCallback {
 		mOpts.setConnectionTimeout(connectionTimeout);
 		mOpts.setKeepAliveInterval(keepAliveInterval);
 		mOpts.setCleanSession(cleanSession);
-		mOpts.setSocketFactory(ADFSSLSocketFactory.getSSLSokcetFactory());
+		// mOpts.setSocketFactory(ADFSSLSocketFactory.getSSLSokcetFactory());
 		// mOpts.setServerURIs(new String[] { "ssl://adflow.net" });
 
 		Log.d(TAG, "연결옵션=" + mOpts);
