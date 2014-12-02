@@ -117,12 +117,13 @@ public class APIKeyFilter implements Filter {
 
 		// check api key
 		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
 		try {
 			conn = ds.getConnection();
-			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt
-					.executeQuery("SELECT * FROM token WHERE tokenid ='" + auth
-							+ "'");
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery("SELECT * FROM token WHERE tokenid ='"
+					+ auth + "'");
 			if (!rs.next()) {
 				logger.debug("해당토큰이존재하지않습니다.");
 				httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
@@ -143,6 +144,23 @@ public class APIKeyFilter implements Filter {
 					+ ")");
 			return;
 		} finally {
+
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+
 			if (conn != null) {
 				try {
 					conn.close();
