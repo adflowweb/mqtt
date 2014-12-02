@@ -403,7 +403,7 @@
 				<clientid>${env.HOSTNAME}</clientid>
 
 				<!-- application log level 설정 -->
-				<log.level>debug</log.level>
+				<log.level>error</log.level>
 
 				<db.driverClass>com.mysql.jdbc.Driver</db.driverClass>
 				<db.connectionURL>jdbc:mysql://localhost:3306/push?useUnicode=true<![CDATA[&amp;]]>characterEncoding=utf8
