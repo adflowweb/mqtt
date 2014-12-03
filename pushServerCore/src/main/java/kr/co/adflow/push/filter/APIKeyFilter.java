@@ -144,9 +144,9 @@ public class APIKeyFilter implements Filter {
 					+ ")");
 			return;
 		} finally {
-			if (conn != null) {
+			if (rs != null) {
 				try {
-					conn.close();
+					rs.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
@@ -158,9 +158,9 @@ public class APIKeyFilter implements Filter {
 					e.printStackTrace();
 				}
 			}
-			if (rs != null) {
+			if (conn != null) {
 				try {
-					rs.close();
+					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
