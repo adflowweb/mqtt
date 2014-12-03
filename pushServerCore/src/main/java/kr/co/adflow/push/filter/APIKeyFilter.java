@@ -153,14 +153,14 @@ public class APIKeyFilter implements Filter {
 			}
 			if (stmt != null) {
 				try {
-					conn.close();
+					stmt.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
 			}
 			if (rs != null) {
 				try {
-					conn.close();
+					rs.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
