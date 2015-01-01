@@ -74,13 +74,13 @@
   <repository>
     <id>releases</id>
     <name>Releases Repository</name>
-    <url>http://localhost:8081/nexus/content/repositories/releases</url>
+    <url>http://14.63.217.141:5051/nexus/content/repositories/releases</url>
   </repository>
 
   <snapshotRepository>
     <id>snapshots</id>
     <name>Snapshots Repository</name>
-    <url>http://localhost:8081/nexus/content/repositories/snapshots</url>
+    <url>http://14.63.217.141:5051/nexus/content/repositories/snapshots</url>
   </snapshotRepository>
 </distributionManagement>	
 </project>
