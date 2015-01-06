@@ -32,7 +32,8 @@ public class DirectMsgHandler implements ProducerCallback<Object> {
 	@Override
 	public Object doInJms(Session session, MessageProducer producer) throws JMSException {
 
-		producer.setPriority(6);
+		// jms priority default 4
+		//producer.setPriority(4);
 		producer.setTimeToLive(msg.getTimeOut());
 		producer.setDeliveryMode(msg.getQos());
 		
@@ -57,12 +58,9 @@ public class DirectMsgHandler implements ProducerCallback<Object> {
 		byteArr = json.getBytes();
 		bytesMessage.writeBytes(byteArr);
 		
-		System.out.println("testMessage=" + json);
-
 		producer.send(bytesMessage);
 		producer.close();
 		
-		System.out.println("end:::=");
 		return byteArr;
 	}
 

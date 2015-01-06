@@ -41,11 +41,16 @@
 	</select>
 
 	<select id="getDeliveredMsgs" resultMap="MessageResult">
-		select * from message
-		where
-		issue is not null and type <![CDATA[ < ]]>
-		100 order by
-		issue desc limit 100
+	<![CDATA[
+		SELECT 
+		   type, id, sender, receiver, issue, issueSms, sms, timeout, qos, retained, reservation,  status, serviceID
+		FROM
+		    message
+		WHERE
+		    issue IS NOT NULL AND type IN ( 102,104,105)
+		ORDER BY issue DESC
+		LIMIT 1000
+		]]>
 		<!-- and reservation is not null -->
 	</select>
 
@@ -65,7 +70,7 @@
 	<insert id="postMsg" parameterType="kr.co.adflow.push.domain.Message">
 		INSERT INTO
 		message (sender, receiver, sms, timeOut, qos, retained,
-		reservation, type, status, serviceID) values(
+		reservation, type, status, serviceID,issue) values(
 		#{sender},
 		#{receiver},
 		#{sms},
@@ -74,7 +79,8 @@
 		#{retained}, #{reservation},
 		#{type},
 		#{status},
-		#{serviceID}
+		#{serviceID},
+		#{issue}
 		)
 		<selectKey keyProperty="id" resultType="Integer" order="AFTER">
 			SELECT

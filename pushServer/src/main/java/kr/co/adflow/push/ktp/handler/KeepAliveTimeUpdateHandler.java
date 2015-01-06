@@ -1,13 +1,16 @@
 package kr.co.adflow.push.ktp.handler;
 
 import java.io.IOException;
+import java.util.Date;
 
+import javax.annotation.Resource;
 import javax.jms.BytesMessage;
 import javax.jms.DeliveryMode;
 import javax.jms.JMSException;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 
+import kr.co.adflow.push.dao.MessageDao;
 import kr.co.adflow.push.domain.Message;
 import kr.co.adflow.push.ktp.service.impl.PlatformServiceImpl;
 
@@ -17,12 +20,15 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.ObjectWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.ProducerCallback;
+import org.springframework.stereotype.Component;
 
 public class KeepAliveTimeUpdateHandler implements ProducerCallback<Object> {
 	
 	final static private int MESSAGE_TYPE = 102;
 	
+
 	
 	private Message msg;
 	
@@ -40,6 +46,8 @@ public class KeepAliveTimeUpdateHandler implements ProducerCallback<Object> {
 		//producer.setTimeToLive(9999);
 		producer.setDeliveryMode(DeliveryMode.PERSISTENT);
 		msg.setType(MESSAGE_TYPE);
+		msg.setStatus(Message.STATUS_PUSH_SENT);
+		msg.setIssue(new Date());
 		
 		BytesMessage bytesMessage = session.createBytesMessage();
 		
@@ -68,6 +76,12 @@ public class KeepAliveTimeUpdateHandler implements ProducerCallback<Object> {
 
 		producer.send(bytesMessage);
 		producer.close();
+		
+		//db table log
+		
+
+		
+		
 		
 		System.out.println("end:::=");
 		return byteArr;
