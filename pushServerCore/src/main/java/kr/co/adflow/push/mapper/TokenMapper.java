@@ -15,6 +15,8 @@ public interface TokenMapper {
 	int post(Token token) throws Exception;
 
 	int put(Token token) throws Exception;
+	
+	int putLastAcessTime(Token token) throws Exception;
 
 	int delete(String token) throws Exception;
 	

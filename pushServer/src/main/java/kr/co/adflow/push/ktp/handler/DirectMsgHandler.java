@@ -8,7 +8,6 @@ import javax.jms.MessageProducer;
 import javax.jms.Session;
 
 import kr.co.adflow.push.domain.Message;
-import kr.co.adflow.push.ktp.service.impl.PlatformServiceImpl;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;

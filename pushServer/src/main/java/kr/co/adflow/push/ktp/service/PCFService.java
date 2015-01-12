@@ -10,7 +10,7 @@ import kr.co.adflow.push.domain.ktp.Subscribe;
  */
 public interface PCFService {
 
-	Subscribe[] get(String token) throws Exception;
+	String[] get(String token) throws Exception;
 
 	Status getStatus(String token) throws Exception;
 

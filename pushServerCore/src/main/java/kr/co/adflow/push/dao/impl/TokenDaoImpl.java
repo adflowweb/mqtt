@@ -63,6 +63,14 @@ public class TokenDaoImpl implements TokenDao {
 		return result;
 	}
 
+	@Override
+	public int putLastAcessTime(Token token) throws Exception {
+		logger.debug("put시작(token=" + token + ")");
+		TokenMapper tokenMapper = sqlSession.getMapper(TokenMapper.class);
+		int result = tokenMapper.putLastAcessTime(token);
+		logger.debug("put종료(result=" + result + ")");
+		return result;
+	}
 	/*
 	 * (non-Javadoc)
 	 * 

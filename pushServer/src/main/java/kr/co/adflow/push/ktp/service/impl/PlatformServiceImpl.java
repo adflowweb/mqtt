@@ -5,25 +5,21 @@ import java.util.Date;
 import javax.annotation.Resource;
 import javax.jms.DeliveryMode;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jms.core.JmsTemplate;
-import org.springframework.stereotype.Service;
-
-import scala.annotation.meta.getter;
 import kr.co.adflow.push.dao.MessageDao;
 import kr.co.adflow.push.domain.Message;
 import kr.co.adflow.push.domain.ktp.request.DigInfo;
 import kr.co.adflow.push.domain.ktp.request.FwInfo;
 import kr.co.adflow.push.domain.ktp.request.KeepAliveTime;
-import kr.co.adflow.push.ktp.controller.PlatformController;
-import kr.co.adflow.push.ktp.handler.DigInfoUpdateHandler;
 import kr.co.adflow.push.ktp.handler.DirectMsgHandler;
-import kr.co.adflow.push.ktp.handler.FwInfoUpgradeHandler;
-import kr.co.adflow.push.ktp.handler.KeepAliveTimeUpdateHandler;
 import kr.co.adflow.push.ktp.handler.PreCheckHandler;
 import kr.co.adflow.push.ktp.service.PlatformService;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.stereotype.Service;
 
 @Service
 public class PlatformServiceImpl implements PlatformService {
@@ -42,19 +38,17 @@ public class PlatformServiceImpl implements PlatformService {
 	@Resource
 	MessageDao messageDao;
 	
+	private final static int TIME_TO_LIVE = 3000;
+	
+	//private @Value("#{code['precheck.time.to.live']}") int TIME_TO_LIVE;
+	
 	public void sendPrecheck(String topicName) {
 		
-		logger.info("유저=" + topicName);
-		System.out.println("topic=" + topicName);
-		
-		jmsTemplate.execute(topicName, new PreCheckHandler());
+		jmsTemplate.execute(topicName, new PreCheckHandler(TIME_TO_LIVE));
 
 	}
 	
 	public void modifyFwInfo(FwInfo fwInfo) {
-		
-		logger.info("유저=" + fwInfo.getReceiver());
-		System.out.println("topic=" + fwInfo.getReceiver());
 		
 		Message msg = new Message();
 		
@@ -70,21 +64,16 @@ public class PlatformServiceImpl implements PlatformService {
 		jmsTemplate.execute(fwInfo.getReceiver(), new DirectMsgHandler(msg));
 		
 		try {
-			System.out.println("msg="+msg.getIssue());
 			int cnt = messageDao.post(msg);
-			System.out.println("cnt="+cnt);
 		} catch (Exception e) {
-			//TODO runtime exception 처리 필요
-			e.printStackTrace();
+			logger.error("error is {}", e);
 			
 		}
 
 	}
 	
 	public void modifyDigInfo(DigInfo digInfo) {
-		
-		logger.info("유저=" + digInfo.getReceiver());
-		System.out.println("topic=" + digInfo.getReceiver());
+
 		Message msg = new Message();
 		
 		msg.setType(CMD_PTT_UPDATE);
@@ -103,18 +92,13 @@ public class PlatformServiceImpl implements PlatformService {
 			int cnt = messageDao.post(msg);
 			System.out.println("cnt="+cnt);
 		} catch (Exception e) {
-			//TODO runtime exception 처리 필요
-			e.printStackTrace();
+			logger.error("error is {}", e);
 			
 		}
 
 	}
 	
 	public void sendMessage(Message message) {
-		
-		logger.info("유저=" + message.getReceiver());
-		System.out.println("topic=" + message.getReceiver());
-		
 
 		message.setStatus(Message.STATUS_PUSH_SENT);
 		message.setIssue(new Date());
@@ -126,17 +110,13 @@ public class PlatformServiceImpl implements PlatformService {
 			int cnt = messageDao.post(message);
 			System.out.println("cnt="+cnt);
 		} catch (Exception e) {
-			//TODO runtime exception 처리 필요
-			e.printStackTrace();
+			logger.error("error is {}", e);
 			
 		}
 
 	}
 	
 	public void modifyKeepAliveTime(KeepAliveTime keepAliveTime) {
-		
-		logger.info("유저=" + keepAliveTime.getReceiver());
-		System.out.println("topic=" + keepAliveTime.getReceiver());
 		
 		Message msg = new Message();
 		
@@ -157,12 +137,30 @@ public class PlatformServiceImpl implements PlatformService {
 			System.out.println("cnt="+cnt);
 		} catch (Exception e) {
 			//TODO runtime exception 처리 필요
-			e.printStackTrace();
+			logger.error("error is {}", e);
 			
 		}
 		
 	}
 	
+	public void sendUserMessage(Message message) {
+		
+		try {
+			message.setStatus(Message.STATUS_WAIT_FOR_SENDING);
+			int cnt = messageDao.post(message);
+			
+			jmsTemplate.execute(message.getReceiver(), new DirectMsgHandler(message));
+			
+			message.setStatus(Message.STATUS_PUSH_SENT);
+			message.setIssue(new Date());
+			messageDao.post(message);
+			System.out.println("cnt="+cnt);
+		} catch (Exception e) {
+			logger.error("error is {}", e);
+			
+		}
+
+	}
 	
 	
 	

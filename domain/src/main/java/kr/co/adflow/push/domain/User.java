@@ -20,6 +20,7 @@ public class User {
 	private String deviceID;
 	private String apnsToken;
 	private String role;
+	private String ufmi;
 
 	public User() {
 	}
@@ -110,6 +111,14 @@ public class User {
 				+ ", dept=" + dept + ", email=" + email + ", phone=" + phone
 				+ ", password=" + password + ", deviceID=" + deviceID
 				+ ", apnsToken=" + apnsToken + ", role=" + role + "]";
+	}
+
+	public String getUfmi() {
+		return ufmi;
+	}
+
+	public void setUfmi(String ufmi) {
+		this.ufmi = ufmi;
 	}
 
 }

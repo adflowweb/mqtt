@@ -16,6 +16,8 @@ public interface TokenDao {
 	Token post(Token token) throws Exception;
 
 	int put(Token token) throws Exception;
+	
+	int putLastAcessTime(Token token) throws Exception;
 
 	int delete(String token) throws Exception;
 

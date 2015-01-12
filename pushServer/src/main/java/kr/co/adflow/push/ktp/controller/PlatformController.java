@@ -15,6 +15,7 @@ import kr.co.adflow.push.ktp.service.PlatformService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,8 +40,6 @@ public class PlatformController {
 	@RequestMapping(value = "precheck", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
 	public void sendPrecheck(@RequestBody Precheck precheck) throws Exception {
-		logger.info("유저=" + precheck.getSender());
-		
 		platformService.sendPrecheck(precheck.getReceiver());
 		
 	}
@@ -50,13 +49,16 @@ public class PlatformController {
 	@ResponseBody
 	public Response modifyFwInfo(@RequestBody FwInfo fwInfo) throws Exception {
 		
+		
 		platformService.modifyFwInfo(fwInfo);
 		
 		Result result = new Result();
 		result.setSuccess(true);
 		List<String> messages = new ArrayList<String>();
 			
-		messages.add("modelID=" + fwInfo.getReceiver());
+//		messages.add("sender" + fwInfo.getSender());
+		messages.add("receiver=" + fwInfo.getReceiver());
+		messages.add("content=" + fwInfo.getContent());
 			
 		result.setInfo(messages);
 		Response res = new Response(result);
@@ -73,8 +75,9 @@ public class PlatformController {
 		Result result = new Result();
 		result.setSuccess(true);
 		List<String> messages = new ArrayList<String>();
-			
-		messages.add("modelID=" + keepAliveTime.getReceiver());
+		
+		messages.add("receiver=" + keepAliveTime.getReceiver());			
+		messages.add("content=" + keepAliveTime.getContent());
 			
 		result.setInfo(messages);
 		Response res = new Response(result);
@@ -94,8 +97,8 @@ public class PlatformController {
 		Result result = new Result();
 		result.setSuccess(true);
 		List<String> messages = new ArrayList<String>();
-			
-		messages.add("rcsID=" + digInfo.getReceiver());
+		messages.add("receiver=" + digInfo.getReceiver());
+		messages.add("content=" + digInfo.getContent());
 			
 		result.setInfo(messages);
 		Response res = new Response(result);
@@ -114,14 +117,75 @@ public class PlatformController {
 		Result result = new Result();
 		result.setSuccess(true);
 		List<String> messages = new ArrayList<String>();
-			
-		messages.add("rcsID=" + message.getReceiver());
+		messages.add("receiver=" + message.getReceiver());	
+		messages.add("content=" + message.getContent());
 			
 		result.setInfo(messages);
 		Response res = new Response(result);
 		logger.info("response=" + res);
 		return res;
 	}
+	
+	@RequestMapping(value = "users/message", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	@ResponseBody
+	public Response sendUserMessage(@RequestBody Message message) throws Exception {
+		
+		
+		platformService.sendMessage(message);
+
+		Result result = new Result();
+		result.setSuccess(true);
+		List<String> messages = new ArrayList<String>();
+			
+		messages.add("receiver=" + message.getReceiver());
+		messages.add("content=" + message.getContent());
+			
+		result.setInfo(messages);
+		Response res = new Response(result);
+		logger.info("response=" + res);
+		return res;
+	}
+	
+	@RequestMapping(value = "users/userid/validation", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	@ResponseBody
+	public Response validUserID(@RequestBody Message message) throws Exception {
+		
+		
+		platformService.sendMessage(message);
+
+		Result result = new Result();
+		result.setSuccess(true);
+		List<String> messages = new ArrayList<String>();
+			
+		messages.add("receiver=" + message.getReceiver());
+		messages.add("content=" + message.getContent());
+			
+		result.setInfo(messages);
+		Response res = new Response(result);
+		logger.info("response=" + res);
+		return res;
+	}
+	
+	@RequestMapping(value = "users/ufmi/validation", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	@ResponseBody
+	public Response validUFMI(@RequestBody Message message) throws Exception {
+		
+		
+		platformService.sendMessage(message);
+
+		Result result = new Result();
+		result.setSuccess(true);
+		List<String> messages = new ArrayList<String>();
+			
+		messages.add("receiver=" + message.getReceiver());
+		messages.add("content=" + message.getContent());
+			
+		result.setInfo(messages);
+		Response res = new Response(result);
+		logger.info("response=" + res);
+		return res;
+	}
+
 
 
 }

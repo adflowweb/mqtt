@@ -18,6 +18,7 @@
 		<result property="email" column="email" />
 		<result property="phone" column="phone" />
 		<result property="role" column="role" />
+		<result property="ufmi" column="ufmi" />
 	</resultMap>
 
 	<select id="getAdmin" resultMap="UserResult">
@@ -30,10 +31,11 @@
 	</select>
 
 	<insert id="post" parameterType="kr.co.adflow.push.domain.User">
-		INSERT INTO
-		user values(
+		INSERT INTO user 
+		(userID,password,name,title,dept,email,phone,role,ufmi )
+		VALUES(
 		#{userID}, #{password}, #{name}, #{title}, #{dept}, #{email},
-		#{phone}, #{role}
+		#{phone}, #{role},#{ufmi}
 		)
 	</insert>
 
@@ -42,7 +44,9 @@
 		set name = #{name},
 		title = #{title}, dept = #{dept}, email = #{email},
 		phone = #{phone},
-		role = #{role} where userid =#{userID}
+		role = #{role},
+		ufmi = #{ufmi} 
+		where userid =#{userID}
 	</update>
 
 

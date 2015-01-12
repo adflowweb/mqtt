@@ -23,5 +23,7 @@ public interface PlatformService {
 	public void sendMessage(Message message);
 	
 	public void modifyKeepAliveTime(KeepAliveTime keepAliveTime);
+	
+	public void sendUserMessage(Message message);
 
 }

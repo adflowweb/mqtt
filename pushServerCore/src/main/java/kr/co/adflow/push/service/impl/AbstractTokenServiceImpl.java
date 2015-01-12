@@ -54,6 +54,7 @@ abstract public class AbstractTokenServiceImpl implements TokenService {
 		Token data = tokenDao.get(token);
 		if (data != null) {
 			logger.debug("validate종료(true)");
+			tokenDao.putLastAcessTime(data);
 			return true;
 		} else {
 			logger.debug("validate종료(false)");
@@ -92,6 +93,11 @@ abstract public class AbstractTokenServiceImpl implements TokenService {
 			userDao.post(user);
 		} catch (DuplicateKeyException e) {
 			logger.debug("유저가이미등록되어있습니다.user=" + user.getUserID());
+		}
+		
+		//TODO
+		if (user.getUfmi() != null && user.getUfmi().trim().length() > 0) {
+			userDao.put(user);
 		}
 
 		// insert device

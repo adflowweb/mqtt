@@ -44,10 +44,10 @@ public class PCFServiceImpl implements PCFService {
 	}
 
 	@Override
-	public Subscribe[] get(String token) throws Exception {
-		logger.debug("get시작(token=" + token + ")");
+	public String[] get(String token) throws Exception {
+		logger.debug("get시작(token={})",token);
 
-		Subscribe[] subsList = null;
+		String[] subsList = null;
 		try {
 
 			// MQEnvironment.userID = "adflow";
@@ -70,18 +70,18 @@ public class PCFServiceImpl implements PCFService {
 			PCFMessage[] responses = agent.send(request);
 
 			// System.out.println("responses.length ::" + responses.length);
-			subsList = new Subscribe[responses.length];
-			String topic = "";
+			subsList = new String[responses.length];
+			//String topic = "";
 
 			for (int i = 0; i < responses.length; i++) {
-				topic = responses[i].getParameterValue(
+				subsList[i] = responses[i].getParameterValue(
 						MQConstants.MQCA_TOPIC_STRING).toString();
 
 				// topic = topic.substring(token.length() + 1);
 
-				System.out.println("topic :: " + topic);
-				subsList[i] = new Subscribe();
-				subsList[i].setTopic(topic);
+//				System.out.println("topic :: " + topic);
+//				subsList[i] = new Subscribe();
+//				subsList[i].setTopic(topic);
 			}
 		} catch (PCFException pcfe) {
 			if (pcfe.getMessage().indexOf("2428") > 0) {

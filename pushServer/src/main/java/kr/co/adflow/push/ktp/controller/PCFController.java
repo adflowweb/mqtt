@@ -43,12 +43,12 @@ public class PCFController {
 	 */
 	@RequestMapping(value = "subscriptions/{token:.+}", method = RequestMethod.GET)
 	@ResponseBody
-	public Response<Subscribe[]> get(@PathVariable String token)
+	public Response<String[]> get(@PathVariable String token)
 			throws Exception {
 		logger.debug("token=" + token);
-		Result<Subscribe[]> result = new Result<Subscribe[]>();
+		Result<String[]> result = new Result<String[]>();
 		result.setSuccess(true);
-		Subscribe[] subscribe = pCFService.get(token);
+		String[] subscribe = pCFService.get(token);
 		if (subscribe == null) {
 			List<String> messages = new ArrayList<String>() {
 				{
@@ -60,7 +60,7 @@ public class PCFController {
 			result.setData(subscribe);
 		}
 
-		Response<Subscribe[]> res = new Response<Subscribe[]>(result);
+		Response<String[]> res = new Response<String[]>(result);
 		logger.debug("response=" + res);
 		return res;
 	}
