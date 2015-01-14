@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package kr.co.adflow.push.dao.impl;
 
 import kr.co.adflow.push.dao.CategoryDao;
@@ -9,20 +12,27 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class CategoryDaoImpl.
+ *
  * @author nadir93
  * @date 2014. 7. 7.
- * 
  */
 @Repository
 public class CategoryDaoImpl implements CategoryDao {
 
+	/** The Constant logger. */
 	private static final org.slf4j.Logger logger = LoggerFactory
 			.getLogger(CategoryDaoImpl.class);
 
+	/** The sql session. */
 	@Autowired
 	private SqlSession sqlSession;
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.dao.CategoryDao#get(int)
+	 */
 	@Override
 	public Category get(int categoryID) throws Exception {
 		logger.debug("get시작(categoryID=" + categoryID + ")");
@@ -33,6 +43,9 @@ public class CategoryDaoImpl implements CategoryDao {
 		return category;
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.dao.CategoryDao#post(kr.co.adflow.push.domain.Category)
+	 */
 	@Override
 	public int post(Category category) throws Exception {
 		logger.debug("post시작(category=" + category + ")");
@@ -43,6 +56,9 @@ public class CategoryDaoImpl implements CategoryDao {
 		return count;
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.dao.CategoryDao#delete(int)
+	 */
 	@Override
 	public int delete(int categoryID) throws Exception {
 		logger.debug("delete시작(categoryID=" + categoryID + ")");
@@ -53,6 +69,9 @@ public class CategoryDaoImpl implements CategoryDao {
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.dao.CategoryDao#getAllCategories()
+	 */
 	@Override
 	public Category[] getAllCategories() throws Exception {
 		logger.debug("getAllCategories시작()");

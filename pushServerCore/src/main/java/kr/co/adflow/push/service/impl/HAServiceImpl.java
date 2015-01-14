@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package kr.co.adflow.push.service.impl;
 
 import java.io.IOException;
@@ -15,18 +18,24 @@ import kr.co.adflow.push.service.HAService;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class HAServiceImpl.
+ *
  * @author nadir93
  * @date 2014. 7. 24.
  */
 @Service
 public class HAServiceImpl implements HAService {
 
+	/** The Constant logger. */
 	private static final org.slf4j.Logger logger = LoggerFactory
 			.getLogger(HAServiceImpl.class);
 
+	/** The Constant CONFIG_PROPERTIES. */
 	private static final String CONFIG_PROPERTIES = "/config.properties";
 
+	/** The prop. */
 	private static Properties prop = new Properties();
 
 	static {
@@ -39,21 +48,31 @@ public class HAServiceImpl implements HAService {
 		}
 	}
 
+	/** The takeover time. */
 	private int takeoverTime = Integer.parseInt(prop
 			.getProperty("ha.takeover.interval"));
 
+	/** The cal. */
 	private Calendar cal = Calendar.getInstance();
 
+	/** The ha dao. */
 	@Resource
 	private HADao haDao;
 
+	/** The active. */
 	public static boolean active;
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.service.HAService#isActive()
+	 */
 	@Override
 	public boolean isActive() {
 		return active;
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.service.HAService#check()
+	 */
 	@Override
 	public void check() throws Exception {
 		logger.debug("check시작()");

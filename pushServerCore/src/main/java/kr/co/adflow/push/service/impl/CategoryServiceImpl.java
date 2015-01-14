@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package kr.co.adflow.push.service.impl;
 
 import javax.annotation.Resource;
@@ -9,20 +12,27 @@ import kr.co.adflow.push.service.CategoryService;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class CategoryServiceImpl.
+ *
  * @author nadir93
  * @date 2014. 7. 7.
- * 
  */
 @Service
 public class CategoryServiceImpl implements CategoryService {
 
+	/** The Constant logger. */
 	private static final org.slf4j.Logger logger = LoggerFactory
 			.getLogger(CategoryServiceImpl.class);
 
+	/** The category dao. */
 	@Resource
 	CategoryDao categoryDao;
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.service.CategoryService#get(int)
+	 */
 	@Override
 	public Category get(int categoryID) throws Exception {
 		logger.debug("get시작(categoryID=" + categoryID + ")");
@@ -31,6 +41,9 @@ public class CategoryServiceImpl implements CategoryService {
 		return category;
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.service.CategoryService#post(kr.co.adflow.push.domain.Category)
+	 */
 	@Override
 	public int post(Category category) throws Exception {
 		logger.debug("post시작(category=" + category + ")");
@@ -39,6 +52,9 @@ public class CategoryServiceImpl implements CategoryService {
 		return count;
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.service.CategoryService#delete(int)
+	 */
 	@Override
 	public int delete(int categoryID) throws Exception {
 		logger.debug("delete시작(categoryID=" + categoryID + ")");
@@ -47,6 +63,9 @@ public class CategoryServiceImpl implements CategoryService {
 		return count;
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.service.CategoryService#getAllCategories()
+	 */
 	@Override
 	public Category[] getAllCategories() throws Exception {
 		logger.debug("getAllCategories시작()");

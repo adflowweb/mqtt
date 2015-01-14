@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package kr.co.adflow.push.ktp.service.impl;
 
 import javax.annotation.PostConstruct;
@@ -11,13 +14,17 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class KTPMqttServiceImpl.
+ *
  * @author nadir93
  * @date 2014. 3. 21.
  */
 @Service
 public class KTPMqttServiceImpl extends AbstractMqttServiceImpl {
 
+	/** The Constant logger. */
 	private static final org.slf4j.Logger logger = LoggerFactory
 			.getLogger(KTPMqttServiceImpl.class);
 
@@ -28,9 +35,9 @@ public class KTPMqttServiceImpl extends AbstractMqttServiceImpl {
 	// private GroupMapper grpMapper;
 
 	/**
-	 * initialize
-	 * 
-	 * @throws Exception
+	 * initialize.
+	 *
+	 * @throws Exception the exception
 	 */
 	@PostConstruct
 	public void initIt() throws Exception {
@@ -41,9 +48,9 @@ public class KTPMqttServiceImpl extends AbstractMqttServiceImpl {
 	}
 
 	/**
-	 * 모든리소스정리
-	 * 
-	 * @throws Exception
+	 * 모든리소스정리.
+	 *
+	 * @throws Exception the exception
 	 */
 	@PreDestroy
 	public void cleanUp() throws Exception {
@@ -52,6 +59,9 @@ public class KTPMqttServiceImpl extends AbstractMqttServiceImpl {
 		logger.info("cleanUp종료()");
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.service.impl.AbstractMqttServiceImpl#receiveAck(java.lang.String, org.eclipse.paho.client.mqttv3.MqttMessage)
+	 */
 	@Override
 	protected void receiveAck(String topic, MqttMessage message) {
 		logger.debug("receiveAck시작(topic=" + topic + ", message=" + message

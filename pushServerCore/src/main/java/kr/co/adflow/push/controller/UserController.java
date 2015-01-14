@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package kr.co.adflow.push.controller;
 
 import java.util.ArrayList;
@@ -26,32 +29,38 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class UserController.
+ *
  * @author nadir93
  * @date 2014. 4. 14.
- * 
  */
 @Controller
 public class UserController {
+	
+	/** The Constant logger. */
 	private static final Logger logger = LoggerFactory
 			.getLogger(UserController.class);
 
+	/** The user service. */
 	@Resource
 	private UserService userService;
 
+	/** The token service. */
 	@Resource
 	private TokenService tokenService;
 
+	/** The role service. */
 	@Resource
 	private RoleService roleService;
 
 	/**
-	 * 유저정보 가져오기
-	 * 
-	 * @param userID
-	 * @param clientID
-	 * @return
-	 * @throws Exception
+	 * 유저정보 가져오기.
+	 *
+	 * @param userID the user id
+	 * @return the response
+	 * @throws Exception the exception
 	 */
 	@RequestMapping(value = "users/{userID:.+}", method = RequestMethod.GET)
 	@ResponseBody
@@ -77,12 +86,10 @@ public class UserController {
 	}
 
 	/**
-	 * 어드민 유저정보 가져오기
-	 * 
-	 * @param userID
-	 * @param clientID
-	 * @return
-	 * @throws Exception
+	 * 어드민 유저정보 가져오기.
+	 *
+	 * @return the admin
+	 * @throws Exception the exception
 	 */
 	@RequestMapping(value = "users", params = "type=admin", method = RequestMethod.GET)
 	@ResponseBody
@@ -107,12 +114,11 @@ public class UserController {
 	}
 
 	/**
-	 * 유저정보 삭제하기
-	 * 
-	 * @param userID
-	 * @param clientID
-	 * @return
-	 * @throws Exception
+	 * 유저정보 삭제하기.
+	 *
+	 * @param userID the user id
+	 * @return the response
+	 * @throws Exception the exception
 	 */
 	@RequestMapping(value = "users/{userID}", method = RequestMethod.DELETE)
 	@ResponseBody
@@ -133,11 +139,11 @@ public class UserController {
 	}
 
 	/**
-	 * 유저정보 입력
-	 * 
-	 * @param msg
-	 * @return
-	 * @throws Exception
+	 * 유저정보 입력.
+	 *
+	 * @param user the user
+	 * @return the response
+	 * @throws Exception the exception
 	 */
 	@RequestMapping(value = "users", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
@@ -158,11 +164,11 @@ public class UserController {
 	}
 
 	/**
-	 * 유저정보 수정하기
-	 * 
-	 * @param msg
-	 * @return
-	 * @throws Exception
+	 * 유저정보 수정하기.
+	 *
+	 * @param user the user
+	 * @return the response
+	 * @throws Exception the exception
 	 */
 	@RequestMapping(value = "users", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
 	@ResponseBody
@@ -183,11 +189,12 @@ public class UserController {
 	}
 
 	/**
-	 * 유저인증
-	 * 
-	 * @param msg
-	 * @return
-	 * @throws Exception
+	 * 유저인증.
+	 *
+	 * @param user the user
+	 * @param request the request
+	 * @return the response
+	 * @throws Exception the exception
 	 */
 	@RequestMapping(value = "auth", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
@@ -215,12 +222,14 @@ public class UserController {
 	}
 
 	 /**
-	 * 어드민 인증
-	 *
-	 * @param msg
-	 * @return
-	 * @throws Exception
-	 */
+ 	 * 어드민 인증.
+ 	 *
+ 	 * @param user the user
+ 	 * @param request the request
+ 	 * @param userAgent the user agent
+ 	 * @return the response
+ 	 * @throws Exception the exception
+ 	 */
 	 @RequestMapping(value = "adminAuth", method = RequestMethod.POST,
 	 consumes = "application/json", produces = "application/json")
 	 @ResponseBody
@@ -248,11 +257,14 @@ public class UserController {
 	 }
 
 	/**
-	 * 유저인증
-	 * 
-	 * @param msg
-	 * @return
-	 * @throws Exception
+	 * 유저인증.
+	 *
+	 * @param request the request
+	 * @param userID the user id
+	 * @param password the password
+	 * @param userAgent the user agent
+	 * @return the response
+	 * @throws Exception the exception
 	 */
 	@RequestMapping(value = "auth", method = RequestMethod.GET)
 	@ResponseBody
@@ -284,11 +296,11 @@ public class UserController {
 	}
 	
 	/**
-	 * 유저암호 수정하기
-	 * 
-	 * @param User
-	 * @return
-	 * @throws Exception
+	 * 유저암호 수정하기.
+	 *
+	 * @param user the user
+	 * @return the response
+	 * @throws Exception the exception
 	 */
 	@RequestMapping(value = "changePassword", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
 	@ResponseBody
@@ -309,11 +321,11 @@ public class UserController {
 	}
 	
 	/**
-	 * 어드민 유저정보 입력
-	 * 
-	 * @param msg
-	 * @return
-	 * @throws Exception
+	 * 어드민 유저정보 입력.
+	 *
+	 * @param user the user
+	 * @return the response
+	 * @throws Exception the exception
 	 */
 	@RequestMapping(value = "users", params = "type=admin", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
@@ -336,10 +348,10 @@ public class UserController {
 	
 
 	/**
-	 * 예외처리
-	 * 
-	 * @param e
-	 * @return
+	 * 예외처리.
+	 *
+	 * @param e the e
+	 * @return the response
 	 */
 	@ExceptionHandler(Exception.class)
 	@ResponseBody

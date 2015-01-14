@@ -1,6 +1,7 @@
+/*
+ * 
+ */
 package kr.co.adflow.push.ktp.handler;
-
-import java.io.IOException;
 
 import javax.jms.BytesMessage;
 import javax.jms.JMSException;
@@ -9,48 +10,82 @@ import javax.jms.Session;
 
 import kr.co.adflow.push.domain.Message;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.ObjectWriter;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jms.core.ProducerCallback;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class DirectMsgHandler.
+ */
 public class DirectMsgHandler implements ProducerCallback<Object> {
 	
+	/** The msg. */
 	private Message msg;
 	
+	/**
+	 * Instantiates a new direct msg handler.
+	 *
+	 * @param message the message
+	 */
 	public DirectMsgHandler(Message message) {
 		msg = message;
 	}
 	
+	/** The Constant logger. */
 	private static final Logger logger = LoggerFactory
 			.getLogger(DirectMsgHandler.class);
 
+	/* (non-Javadoc)
+	 * @see org.springframework.jms.core.ProducerCallback#doInJms(javax.jms.Session, javax.jms.MessageProducer)
+	 */
 	@Override
 	public Object doInJms(Session session, MessageProducer producer) throws JMSException {
 
+		logger.info("doInJms start=====================");
 		// jms priority default 4
 		//producer.setPriority(4);
-		producer.setTimeToLive(msg.getTimeOut());
+		producer.setTimeToLive(msg.getExpiry());
 		producer.setDeliveryMode(msg.getQos());
 		
 		BytesMessage bytesMessage = session.createBytesMessage();
-		ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
 		String json = "";
-		try {
-			json = ow.writeValueAsString(msg);
-		} catch (JsonGenerationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (JsonMappingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
+			
+			JSONObject msgObject = new JSONObject();
+			try {
+			
+			msgObject.put("type", msg.getType());
+			msgObject.put("id", msg.getId());
+			msgObject.put("sender", msg.getSender());
+			msgObject.put("receiver", msg.getReceiver());
+			msgObject.put("qos", msg.getQos());
+			msgObject.put("issue", msg.getIssue());
+			msgObject.put("issueSms", msg.getIssueSms());
+			msgObject.put("contentType", msg.getContentType());
+			msgObject.put("serviceID", msg.getServiceID());
+			msgObject.put("ack", msg.isAck());
+			
+			
+			logger.info("doInJms=====================");
+			if ("application/json".equals(msg.getContentType())) {
+			JSONObject contentObject = new JSONObject(msg.getContent());
+			msgObject.put("content", contentObject);
+			} else {
+				msgObject.put("content", msg.getContent());
+			}
+			
+			//json = ow.writeValueAsString(msg);
+			json = msgObject.toString();
+			logger.info("doInJms====================={}",json);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		
 		
 		byte[] byteArr = new byte[1024];
 	

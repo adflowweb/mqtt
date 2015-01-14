@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package kr.co.adflow.push.filter;
 
 import java.io.IOException;
@@ -18,21 +21,27 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
-import kr.co.adflow.push.service.impl.HAServiceImpl;
-
 import org.slf4j.LoggerFactory;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class APIKeyFilter.
+ *
  * @author nadir93
  * @date 2014. 5. 20.
- * 
  */
 public class APIKeyFilter implements Filter {
 
+	/** The Constant logger. */
 	private static final org.slf4j.Logger logger = LoggerFactory
 			.getLogger(APIKeyFilter.class);
+	
+	/** The ds. */
 	private DataSource ds = null;
 
+	/* (non-Javadoc)
+	 * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
+	 */
 	@Override
 	public void init(FilterConfig config) throws ServletException {
 		logger.debug("init시작(config=" + config);
@@ -47,12 +56,18 @@ public class APIKeyFilter implements Filter {
 		logger.debug("init종료()");
 	}
 
+	/* (non-Javadoc)
+	 * @see javax.servlet.Filter#destroy()
+	 */
 	@Override
 	public void destroy() {
 		logger.debug("destroy시작()");
 		logger.debug("destroy종료()");
 	}
 
+	/* (non-Javadoc)
+	 * @see javax.servlet.Filter#doFilter(javax.servlet.ServletRequest, javax.servlet.ServletResponse, javax.servlet.FilterChain)
+	 */
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response,
 			FilterChain chain) throws IOException, ServletException {

@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package kr.co.adflow.push.controller;
 
 import java.util.ArrayList;
@@ -20,26 +23,30 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class CategoryController.
+ *
  * @author nadir93
  * @date 2014. 7. 7.
- * 
  */
 @Controller
 public class CategoryController {
 
+	/** The Constant logger. */
 	private static final Logger logger = LoggerFactory
 			.getLogger(CategoryController.class);
 
+	/** The category service. */
 	@Resource
 	private CategoryService categoryService;
 
 	/**
-	 * 카테고리 등록하기
-	 * 
-	 * @param msg
-	 * @return
-	 * @throws Exception
+	 * 카테고리 등록하기.
+	 *
+	 * @param category the category
+	 * @return the response
+	 * @throws Exception the exception
 	 */
 	@RequestMapping(value = "categories", method = RequestMethod.POST)
 	@ResponseBody
@@ -60,11 +67,11 @@ public class CategoryController {
 	}
 
 	/**
-	 * 카테고리 삭제하기
-	 * 
-	 * @param msg
-	 * @return
-	 * @throws Exception
+	 * 카테고리 삭제하기.
+	 *
+	 * @param categoryID the category id
+	 * @return the response
+	 * @throws Exception the exception
 	 */
 	@RequestMapping(value = "categories/{categoryID}", method = RequestMethod.DELETE)
 	@ResponseBody
@@ -85,11 +92,11 @@ public class CategoryController {
 	}
 
 	/**
-	 * 카테고리 가져오기
-	 * 
-	 * @param msg
-	 * @return
-	 * @throws Exception
+	 * 카테고리 가져오기.
+	 *
+	 * @param categoryID the category id
+	 * @return the response
+	 * @throws Exception the exception
 	 */
 	@RequestMapping(value = "categories/{categoryID}", method = RequestMethod.GET)
 	@ResponseBody
@@ -116,11 +123,10 @@ public class CategoryController {
 	}
 
 	/**
-	 * 전체 카테고리 가져오기
-	 * 
-	 * @param msg
-	 * @return
-	 * @throws Exception
+	 * 전체 카테고리 가져오기.
+	 *
+	 * @return the msgs
+	 * @throws Exception the exception
 	 */
 	@RequestMapping(value = "categories", method = RequestMethod.GET)
 	@ResponseBody
@@ -136,10 +142,10 @@ public class CategoryController {
 	}
 
 	/**
-	 * 예외처리
-	 * 
-	 * @param e
-	 * @return
+	 * 예외처리.
+	 *
+	 * @param e the e
+	 * @return the response
 	 */
 	@ExceptionHandler(Exception.class)
 	@ResponseBody

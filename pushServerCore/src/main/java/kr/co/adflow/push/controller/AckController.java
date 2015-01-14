@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package kr.co.adflow.push.controller;
 
 import java.util.ArrayList;
@@ -6,7 +9,6 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import kr.co.adflow.push.domain.Acknowledge;
-import kr.co.adflow.push.domain.Message;
 import kr.co.adflow.push.domain.Response;
 import kr.co.adflow.push.domain.Result;
 import kr.co.adflow.push.service.AckService;
@@ -20,25 +22,29 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class AckController.
+ *
  * @author nadir93
- * 
  */
 @Controller
 public class AckController {
 
+	/** The Constant logger. */
 	private static final Logger logger = LoggerFactory
 			.getLogger(AckController.class);
 
+	/** The ack service. */
 	@Resource
 	private AckService ackService;
 
 	/**
-	 * 수신확인데이타 가져오기
-	 * 
-	 * @param msg
-	 * @return
-	 * @throws Exception
+	 * 수신확인데이타 가져오기.
+	 *
+	 * @param msgID the msg id
+	 * @return the response
+	 * @throws Exception the exception
 	 */
 	@RequestMapping(value = "acks/{msgID}", method = RequestMethod.GET)
 	@ResponseBody
@@ -56,10 +62,10 @@ public class AckController {
 	}
 
 	/**
-	 * 예외처리
-	 * 
-	 * @param e
-	 * @return
+	 * 예외처리.
+	 *
+	 * @param e the e
+	 * @return the response
 	 */
 	@ExceptionHandler(Exception.class)
 	@ResponseBody

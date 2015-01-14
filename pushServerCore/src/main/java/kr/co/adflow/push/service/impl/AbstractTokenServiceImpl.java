@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package kr.co.adflow.push.service.impl;
 
 import javax.annotation.Resource;
@@ -5,7 +8,6 @@ import javax.annotation.Resource;
 import kr.co.adflow.push.dao.DeviceDao;
 import kr.co.adflow.push.dao.TokenDao;
 import kr.co.adflow.push.dao.UserDao;
-import kr.co.adflow.push.dao.impl.DeviceDaoImpl;
 import kr.co.adflow.push.domain.Device;
 import kr.co.adflow.push.domain.Token;
 import kr.co.adflow.push.domain.User;
@@ -15,30 +17,36 @@ import kr.co.adflow.util.TokenGenerator;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class AbstractTokenServiceImpl.
+ *
  * @author nadir93
  * @date 2014. 4. 14.
- * 
  */
 // @Service
 abstract public class AbstractTokenServiceImpl implements TokenService {
+	
+	/** The Constant logger. */
 	private static final org.slf4j.Logger logger = LoggerFactory
 			.getLogger(AbstractTokenServiceImpl.class);
 
+	/** The token dao. */
 	@Resource
 	TokenDao tokenDao;
 	
+	/** The user dao. */
 	@Resource
 	protected UserDao userDao;
 
+	/** The device dao. */
 	@Resource
 	DeviceDao deviceDao;
 	
+	/** The mqtt service impl. */
 	@Autowired
 	AbstractMqttServiceImpl mqttServiceImpl;
 
@@ -62,6 +70,9 @@ abstract public class AbstractTokenServiceImpl implements TokenService {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.service.TokenService#get(java.lang.String)
+	 */
 	@Override
 	public Token get(String token) throws Exception {
 		logger.debug("get시작(token=" + token + ")");
@@ -146,11 +157,17 @@ abstract public class AbstractTokenServiceImpl implements TokenService {
 		return rst;
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.service.TokenService#put(kr.co.adflow.push.domain.Token)
+	 */
 	@Override
 	public int put(Token token) throws Exception {
 		return tokenDao.put(token);
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.service.TokenService#delete(java.lang.String)
+	 */
 	@Override
 	public int delete(String token) throws Exception {
 		logger.debug("delete시작(token=" + token + ")");

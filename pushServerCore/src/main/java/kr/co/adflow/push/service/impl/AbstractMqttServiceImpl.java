@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package kr.co.adflow.push.service.impl;
 
 import java.io.IOException;
@@ -40,23 +43,32 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class AbstractMqttServiceImpl.
+ *
  * @author nadir93
  * @date 2014. 3. 21.
  */
 public abstract class AbstractMqttServiceImpl implements MqttCallback,
 		MqttService {
 
+	/** The Constant CONFIG_PROPERTIES. */
 	private static final String CONFIG_PROPERTIES = "/config.properties";
 
+	/** The formatter. */
 	private static SimpleDateFormat formatter = new SimpleDateFormat(
 			"yyyy.MM.dd HH:mm:ss");
 
+	/** The Constant logger. */
 	private static final org.slf4j.Logger logger = LoggerFactory
 			.getLogger(AbstractMqttServiceImpl.class);
 
 	// 23 character 로 제한됨
+	/** The Constant CLIENT_ID_LENGTH. */
 	private static final int CLIENT_ID_LENGTH = 23;
+	
+	/** The prop. */
 	private static Properties prop = new Properties();
 
 	static {
@@ -69,16 +81,21 @@ public abstract class AbstractMqttServiceImpl implements MqttCallback,
 		}
 	}
 
+	/** The Constant MQTT_PACKAGE. */
 	public static final String MQTT_PACKAGE = "org.eclipse.paho.client.mqttv3";
 
+	/** The Constant TOPIC. */
 	private static final String[] TOPIC = prop.getProperty("topic").split(",");
 
+	/** The Constant SERVERURL. */
 	private static final String[] SERVERURL = prop.getProperty("mq.server.url")
 			.split(",");
 
+	/** The Constant ssl. */
 	private static final boolean ssl = Boolean.parseBoolean(prop
 			.getProperty("mq.server.ssl"));
 
+	/** The clientid. */
 	private static String CLIENTID;// prop.getProperty("clientid");
 	static {
 		if (prop.getProperty("clientid") == null) {
@@ -109,40 +126,58 @@ public abstract class AbstractMqttServiceImpl implements MqttCallback,
 
 	}
 
+	/** The req cnt. */
 	protected double reqCnt; // receive message count
+	
+	/** The object mapper. */
 	protected ObjectMapper objectMapper = new ObjectMapper();
+	
+	/** The msg mapper. */
 	protected MessageMapper msgMapper;
+	
+	/** The message dao. */
 	@Resource
 	protected MessageDao messageDao;
 
+	/** The sql session. */
 	@Autowired
 	protected SqlSession sqlSession;
 
+	/** The mqtt client. */
 	private MqttAsyncClient mqttClient;
 
+	/** The connection timeout. */
 	private int connectionTimeout = Integer.parseInt(prop
 			.getProperty("connection.timeout"));
 
+	/** The keep alive interval. */
 	private int keepAliveInterval = Integer.parseInt(prop
 			.getProperty("keep.alive.interval"));
 
+	/** The clean session. */
 	private boolean cleanSession = Boolean.parseBoolean(prop
 			.getProperty("clean.session"));
 
+	/** The m opts. */
 	private MqttConnectOptions mOpts;
+	
+	/** The error msg. */
 	private String errorMsg;
 
+	/** The tps. */
 	private double tps; // 10초 평균 tps
 
+	/** The log level. */
 	private Level logLevel = Level.parse(prop.getProperty("paho.log.level"));
 
 	// mqtt wait timeout
+	/** The wait timeout. */
 	private static long WAIT_TIMEOUT = 10000;
 
 	/**
-	 * initialize
-	 * 
-	 * @throws Exception
+	 * initialize.
+	 *
+	 * @throws Exception the exception
 	 */
 	// @PostConstruct
 	public void initialize() throws Exception {
@@ -155,9 +190,9 @@ public abstract class AbstractMqttServiceImpl implements MqttCallback,
 	}
 
 	/**
-	 * 모든리소스정리
-	 * 
-	 * @throws Exception
+	 * 모든리소스정리.
+	 *
+	 * @throws Exception the exception
 	 */
 	// @PreDestroy
 	public void cleanUp() throws Exception {
@@ -166,6 +201,9 @@ public abstract class AbstractMqttServiceImpl implements MqttCallback,
 		logger.info("cleanUp종료()");
 	}
 
+	/**
+	 * Sets the mqtt client log.
+	 */
 	private void setMqttClientLog() {
 		logger.debug("setMqttClientLog시작()");
 		Handler defaultHandler = new ConsoleHandler();
@@ -194,6 +232,9 @@ public abstract class AbstractMqttServiceImpl implements MqttCallback,
 		reqCnt = 0; // 초기화
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.service.MqttService#healthCheck()
+	 */
 	public void healthCheck() throws Exception {
 
 		if (mqttClient == null) {
@@ -215,7 +256,9 @@ public abstract class AbstractMqttServiceImpl implements MqttCallback,
 	}
 
 	/**
-	 * @throws MqttException
+	 * Connect.
+	 *
+	 * @throws MqttException the mqtt exception
 	 */
 	private synchronized void connect() throws MqttException {
 		logger.debug("connect시작()");
@@ -233,7 +276,9 @@ public abstract class AbstractMqttServiceImpl implements MqttCallback,
 	}
 
 	/**
-	 * @throws MqttException
+	 * Reconnect.
+	 *
+	 * @throws MqttException the mqtt exception
 	 */
 	private synchronized void reconnect() throws MqttException {
 		logger.debug("reconnect시작()");
@@ -253,7 +298,9 @@ public abstract class AbstractMqttServiceImpl implements MqttCallback,
 	}
 
 	/**
-	 * @return
+	 * Make mqtt opts.
+	 *
+	 * @return the mqtt connect options
 	 */
 	private MqttConnectOptions makeMqttOpts() {
 		logger.debug("makeMqttOpts시작()");
@@ -320,9 +367,11 @@ public abstract class AbstractMqttServiceImpl implements MqttCallback,
 	}
 
 	/**
-	 * @param topic
-	 * @param qos
-	 * @throws MqttException
+	 * Subscribe.
+	 *
+	 * @param topic the topic
+	 * @param qos the qos
+	 * @throws MqttException the mqtt exception
 	 */
 	private synchronized void subscribe(String topic, int qos)
 			throws MqttException {
@@ -394,6 +443,12 @@ public abstract class AbstractMqttServiceImpl implements MqttCallback,
 		logger.debug("messageArrived종료()");
 	}
 
+	/**
+	 * Receive ack.
+	 *
+	 * @param topic the topic
+	 * @param message the message
+	 */
 	abstract protected void receiveAck(String topic, MqttMessage message);
 
 	// abstract protected void receiveGroup(String topic, MqttMessage message);
@@ -430,8 +485,8 @@ public abstract class AbstractMqttServiceImpl implements MqttCallback,
 		logger.debug("destroy종료()");
 	}
 
-	/**
-	 * @return
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.service.MqttService#getErrorMsg()
 	 */
 	public String getErrorMsg() throws Exception {
 		logger.debug("getErrorMsg시작()");
@@ -439,6 +494,9 @@ public abstract class AbstractMqttServiceImpl implements MqttCallback,
 		return errorMsg;
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.service.MqttService#setError(java.lang.String)
+	 */
 	@Override
 	public void setError(String error) {
 		logger.debug("setError시작(errorMsg=" + error + ")");
@@ -451,11 +509,17 @@ public abstract class AbstractMqttServiceImpl implements MqttCallback,
 	 * 
 	 * @see kr.co.adflow.push.service.MqttService#getTps()
 	 */
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.service.MqttService#getTps()
+	 */
 	@Override
 	public double getTps() throws Exception {
 		return tps;
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.service.MqttService#publish(kr.co.adflow.push.domain.Message)
+	 */
 	@Override
 	public synchronized IMqttDeliveryToken publish(Message msg)
 			throws Exception {
@@ -513,6 +577,9 @@ public abstract class AbstractMqttServiceImpl implements MqttCallback,
 		return token;
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.service.MqttService#isConnected()
+	 */
 	@Override
 	public boolean isConnected() throws Exception {
 		logger.debug("isConnected시작()");
@@ -521,7 +588,10 @@ public abstract class AbstractMqttServiceImpl implements MqttCallback,
 	}
 
 	/**
-	 * @throws MqttException
+	 * Mqtt connection clean.
+	 *
+	 * @param clientID the client id
+	 * @throws MqttException the mqtt exception
 	 */
 	public void mqttConnectionClean(String clientID) throws MqttException {
 		logger.debug("mqttConnectionClean시작()");

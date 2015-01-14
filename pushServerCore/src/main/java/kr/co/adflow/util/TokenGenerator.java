@@ -1,23 +1,30 @@
+/*
+ * 
+ */
 package kr.co.adflow.util;
 
-import java.net.InetAddress;
 import java.security.MessageDigest;
 import java.util.UUID;
 
 import org.slf4j.LoggerFactory;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class TokenGenerator.
+ *
  * @author nadir93
  * @date 2014. 5. 15.
- * 
  */
 public class TokenGenerator {
 
+	/** The Constant logger. */
 	private static final org.slf4j.Logger logger = LoggerFactory
 			.getLogger(TokenGenerator.class);
 
 	/**
-	 * @return
+	 * Generate.
+	 *
+	 * @return the string
 	 */
 	public static String generate() {
 		logger.debug("generate시작()");
@@ -32,6 +39,12 @@ public class TokenGenerator {
 	
 	
 	//140912 <kicho> userid로 토큰생성 -start
+	/**
+	 * Generate.
+	 *
+	 * @param userID the user id
+	 * @return the string
+	 */
 	public static String generate(String userID) {
 		
 		String token=null;

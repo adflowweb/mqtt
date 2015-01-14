@@ -1,10 +1,12 @@
+/*
+ * 
+ */
 package kr.co.adflow.push.ktp.service.impl;
 
 import java.io.IOException;
 import java.util.Properties;
 
 import kr.co.adflow.push.domain.ktp.Status;
-import kr.co.adflow.push.domain.ktp.Subscribe;
 import kr.co.adflow.push.handler.AbstractMessageHandler;
 import kr.co.adflow.push.ktp.service.PCFService;
 
@@ -18,19 +20,24 @@ import com.ibm.mq.pcf.PCFException;
 import com.ibm.mq.pcf.PCFMessage;
 import com.ibm.mq.pcf.PCFMessageAgent;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class PCFServiceImpl.
+ *
  * @author nadir93
  * @date 2014. 4. 14.
- * 
  */
 @Service
 public class PCFServiceImpl implements PCFService {
 
+	/** The Constant logger. */
 	private static final org.slf4j.Logger logger = LoggerFactory
 			.getLogger(PCFServiceImpl.class);
 
+	/** The Constant CONFIG_PROPERTIES. */
 	private static final String CONFIG_PROPERTIES = "/config.properties";
 
+	/** The prop. */
 	private static Properties prop = new Properties();
 
 	static {
@@ -43,6 +50,9 @@ public class PCFServiceImpl implements PCFService {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.ktp.service.PCFService#get(java.lang.String)
+	 */
 	@Override
 	public String[] get(String token) throws Exception {
 		logger.debug("get시작(token={})",token);
@@ -102,6 +112,9 @@ public class PCFServiceImpl implements PCFService {
 		return subsList;
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.ktp.service.PCFService#getStatus(java.lang.String)
+	 */
 	@Override
 	public Status getStatus(String token) throws Exception {
 		logger.debug("get시작(token=" + token + ")");

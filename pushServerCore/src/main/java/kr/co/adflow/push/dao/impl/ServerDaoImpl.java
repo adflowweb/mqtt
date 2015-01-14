@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package kr.co.adflow.push.dao.impl;
 
 import java.lang.management.ManagementFactory;
@@ -27,19 +30,24 @@ import org.hyperic.sigar.SigarLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class ServerDaoImpl.
+ *
  * @author nadir93
  * @date 2014. 4. 14.
- * 
  */
 // @Repository
 public class ServerDaoImpl implements ServerDao {
 
+	/** The Constant logger. */
 	private static final Logger logger = LoggerFactory
 			.getLogger(ServerDaoImpl.class);
 
+	/** The Constant sigar. */
 	private static final Sigar sigar = new Sigar();
 
+	/** The mqtt service. */
 	@Resource
 	MqttService mqttService;
 
@@ -194,7 +202,9 @@ public class ServerDaoImpl implements ServerDao {
 	}
 
 	/**
-	 * @param cpu
+	 * Log cpu info.
+	 *
+	 * @param cpu the cpu
 	 */
 	private void logCPUInfo(CpuPerc cpu) {
 		logger.debug("UserTime=" + CpuPerc.format(cpu.getUser()));
@@ -210,6 +220,12 @@ public class ServerDaoImpl implements ServerDao {
 		}
 	}
 
+	/**
+	 * Make disk info.
+	 *
+	 * @param fs the fs
+	 * @return the disk
+	 */
 	public Disk makeDiskInfo(FileSystem fs) {
 		long used, avail, total, pct;
 
@@ -267,20 +283,35 @@ public class ServerDaoImpl implements ServerDao {
 		return disk;
 	}
 
+	/**
+	 * Format size.
+	 *
+	 * @param size the size
+	 * @return the string
+	 */
 	private String formatSize(long size) {
 		return Sigar.formatSize(size * 1024);
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.dao.ServerDao#post()
+	 */
 	@Override
 	public void post() throws Exception {
 		// return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.dao.ServerDao#put()
+	 */
 	@Override
 	public void put() throws Exception {
 		// return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.dao.ServerDao#delete()
+	 */
 	@Override
 	public void delete() throws Exception {
 		// return null;

@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package kr.co.adflow.push.dao.impl;
 
 import kr.co.adflow.push.dao.AckDao;
@@ -9,16 +12,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class AckDaoImpl.
+ *
  * @author nadir93
- * 
  */
 @Component
 public class AckDaoImpl implements AckDao {
 
+	/** The Constant logger. */
 	private static final org.slf4j.Logger logger = LoggerFactory
 			.getLogger(AckDaoImpl.class);
 
+	/** The sql session. */
 	@Autowired
 	private SqlSession sqlSession;
 

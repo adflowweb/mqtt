@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package kr.co.adflow.push.controller;
 
 import java.util.ArrayList;
@@ -22,25 +25,30 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class TokenController.
+ *
  * @author nadir93
  * @date 2014. 3. 21.
  */
 @Controller
 public class TokenController {
+	
+	/** The Constant logger. */
 	private static final Logger logger = LoggerFactory
 			.getLogger(TokenController.class);
 
+	/** The token service. */
 	@Resource
 	private TokenService tokenService;
 
 	/**
-	 * 토큰정보가져오기
-	 * 
-	 * @param userID
-	 * @param clientID
-	 * @return
-	 * @throws Exception
+	 * 토큰정보가져오기.
+	 *
+	 * @param token the token
+	 * @return the response
+	 * @throws Exception the exception
 	 */
 	@RequestMapping(value = "tokens/{token}", method = RequestMethod.GET)
 	@ResponseBody
@@ -55,11 +63,11 @@ public class TokenController {
 	}
 
 	/**
-	 * 토큰 발행하기
-	 * 
-	 * @param token
-	 * @return
-	 * @throws Exception
+	 * 토큰 발행하기.
+	 *
+	 * @param token the token
+	 * @return the response
+	 * @throws Exception the exception
 	 */
 	@RequestMapping(value = "tokens", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
@@ -94,11 +102,11 @@ public class TokenController {
 	}
 
 	/**
-	 * 토큰유효성체크
-	 * 
-	 * @param token
-	 * @return
-	 * @throws Exception
+	 * 토큰유효성체크.
+	 *
+	 * @param token the token
+	 * @return the response
+	 * @throws Exception the exception
 	 */
 	@RequestMapping(value = "validate/{token}", method = RequestMethod.GET)
 	@ResponseBody
@@ -115,12 +123,11 @@ public class TokenController {
 
 	//140829 <kicho> - start
 	/**
-	 * userID로 토큰정보 삭제하기
-	 * 
-	 * 
-	 * @param userID
-	 * @return
-	 * @throws Exception
+	 * userID로 토큰정보 삭제하기.
+	 *
+	 * @param token the token
+	 * @return the response
+	 * @throws Exception the exception
 	 */
 	@RequestMapping(value = "tokensByUser/{userID}", method = RequestMethod.DELETE)
 	@ResponseBody
@@ -142,12 +149,11 @@ public class TokenController {
 	//140829 <kicho> - end
 	
 	/**
-	 * 토큰정보 삭제하기
-	 * 
-	 * 
-	 * @param token
-	 * @return
-	 * @throws Exception
+	 * 토큰정보 삭제하기.
+	 *
+	 * @param token the token
+	 * @return the response
+	 * @throws Exception the exception
 	 */
 	@RequestMapping(value = "token/{token}", method = RequestMethod.DELETE)
 	@ResponseBody
@@ -169,11 +175,11 @@ public class TokenController {
 	
 	//140902 <kicho> - start
 	/**
-	 * 여러 토큰 가져오기
-	 * 
-	 * @param userID
-	 * @return
-	 * @throws Exception
+	 * 여러 토큰 가져오기.
+	 *
+	 * @param userID the user id
+	 * @return the multi by user
+	 * @throws Exception the exception
 	 */
 	@RequestMapping(value = "tokenMulti/{userID}", method = RequestMethod.GET)
 	@ResponseBody
@@ -200,12 +206,11 @@ public class TokenController {
 	
 	//140902 <kicho> - start
 	/**
-	 * 토큰정보가져오기
-	 * 
-	 * @param userID
-	 * @param clientID
-	 * @return
-	 * @throws Exception
+	 * 토큰정보가져오기.
+	 *
+	 * @param userID the user id
+	 * @return the by user
+	 * @throws Exception the exception
 	 */
 	@RequestMapping(value = "tokensByUser/{userID}", method = RequestMethod.GET)
 	@ResponseBody
@@ -232,10 +237,10 @@ public class TokenController {
 	//140902 <kicho> - end
 
 	/**
-	 * 예외처리
-	 * 
-	 * @param e
-	 * @return
+	 * 예외처리.
+	 *
+	 * @param e the e
+	 * @return the response
 	 */
 	@ExceptionHandler(Exception.class)
 	@ResponseBody

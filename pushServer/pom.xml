@@ -404,7 +404,7 @@
 				<health.check.interval>10</health.check.interval>
 
 				<!-- messageProcess enable/disable -->
-				<message.enable>true</message.enable>
+				<message.enable>false</message.enable>
 
 				<!-- messageProcess interval (second) -->
 				<message.process.interval>15</message.process.interval>

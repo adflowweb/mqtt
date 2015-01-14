@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package kr.co.adflow.push.controller;
 
 import java.util.ArrayList;
@@ -15,25 +18,29 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class GroupController.
+ *
  * @author nadir93
  * @date 2014. 4. 14.
- * 
  */
 @Controller
 public class GroupController {
 
+	/** The Constant logger. */
 	private static final Logger logger = LoggerFactory
 			.getLogger(GroupController.class);
 
+	/** The group service. */
 	@Resource
 	private GroupService groupService;
 
 	/**
-	 * 예외처리
-	 * 
-	 * @param e
-	 * @return
+	 * 예외처리.
+	 *
+	 * @param e the e
+	 * @return the response
 	 */
 	@ExceptionHandler(Exception.class)
 	@ResponseBody

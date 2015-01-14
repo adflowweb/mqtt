@@ -41,7 +41,25 @@
 
 	<select id="validate" resultType="boolean">
 		SELECT CASE WHEN count(*) > 0
-		THEN 1 ELSE 0 END From token where tokenid = #{token}
+		THEN 1 ELSE 0 END 
+		FROM token 
+		WHERE tokenid = #{token}
+	</select>
+	
+	<select id="validateByUfmi" resultType="boolean">
+		SELECT CASE WHEN count(tokenid) > 0
+			THEN 1 ELSE 0 END  AS result
+		FROM push.token a , push.user b
+		WHERE a.userid = b.userid 
+		AND b.ufmi IS NOT NULL
+		AND ufmi = #{ufmi}
+	</select>
+	
+	<select id="validateByUserID" resultType="boolean">
+		SELECT CASE WHEN count(tokenid) > 0
+		THEN 1 ELSE 0 END 
+		FROM token 
+		WHERE userID = #{userID}
 	</select>
 
 	<delete id="delete" parameterType="java.lang.String">

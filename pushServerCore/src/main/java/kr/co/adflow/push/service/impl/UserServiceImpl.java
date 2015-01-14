@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package kr.co.adflow.push.service.impl;
 
 import javax.annotation.Resource;
@@ -11,20 +14,25 @@ import kr.co.adflow.push.service.UserService;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class UserServiceImpl.
+ *
  * @author nadir93
  * @date 2014. 4. 14.
- * 
  */
 @Service
 public class UserServiceImpl implements UserService {
 
+	/** The Constant logger. */
 	private static final org.slf4j.Logger logger = LoggerFactory
 			.getLogger(UserServiceImpl.class);
 
+	/** The user dao. */
 	@Resource
 	private UserDao userDao;
 
+	/** The token service. */
 	@Resource
 	private TokenService tokenService;
 
@@ -41,6 +49,9 @@ public class UserServiceImpl implements UserService {
 		return user;
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.service.UserService#post(kr.co.adflow.push.domain.User)
+	 */
 	@Override
 	public int post(User user) throws Exception {
 		logger.debug("post시작(user=" + user + ")");
@@ -49,6 +60,9 @@ public class UserServiceImpl implements UserService {
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.service.UserService#put(kr.co.adflow.push.domain.User)
+	 */
 	@Override
 	public int put(User user) throws Exception {
 		logger.debug("put시작(user=" + user + ")");
@@ -57,6 +71,9 @@ public class UserServiceImpl implements UserService {
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.service.UserService#delete(java.lang.String)
+	 */
 	@Override
 	public int delete(String userID) throws Exception {
 		logger.debug("delete시작(userID=" + userID + ")");
@@ -134,6 +151,9 @@ public class UserServiceImpl implements UserService {
 	 return token;
 	 }
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.service.UserService#getAdmin()
+	 */
 	@Override
 	public User[] getAdmin() throws Exception {
 		logger.debug("getAdmin시작()");
@@ -145,6 +165,9 @@ public class UserServiceImpl implements UserService {
 	
 	//140901 <kicho> - start 
 	//어드민 암호 변
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.service.UserService#changePassword(kr.co.adflow.push.domain.User)
+	 */
 	@Override
 	public int changePassword(User user) throws Exception {
 		logger.debug("put시작(user=" + user + ")");

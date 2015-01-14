@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package kr.co.adflow.push.handler;
 
 import java.io.IOException;
@@ -14,18 +17,23 @@ import kr.co.adflow.push.service.HAService;
 
 import org.slf4j.LoggerFactory;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class DefaultSMSHandler.
+ *
  * @author nadir93
  * @date 2014. 7. 8.
- * 
  */
 public abstract class DefaultSMSHandler implements Runnable {
 
+	/** The Constant logger. */
 	private static final org.slf4j.Logger logger = LoggerFactory
 			.getLogger(DefaultSMSHandler.class);
 
+	/** The Constant CONFIG_PROPERTIES. */
 	private static final String CONFIG_PROPERTIES = "/config.properties";
 
+	/** The prop. */
 	private static Properties prop = new Properties();
 
 	static {
@@ -38,24 +46,29 @@ public abstract class DefaultSMSHandler implements Runnable {
 		}
 	}
 
+	/** The sms looper. */
 	protected ScheduledExecutorService smsLooper;
 
 	// SMS처리 유무
+	/** The sms. */
 	protected boolean sms = Boolean
 			.parseBoolean(prop.getProperty("sms.enable"));
 	// sms처리주기
+	/** The sms interval. */
 	protected int smsInterval = Integer.parseInt(prop
 			.getProperty("sms.process.interval"));
 
+	/** The first. */
 	private static boolean first = true; // thread name 세팅용
 
+	/** The ha service. */
 	@Resource
 	HAService haService;
 
 	/**
-	 * initialize
-	 * 
-	 * @throws Exception
+	 * initialize.
+	 *
+	 * @throws Exception the exception
 	 */
 	@PostConstruct
 	public void initIt() throws Exception {
@@ -71,9 +84,9 @@ public abstract class DefaultSMSHandler implements Runnable {
 	}
 
 	/**
-	 * 모든리소스정리
-	 * 
-	 * @throws Exception
+	 * 모든리소스정리.
+	 *
+	 * @throws Exception the exception
 	 */
 	@PreDestroy
 	public void cleanUp() throws Exception {
@@ -85,6 +98,9 @@ public abstract class DefaultSMSHandler implements Runnable {
 		logger.info("cleanUp종료()");
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Runnable#run()
+	 */
 	@Override
 	public void run() {
 		if (first) {
@@ -103,6 +119,9 @@ public abstract class DefaultSMSHandler implements Runnable {
 		doProcess();
 	}
 
+	/**
+	 * Do process.
+	 */
 	protected abstract void doProcess();
 
 }

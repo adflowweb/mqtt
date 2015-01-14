@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package kr.co.adflow.push.handler;
 
 import java.io.IOException;
@@ -8,15 +11,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import javapns.Push;
-
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 
-import kr.co.adflow.push.domain.Device;
 import kr.co.adflow.push.domain.Message;
-import kr.co.adflow.push.mapper.DeviceMapper;
 import kr.co.adflow.push.mapper.MessageMapper;
 import kr.co.adflow.push.service.HAService;
 import kr.co.adflow.push.service.MqttService;
@@ -24,26 +23,28 @@ import kr.co.adflow.push.service.MqttService;
 import org.apache.ibatis.session.SqlSession;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
+// TODO: Auto-generated Javadoc
 /**
- * 메시지처리
- * 
+ * 메시지처리.
+ *
  * @author nadir93
  * @date 2014. 6. 12.
  */
 // @Component
 public class AbstractMessageHandler implements Runnable {
+	
+	/** The Constant logger. */
 	private static final org.slf4j.Logger logger = LoggerFactory
 			.getLogger(AbstractMessageHandler.class);
 
+	/** The Constant CONFIG_PROPERTIES. */
 	private static final String CONFIG_PROPERTIES = "/config.properties";
 
+	/** The prop. */
 	private static Properties prop = new Properties();
 
 	static {
@@ -57,42 +58,54 @@ public class AbstractMessageHandler implements Runnable {
 	}
 
 	// 메시지처리 유무
+	/** The msg process. */
 	private boolean msgProcess = Boolean.parseBoolean(prop
 			.getProperty("message.enable"));
 	// 메시지처리주기
+	/** The message interval. */
 	private int messageInterval = Integer.parseInt(prop
 			.getProperty("message.process.interval"));
 
 	// apns key file
+	/** The apns key file. */
 	protected String apnsKeyFile = prop.getProperty("apns.key.file");
 
+	/** The apns key file password. */
 	protected String apnsKeyFilePassword = prop
 			.getProperty("apns.key.password");
 
+	/** The apns production. */
 	protected boolean apnsProduction = Boolean.parseBoolean(prop
 			.getProperty("apns.production"));
 
+	/** The first. */
 	private static boolean first = true;
 
+	/** The mqtt service. */
 	@Resource
 	MqttService mqttService;
 
+	/** The ha service. */
 	@Resource
 	HAService haService;
 
+	/** The sql session. */
 	@Autowired
 	private SqlSession sqlSession;
 
+	/** The message looper. */
 	protected ScheduledExecutorService messageLooper;
 
+	/** The msg mapper. */
 	protected MessageMapper msgMapper;
 
+	/** The parser. */
 	protected JSONParser parser = new JSONParser();
 
 	/**
-	 * initialize
-	 * 
-	 * @throws Exception
+	 * initialize.
+	 *
+	 * @throws Exception the exception
 	 */
 	@PostConstruct
 	public void initIt() throws Exception {
@@ -111,9 +124,9 @@ public class AbstractMessageHandler implements Runnable {
 	}
 
 	/**
-	 * 모든리소스정리
-	 * 
-	 * @throws Exception
+	 * 모든리소스정리.
+	 *
+	 * @throws Exception the exception
 	 */
 	@PreDestroy
 	public void cleanUp() throws Exception {
@@ -289,6 +302,12 @@ public class AbstractMessageHandler implements Runnable {
 	//KTP-skip-end
 
 
+	/**
+	 * Publish.
+	 *
+	 * @param msg the msg
+	 * @throws Exception the exception
+	 */
 	private void publish(Message msg) throws Exception {
 		logger.debug("publish시작(msg=" + msg + ")");
 		Message message = msgMapper.get(msg.getId());

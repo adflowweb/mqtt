@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package kr.co.adflow.push.handler;
 
 import java.io.IOException;
@@ -15,18 +18,24 @@ import kr.co.adflow.push.service.HAService;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class HAHandler.
+ *
  * @author nadir93
  * @date 2014. 7. 24.
  */
 @Component
 public class HAHandler implements Runnable {
 
+	/** The Constant logger. */
 	private static final org.slf4j.Logger logger = LoggerFactory
 			.getLogger(HAHandler.class);
 
+	/** The Constant CONFIG_PROPERTIES. */
 	private static final String CONFIG_PROPERTIES = "/config.properties";
 
+	/** The prop. */
 	private static Properties prop = new Properties();
 
 	static {
@@ -37,22 +46,28 @@ public class HAHandler implements Runnable {
 			e.printStackTrace();
 		}
 	}
+	
+	/** The first. */
 	private static boolean first = true; // thread name 세팅용
 
+	/** The ha. */
 	private boolean ha = Boolean.parseBoolean(prop.getProperty("ha.enable"));
 
+	/** The ha interval. */
 	private int haInterval = Integer.parseInt(prop
 			.getProperty("ha.check.interval"));
 
+	/** The HA looper. */
 	private ScheduledExecutorService HALooper;
 
+	/** The ha service. */
 	@Resource
 	private HAService haService;
 
 	/**
-	 * initialize
-	 * 
-	 * @throws Exception
+	 * initialize.
+	 *
+	 * @throws Exception the exception
 	 */
 	@PostConstruct
 	public void initIt() throws Exception {
@@ -68,9 +83,9 @@ public class HAHandler implements Runnable {
 	}
 
 	/**
-	 * 모든리소스정리
-	 * 
-	 * @throws Exception
+	 * 모든리소스정리.
+	 *
+	 * @throws Exception the exception
 	 */
 	@PreDestroy
 	public void cleanUp() throws Exception {
@@ -82,6 +97,9 @@ public class HAHandler implements Runnable {
 		logger.info("cleanUp종료()");
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Runnable#run()
+	 */
 	@Override
 	public void run() {
 		logger.debug("HACheck시작()");

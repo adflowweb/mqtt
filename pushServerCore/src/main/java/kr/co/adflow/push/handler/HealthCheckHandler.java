@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package kr.co.adflow.push.handler;
 
 import java.io.IOException;
@@ -16,21 +19,24 @@ import kr.co.adflow.push.service.MqttService;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+// TODO: Auto-generated Javadoc
 /**
- * 헬스체크 핸들러
- * 
+ * 헬스체크 핸들러.
+ *
  * @author nadir93
  * @date 2014. 7. 7.
- * 
  */
 @Component
 public class HealthCheckHandler implements Runnable {
 
+	/** The Constant logger. */
 	private static final org.slf4j.Logger logger = LoggerFactory
 			.getLogger(HealthCheckHandler.class);
 
+	/** The Constant CONFIG_PROPERTIES. */
 	private static final String CONFIG_PROPERTIES = "/config.properties";
 
+	/** The prop. */
 	private static Properties prop = new Properties();
 
 	static {
@@ -43,26 +49,32 @@ public class HealthCheckHandler implements Runnable {
 		}
 	}
 
+	/** The first. */
 	private static boolean first = true; // thread name 세팅용
 
+	/** The health check. */
 	private boolean healthCheck = Boolean.parseBoolean(prop
 			.getProperty("health.enable"));
 
+	/** The health check interval. */
 	private int healthCheckInterval = Integer.parseInt(prop
 			.getProperty("health.check.interval"));
 
+	/** The health check looper. */
 	private ScheduledExecutorService healthCheckLooper;
 
+	/** The mqtt service. */
 	@Resource
 	private MqttService mqttService;
 
+	/** The ha service. */
 	@Resource
 	HAService haService;
 
 	/**
-	 * initialize
-	 * 
-	 * @throws Exception
+	 * initialize.
+	 *
+	 * @throws Exception the exception
 	 */
 	@PostConstruct
 	public void initIt() throws Exception {
@@ -78,9 +90,9 @@ public class HealthCheckHandler implements Runnable {
 	}
 
 	/**
-	 * 모든리소스정리
-	 * 
-	 * @throws Exception
+	 * 모든리소스정리.
+	 *
+	 * @throws Exception the exception
 	 */
 	@PreDestroy
 	public void cleanUp() throws Exception {
@@ -92,6 +104,9 @@ public class HealthCheckHandler implements Runnable {
 		logger.info("cleanUp종료()");
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Runnable#run()
+	 */
 	@Override
 	public void run() {
 		if (first) {

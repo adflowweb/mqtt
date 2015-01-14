@@ -1,6 +1,7 @@
+/*
+ * 
+ */
 package kr.co.adflow.push.dao.impl;
-
-import javax.annotation.Resource;
 
 import kr.co.adflow.push.dao.UserDao;
 import kr.co.adflow.push.domain.User;
@@ -11,17 +12,21 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class UserDaoImpl.
+ *
  * @author nadir93
  * @date 2014. 4. 14.
- * 
  */
 @Repository
 public class UserDaoImpl implements UserDao {
 
+	/** The Constant logger. */
 	private static final org.slf4j.Logger logger = LoggerFactory
 			.getLogger(UserDaoImpl.class);
 	// Autowired를 사용하여 sqlSession을 사용할수 있다.
+	/** The sql session. */
 	@Autowired
 	private SqlSession sqlSession;
 
@@ -100,6 +105,9 @@ public class UserDaoImpl implements UserDao {
 		return rst;
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.dao.UserDao#getAdmin()
+	 */
 	@Override
 	public User[] getAdmin() throws Exception {
 		logger.debug("getAdmin시작()");

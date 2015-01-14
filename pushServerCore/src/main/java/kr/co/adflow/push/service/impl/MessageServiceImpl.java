@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package kr.co.adflow.push.service.impl;
 
 import javax.annotation.Resource;
@@ -9,20 +12,27 @@ import kr.co.adflow.push.service.MessageService;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class MessageServiceImpl.
+ *
  * @author nadir93
  * @date 2014. 4. 14.
- * 
  */
 @Service
 public class MessageServiceImpl implements MessageService {
 
+	/** The Constant logger. */
 	private static final org.slf4j.Logger logger = LoggerFactory
 			.getLogger(MessageServiceImpl.class);
 
+	/** The message dao. */
 	@Resource
 	MessageDao messageDao;
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.service.MessageService#get(int)
+	 */
 	@Override
 	public Message get(int messageID) throws Exception {
 		logger.debug("get시작(msg=" + messageID + ")");
@@ -74,11 +84,17 @@ public class MessageServiceImpl implements MessageService {
 		return count;
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.service.MessageService#getMsgs()
+	 */
 	@Override
 	public Message[] getMsgs() throws Exception {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.service.MessageService#getDeliveredMsgs()
+	 */
 	@Override
 	public Message[] getDeliveredMsgs() throws Exception {
 		logger.debug("getDeliveredMsgs시작()");
@@ -87,6 +103,9 @@ public class MessageServiceImpl implements MessageService {
 		return msg;
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.service.MessageService#getReservationMsgs()
+	 */
 	@Override
 	public Message[] getReservationMsgs() throws Exception {
 		logger.debug("getReservationMsgs시작()");

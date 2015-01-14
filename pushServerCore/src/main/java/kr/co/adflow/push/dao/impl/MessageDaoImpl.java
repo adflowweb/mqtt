@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package kr.co.adflow.push.dao.impl;
 
 import kr.co.adflow.push.dao.MessageDao;
@@ -9,17 +12,21 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class MessageDaoImpl.
+ *
  * @author nadir93
  * @date 2014. 4. 14.
- * 
  */
 @Component
 public class MessageDaoImpl implements MessageDao {
 
+	/** The Constant logger. */
 	private static final org.slf4j.Logger logger = LoggerFactory
 			.getLogger(MessageDaoImpl.class);
 
+	/** The sql session. */
 	@Autowired
 	private SqlSession sqlSession;
 
@@ -73,6 +80,22 @@ public class MessageDaoImpl implements MessageDao {
 		logger.debug("put종료(count=" + count + ")");
 		return count;
 	}
+	
+	
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.dao.MessageDao#putIssue(kr.co.adflow.push.domain.Message)
+	 */
+	public int putIssue(Message msg) throws Exception {
+		logger.debug("put시작(msg=" + msg + ")");
+		// db 저장
+		MessageMapper msgMapper = sqlSession.getMapper(MessageMapper.class);
+		int count = msgMapper.putIssue(msg);
+		logger.debug("msg=" + msg);
+		msgMapper.putContent(msg);
+		logger.debug("put종료(count=" + count + ")");
+		return count;
+	}
+
 
 	/*
 	 * (non-Javadoc)
@@ -88,6 +111,9 @@ public class MessageDaoImpl implements MessageDao {
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.dao.MessageDao#getReservationMsgs()
+	 */
 	@Override
 	public Message[] getReservationMsgs() throws Exception {
 		logger.debug("getReservationMsgs시작()");
@@ -97,6 +123,9 @@ public class MessageDaoImpl implements MessageDao {
 		return msg;
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.dao.MessageDao#getDeliveredMsgs()
+	 */
 	@Override
 	public Message[] getDeliveredMsgs() throws Exception {
 		logger.debug("getDeliveredMsgs시작()");

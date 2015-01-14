@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package kr.co.adflow.push.ktp.controller;
 
 import java.util.ArrayList;
@@ -8,7 +11,6 @@ import javax.annotation.Resource;
 import kr.co.adflow.push.domain.Response;
 import kr.co.adflow.push.domain.Result;
 import kr.co.adflow.push.domain.ktp.Status;
-import kr.co.adflow.push.domain.ktp.Subscribe;
 import kr.co.adflow.push.ktp.service.PCFService;
 
 import org.slf4j.Logger;
@@ -20,26 +22,30 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class PCFController.
+ *
  * @author nadir93
  * @date 2014. 4. 14.
- * 
  */
 @Controller
 public class PCFController {
 
+	/** The Constant logger. */
 	private static final Logger logger = LoggerFactory
 			.getLogger(PCFController.class);
 
+	/** The p cf service. */
 	@Resource
 	private PCFService pCFService;
 
 	/**
-	 * subscription List 가져오기
-	 * 
-	 * @param token
-	 * @return
-	 * @throws Exception
+	 * subscription List 가져오기.
+	 *
+	 * @param token the token
+	 * @return the response
+	 * @throws Exception the exception
 	 */
 	@RequestMapping(value = "subscriptions/{token:.+}", method = RequestMethod.GET)
 	@ResponseBody
@@ -66,11 +72,11 @@ public class PCFController {
 	}
 
 	/**
-	 * MQTT Client 연결상태 가져오기
-	 * 
-	 * @param token
-	 * @return
-	 * @throws Exception
+	 * MQTT Client 연결상태 가져오기.
+	 *
+	 * @param token the token
+	 * @return the status
+	 * @throws Exception the exception
 	 */
 	@RequestMapping(value = "clients/{token:.+}", method = RequestMethod.GET)
 	@ResponseBody
@@ -88,10 +94,10 @@ public class PCFController {
 	}
 
 	/**
-	 * 예외처리
-	 * 
-	 * @param e
-	 * @return
+	 * 예외처리.
+	 *
+	 * @param e the e
+	 * @return the response
 	 */
 	@ExceptionHandler(Exception.class)
 	@ResponseBody
