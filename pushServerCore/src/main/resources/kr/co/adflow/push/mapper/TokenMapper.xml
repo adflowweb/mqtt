@@ -20,8 +20,7 @@
 	</select>
 
 	<insert id="post" parameterType="kr.co.adflow.push.domain.Token">
-		INSERT INTO (tokenID, userID, issue, lastAccessTime)
-		token
+		INSERT INTO token (tokenID, userID, issue, lastAccessTime)
 		values(#{tokenID}, #{userID}, now(), now())
 	</insert>
 	
@@ -35,7 +34,7 @@
 	
 		<update id="putLastAcessTime" parameterType="kr.co.adflow.push.domain.Token">
 		UPDATE token
-		SET lastAcessTime = now()
+		SET lastAccessTime = now()
 		WHERE tokenID = #{tokenID}
 	</update>
 
