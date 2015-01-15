@@ -95,17 +95,18 @@ public class PCFServiceImpl implements PCFService {
 			}
 		} catch (PCFException pcfe) {
 			if (pcfe.getMessage().indexOf("2428") > 0) {
-				System.err
-						.println("해당 토큰관련 subscriptions 가 없습니다. -errorcode:2428");
+				logger.error("해당 토큰관련 subscriptions 가 없습니다. -errorcode:2428");
 
 			} else {
-				System.err.println("PCF error: " + pcfe);
+				logger.error("PCF error: " + pcfe);
 			}
 
 		} catch (MQException mqe) {
-			System.err.println(mqe);
+			logger.error("MQException is ",mqe);
+			throw mqe;
 		} catch (IOException ioe) {
-			System.err.println(ioe);
+			logger.error("IOException is ",ioe);
+			throw ioe;
 		}
 
 		// logger.debug("get종료(Subscribe result=" + subsList + ")");
@@ -171,9 +172,11 @@ public class PCFServiceImpl implements PCFService {
 				status.setStatus(pcfe.toString());
 			}
 		} catch (MQException mqe) {
-			System.err.println(mqe);
+			logger.error("MQException is",mqe);
+			throw mqe;
 		} catch (IOException ioe) {
-			System.err.println(ioe);
+			logger.error("IOException is",ioe);
+			throw ioe;
 		}
 
 		// logger.debug("get종료(Subscribe result=" + subsList + ")");

@@ -250,6 +250,10 @@ public class PlatformServiceImpl implements PlatformService {
 		}
 
 	}
+	
+	private long getMillisExpiryTime(int sec) {
+		return sec * 1000;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -268,7 +272,7 @@ public class PlatformServiceImpl implements PlatformService {
 			message.setStatus(Message.STATUS_WAIT_FOR_SENDING);
 
 			message.setQos(userMessage.getQos());
-			message.setExpiry(userMessage.getExpiry());
+			message.setExpiry(this.getMillisExpiryTime(userMessage.getExpiry()));
 			message.setAck(true);
 			message.setSender(userMessage.getSender());
 			message.setReceiver(userMessage.getReceiver());

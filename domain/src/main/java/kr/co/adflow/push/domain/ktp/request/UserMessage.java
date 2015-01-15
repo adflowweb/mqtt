@@ -26,7 +26,7 @@ public class UserMessage {
 	private int qos;
 	
 	/** The expiry. */
-	private long expiry;
+	private int expiry;
 	//private int type;
 	
 	/**
@@ -124,7 +124,7 @@ public class UserMessage {
 	 *
 	 * @return the expiry
 	 */
-	public long getExpiry() {
+	public int getExpiry() {
 		return expiry;
 	}
 	
@@ -133,7 +133,7 @@ public class UserMessage {
 	 *
 	 * @param expiry the new expiry
 	 */
-	public void setExpiry(long expiry) {
+	public void setExpiry(int expiry) {
 		this.expiry = expiry;
 	}
 

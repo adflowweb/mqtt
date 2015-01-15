@@ -44,7 +44,6 @@ public class DirectMsgHandler implements ProducerCallback<Object> {
 	@Override
 	public Object doInJms(Session session, MessageProducer producer) throws JMSException {
 
-		logger.info("doInJms start=====================");
 		// jms priority default 4
 		//producer.setPriority(4);
 		producer.setTimeToLive(msg.getExpiry());
@@ -69,7 +68,6 @@ public class DirectMsgHandler implements ProducerCallback<Object> {
 			msgObject.put("ack", msg.isAck());
 			
 			
-			logger.info("doInJms=====================");
 			if ("application/json".equals(msg.getContentType())) {
 			JSONObject contentObject = new JSONObject(msg.getContent());
 			msgObject.put("content", contentObject);
@@ -77,11 +75,8 @@ public class DirectMsgHandler implements ProducerCallback<Object> {
 				msgObject.put("content", msg.getContent());
 			}
 			
-			//json = ow.writeValueAsString(msg);
 			json = msgObject.toString();
-			logger.info("doInJms====================={}",json);
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			

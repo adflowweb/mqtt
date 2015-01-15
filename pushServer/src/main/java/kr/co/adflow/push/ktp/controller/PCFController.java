@@ -61,6 +61,9 @@ public class PCFController {
 					add("subscription not found");
 				}
 			};
+			logger.info("subscribe :: {}",subscribe);
+			subscribe = new String[0];
+			result.setData(subscribe);
 			result.setInfo(messages);
 		} else {
 			result.setData(subscribe);
