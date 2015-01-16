@@ -273,7 +273,7 @@ public class PlatformServiceImpl implements PlatformService {
 
 			message.setQos(userMessage.getQos());
 			message.setExpiry(this.getMillisExpiryTime(userMessage.getExpiry()));
-			message.setAck(true);
+			//message.setAck(true);
 			message.setSender(userMessage.getSender());
 			message.setReceiver(userMessage.getReceiver());
 			message.setContentType(userMessage.getContentType());
