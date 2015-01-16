@@ -163,7 +163,7 @@ public class PushHandler implements MqttCallback {
                 connect();
 
                 // testCode
-                // subscription check by chan
+                // subscription check by chanho
                 String getSubData=this.getSubscriptions();
                 JSONObject jsonData = new JSONObject(getSubData);
                 Log.d(TAG, "jsonData:"+jsonData.toString());
