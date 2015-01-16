@@ -2,6 +2,7 @@ package kr.co.adflow.push.handler;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.StrictMode;
 import android.util.Base64;
 import android.util.Log;
 
@@ -62,9 +63,9 @@ public class PushHandler implements MqttCallback {
     public static final String TAG = "PushHandler";
 
     public static final int alarmInterval = 60;
-    //public static final int DEFAULT_KEEP_ALIVE_TIME_OUT = 240;
+    public static final int DEFAULT_KEEP_ALIVE_TIME_OUT = 240;
 
-    public static final int DEFAULT_KEEP_ALIVE_TIME_OUT = 60; //for test
+    //public static final int DEFAULT_KEEP_ALIVE_TIME_OUT = 60; //for test
     private static final String MQTT_PACKAGE = "org.eclipse.paho.client.mqttv3";
     private static final int mqttConnectionTimeout = 10; // second
     private static final int timeoutConnection = 3000; // 3초
@@ -164,6 +165,12 @@ public class PushHandler implements MqttCallback {
 
                 // testCode
                 // subscription check by chanho
+                // 임시 코드
+                if (android.os.Build.VERSION.SDK_INT > 9) {
+                    StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+                    StrictMode.setThreadPolicy(policy);
+                }
+                //임시코드 end
                 String getSubData=this.getSubscriptions();
                 JSONObject jsonData = new JSONObject(getSubData);
                 Log.d(TAG, "jsonData:"+jsonData.toString());
