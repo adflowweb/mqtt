@@ -1,0 +1,824 @@
+package kr.co.adflow.push.service.impl;
+
+import android.app.AlarmManager;
+import android.app.AlertDialog;
+import android.app.PendingIntent;
+import android.app.Service;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.res.Configuration;
+import android.os.Bundle;
+import android.os.IBinder;
+import android.os.PowerManager;
+import android.os.RemoteException;
+import android.os.StrictMode;
+import android.util.Log;
+import android.view.WindowManager;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.FileDescriptor;
+import java.io.PrintWriter;
+
+import kr.co.adflow.push.IPushService;
+import kr.co.adflow.push.PushPreference;
+import kr.co.adflow.push.handler.PushHandler;
+import kr.co.adflow.push.receiver.PushReceiver;
+import kr.co.adflow.push.service.PushService;
+
+public class PushServiceImpl extends Service implements PushService {
+
+    // TAG for debug
+    public static final String TAG = "PushService";
+    public static final String AUTH_URI = "https://14.63.217.141/v1/auth";
+    public static final String MQTTSERVERIP = "ssl://14.63.217.141";
+    public static final String ACKTOPIC = "mms/ack";
+    private static PowerManager.WakeLock wakeLock;
+    private static boolean cleanSession = false;
+    private PushHandler pushHandler;
+    private PushPreference preference;
+
+    // Binder given to clients
+//	private final IBinder binder = new LocalBinder();
+    public static PushServiceImpl instance;
+
+    public PushServiceImpl() {
+        Log.d(TAG, "PushService생성자시작()");
+        Log.d(TAG, "PushService=" + this);
+        pushHandler = new PushHandler(this);
+        Log.d(TAG, "pushHandler=" + pushHandler);
+        preference = new PushPreference(this);
+        Log.d(TAG, "preference=" + preference);
+        instance = this;
+        Log.d(TAG, "PushService생성자종료()");
+    }
+
+    public static PushServiceImpl getInstance() {
+        return instance;
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        Log.d(TAG, "onBind시작(intent=" + intent + ")");
+        Log.d(TAG, "onBind종료(binder=" + binder + ")");
+        return binder;
+    }
+
+    //AIDL 구현체
+    IPushService.Stub binder = new IPushService.Stub() {
+        @Override
+        public String sendMsg(String sender, String receiver, int qos, String contentType, String content, int expiry) throws RemoteException {
+            Log.d(TAG, "sendMsg시작(sender=" + sender + ", receiver=" + receiver + ", qos="
+                    + qos + ", contentType=" + contentType + ", content=" + content + ", expiry=" + expiry + ")");
+            //테스트중
+            setStrictMode();
+            //테스트코드END
+
+
+            JSONObject returnData = new JSONObject();
+            JSONObject res = new JSONObject();
+            try {
+                String result = PushServiceImpl.getInstance().sendMsg(sender, receiver, qos, contentType, content, expiry);
+                Log.d(TAG, "sendMsg종료(result=" + result + ")");
+                return result;
+            } catch (Exception e) {
+                Log.e(TAG, "sendMsg처리중에러발생", e);
+
+                try {
+                   res.put("success", false);
+                   res.put("error", e.toString());
+                   returnData.put("result",res);
+
+                } catch (JSONException ex) {
+                    ex.printStackTrace();
+                }
+                //return "{\"result\":{\"success\":false, \"error\":\"" + e + "\"}}";
+                return returnData.toString();
+            }
+        }
+
+        @Override
+        public String existPMAByUFMI(String ufmi) throws RemoteException {
+            Log.d(TAG, "existPMAByUFMI시작(ufmi=" + ufmi + ")");
+            //테스트중
+            setStrictMode();
+            //테스트코드END
+
+            JSONObject returnData = new JSONObject();
+            JSONObject res = new JSONObject();
+            try {
+                String result = PushServiceImpl.getInstance().existPMAByUFMI(ufmi);
+                Log.d(TAG, "existPMAByUFMI종료(result=" + result + ")");
+                return result;
+            } catch (Exception e) {
+                Log.e(TAG, "existPMAByUFMI중에러발생", e);
+
+                try {
+                    res.put("success", false);
+                    res.put("error", e.toString());
+                    returnData.put("result",res);
+                } catch (JSONException ex) {
+                    ex.printStackTrace();
+                }
+                //return "{\"result\":{\"success\":false, \"error\":\"" + e + "\"}}";
+                return returnData.toString();
+            }
+        }
+
+        @Override
+        public String existPMAByUserID(String userID) throws RemoteException {
+            Log.d(TAG, "existPMAByUserID시작(userID=" + userID + ")");
+            //테스트중
+            setStrictMode();
+            //테스트코드END
+
+            JSONObject returnData = new JSONObject();
+            JSONObject res = new JSONObject();
+            try {
+                String result = PushServiceImpl.getInstance().existPMAByUserID(userID);
+                Log.d(TAG, "existPMAByUserID종료(result=" + result + ")");
+                return result;
+            } catch (Exception e) {
+                Log.e(TAG, "existPMAByUserID중에러발생", e);
+
+                try {
+                    res.put("success", false);
+                    res.put("error", e.toString());
+                    returnData.put("result",res);
+                } catch (JSONException ex) {
+                    ex.printStackTrace();
+                }
+                //return "{\"result\":{\"success\":false, \"error\":\"" + e + "\"}}";
+                return returnData.toString();
+            }
+        }
+
+        @Override
+        public String connect(String userID, String deviceID, String ufmi) throws RemoteException {
+            Log.d(TAG, "connect시작(userID=" + userID + ", deviceID=" + deviceID + ", ufmi=" + ufmi + ")");
+            Log.d(TAG, "pushHandler=" + pushHandler);
+
+            //메인쓰레드에서 네트웍연결부분이 발생하여
+            //테스트중
+            setStrictMode();
+            //테스트코드END
+
+
+            JSONObject returnData = new JSONObject();
+            JSONObject result = new JSONObject();
+            String res = null;
+            try {
+                if (pushHandler != null || pushHandler.isConnected()) {
+                    //인증
+                    //{"result":{"success":true,"data":{"tokenID":"b0dbcd2fe4ce4c58940e33e","userID":"testUser","issue":1420715174000}}}
+                    res = pushHandler.auth(AUTH_URI, userID, deviceID, ufmi);
+                    JSONObject obj = new JSONObject(res);
+                    JSONObject rst = obj.getJSONObject("result");
+
+                    if (!rst.getBoolean("success")) {
+                        //에러데이타 추출후 응답메시지에 추가요망
+                        throw new Exception("인증문제가발생하였습니다(bizException)");
+                    }
+                    JSONObject data = rst.getJSONObject("data");
+                    String token = data.getString("tokenID");
+                    Log.d(TAG, "token=" + token);
+
+                    //연결
+                    if (token != null) {
+                        startPushHandler(token, MQTTSERVERIP, cleanSession);
+                    } else {
+                        // 토큰이널값일경우
+                        throw new Exception("인증문제가발생하였습니다(토큰값이없습니다)");
+                    }
+                } else {
+                    throw new Exception("푸시핸들러문제로전송에실패하였습니다.");
+                }
+                Log.d(TAG, "connect종료()");
+                result.put("success", true);
+                returnData.put("result", result);
+                return returnData.toString();
+            } catch (Exception e) {
+                Log.e(TAG, "mqtt세션연결중에러발생", e);
+                try {
+                    result.put("success", false);
+                    result.put("error",e.toString());
+                    returnData.put("result", result);
+                } catch (JSONException ex) {
+                    ex.printStackTrace();
+                }
+                //return "{\"result\":{\"success\":false, \"error\":\"" + e + "\"}}";
+                return returnData.toString();
+            }
+        }
+
+        /**
+         *
+         * @param sender
+         * @param topic
+         * @return
+         * @throws RemoteException
+         */
+        @Override
+        public String preCheck(String sender, String topic) throws RemoteException {
+            Log.d(TAG, "preCheck시작(sender=" + sender + ", topic=" + topic + ")");
+            //메인쓰레드에서 네트웍연결부분이 발생하여
+            //테스트중
+            setStrictMode();
+            //테스트코드END
+
+            JSONObject returnData = new JSONObject();
+            JSONObject result = new JSONObject();
+            try {
+                if (sender == null || sender.equals("") || topic == null || topic.equals("")) {
+                    Log.e(TAG, "데이터가적절하지않습니다.");
+                    throw new Exception("데이터가적절하지않습니다.");
+                }
+                PushServiceImpl.getInstance().preCheck(sender, topic);
+                Log.d(TAG, "preCheck종료");
+                result.put("success", true);
+                returnData.put("result", result);
+                return returnData.toString();
+                //return "{\"result\":{\"success\":true}}";
+            } catch (Exception e) {
+                Log.e(TAG, "preCheck중에러발생", e);
+                try {
+                    result.put("success", false);
+                    result.put("error",e.toString());
+                    returnData.put("result", result);
+                } catch (JSONException ex) {
+                    ex.printStackTrace();
+                }
+                //return "{\"result\":{\"success\":false, \"error\":\"" + e + "\"}}";
+                return returnData.toString();
+            }
+        }
+
+        @Override
+        public String getSubscriptions() throws RemoteException {
+            Log.d(TAG, "getSubscriptions시작()");
+            //메인쓰레드에서 네트웍연결부분이 발생하여
+            //테스트중
+            setStrictMode();
+            //테스트코드END
+
+            JSONObject returnData = new JSONObject();
+            JSONObject res = new JSONObject();
+            try {
+                String result = PushServiceImpl.getInstance().getSubscriptions();
+                //{"result":{"success":true, "data":{"result":{"success":true,"info":["subscription not found"]}}}}
+                Log.d(TAG, "getSubscriptions종료(result=" + result + ")");
+                return result;
+            } catch (Exception e) {
+                Log.e(TAG, "getSubscriptions중에러발생", e);
+
+                try {
+                    res.put("success", false);
+                    res.put("error", e.toString());
+                    returnData.put("result",res);
+
+                } catch (JSONException ex) {
+                    ex.printStackTrace();
+                }
+                //return "{\"result\":{\"success\":false, \"error\":\"" + e + "\"}}";
+                return returnData.toString();
+            }
+        }
+
+        @Override
+        public boolean isConnected() throws RemoteException {
+            Log.d(TAG, "isConnected시작()");
+            Log.d(TAG, "isConnected종료()");
+            return PushServiceImpl.getInstance().isConnected();
+        }
+
+        @Override
+        public String unsubscribe(String topic) throws RemoteException {
+            Log.d(TAG, "unsubscribe시작(topic=" + topic + ")");
+            JSONObject returnData = new JSONObject();
+            JSONObject result = new JSONObject();
+            try {
+                PushServiceImpl.getInstance().unsubscribe(topic);
+                result.put("success", true);
+                returnData.put("result", result);
+                Log.d(TAG, "unsubscribe종료(result=" + returnData + ")");
+                return returnData.toString();
+                // return "{\"result\":{\"success\":true}}";
+            } catch (Exception e) {
+                Log.e(TAG, "unsubscribe중에러발생", e);
+
+                try {
+                    result.put("success", false);
+                    result.put("error",e.toString());
+                    returnData.put("result", result);
+                } catch (JSONException ex) {
+                    ex.printStackTrace();
+                }
+                //return "{\"result\":{\"success\":false, \"error\":\"" + e + "\"}}";
+                return returnData.toString();
+            }
+        }
+
+        @Override
+        public String subscribe(String topic, int qos) throws RemoteException {
+            Log.d(TAG, "subscribe시작(topic=" + topic + ", qos=" + qos + ")");
+
+            JSONObject returnData = new JSONObject();
+            JSONObject result = new JSONObject();
+            try {
+                PushServiceImpl.getInstance().subscribe(topic, qos);
+                result.put("success", true);
+                returnData.put("result", result);
+                Log.d(TAG, "subscribe종료(result=" + returnData + ")");
+                return returnData.toString();
+            } catch (Exception e) {
+                Log.e(TAG, "subscribe중에러발생", e);
+
+                try {
+                    result.put("success", false);
+                    result.put("error",e.toString());
+                    returnData.put("result", result);
+                } catch (JSONException ex) {
+                    ex.printStackTrace();
+                }
+                return returnData.toString();
+            }
+        }
+
+        @Override
+        public String ack(String msgID, String tokenID) throws RemoteException {
+            Log.d(TAG, "ack시작(msgID=" + msgID + ", tokenID=" + tokenID + ")");
+
+            JSONObject returnData = new JSONObject();
+            JSONObject result = new JSONObject();
+            try {
+                PushServiceImpl.getInstance().ack(msgID, tokenID);
+                result.put("success", true);
+                returnData.put("result", result);
+                Log.d(TAG, "ack종료(result=" + returnData + ")");
+                return returnData.toString();
+            } catch (Exception e) {
+                Log.e(TAG, "subscribe중에러발생", e);
+
+                try {
+                    result.put("success", false);
+                    result.put("error",e.toString());
+                    returnData.put("result", result);
+                } catch (JSONException ex) {
+                    ex.printStackTrace();
+                }
+                return returnData.toString();
+            }
+        }
+
+//        @Override
+//        public void publish(String topic, byte[] payload, int qos) throws RemoteException {
+//            try {
+//                Log.d(TAG, "publish시작");
+//                Log.d(TAG, "topic=" + topic);
+//                Log.d(TAG, "payload=" + new String(payload));
+//                Log.d(TAG, "qos=" + qos);
+//
+//                if (topic == null || topic.equals("") || payload == null) {
+//                    Log.e(TAG, "데이터가적절하지않습니다.");
+//                    throw new Exception("데이터가적절하지않습니다.");
+//                }
+//                publish(topic,
+//                        payload, qos);
+//                Log.d(TAG, "publish종료");
+//            } catch (Exception e) {
+//                throw new RemoteException(e.getMessage());
+//            }
+//        }
+    };
+
+    private void ack(String msgID, String tokenID) throws Exception {
+        Log.d(TAG, "ack시작(msgID=" + msgID + ", tokenID=" + tokenID + ")");
+        JSONObject ack = new JSONObject();
+        ack.put("msgID", msgID);
+        ack.put("token", tokenID);
+        ack.put("ackType", "app");
+        ack.put("ackTime", System.currentTimeMillis());
+
+        publish(ACKTOPIC, ack.toString().getBytes(), 2); // qos 2 로 전송
+        Log.d(TAG, "ack종료()");
+    }
+
+    private String existPMAByUserID(String userID) throws Exception {
+        Log.d(TAG, "existPMAByUserID시작(userID=" + userID + ")");
+        String result = pushHandler.existPMAByUserID(userID);
+        Log.d(TAG, "existPMAByUserID종료()");
+        return result;
+    }
+
+    private String existPMAByUFMI(String ufmi) throws Exception {
+        Log.d(TAG, "existPMAByUFMI시작(ufmi=" + ufmi + ")");
+        String result = pushHandler.existPMAByUFMI(ufmi);
+        Log.d(TAG, "existPMAByUFMI종료()");
+        return result;
+    }
+
+    /**
+     *
+     */
+    private void setStrictMode() {
+        Log.d(TAG, "setStrictMode시작()");
+        if (android.os.Build.VERSION.SDK_INT > 9) {
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+        }
+        Log.d(TAG, "setStrictMode종료()");
+    }
+
+    @Override
+    public void onCreate() {
+        Log.d(TAG, "onCreate시작()");
+        Log.d(TAG, "onCreate종료()");
+    }
+
+    @Override
+    public void onStart(Intent intent, int startId) {
+        Log.d(TAG, "onStart시작(intent=" + intent + ",startId=" + startId + ")");
+        Log.d(TAG, "onStart종료()");
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d(TAG, "onStartCommand시작(intent=" + intent + ", flags=" + flags
+                + ", startId=" + startId + ")");
+
+        try {
+            if (intent == null) {
+                Log.e(TAG, "intent가 존재하지않습니다.");
+                return Service.START_STICKY;
+            }
+
+            // action 분기처리
+            if (intent.getAction().equals("kr.co.adflow.push.service.RESTART")) {
+                // 푸시서비스 시작
+                Log.d(TAG, "푸시서비스를재시작합니다.");
+                Bundle bundle = intent.getExtras();
+
+                if (bundle == null) {
+                    Log.e(TAG, "bundle이 존재하지않습니다.");
+                    return Service.START_STICKY;
+                }
+
+                for (String key : bundle.keySet()) {
+                    Log.d(TAG, key + "=" + bundle.get(key));
+                }
+                String token = bundle.getString(PushPreference.TOKEN);
+                Log.d(TAG, "token=" + token);
+
+                String server = bundle.getString(PushPreference.SERVERURL);
+                Log.d(TAG, "server=" + server);
+
+                boolean cleanSession = bundle
+                        .getBoolean(PushPreference.CLEANSESSION);
+                Log.d(TAG, "cleanSession=" + cleanSession);
+
+                if (token != null) {
+                    startPushHandler(token, server, cleanSession);
+                } else {
+                    // 토큰이널일경우
+                    Log.d(TAG, "토큰정보가없습니다.");
+                }
+            } else if (intent.getAction().equals("kr.co.adflow.push.service.ACK")) {
+
+                Bundle bundle = intent.getExtras();
+
+                if (bundle == null) {
+                    Log.e(TAG, "bundle이 존재하지않습니다.");
+                    return Service.START_STICKY;
+                }
+
+                for (String key : bundle.keySet()) {
+                    Log.d(TAG, key + "=" + bundle.get(key));
+                }
+
+                String msgID = bundle.getString(PushPreference.MSGID);
+                Log.d(TAG, "msgID=" + msgID);
+
+                String token = bundle.getString(PushPreference.TOKEN);
+                Log.d(TAG, "token=" + token);
+
+                if (msgID != null && token != null) {
+                    JSONObject ack = new JSONObject();
+                    ack.put("msgID", msgID);
+                    ack.put("token", token);
+                    ack.put("ackType", "pma");
+                    ack.put("ackTime", System.currentTimeMillis());
+                    Log.d(TAG, "ack=" + ack);
+                    publish(ACKTOPIC, ack.toString().getBytes(), 2); // qos 2 로 전송
+                }
+            } else if (intent.getAction().equals(
+                    "kr.co.adflow.push.service.FWUPDATE")) {
+                Log.d(TAG, "firmUpdate시작");
+                // Device model
+                String phoneModel = android.os.Build.MODEL;
+                Log.d(TAG, "phoneModel=" + phoneModel);
+
+                Bundle bundle = intent.getExtras();
+                String msg = bundle.getString("Message");
+                Log.d(TAG, "msg=" + msg);
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("firmware update");
+                //builder.setIcon(R.drawable.icon);
+                builder.setMessage(msg);
+
+                builder.setPositiveButton("예", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        //Do something
+                        Log.d(TAG, "펌웨어업데이트를 선택하였습니다.");
+                        Intent intent = new Intent();
+                        intent.setAction("android.settings.SYSTEM_UPDATE_SETTINGS");
+                        intent.setFlags(intent.FLAG_ACTIVITY_NEW_TASK);
+                        //intent.setComponent(ComponentName
+                        //       .unflattenFromString("com.google.android.gsf/.update.SystemUpdateActivity"));
+                        startActivity(intent);
+                        dialog.dismiss();
+                    }
+                });
+
+                builder.setNegativeButton("아니오", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        //Do something
+                        Log.d(TAG, "펌웨어업데이트를 취소하였습니다.");
+                        dialog.dismiss();
+                    }
+                });
+
+                AlertDialog alert = builder.create();
+                alert.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+                alert.show();
+            }
+//            } else if (intent.getAction().equals(
+//                    "kr.co.adflow.push.service.STOP")) {
+//                Log.d(TAG, "푸시서비스를종료합니다.");
+//                pushHandler.stop();
+            else if (intent.getAction().equals(
+                    "kr.co.adflow.push.service.KEEPALIVE")) {
+                Log.d(TAG, "keepalive체크를시작합니다.");
+                pushHandler.keepAlive();
+            }
+            // else if (intent.getAction().equals("kr.co.adflow.action.login"))
+            // {
+            // // 로그인시
+            // Log.d(TAG, "로그인처리를시작합니다.");
+            // pushHandler.login(intent);
+            // Log.d(TAG, "로그인처리를종료합니다.");
+            // }
+            else {
+                Log.e(TAG, "적절한처리핸들러가없습니다.");
+            }
+        } catch (
+                Exception e
+                )
+
+        {
+            Log.e(TAG, "예외상황발생", e);
+        }
+
+        int ret = super.onStartCommand(intent, flags, startId);
+        Log.d(TAG, "onStartCommand종료(리턴코드=" + ret + ")");
+        return ret;
+    }
+
+    /**
+     * @param token
+     * @param server
+     * @param cleanSession
+     */
+
+    public void startPushHandler(String token, String server,
+                                 boolean cleanSession) throws Exception {
+        Log.d(TAG, "startPushHandler시작()");
+        // 토큰저장
+        preference.put(PushPreference.TOKEN, token);
+        // server url 저장
+        preference.put(PushPreference.SERVERURL, server);
+        // cleanSession 저장
+        preference.put(PushPreference.CLEANSESSION, cleanSession);
+
+        Log.d(TAG, "알람을설정합니다.");
+        AlarmManager service = (AlarmManager) this
+                .getSystemService(Context.ALARM_SERVICE);
+        Intent i = new Intent(this, PushReceiver.class);
+        i.setAction("kr.co.adflow.push.service.KEEPALIVE");
+        PendingIntent pending = PendingIntent.getBroadcast(this, 0, i,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+        service.setRepeating(AlarmManager.RTC_WAKEUP,
+                System.currentTimeMillis() + 1000,
+                1000 * PushHandler.alarmInterval, pending);
+        Log.d(TAG, "알람이설정되었습니다");
+        // 푸시핸들러 시작
+        pushHandler.start();
+        Log.d(TAG, "startPushHandler종료()");
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.d(TAG, "onDestroy시작()");
+        pushHandler.stop();
+        // 알람제거해야함
+        Log.d(TAG, "onDestroy종료()");
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        Log.d(TAG, "onConfigurationChanged시작(config=" + newConfig + ")");
+        super.onConfigurationChanged(newConfig);
+        Log.d(TAG, "onConfigurationChanged종료()");
+    }
+
+    @Override
+    public void onLowMemory() {
+        Log.d(TAG, "onLowMemory시작()");
+        Log.d(TAG, "onLowMemory종료()");
+    }
+
+    @Override
+    public void onTrimMemory(int level) {
+        Log.d(TAG, "onTrimMemory시작(level=" + level + ")");
+        Log.d(TAG, "onTrimMemory종료()");
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        Log.d(TAG, "onUnbind시작(intent=" + intent + ")");
+        Log.d(TAG, "onUnbind종료()");
+        return super.onUnbind(intent);
+    }
+
+    @Override
+    public void onRebind(Intent intent) {
+        Log.d(TAG, "onRebind시작(intent=" + intent + ")");
+        Log.d(TAG, "onRebind종료()");
+    }
+
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        Log.d(TAG, "onTaskRemoved시작(intent=" + rootIntent + ")");
+        Log.d(TAG, "onTaskRemoved종료()");
+    }
+
+    @Override
+    protected void dump(FileDescriptor fd, PrintWriter writer, String[] args) {
+        Log.d(TAG, "dump시작(fd=" + fd + "||writer=" + writer + "||args=" + args
+                + ")");
+        super.dump(fd, writer, args);
+        Log.d(TAG, "dump종료()");
+    }
+
+    /**
+     * @return
+     */
+    public static PowerManager.WakeLock getWakeLock() {
+        Log.d(TAG, "getWakeLock시작()");
+        Log.d(TAG, "getWakeLock종료(wakeLock=" + wakeLock + ")");
+        return wakeLock;
+    }
+
+    /**
+     * @param lock
+     */
+    public static void setWakeLock(PowerManager.WakeLock lock) {
+        Log.d(TAG, "setWakeLock시작(lock=" + lock + ")");
+        wakeLock = lock;
+        Log.d(TAG, "setWakeLock종료(wakeLock=" + wakeLock + ")");
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see kr.co.adflow.push.service.PushService#publish(java.lang.String,
+     * byte[], int)
+     */
+    @Override
+    public void publish(String topic, byte[] payload, int qos) throws Exception {
+        Log.d(TAG, "publish시작(토픽=" + topic + ", qos=" + qos + ")");
+        Log.d(TAG, "service=" + this);
+        Log.d(TAG, "pushHandler=" + pushHandler);
+        if (pushHandler != null || pushHandler.isConnected()) {
+            // 일단 retained = false로 세팅
+            pushHandler.publish(topic, payload, qos, false);
+        } else {
+            throw new Exception("푸시핸들러문제로전송에실패하였습니다.");
+        }
+        Log.d(TAG, "publish종료()");
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see kr.co.adflow.push.service.PushService#subscribe(java.lang.String,
+     * int)
+     */
+    @Override
+    public void subscribe(String topic, int qos) throws Exception {
+        Log.d(TAG, "subScribe시작(토픽=" + topic + ", qos=" + qos + ")");
+        pushHandler.subscribe(topic, qos);
+        Log.d(TAG, "subscribe종료()");
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see kr.co.adflow.push.service.PushService#unsubscribe(java.lang.String)
+     */
+    @Override
+    public void unsubscribe(String topic) throws Exception {
+        Log.d(TAG, "unsubscribe시작(토픽=" + topic + ")");
+        pushHandler.unsubscribe(topic);
+        Log.d(TAG, "unsubscribe종료()");
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see kr.co.adflow.push.service.PushService#preCheck(java.lang.String)
+     */
+    @Override
+    public String preCheck(String sender, String topic) throws Exception {
+        Log.d(TAG, "preCheck시작(sender=" + sender + ", 토픽=" + topic + ")");
+        String ret = pushHandler.preCheck(sender, topic);
+        Log.d(TAG, "preCheck종료(return=" + ret + ")");
+        return ret;
+    }
+
+    @Override
+    public String getSubscriptions() throws Exception {
+        Log.d(TAG, "getSubscriptions시작()");
+        String ret = pushHandler.getSubscriptions();
+        Log.d(TAG, "getSubscriptions종료(return=" + ret + ")");
+        return ret;
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see kr.co.adflow.push.service.PushService#isConnected()
+     */
+    @Override
+    public boolean isConnected() {
+        Log.d(TAG, "isConnected시작()");
+        boolean value = false;
+        if (pushHandler != null) {
+            value = pushHandler.isConnected();
+        }
+        Log.d(TAG, "isConnected종료(value=" + value + ")");
+        return value;
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see kr.co.adflow.push.service.PushService#getLostCout()
+     */
+    public int getLostCout() {
+        Log.d(TAG, "getLostCout시작()");
+        int lostCount = pushHandler.getLostCout();
+        Log.d(TAG, "getLostCout종료(lostCount=" + lostCount + ")");
+        return lostCount;
+    }
+
+//	/**
+//	 * Class used for the client Binder. Because we know this service always
+//	 * runs in the same process as its clients, we don't need to deal with IPC.
+//	 */
+//	public class LocalBinder extends Binder {
+//		public PushService getService() {
+//			Log.d(TAG, "getService시작()");
+//			// Return this instance of LocalService so clients can call public
+//			// methods
+//			Log.d(TAG, "getService종료(value=" + PushServiceImpl.this + ")");
+//			return PushServiceImpl.this;
+//		}
+//	}
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see kr.co.adflow.push.service.PushService#auth(java.lang.String,
+     * java.lang.String)
+     */
+    @Override
+    public String auth(String url, String userID, String deviceID, String ufmi)
+            throws Exception {
+        Log.d(TAG, "auth시작(url=" + url + ", userID=" + userID + ", deviceID="
+                + deviceID + ", ufmi=" + ufmi + ")");
+        String ret = pushHandler.auth(url, userID, deviceID, ufmi);
+        Log.d(TAG, "auth종료(return=" + ret + ")");
+        return ret;
+    }
+
+    public String sendMsg(String sender, String receiver, int qos, String contentType, String content, int expiry) throws Exception {
+        Log.d(TAG, "sendMsg시작(sender=" + sender + ", receiver=" + receiver + ", qos="
+                + qos + ", contentType=" + contentType + ", content=" + content + ", expiry=" + expiry + ")");
+        String ret = pushHandler.sendMsg(sender, receiver, qos, contentType, content, expiry);
+        Log.d(TAG, "sendMsg종료(return=" + ret + ")");
+        return ret;
+    }
+
+}
