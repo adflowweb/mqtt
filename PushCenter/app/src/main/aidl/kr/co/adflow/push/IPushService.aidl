@@ -6,7 +6,7 @@ package kr.co.adflow.push;
 interface IPushService {
 
         //mqttSession 연결
-        String connect(String userID, String deviceID, String ufmi);
+        //String connect(String userID, String deviceID, String ufmi);
         //preCheck
     	String preCheck(String sender, String topic);
     	//서브스크립션정보가져오기
