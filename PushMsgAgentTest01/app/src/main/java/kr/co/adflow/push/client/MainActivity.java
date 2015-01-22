@@ -40,7 +40,7 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        Log.d(TAG, "onCreate시작(bundle=" + savedInstanceState + ")");
 
         txtView = (TextView) findViewById(R.id.textView);
         txtView.setText("PMA 테스트클라이언트");
@@ -426,4 +426,57 @@ public class MainActivity extends ActionBarActivity {
         }
     };
 
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(TAG, "onStop");
+        if (mBinder != null) {
+            try {
+                unbindService(mConnection);
+                Log.d(TAG, "PushService언바인드");
+            } catch (Exception e) {
+                e.printStackTrace();
+                txtView.setText("에러발생=" + e.toString());
+            } finally {
+                mBinder = null;
+            }
+        }
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        Log.d(TAG, "onPostResume");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy");
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume");
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.d(TAG, "onRestart");
+    }
 }
