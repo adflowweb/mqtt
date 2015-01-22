@@ -66,15 +66,15 @@ public class PushServiceImpl extends Service implements PushService {
         public String sendMsg(String sender, String receiver, int qos, String contentType, String content, int expiry) throws RemoteException {
             Log.d(TAG, "sendMsg시작(sender=" + sender + ", receiver=" + receiver + ", qos="
                     + qos + ", contentType=" + contentType + ", content=" + content + ", expiry=" + expiry + ")");
-            //테스트중
-            //setStrictMode();
-            //테스트코드END
 
+            long start = System.currentTimeMillis();
             JSONObject returnData = new JSONObject();
             JSONObject res = new JSONObject();
             try {
                 String result = PushServiceImpl.getInstance().sendMsg(sender, receiver, qos, contentType, content, expiry);
                 Log.d(TAG, "sendMsg종료(result=" + result + ")");
+                long stop = System.currentTimeMillis();
+                Log.d(TAG, "걸린시간=" + (stop - start) + "ms");
                 return result;
             } catch (Exception e) {
                 Log.e(TAG, "sendMsg처리중에러발생", e);
@@ -88,6 +88,8 @@ public class PushServiceImpl extends Service implements PushService {
                     ex.printStackTrace();
                 }
                 //return "{\"result\":{\"success\":false, \"error\":\"" + e + "\"}}";
+                long stop = System.currentTimeMillis();
+                Log.d(TAG, "걸린시간=" + (stop - start) + "ms");
                 return returnData.toString();
             }
         }
@@ -95,15 +97,15 @@ public class PushServiceImpl extends Service implements PushService {
         @Override
         public String existPMAByUFMI(String ufmi) throws RemoteException {
             Log.d(TAG, "existPMAByUFMI시작(ufmi=" + ufmi + ")");
-            //테스트중
-            //setStrictMode();
-            //테스트코드END
+            long start = System.currentTimeMillis();
 
             JSONObject returnData = new JSONObject();
             JSONObject res = new JSONObject();
             try {
                 String result = PushServiceImpl.getInstance().existPMAByUFMI(ufmi);
                 Log.d(TAG, "existPMAByUFMI종료(result=" + result + ")");
+                long stop = System.currentTimeMillis();
+                Log.d(TAG, "걸린시간=" + (stop - start) + "ms");
                 return result;
             } catch (Exception e) {
                 Log.e(TAG, "existPMAByUFMI중에러발생", e);
@@ -116,6 +118,8 @@ public class PushServiceImpl extends Service implements PushService {
                     ex.printStackTrace();
                 }
                 //return "{\"result\":{\"success\":false, \"error\":\"" + e + "\"}}";
+                long stop = System.currentTimeMillis();
+                Log.d(TAG, "걸린시간=" + (stop - start) + "ms");
                 return returnData.toString();
             }
         }
@@ -123,15 +127,15 @@ public class PushServiceImpl extends Service implements PushService {
         @Override
         public String existPMAByUserID(String userID) throws RemoteException {
             Log.d(TAG, "existPMAByUserID시작(userID=" + userID + ")");
-            //테스트중
-            //setStrictMode();
-            //테스트코드END
+            long start = System.currentTimeMillis();
 
             JSONObject returnData = new JSONObject();
             JSONObject res = new JSONObject();
             try {
                 String result = PushServiceImpl.getInstance().existPMAByUserID(userID);
                 Log.d(TAG, "existPMAByUserID종료(result=" + result + ")");
+                long stop = System.currentTimeMillis();
+                Log.d(TAG, "걸린시간=" + (stop - start) + "ms");
                 return result;
             } catch (Exception e) {
                 Log.e(TAG, "existPMAByUserID중에러발생", e);
@@ -144,6 +148,8 @@ public class PushServiceImpl extends Service implements PushService {
                     ex.printStackTrace();
                 }
                 //return "{\"result\":{\"success\":false, \"error\":\"" + e + "\"}}";
+                long stop = System.currentTimeMillis();
+                Log.d(TAG, "걸린시간=" + (stop - start) + "ms");
                 return returnData.toString();
             }
         }
@@ -216,11 +222,7 @@ public class PushServiceImpl extends Service implements PushService {
         @Override
         public String preCheck(String sender, String topic) throws RemoteException {
             Log.d(TAG, "preCheck시작(sender=" + sender + ", topic=" + topic + ")");
-            //메인쓰레드에서 네트웍연결부분이 발생하여
-            //테스트중
-            //setStrictMode();
-            //테스트코드END
-
+            long start = System.currentTimeMillis();
             JSONObject returnData = new JSONObject();
             JSONObject result = new JSONObject();
             try {
@@ -232,6 +234,8 @@ public class PushServiceImpl extends Service implements PushService {
                 Log.d(TAG, "preCheck종료");
                 result.put("success", true);
                 returnData.put("result", result);
+                long stop = System.currentTimeMillis();
+                Log.d(TAG, "걸린시간=" + (stop - start) + "ms");
                 return returnData.toString();
                 //return "{\"result\":{\"success\":true}}";
             } catch (Exception e) {
@@ -243,6 +247,8 @@ public class PushServiceImpl extends Service implements PushService {
                 } catch (JSONException ex) {
                     ex.printStackTrace();
                 }
+                long stop = System.currentTimeMillis();
+                Log.d(TAG, "걸린시간=" + (stop - start) + "ms");
                 //return "{\"result\":{\"success\":false, \"error\":\"" + e + "\"}}";
                 return returnData.toString();
             }
@@ -251,15 +257,14 @@ public class PushServiceImpl extends Service implements PushService {
         @Override
         public String getSubscriptions() throws RemoteException {
             Log.d(TAG, "getSubscriptions시작()");
-            //메인쓰레드에서 네트웍연결부분이 발생하여
-            //테스트중
-            //setStrictMode();
-            //테스트코드END
+            long start = System.currentTimeMillis();
 
             JSONObject returnData = new JSONObject();
             JSONObject res = new JSONObject();
             try {
                 String result = PushServiceImpl.getInstance().getSubscriptions();
+                long stop = System.currentTimeMillis();
+                Log.d(TAG, "걸린시간=" + (stop - start) + "ms");
                 //{"result":{"success":true, "data":{"result":{"success":true,"info":["subscription not found"]}}}}
                 Log.d(TAG, "getSubscriptions종료(result=" + result + ")");
                 return result;
@@ -274,6 +279,9 @@ public class PushServiceImpl extends Service implements PushService {
                 } catch (JSONException ex) {
                     ex.printStackTrace();
                 }
+
+                long stop = System.currentTimeMillis();
+                Log.d(TAG, "걸린시간=" + (stop - start) + "ms");
                 //return "{\"result\":{\"success\":false, \"error\":\"" + e + "\"}}";
                 return returnData.toString();
             }
@@ -289,10 +297,14 @@ public class PushServiceImpl extends Service implements PushService {
         @Override
         public String unsubscribe(String topic) throws RemoteException {
             Log.d(TAG, "unsubscribe시작(topic=" + topic + ")");
+            long start = System.currentTimeMillis();
             JSONObject returnData = new JSONObject();
             JSONObject result = new JSONObject();
             try {
                 PushServiceImpl.getInstance().unsubscribe(topic);
+                long stop = System.currentTimeMillis();
+                Log.d(TAG, "걸린시간=" + (stop - start) + "ms");
+
                 result.put("success", true);
                 returnData.put("result", result);
                 Log.d(TAG, "unsubscribe종료(result=" + returnData + ")");
@@ -300,7 +312,8 @@ public class PushServiceImpl extends Service implements PushService {
                 // return "{\"result\":{\"success\":true}}";
             } catch (Exception e) {
                 Log.e(TAG, "unsubscribe중에러발생", e);
-
+                long stop = System.currentTimeMillis();
+                Log.d(TAG, "걸린시간=" + (stop - start) + "ms");
                 try {
                     result.put("success", false);
                     result.put("error", e.toString());
@@ -316,18 +329,21 @@ public class PushServiceImpl extends Service implements PushService {
         @Override
         public String subscribe(String topic, int qos) throws RemoteException {
             Log.d(TAG, "subscribe시작(topic=" + topic + ", qos=" + qos + ")");
-
+            long start = System.currentTimeMillis();
             JSONObject returnData = new JSONObject();
             JSONObject result = new JSONObject();
             try {
                 PushServiceImpl.getInstance().subscribe(topic, qos);
+                long stop = System.currentTimeMillis();
+                Log.d(TAG, "걸린시간=" + (stop - start) + "ms");
                 result.put("success", true);
                 returnData.put("result", result);
                 Log.d(TAG, "subscribe종료(result=" + returnData + ")");
                 return returnData.toString();
             } catch (Exception e) {
                 Log.e(TAG, "subscribe중에러발생", e);
-
+                long stop = System.currentTimeMillis();
+                Log.d(TAG, "걸린시간=" + (stop - start) + "ms");
                 try {
                     result.put("success", false);
                     result.put("error", e.toString());
@@ -342,18 +358,21 @@ public class PushServiceImpl extends Service implements PushService {
         @Override
         public String ack(String msgID, String tokenID) throws RemoteException {
             Log.d(TAG, "ack시작(msgID=" + msgID + ", tokenID=" + tokenID + ")");
-
+            long start = System.currentTimeMillis();
             JSONObject returnData = new JSONObject();
             JSONObject result = new JSONObject();
             try {
                 PushServiceImpl.getInstance().ack(msgID, tokenID);
+                long stop = System.currentTimeMillis();
+                Log.d(TAG, "걸린시간=" + (stop - start) + "ms");
                 result.put("success", true);
                 returnData.put("result", result);
                 Log.d(TAG, "ack종료(result=" + returnData + ")");
                 return returnData.toString();
             } catch (Exception e) {
                 Log.e(TAG, "subscribe중에러발생", e);
-
+                long stop = System.currentTimeMillis();
+                Log.d(TAG, "걸린시간=" + (stop - start) + "ms");
                 try {
                     result.put("success", false);
                     result.put("error", e.toString());
@@ -411,18 +430,6 @@ public class PushServiceImpl extends Service implements PushService {
         Log.d(TAG, "existPMAByUFMI종료()");
         return result;
     }
-
-    /**
-     *
-     */
-//    private void setStrictMode() {
-//        Log.d(TAG, "setStrictMode시작()");
-//        if (android.os.Build.VERSION.SDK_INT > 9) {
-//            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-//            StrictMode.setThreadPolicy(policy);
-//        }
-//        Log.d(TAG, "setStrictMode종료()");
-//    }
 
     @Override
     public void onCreate() {
@@ -697,11 +704,10 @@ public class PushServiceImpl extends Service implements PushService {
      * @see kr.co.adflow.push.service.PushService#preCheck(java.lang.String)
      */
     @Override
-    public String preCheck(String sender, String topic) throws Exception {
+    public void preCheck(String sender, String topic) throws Exception {
         Log.d(TAG, "preCheck시작(sender=" + sender + ", 토픽=" + topic + ")");
-        String ret = pushHandler.preCheck(sender, topic);
-        Log.d(TAG, "preCheck종료(return=" + ret + ")");
-        return ret;
+        pushHandler.preCheck(sender, topic);
+        Log.d(TAG, "preCheck종료()");
     }
 
     @Override
@@ -739,20 +745,6 @@ public class PushServiceImpl extends Service implements PushService {
         Log.d(TAG, "getLostCout종료(lostCount=" + lostCount + ")");
         return lostCount;
     }
-
-//	/**
-//	 * Class used for the client Binder. Because we know this service always
-//	 * runs in the same process as its clients, we don't need to deal with IPC.
-//	 */
-//	public class LocalBinder extends Binder {
-//		public PushService getService() {
-//			Log.d(TAG, "getService시작()");
-//			// Return this instance of LocalService so clients can call public
-//			// methods
-//			Log.d(TAG, "getService종료(value=" + PushServiceImpl.this + ")");
-//			return PushServiceImpl.this;
-//		}
-//	}
 
     /*
      * (non-Javadoc)

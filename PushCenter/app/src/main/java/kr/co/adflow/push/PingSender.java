@@ -49,6 +49,11 @@ public class PingSender implements MqttPingSender {
         Log.d(TAG, "schedule시작(delayInMilliseconds=" + delayInMilliseconds
                 + ")");
 
+        //keepAlive 시간과 상관없이 알람주기(60초)마다 알람은 일어나야함.
+        if (delayInMilliseconds > PushHandler.ALARM_INTERVAL * 1000) {
+            delayInMilliseconds = PushHandler.ALARM_INTERVAL * 1000;
+        }
+
         long nextAlarmInMilliseconds = System.currentTimeMillis()
                 + delayInMilliseconds;
         Log.d(TAG,

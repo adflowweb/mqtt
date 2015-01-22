@@ -63,7 +63,7 @@ public class PushHandler implements MqttCallback {
     public static final String TAG = "PushHandler";
 
     public static final int ALARM_INTERVAL = 60;
-    public static final int DEFAULT_KEEP_ALIVE_TIME_OUT = 60;
+    public static final int DEFAULT_KEEP_ALIVE_TIME_OUT = 240;
     public static final boolean CLEAN_SESSION = false;
     public static final String AUTH_URL = "https://14.63.217.141/v1/auth";
     public static final String MQTT_SERVER_URL = "ssl://14.63.217.141";
@@ -154,7 +154,6 @@ public class PushHandler implements MqttCallback {
         Log.d(TAG, "mqttClient=" + mqttClient);
 
         try {
-
             String token = preference.getValue(PushPreference.TOKEN, null);
             Log.d(TAG, "token=" + token);
             // token이 null일 경우 토큰을발급한다.
@@ -184,7 +183,7 @@ public class PushHandler implements MqttCallback {
                 String getSubData = this.getSubscriptions();
                 Log.d(TAG, "getSubData=" + getSubData);
                 JSONObject jsonData = new JSONObject(getSubData);
-                Log.d(TAG, "jsonData:" + jsonData.toString());
+                Log.d(TAG, "jsonData=" + jsonData.toString());
                 JSONObject resultData = jsonData.getJSONObject("result");
                 Log.d(TAG, "resultData=" + resultData.toString());
                 boolean resultSuccess = resultData.getBoolean("success");
@@ -207,7 +206,8 @@ public class PushHandler implements MqttCallback {
 
                         }
                     }
-
+                } else {
+                    Log.d(TAG, "서브스크립션을가져오는데실패했습니다.");
                 }
                 // subscription check end
                 // subscribe("/users", 2);
@@ -619,7 +619,7 @@ public class PushHandler implements MqttCallback {
      * @return
      * @throws Exception
      */
-    public String preCheck(String sender, String topic) throws Exception {
+    public void preCheck(String sender, String topic) throws Exception {
         Log.d(TAG, "preCheck시작(sender=" + sender + ", topic=" + topic + ")");
         JSONObject data = new JSONObject();
         data.put("sender", sender);
@@ -645,9 +645,9 @@ public class PushHandler implements MqttCallback {
                     + response.getStatusLine().getStatusCode());
         }
 
-        String responseStr = EntityUtils.toString(response.getEntity());
-        Log.d(TAG, "preCheck종료(value=" + responseStr + ")");
-        return responseStr;
+        //String responseStr = EntityUtils.toString(response.getEntity());
+        //Log.d(TAG, "preCheck종료(value=" + responseStr + ")");
+        //return responseStr;
     }
 
     /**
