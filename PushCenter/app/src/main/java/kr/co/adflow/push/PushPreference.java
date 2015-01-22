@@ -17,6 +17,7 @@ public class PushPreference {
     public static final String KEEPALIVE = "keepAlive";
     public static final String CLEANSESSION = "cleanSession";
     public static final String MSGID = "msgID";
+    public static final String PHONENUM = "phoneNumber";
 
     private final String PREF_NAME = "kr.co.adflow.push";
 
@@ -128,5 +129,15 @@ public class PushPreference {
             Log.d(TAG, "getValue종료(해당키가존재하지않습니다. return=" + value + ")");
             return value;
         }
+    }
+
+    public void remove(String key) {
+        Log.d(TAG, "remove시작(key=" + key + ")");
+        SharedPreferences pref = context.getSharedPreferences(PREF_NAME,
+                Activity.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.remove(key);
+        editor.commit();
+        Log.d(TAG, "remove종료()");
     }
 }

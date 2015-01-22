@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.RemoteException;
-import android.os.StrictMode;
 import android.util.Log;
 import android.view.WindowManager;
 
@@ -30,13 +29,8 @@ import kr.co.adflow.push.service.PushService;
 
 public class PushServiceImpl extends Service implements PushService {
 
-    // TAG for debug
     public static final String TAG = "PushService";
-    public static final String AUTH_URI = "https://14.63.217.141/v1/auth";
-    public static final String MQTTSERVERIP = "ssl://14.63.217.141";
-    public static final String ACKTOPIC = "mms/ack";
     private static PowerManager.WakeLock wakeLock;
-    private static boolean cleanSession = false;
     private PushHandler pushHandler;
     private PushPreference preference;
 
@@ -72,29 +66,30 @@ public class PushServiceImpl extends Service implements PushService {
         public String sendMsg(String sender, String receiver, int qos, String contentType, String content, int expiry) throws RemoteException {
             Log.d(TAG, "sendMsg시작(sender=" + sender + ", receiver=" + receiver + ", qos="
                     + qos + ", contentType=" + contentType + ", content=" + content + ", expiry=" + expiry + ")");
-            //테스트중
-            setStrictMode();
-            //테스트코드END
 
-
+            long start = System.currentTimeMillis();
             JSONObject returnData = new JSONObject();
             JSONObject res = new JSONObject();
             try {
                 String result = PushServiceImpl.getInstance().sendMsg(sender, receiver, qos, contentType, content, expiry);
                 Log.d(TAG, "sendMsg종료(result=" + result + ")");
+                long stop = System.currentTimeMillis();
+                Log.d(TAG, "걸린시간=" + (stop - start) + "ms");
                 return result;
             } catch (Exception e) {
                 Log.e(TAG, "sendMsg처리중에러발생", e);
 
                 try {
-                   res.put("success", false);
-                   res.put("error", e.toString());
-                   returnData.put("result",res);
+                    res.put("success", false);
+                    res.put("error", e.toString());
+                    returnData.put("result", res);
 
                 } catch (JSONException ex) {
                     ex.printStackTrace();
                 }
                 //return "{\"result\":{\"success\":false, \"error\":\"" + e + "\"}}";
+                long stop = System.currentTimeMillis();
+                Log.d(TAG, "걸린시간=" + (stop - start) + "ms");
                 return returnData.toString();
             }
         }
@@ -102,15 +97,15 @@ public class PushServiceImpl extends Service implements PushService {
         @Override
         public String existPMAByUFMI(String ufmi) throws RemoteException {
             Log.d(TAG, "existPMAByUFMI시작(ufmi=" + ufmi + ")");
-            //테스트중
-            setStrictMode();
-            //테스트코드END
+            long start = System.currentTimeMillis();
 
             JSONObject returnData = new JSONObject();
             JSONObject res = new JSONObject();
             try {
                 String result = PushServiceImpl.getInstance().existPMAByUFMI(ufmi);
                 Log.d(TAG, "existPMAByUFMI종료(result=" + result + ")");
+                long stop = System.currentTimeMillis();
+                Log.d(TAG, "걸린시간=" + (stop - start) + "ms");
                 return result;
             } catch (Exception e) {
                 Log.e(TAG, "existPMAByUFMI중에러발생", e);
@@ -118,11 +113,13 @@ public class PushServiceImpl extends Service implements PushService {
                 try {
                     res.put("success", false);
                     res.put("error", e.toString());
-                    returnData.put("result",res);
+                    returnData.put("result", res);
                 } catch (JSONException ex) {
                     ex.printStackTrace();
                 }
                 //return "{\"result\":{\"success\":false, \"error\":\"" + e + "\"}}";
+                long stop = System.currentTimeMillis();
+                Log.d(TAG, "걸린시간=" + (stop - start) + "ms");
                 return returnData.toString();
             }
         }
@@ -130,15 +127,15 @@ public class PushServiceImpl extends Service implements PushService {
         @Override
         public String existPMAByUserID(String userID) throws RemoteException {
             Log.d(TAG, "existPMAByUserID시작(userID=" + userID + ")");
-            //테스트중
-            setStrictMode();
-            //테스트코드END
+            long start = System.currentTimeMillis();
 
             JSONObject returnData = new JSONObject();
             JSONObject res = new JSONObject();
             try {
                 String result = PushServiceImpl.getInstance().existPMAByUserID(userID);
                 Log.d(TAG, "existPMAByUserID종료(result=" + result + ")");
+                long stop = System.currentTimeMillis();
+                Log.d(TAG, "걸린시간=" + (stop - start) + "ms");
                 return result;
             } catch (Exception e) {
                 Log.e(TAG, "existPMAByUserID중에러발생", e);
@@ -146,72 +143,74 @@ public class PushServiceImpl extends Service implements PushService {
                 try {
                     res.put("success", false);
                     res.put("error", e.toString());
-                    returnData.put("result",res);
+                    returnData.put("result", res);
                 } catch (JSONException ex) {
                     ex.printStackTrace();
                 }
                 //return "{\"result\":{\"success\":false, \"error\":\"" + e + "\"}}";
+                long stop = System.currentTimeMillis();
+                Log.d(TAG, "걸린시간=" + (stop - start) + "ms");
                 return returnData.toString();
             }
         }
 
-        @Override
-        public String connect(String userID, String deviceID, String ufmi) throws RemoteException {
-            Log.d(TAG, "connect시작(userID=" + userID + ", deviceID=" + deviceID + ", ufmi=" + ufmi + ")");
-            Log.d(TAG, "pushHandler=" + pushHandler);
-
-            //메인쓰레드에서 네트웍연결부분이 발생하여
-            //테스트중
-            setStrictMode();
-            //테스트코드END
-
-
-            JSONObject returnData = new JSONObject();
-            JSONObject result = new JSONObject();
-            String res = null;
-            try {
-                if (pushHandler != null || pushHandler.isConnected()) {
-                    //인증
-                    //{"result":{"success":true,"data":{"tokenID":"b0dbcd2fe4ce4c58940e33e","userID":"testUser","issue":1420715174000}}}
-                    res = pushHandler.auth(AUTH_URI, userID, deviceID, ufmi);
-                    JSONObject obj = new JSONObject(res);
-                    JSONObject rst = obj.getJSONObject("result");
-
-                    if (!rst.getBoolean("success")) {
-                        //에러데이타 추출후 응답메시지에 추가요망
-                        throw new Exception("인증문제가발생하였습니다(bizException)");
-                    }
-                    JSONObject data = rst.getJSONObject("data");
-                    String token = data.getString("tokenID");
-                    Log.d(TAG, "token=" + token);
-
-                    //연결
-                    if (token != null) {
-                        startPushHandler(token, MQTTSERVERIP, cleanSession);
-                    } else {
-                        // 토큰이널값일경우
-                        throw new Exception("인증문제가발생하였습니다(토큰값이없습니다)");
-                    }
-                } else {
-                    throw new Exception("푸시핸들러문제로전송에실패하였습니다.");
-                }
-                Log.d(TAG, "connect종료()");
-                result.put("success", true);
-                returnData.put("result", result);
-                return returnData.toString();
-            } catch (Exception e) {
-                Log.e(TAG, "mqtt세션연결중에러발생", e);
-                try {
-                    result.put("success", false);
-                    result.put("error",e.toString());
-                    returnData.put("result", result);
-                } catch (JSONException ex) {
-                    ex.printStackTrace();
-                }
-                //return "{\"result\":{\"success\":false, \"error\":\"" + e + "\"}}";
-                return returnData.toString();
-            }
-        }
+//        @Override
+//        public String connect(String userID, String deviceID, String ufmi) throws RemoteException {
+//            Log.d(TAG, "connect시작(userID=" + userID + ", deviceID=" + deviceID + ", ufmi=" + ufmi + ")");
+//            Log.d(TAG, "pushHandler=" + pushHandler);
+//
+//            //메인쓰레드에서 네트웍연결부분이 발생하여
+//            //테스트중
+//            setStrictMode();
+//            //테스트코드END
+//
+//
+//            JSONObject returnData = new JSONObject();
+//            JSONObject result = new JSONObject();
+//            String res = null;
+//            try {
+//                if (pushHandler != null) {
+//                    //인증
+//                    //{"result":{"success":true,"data":{"tokenID":"b0dbcd2fe4ce4c58940e33e","userID":"testUser","issue":1420715174000}}}
+//                    res = pushHandler.auth(AUTH_URI, userID, deviceID, ufmi);
+//                    JSONObject obj = new JSONObject(res);
+//                    JSONObject rst = obj.getJSONObject("result");
+//
+//                    if (!rst.getBoolean("success")) {
+//                        //에러데이타 추출후 응답메시지에 추가요망
+//                        throw new Exception("인증문제가발생하였습니다(bizException)");
+//                    }
+//                    JSONObject data = rst.getJSONObject("data");
+//                    String token = data.getString("tokenID");
+//                    Log.d(TAG, "token=" + token);
+//
+//                    //연결
+//                    if (token != null) {
+//                        startPushHandler(token, MQTTSERVERIP, cleanSession);
+//                    } else {
+//                        // 토큰이널값일경우
+//                        throw new Exception("인증문제가발생하였습니다(토큰값이없습니다)");
+//                    }
+//                } else {
+//                    throw new Exception("푸시핸들러문제로전송에실패하였습니다.");
+//                }
+//                Log.d(TAG, "connect종료()");
+//                result.put("success", true);
+//                returnData.put("result", result);
+//                return returnData.toString();
+//            } catch (Exception e) {
+//                Log.e(TAG, "mqtt세션연결중에러발생", e);
+//                try {
+//                    result.put("success", false);
+//                    result.put("error", e.toString());
+//                    returnData.put("result", result);
+//                } catch (JSONException ex) {
+//                    ex.printStackTrace();
+//                }
+//                //return "{\"result\":{\"success\":false, \"error\":\"" + e + "\"}}";
+//                return returnData.toString();
+//            }
+//        }
 
         /**
          *
@@ -223,11 +222,7 @@ public class PushServiceImpl extends Service implements PushService {
         @Override
         public String preCheck(String sender, String topic) throws RemoteException {
             Log.d(TAG, "preCheck시작(sender=" + sender + ", topic=" + topic + ")");
-            //메인쓰레드에서 네트웍연결부분이 발생하여
-            //테스트중
-            setStrictMode();
-            //테스트코드END
-
+            long start = System.currentTimeMillis();
             JSONObject returnData = new JSONObject();
             JSONObject result = new JSONObject();
             try {
@@ -239,17 +234,21 @@ public class PushServiceImpl extends Service implements PushService {
                 Log.d(TAG, "preCheck종료");
                 result.put("success", true);
                 returnData.put("result", result);
+                long stop = System.currentTimeMillis();
+                Log.d(TAG, "걸린시간=" + (stop - start) + "ms");
                 return returnData.toString();
                 //return "{\"result\":{\"success\":true}}";
             } catch (Exception e) {
                 Log.e(TAG, "preCheck중에러발생", e);
                 try {
                     result.put("success", false);
-                    result.put("error",e.toString());
+                    result.put("error", e.toString());
                     returnData.put("result", result);
                 } catch (JSONException ex) {
                     ex.printStackTrace();
                 }
+                long stop = System.currentTimeMillis();
+                Log.d(TAG, "걸린시간=" + (stop - start) + "ms");
                 //return "{\"result\":{\"success\":false, \"error\":\"" + e + "\"}}";
                 return returnData.toString();
             }
@@ -258,15 +257,14 @@ public class PushServiceImpl extends Service implements PushService {
         @Override
         public String getSubscriptions() throws RemoteException {
             Log.d(TAG, "getSubscriptions시작()");
-            //메인쓰레드에서 네트웍연결부분이 발생하여
-            //테스트중
-            setStrictMode();
-            //테스트코드END
+            long start = System.currentTimeMillis();
 
             JSONObject returnData = new JSONObject();
             JSONObject res = new JSONObject();
             try {
                 String result = PushServiceImpl.getInstance().getSubscriptions();
+                long stop = System.currentTimeMillis();
+                Log.d(TAG, "걸린시간=" + (stop - start) + "ms");
                 //{"result":{"success":true, "data":{"result":{"success":true,"info":["subscription not found"]}}}}
                 Log.d(TAG, "getSubscriptions종료(result=" + result + ")");
                 return result;
@@ -276,11 +274,14 @@ public class PushServiceImpl extends Service implements PushService {
                 try {
                     res.put("success", false);
                     res.put("error", e.toString());
-                    returnData.put("result",res);
+                    returnData.put("result", res);
 
                 } catch (JSONException ex) {
                     ex.printStackTrace();
                 }
+
+                long stop = System.currentTimeMillis();
+                Log.d(TAG, "걸린시간=" + (stop - start) + "ms");
                 //return "{\"result\":{\"success\":false, \"error\":\"" + e + "\"}}";
                 return returnData.toString();
             }
@@ -296,10 +297,14 @@ public class PushServiceImpl extends Service implements PushService {
         @Override
         public String unsubscribe(String topic) throws RemoteException {
             Log.d(TAG, "unsubscribe시작(topic=" + topic + ")");
+            long start = System.currentTimeMillis();
             JSONObject returnData = new JSONObject();
             JSONObject result = new JSONObject();
             try {
                 PushServiceImpl.getInstance().unsubscribe(topic);
+                long stop = System.currentTimeMillis();
+                Log.d(TAG, "걸린시간=" + (stop - start) + "ms");
+
                 result.put("success", true);
                 returnData.put("result", result);
                 Log.d(TAG, "unsubscribe종료(result=" + returnData + ")");
@@ -307,10 +312,11 @@ public class PushServiceImpl extends Service implements PushService {
                 // return "{\"result\":{\"success\":true}}";
             } catch (Exception e) {
                 Log.e(TAG, "unsubscribe중에러발생", e);
-
+                long stop = System.currentTimeMillis();
+                Log.d(TAG, "걸린시간=" + (stop - start) + "ms");
                 try {
                     result.put("success", false);
-                    result.put("error",e.toString());
+                    result.put("error", e.toString());
                     returnData.put("result", result);
                 } catch (JSONException ex) {
                     ex.printStackTrace();
@@ -323,21 +329,24 @@ public class PushServiceImpl extends Service implements PushService {
         @Override
         public String subscribe(String topic, int qos) throws RemoteException {
             Log.d(TAG, "subscribe시작(topic=" + topic + ", qos=" + qos + ")");
-
+            long start = System.currentTimeMillis();
             JSONObject returnData = new JSONObject();
             JSONObject result = new JSONObject();
             try {
                 PushServiceImpl.getInstance().subscribe(topic, qos);
+                long stop = System.currentTimeMillis();
+                Log.d(TAG, "걸린시간=" + (stop - start) + "ms");
                 result.put("success", true);
                 returnData.put("result", result);
                 Log.d(TAG, "subscribe종료(result=" + returnData + ")");
                 return returnData.toString();
             } catch (Exception e) {
                 Log.e(TAG, "subscribe중에러발생", e);
-
+                long stop = System.currentTimeMillis();
+                Log.d(TAG, "걸린시간=" + (stop - start) + "ms");
                 try {
                     result.put("success", false);
-                    result.put("error",e.toString());
+                    result.put("error", e.toString());
                     returnData.put("result", result);
                 } catch (JSONException ex) {
                     ex.printStackTrace();
@@ -349,21 +358,24 @@ public class PushServiceImpl extends Service implements PushService {
         @Override
         public String ack(String msgID, String tokenID) throws RemoteException {
             Log.d(TAG, "ack시작(msgID=" + msgID + ", tokenID=" + tokenID + ")");
-
+            long start = System.currentTimeMillis();
             JSONObject returnData = new JSONObject();
             JSONObject result = new JSONObject();
             try {
                 PushServiceImpl.getInstance().ack(msgID, tokenID);
+                long stop = System.currentTimeMillis();
+                Log.d(TAG, "걸린시간=" + (stop - start) + "ms");
                 result.put("success", true);
                 returnData.put("result", result);
                 Log.d(TAG, "ack종료(result=" + returnData + ")");
                 return returnData.toString();
             } catch (Exception e) {
                 Log.e(TAG, "subscribe중에러발생", e);
-
+                long stop = System.currentTimeMillis();
+                Log.d(TAG, "걸린시간=" + (stop - start) + "ms");
                 try {
                     result.put("success", false);
-                    result.put("error",e.toString());
+                    result.put("error", e.toString());
                     returnData.put("result", result);
                 } catch (JSONException ex) {
                     ex.printStackTrace();
@@ -401,7 +413,7 @@ public class PushServiceImpl extends Service implements PushService {
         ack.put("ackType", "app");
         ack.put("ackTime", System.currentTimeMillis());
 
-        publish(ACKTOPIC, ack.toString().getBytes(), 2); // qos 2 로 전송
+        publish(PushHandler.ACK_TOPIC, ack.toString().getBytes(), 2); // qos 2 로 전송
         Log.d(TAG, "ack종료()");
     }
 
@@ -417,18 +429,6 @@ public class PushServiceImpl extends Service implements PushService {
         String result = pushHandler.existPMAByUFMI(ufmi);
         Log.d(TAG, "existPMAByUFMI종료()");
         return result;
-    }
-
-    /**
-     *
-     */
-    private void setStrictMode() {
-        Log.d(TAG, "setStrictMode시작()");
-        if (android.os.Build.VERSION.SDK_INT > 9) {
-            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-            StrictMode.setThreadPolicy(policy);
-        }
-        Log.d(TAG, "setStrictMode종료()");
     }
 
     @Override
@@ -457,35 +457,11 @@ public class PushServiceImpl extends Service implements PushService {
             // action 분기처리
             if (intent.getAction().equals("kr.co.adflow.push.service.RESTART")) {
                 // 푸시서비스 시작
-                Log.d(TAG, "푸시서비스를재시작합니다.");
-                Bundle bundle = intent.getExtras();
-
-                if (bundle == null) {
-                    Log.e(TAG, "bundle이 존재하지않습니다.");
-                    return Service.START_STICKY;
-                }
-
-                for (String key : bundle.keySet()) {
-                    Log.d(TAG, key + "=" + bundle.get(key));
-                }
-                String token = bundle.getString(PushPreference.TOKEN);
-                Log.d(TAG, "token=" + token);
-
-                String server = bundle.getString(PushPreference.SERVERURL);
-                Log.d(TAG, "server=" + server);
-
-                boolean cleanSession = bundle
-                        .getBoolean(PushPreference.CLEANSESSION);
-                Log.d(TAG, "cleanSession=" + cleanSession);
-
-                if (token != null) {
-                    startPushHandler(token, server, cleanSession);
-                } else {
-                    // 토큰이널일경우
-                    Log.d(TAG, "토큰정보가없습니다.");
-                }
+                Log.d(TAG, "푸시핸들러를재시작합니다.");
+                restartPushHandler();
+                Log.d(TAG, "푸시핸들러를재시작되었습니다.");
             } else if (intent.getAction().equals("kr.co.adflow.push.service.ACK")) {
-
+                Log.d(TAG, "메시지에크를시작합니다.");
                 Bundle bundle = intent.getExtras();
 
                 if (bundle == null) {
@@ -510,8 +486,9 @@ public class PushServiceImpl extends Service implements PushService {
                     ack.put("ackType", "pma");
                     ack.put("ackTime", System.currentTimeMillis());
                     Log.d(TAG, "ack=" + ack);
-                    publish(ACKTOPIC, ack.toString().getBytes(), 2); // qos 2 로 전송
+                    publish(PushHandler.ACK_TOPIC, ack.toString().getBytes(), 2); // qos 2 로 전송
                 }
+                Log.d(TAG, "메시지에크를종료합니다.");
             } else if (intent.getAction().equals(
                     "kr.co.adflow.push.service.FWUPDATE")) {
                 Log.d(TAG, "firmUpdate시작");
@@ -561,6 +538,7 @@ public class PushServiceImpl extends Service implements PushService {
                     "kr.co.adflow.push.service.KEEPALIVE")) {
                 Log.d(TAG, "keepalive체크를시작합니다.");
                 pushHandler.keepAlive();
+                Log.d(TAG, "keepalive체크를종료합니다.");
             }
             // else if (intent.getAction().equals("kr.co.adflow.action.login"))
             // {
@@ -572,11 +550,7 @@ public class PushServiceImpl extends Service implements PushService {
             else {
                 Log.e(TAG, "적절한처리핸들러가없습니다.");
             }
-        } catch (
-                Exception e
-                )
-
-        {
+        } catch (Exception e) {
             Log.e(TAG, "예외상황발생", e);
         }
 
@@ -585,22 +559,12 @@ public class PushServiceImpl extends Service implements PushService {
         return ret;
     }
 
+
     /**
-     * @param token
-     * @param server
-     * @param cleanSession
+     * @throws Exception
      */
-
-    public void startPushHandler(String token, String server,
-                                 boolean cleanSession) throws Exception {
-        Log.d(TAG, "startPushHandler시작()");
-        // 토큰저장
-        preference.put(PushPreference.TOKEN, token);
-        // server url 저장
-        preference.put(PushPreference.SERVERURL, server);
-        // cleanSession 저장
-        preference.put(PushPreference.CLEANSESSION, cleanSession);
-
+    public void restartPushHandler() throws Exception {
+        Log.d(TAG, "restartPushHandler시작()");
         Log.d(TAG, "알람을설정합니다.");
         AlarmManager service = (AlarmManager) this
                 .getSystemService(Context.ALARM_SERVICE);
@@ -610,11 +574,11 @@ public class PushServiceImpl extends Service implements PushService {
                 PendingIntent.FLAG_UPDATE_CURRENT);
         service.setRepeating(AlarmManager.RTC_WAKEUP,
                 System.currentTimeMillis() + 1000,
-                1000 * PushHandler.alarmInterval, pending);
+                1000 * PushHandler.ALARM_INTERVAL, pending);
         Log.d(TAG, "알람이설정되었습니다");
         // 푸시핸들러 시작
         pushHandler.start();
-        Log.d(TAG, "startPushHandler종료()");
+        Log.d(TAG, "restartPushHandler종료()");
     }
 
     @Override
@@ -740,11 +704,10 @@ public class PushServiceImpl extends Service implements PushService {
      * @see kr.co.adflow.push.service.PushService#preCheck(java.lang.String)
      */
     @Override
-    public String preCheck(String sender, String topic) throws Exception {
+    public void preCheck(String sender, String topic) throws Exception {
         Log.d(TAG, "preCheck시작(sender=" + sender + ", 토픽=" + topic + ")");
-        String ret = pushHandler.preCheck(sender, topic);
-        Log.d(TAG, "preCheck종료(return=" + ret + ")");
-        return ret;
+        pushHandler.preCheck(sender, topic);
+        Log.d(TAG, "preCheck종료()");
     }
 
     @Override
@@ -782,20 +745,6 @@ public class PushServiceImpl extends Service implements PushService {
         Log.d(TAG, "getLostCout종료(lostCount=" + lostCount + ")");
         return lostCount;
     }
-
-//	/**
-//	 * Class used for the client Binder. Because we know this service always
-//	 * runs in the same process as its clients, we don't need to deal with IPC.
-//	 */
-//	public class LocalBinder extends Binder {
-//		public PushService getService() {
-//			Log.d(TAG, "getService시작()");
-//			// Return this instance of LocalService so clients can call public
-//			// methods
-//			Log.d(TAG, "getService종료(value=" + PushServiceImpl.this + ")");
-//			return PushServiceImpl.this;
-//		}
-//	}
 
     /*
      * (non-Javadoc)
