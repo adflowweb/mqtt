@@ -9,7 +9,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.RemoteException;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -52,11 +51,11 @@ public class MainActivity extends ActionBarActivity {
                 new Button.OnClickListener() {
                     public void onClick(View v) {
                         Log.d(TAG, "푸시서비스연결시작");
-                        Intent explicitIntent = null;
-
-                        // Package 설치여부 확인
-                        PackageManager pm = getPackageManager();
                         try {
+                            Intent explicitIntent = null;
+
+                            // Package 설치여부 확인
+                            PackageManager pm = getPackageManager();
                             ApplicationInfo appInfo = pm.getApplicationInfo("kr.co.adflow.push", PackageManager.GET_META_DATA);
                             Log.d(TAG, "appInfo=" + appInfo);
 
@@ -74,14 +73,13 @@ public class MainActivity extends ActionBarActivity {
                             explicitIntent = new Intent();
                             explicitIntent.setComponent(component);
                             Log.d(TAG, "explicitIntent=" + explicitIntent);
-
-                        } catch (PackageManager.NameNotFoundException e) {
+                            bindService(explicitIntent, mConnection, Context.BIND_AUTO_CREATE);
+                            Log.d(TAG, "PushService바인드");
+                            Log.d(TAG, "푸시서비스연결종료");
+                        } catch (Exception e) {
                             e.printStackTrace();
+                            txtView.setText("에러발생=" + e.toString());
                         }
-
-                        bindService(explicitIntent, mConnection, Context.BIND_AUTO_CREATE);
-                        Log.d(TAG, "PushService바인드");
-                        Log.d(TAG, "푸시서비스연결종료");
                     }
                 }
         );
@@ -93,9 +91,15 @@ public class MainActivity extends ActionBarActivity {
                     public void onClick(View v) {
                         Log.d(TAG, "푸시서비스해제시작");
                         if (mBinder != null) {
-                            unbindService(mConnection);
-                            Log.d(TAG, "PushService언바인드");
-                            mBinder = null;
+                            try {
+                                unbindService(mConnection);
+                                Log.d(TAG, "PushService언바인드");
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                txtView.setText("에러발생=" + e.toString());
+                            } finally {
+                                mBinder = null;
+                            }
                         } else {
                             Log.d(TAG, "푸시서비스와연결되어있지않습니다.");
                             txtView.setText("푸시서비스와연결되어있지않습니다.");
@@ -133,10 +137,12 @@ public class MainActivity extends ActionBarActivity {
                         Log.d(TAG, "서브스크라이브시작");
                         if (mBinder != null) {
                             try {
+                                long start = System.currentTimeMillis();
                                 String result = mBinder.subscribe("users", 2);
+                                long stop = System.currentTimeMillis();
+                                txtView.setText("result=" + result + ", 걸린시간=" + (stop - start) + "ms");
                                 Log.d(TAG, "result=" + result);
-                                txtView.setText("result=" + result);
-                            } catch (RemoteException e) {
+                            } catch (Exception e) {
                                 e.printStackTrace();
                                 txtView.setText("에러발생=" + e.toString());
                             }
@@ -158,10 +164,12 @@ public class MainActivity extends ActionBarActivity {
                         Log.d(TAG, "서브스크라이브해제시작");
                         if (mBinder != null) {
                             try {
+                                long start = System.currentTimeMillis();
                                 String result = mBinder.unsubscribe("users");
+                                long stop = System.currentTimeMillis();
+                                txtView.setText("result=" + result + ", 걸린시간=" + (stop - start) + "ms");
                                 Log.d(TAG, "result=" + result);
-                                txtView.setText("result=" + result);
-                            } catch (RemoteException e) {
+                            } catch (Exception e) {
                                 e.printStackTrace();
                                 txtView.setText("에러발생=" + e.toString());
                             }
@@ -183,10 +191,12 @@ public class MainActivity extends ActionBarActivity {
                         Log.d(TAG, "프리첵시작");
                         if (mBinder != null) {
                             try {
+                                long start = System.currentTimeMillis();
                                 String result = mBinder.preCheck("testUser", "users");
+                                long stop = System.currentTimeMillis();
+                                txtView.setText("result=" + result + ", 걸린시간=" + (stop - start) + "ms");
                                 Log.d(TAG, "result=" + result);
-                                txtView.setText("result=" + result);
-                            } catch (RemoteException e) {
+                            } catch (Exception e) {
                                 e.printStackTrace();
                                 txtView.setText("에러발생=" + e.toString());
                             }
@@ -208,10 +218,12 @@ public class MainActivity extends ActionBarActivity {
                         Log.d(TAG, "서브스크립션가져오기시작");
                         if (mBinder != null) {
                             try {
+                                long start = System.currentTimeMillis();
                                 String result = mBinder.getSubscriptions();
+                                long stop = System.currentTimeMillis();
+                                txtView.setText("result=" + result + ", 걸린시간=" + (stop - start) + "ms");
                                 Log.d(TAG, "result=" + result);
-                                txtView.setText("result=" + result);
-                            } catch (RemoteException e) {
+                            } catch (Exception e) {
                                 e.printStackTrace();
                                 txtView.setText("에러발생=" + e.toString());
                             }
@@ -233,10 +245,12 @@ public class MainActivity extends ActionBarActivity {
                         Log.d(TAG, "mqttSession연결상태가져오기시작");
                         if (mBinder != null) {
                             try {
+                                long start = System.currentTimeMillis();
                                 boolean result = mBinder.isConnected();
+                                long stop = System.currentTimeMillis();
+                                txtView.setText("연결상태=" + result + ", 걸린시간=" + (stop - start) + "ms");
                                 Log.d(TAG, "연결상태=" + result);
-                                txtView.setText("연결상태=" + result);
-                            } catch (RemoteException e) {
+                            } catch (Exception e) {
                                 e.printStackTrace();
                                 txtView.setText("에러발생=" + e.toString());
                             }
@@ -258,10 +272,12 @@ public class MainActivity extends ActionBarActivity {
                         Log.d(TAG, "existPMAByUFMI시작");
                         if (mBinder != null) {
                             try {
+                                long start = System.currentTimeMillis();
                                 String result = mBinder.existPMAByUFMI("200*800");
+                                long stop = System.currentTimeMillis();
+                                txtView.setText("체크결과=" + result + ", 걸린시간=" + (stop - start) + "ms");
                                 Log.d(TAG, "체크결과=" + result);
-                                txtView.setText("체크결과=" + result);
-                            } catch (RemoteException e) {
+                            } catch (Exception e) {
                                 e.printStackTrace();
                                 txtView.setText("에러발생=" + e.toString());
                             }
@@ -282,10 +298,12 @@ public class MainActivity extends ActionBarActivity {
                         Log.d(TAG, "existPMAByUserID시작");
                         if (mBinder != null) {
                             try {
+                                long start = System.currentTimeMillis();
                                 String result = mBinder.existPMAByUserID("testUser");
+                                long stop = System.currentTimeMillis();
+                                txtView.setText("체크결과=" + result + ", 걸린시간=" + (stop - start) + "ms");
                                 Log.d(TAG, "체크결과=" + result);
-                                txtView.setText("체크결과=" + result);
-                            } catch (RemoteException e) {
+                            } catch (Exception e) {
                                 e.printStackTrace();
                                 txtView.setText("에러발생=" + e.toString());
                             }
@@ -308,10 +326,12 @@ public class MainActivity extends ActionBarActivity {
                         Log.d(TAG, "mBinder=" + mBinder);
                         if (mBinder != null) {
                             try {
+                                long start = System.currentTimeMillis();
                                 String result = mBinder.sendMsg("testUser", "users", 2, "application/json", "{\"key\":\"value\"}", 60000);
+                                long stop = System.currentTimeMillis();
+                                txtView.setText("체크결과=" + result + ", 걸린시간=" + (stop - start) + "ms");
                                 Log.d(TAG, "체크결과=" + result);
-                                txtView.setText("체크결과=" + result);
-                            } catch (RemoteException e) {
+                            } catch (Exception e) {
                                 e.printStackTrace();
                                 txtView.setText("에러발생=" + e.toString());
                             }
