@@ -110,7 +110,13 @@ public class PCFServiceImpl implements PCFService {
 			logger.error("IOException is ",ioe);
 			throw ioe;
 		} finally {
-			if (agent != null) agent.disconnect();
+			
+			if (agent != null) {
+				logger.info("agent disconnect" );
+				agent.disconnect();
+			} else {
+				logger.info("agent null" );
+			}
 		}
 
 		// logger.debug("get종료(Subscribe result=" + subsList + ")");
@@ -183,7 +189,12 @@ public class PCFServiceImpl implements PCFService {
 			logger.error("IOException is",ioe);
 			throw ioe;
 		} finally {
-			if (agent != null) agent.disconnect();
+			if (agent != null) {
+				logger.info("agent disconnect" );
+				agent.disconnect();
+			} else {
+				logger.info("agent null" );
+			}
 		}
 
 		// logger.debug("get종료(Subscribe result=" + subsList + ")");
