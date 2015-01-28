@@ -9,15 +9,18 @@ import java.util.List;
 import kr.co.adflow.push.domain.Message;
 import kr.co.adflow.push.domain.Response;
 import kr.co.adflow.push.domain.Result;
+import kr.co.adflow.push.domain.User;
 import kr.co.adflow.push.domain.Validation;
 import kr.co.adflow.push.domain.ktp.request.DigInfo;
 import kr.co.adflow.push.domain.ktp.request.FwInfo;
 import kr.co.adflow.push.domain.ktp.request.KeepAliveTime;
 import kr.co.adflow.push.domain.ktp.request.Precheck;
 import kr.co.adflow.push.domain.ktp.request.Ufmi;
+import kr.co.adflow.push.domain.ktp.request.UpdateUfmi;
 import kr.co.adflow.push.domain.ktp.request.UserID;
 import kr.co.adflow.push.domain.ktp.request.UserMessage;
 import kr.co.adflow.push.ktp.service.PlatformService;
+import kr.co.adflow.push.service.UserService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +50,9 @@ public class PlatformController {
 	/** The platform service. */
 	@Autowired
 	private PlatformService platformService;
+	
+	@Autowired
+	private UserService userService;
 
 	/**
 	 * Send precheck.
@@ -226,6 +232,23 @@ public class PlatformController {
 		result.setSuccess(true);
 		Validation valid = new Validation(platformService.validUFMI(ufmi));
 		result.setData(valid);
+		Response res = new Response(result);
+		logger.info("response={}", res);
+		return res;
+	}
+	
+	@RequestMapping(value = "users/ufmi", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
+	@ResponseBody
+	public Response updateUFMI(@RequestBody UpdateUfmi ufmi) throws Exception {
+
+		User user = new User();
+		user.setUserID(ufmi.getUserID());
+		user.setUfmi(ufmi.getUfmi());
+		
+		userService.updateUFMI(user);
+		
+		Result result = new Result();
+		result.setSuccess(true);
 		Response res = new Response(result);
 		logger.info("response={}", res);
 		return res;
