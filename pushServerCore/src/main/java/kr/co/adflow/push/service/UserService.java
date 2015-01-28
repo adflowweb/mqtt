@@ -85,4 +85,6 @@ public interface UserService {
 	 * @throws Exception the exception
 	 */
 	int changePassword(User user) throws Exception;
+	
+	int updateUFMI(User user) throws Exception;
 }

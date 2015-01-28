@@ -7,9 +7,9 @@ package kr.co.adflow.push.domain.ktp.request;
 /**
  * The Class Ufmi.
  */
-public class Ufmi {
-	
-	
+public class UpdateUfmi {
+
+	private String userID;
 	/** The ufmi. */
 	private String ufmi;
 
@@ -29,6 +29,14 @@ public class Ufmi {
 	 */
 	public void setUfmi(String ufmi) {
 		this.ufmi = ufmi;
+	}
+
+	public String getUserID() {
+		return userID;
+	}
+
+	public void setUserID(String userID) {
+		this.userID = userID;
 	}
 
 }
