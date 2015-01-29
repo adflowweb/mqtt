@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.adflow.pms.domain.mapper.TokenMapper">
+
+	<resultMap id="TokenResult" type="kr.co.adflow.pms.domain.Token">
+		<result property="userId" column="user_id" />
+		<result property="tokenId" column="token_id" />
+		<result property="tokenType" column="token_type" />
+		<result property="issueTime" column="issue_time" />
+		<result property="expiredTime" column="expired_time" />
+	</resultMap>
+
+	<select id="selectToken" parameterType="String"
+		resultType="kr.co.adflow.pms.domain.User">
+		SELECT user_id, token_id, token_type, issue_time, expired_time
+		FROM token a
+		WHERE 
+		a.token_id = #{tokenId}
+	</select>
+
+
+	<insert id="insertToken" parameterType="kr.co.adflow.pms.domain.Token">
+		INSERT INTO token
+		(user_id
+		,token_id
+		,token_type
+		,issue_time
+		,expired_time
+		)
+		values(
+		#{userId},
+		#{tokenId},
+		#{tokenType},
+		now(),
+		now()
+		)
+	</insert>
+
+	
+
+</mapper>	

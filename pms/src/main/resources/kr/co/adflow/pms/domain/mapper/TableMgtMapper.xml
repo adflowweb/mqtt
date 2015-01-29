@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.adflow.pms.domain.mapper.TableMgtMapper">
+
+
+	<update id="createMessage" parameterType="String">
+	CREATE TABLE pms.message${value} (
+	  msg_id varchar(50) NOT NULL ,
+	  msg_type int(10) unsigned DEFAULT NULL,
+	  sender_id varchar(50) DEFAULT NULL,
+	  receiver varchar(50) DEFAULT NULL,
+	  service_id varchar(100) DEFAULT NULL,
+	  ack boolean DEFAULT NULL,
+	  status tinyint(1)  DEFAULT NULL,
+	  reservation_time datetime DEFAULT NULL,
+	  server_id varchar(10) DEFAULT NULL,
+	  expiry int(10) unsigned DEFAULT NULL,
+	  qos tinyint(1) unsigned DEFAULT NULL,
+	  retained tinyint(1) DEFAULT NULL,
+	  issue_time datetime DEFAULT NULL,
+	  update_time datetime DEFAULT NULL,
+	  PRIMARY KEY (msg_id)
+	) ENGINE=InnoDB AUTO_INCREMENT=395 DEFAULT CHARSET=utf8
+	</update>
+
+</mapper>	

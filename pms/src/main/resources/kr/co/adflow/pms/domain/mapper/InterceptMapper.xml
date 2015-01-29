@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.adflow.pms.domain.mapper.InterceptMapper">
+
+	<resultMap id="keyResult" type="java.util.Map">
+		<result property="ipFilters" column="ip_filters" />
+	</resultMap>
+
+	<select id="selectCashedApplicationKey" parameterType="kr.co.adflow.pms.domain.AppKey" resultType="String">
+	SELECT ip_filters 
+	FROM pms.token a , pms.user b
+	WHERE a.user_id = b.user_id 
+	AND a.token_type = 'A' 
+	AND a.expired_time IS NULL
+	AND b.status = 0
+	AND a.token_id = #{applicationKey} 
+	AND b.role = #{role}
+	</select>
+	
+	<select id="selectCashedUserId" parameterType="String" resultType="String">
+	SELECT a.user_id 
+	FROM pms.token a
+	WHERE a.token_id = #{applicationKey} 
+	</select>
+	
+	
+
+</mapper>	

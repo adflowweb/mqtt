@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.adflow.pms.domain.mapper.AckMapper">
+
+	<resultMap id="TokenResult" type="kr.co.adflow.pms.domain.Ack">
+		<result property="msgId" column="user_id" />
+		<result property="ackType" column="token_id" />
+		<result property="tokenId" column="token_type" />
+		<result property="ackTime" column="issue_time" />
+		<result property="issueTime" column="expired_time" />
+	</resultMap>
+
+
+	<insert id="insertAck" parameterType="kr.co.adflow.pms.domain.Ack">
+		INSERT INTO ack
+		(msg_id
+		,ack_type
+		,token_id
+		,ack_time
+		,issue_time
+		)
+		values(
+		#{msgId},
+		#{ackType},
+		#{tokenId},
+		#{ackTime},
+		now()
+		)
+	</insert>
+
+	
+
+</mapper>	
