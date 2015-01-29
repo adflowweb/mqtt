@@ -7,28 +7,27 @@ import java.util.List;
 
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
-
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class Result<T> {
-	
+
 	/** The success. */
 	private boolean success;
-	
+
 	/** The data. */
 	private T data;
-	
+
 	/** The errors. */
 	private List<String> errors;
-	
+
 	/** The warnings. */
 	private List<String> warnings;
-	
+
 	/** The info. */
 	private List<String> info;
 
 	/**
 	 * Gets the warnings.
-	 *
+	 * 
 	 * @return the warnings
 	 */
 	public List<String> getWarnings() {
@@ -37,8 +36,9 @@ public class Result<T> {
 
 	/**
 	 * Sets the warnings.
-	 *
-	 * @param warnings the new warnings
+	 * 
+	 * @param warnings
+	 *            the new warnings
 	 */
 	public void setWarnings(List<String> warnings) {
 		this.warnings = warnings;
@@ -46,7 +46,7 @@ public class Result<T> {
 
 	/**
 	 * Gets the info.
-	 *
+	 * 
 	 * @return the info
 	 */
 	public List<String> getInfo() {
@@ -55,8 +55,9 @@ public class Result<T> {
 
 	/**
 	 * Sets the info.
-	 *
-	 * @param info the new info
+	 * 
+	 * @param info
+	 *            the new info
 	 */
 	public void setInfo(List<String> info) {
 		this.info = info;
@@ -64,7 +65,7 @@ public class Result<T> {
 
 	/**
 	 * Gets the errors.
-	 *
+	 * 
 	 * @return the errors
 	 */
 	public List<String> getErrors() {
@@ -73,8 +74,9 @@ public class Result<T> {
 
 	/**
 	 * Sets the errors.
-	 *
-	 * @param errors the new errors
+	 * 
+	 * @param errors
+	 *            the new errors
 	 */
 	public void setErrors(List<String> errors) {
 		this.errors = errors;
@@ -82,7 +84,7 @@ public class Result<T> {
 
 	/**
 	 * Gets the data.
-	 *
+	 * 
 	 * @return the data
 	 */
 	public T getData() {
@@ -91,8 +93,9 @@ public class Result<T> {
 
 	/**
 	 * Sets the data.
-	 *
-	 * @param data the new data
+	 * 
+	 * @param data
+	 *            the new data
 	 */
 	public void setData(T data) {
 		this.data = data;
@@ -100,7 +103,7 @@ public class Result<T> {
 
 	/**
 	 * Checks if is success.
-	 *
+	 * 
 	 * @return true, if is success
 	 */
 	public boolean isSuccess() {
@@ -109,14 +112,17 @@ public class Result<T> {
 
 	/**
 	 * Sets the success.
-	 *
-	 * @param success the new success
+	 * 
+	 * @param success
+	 *            the new success
 	 */
 	public void setSuccess(boolean success) {
 		this.success = success;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

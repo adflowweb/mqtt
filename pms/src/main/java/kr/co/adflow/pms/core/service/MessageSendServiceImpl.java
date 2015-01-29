@@ -15,42 +15,39 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class MessageSendServiceImpl implements MessageSendService {
-	
+
 	private static final Logger logger = LoggerFactory
 			.getLogger(MessageSendServiceImpl.class);
-	
+
 	@Autowired
 	private MessageMapper messageMapper;
-	
+
 	@Autowired
 	private JmsTemplate jmsTemplate;
 
 	@Override
-	public int sendMessageArray(String serverId,int limit) {
-		
-		
-		HashMap<String,Object> param = new HashMap<String,Object>();
-	
+	public int sendMessageArray(String serverId, int limit) {
+
+		HashMap<String, Object> param = new HashMap<String, Object>();
+
 		param.put("serverId", serverId);
 		param.put("limit", limit);
-		
+
 		List<Message> list = messageMapper.selectList(param);
-		
+
 		int updateCnt = 0;
-		for (Message msg : list ) {
-			
-			
-			
+		for (Message msg : list) {
+
 			jmsTemplate.execute(msg.getReceiver(), new DirectMsgHandler(msg));
-			
+
 			msg.setStatus(1);
-			
+
 			int resultCnt = messageMapper.updateStatus(msg);
-			logger.info("update count is {}",resultCnt);
+			logger.info("update count is {}", resultCnt);
 			updateCnt++;
 		}
-		
-		logger.info("sendMessageArray is cnt {}",updateCnt);
+
+		logger.info("sendMessageArray is cnt {}", updateCnt);
 		return updateCnt;
 	}
 

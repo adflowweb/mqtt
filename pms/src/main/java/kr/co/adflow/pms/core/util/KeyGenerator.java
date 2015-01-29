@@ -2,60 +2,53 @@ package kr.co.adflow.pms.core.util;
 
 import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
-
-
-
-
-
 
 import org.slf4j.LoggerFactory;
 
 public class KeyGenerator {
-	
+
 	/** The Constant logger. */
 	private static final org.slf4j.Logger logger = LoggerFactory
 			.getLogger(KeyGenerator.class);
 
 	/**
 	 * Generate.
-	 *
+	 * 
 	 * @return the string
 	 */
 	private static String generate() {
 		return UUID.randomUUID().toString().replaceAll("-", "");
 	}
-	
-	
+
 	public static String generateMsgId() {
 		String id = KeyGenerator.generate();
 
 		return KeyGenerator.getYYYYMM() + id;
 	}
-	
+
 	public static String getYYYYMM() {
 
-		return KeyGenerator.getDate(new Date() ,"YYYYMM");
+		return KeyGenerator.getDate(new Date(), "YYYYMM");
 	}
-	
-	private static String getDate(Date date,String pattern) {
-		
+
+	private static String getDate(Date date, String pattern) {
+
 		SimpleDateFormat fmt = new SimpleDateFormat(pattern);
-		
+
 		return fmt.format(date);
-		
+
 	}
-	
-public static String generateToken(String str) {
-		
+
+	public static String generateToken(String str) {
+
 		StringBuffer sb = null;
 		String token = null;
 		try {
 			token = KeyGenerator.generate() + str;
 			MessageDigest md = MessageDigest.getInstance("MD5");
-			
+
 			md.update(token.getBytes());
 			byte[] mdbytes = md.digest();
 
@@ -68,14 +61,12 @@ public static String generateToken(String str) {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		
+
 		return sb.toString();
 	}
 
+	public static String generateHash(String str) {
 
-public static String generateHash(String str) {
-		
 		StringBuffer sb = null;
 		try {
 			MessageDigest md = MessageDigest.getInstance("SHA1");
@@ -91,8 +82,7 @@ public static String generateHash(String str) {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		
+
 		return sb.toString();
 	}
 

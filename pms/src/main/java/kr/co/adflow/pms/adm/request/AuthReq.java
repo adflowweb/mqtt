@@ -1,10 +1,9 @@
-package kr.co.adflow.pms.inf.request;
+package kr.co.adflow.pms.adm.request;
 
-public class UserReq {
+public class AuthReq {
 
 	private String userId;
 	private String password;
-	private int msgCntLimitDay;
 
 	public String getUserId() {
 		return userId;
@@ -21,13 +20,4 @@ public class UserReq {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-
-	public int getMsgCntLimitDay() {
-		return msgCntLimitDay;
-	}
-
-	public void setMsgCntLimitDay(int msgCntLimitDay) {
-		this.msgCntLimitDay = msgCntLimitDay;
-	}
-
 }
