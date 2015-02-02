@@ -64,6 +64,16 @@ public class KeyGenerator {
 
 		return sb.toString();
 	}
+	
+	public static String createPw(String str1,String str2) {
+		String result = null;
+		result = generateHash(str2);
+		
+		//TODO pw 로직 변경
+		//result = generateHash(str1 + "#" + result);
+		
+		return result;
+	}
 
 	public static String generateHash(String str) {
 

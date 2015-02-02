@@ -19,6 +19,10 @@
         <mapping path="/svc/*" />
         <beans:bean class="kr.co.adflow.pms.svc.filter.SeviceInterceptor"/> 
     </interceptor>
+    <interceptor>
+        <mapping path="/adm/sys/*" />
+        <beans:bean class="kr.co.adflow.pms.adm.filter.SystemInterceptor"/> 
+    </interceptor>    
 </interceptors>
 
 

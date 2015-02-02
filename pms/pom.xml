@@ -207,6 +207,21 @@
 			<artifactId>neo4j-cypher-compiler-2.1</artifactId>
 			<version>2.1.2</version>
 		</dependency>
+		<dependency>
+			<groupId>net.wimpi</groupId>
+			<artifactId>telnetd-x</artifactId>
+			<version>2.1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.activemq</groupId>
+			<artifactId>activemq-client</artifactId>
+			<version>5.9.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.activemq</groupId>
+			<artifactId>activemq-client</artifactId>
+			<version>5.9.1</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -234,14 +249,6 @@
 					<compilerArgument>-Xlint:all</compilerArgument>
 					<showWarnings>true</showWarnings>
 					<showDeprecation>true</showDeprecation>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>1.2.1</version>
-				<configuration>
-					<mainClass>org.test.int1.Main</mainClass>
 				</configuration>
 			</plugin>
 			<plugin>

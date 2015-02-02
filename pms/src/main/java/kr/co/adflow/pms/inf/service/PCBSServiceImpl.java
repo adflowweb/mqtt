@@ -46,7 +46,7 @@ public class PCBSServiceImpl implements PCBSService {
 
 	private String getPassword(UserReq req) {
 
-		return KeyGenerator.generateHash(req.getPassword());
+		return KeyGenerator.createPw(req.getUserId(),req.getPassword());
 	}
 
 	private String getTokenId(UserReq req) {

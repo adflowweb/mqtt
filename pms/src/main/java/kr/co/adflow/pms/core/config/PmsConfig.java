@@ -9,6 +9,8 @@ public class PmsConfig {
 	public static final String HEADER_APPLICATION_TOKEN = "X-Application-Token";
 	public static final String HEADER_APPLICATION_KEY = "X-Application-Key";
 	public static final String HEADER_CONTENT_TYPE = "application/json";
+	public static final int HEADER_APPLICATION_TOKEN_EXPIRED = 30;
+	
 	
 	public static final String INTERCEPTER_IP_FILTER = "0.0.0.0";
 
@@ -23,6 +25,7 @@ public class PmsConfig {
 	
 	public static final String USER_ROLE_SERVICE = "svc";
 	public static final String USER_ROLE_INTERFACE = "inf";
+	public static final String USER_ROLE_SYSTEM = "sys";
 
 	public static final String TOKEN_TYPE_APPLICATION = "A";
 	public static final String TOKEN_TYPE_TOKEN = "T";

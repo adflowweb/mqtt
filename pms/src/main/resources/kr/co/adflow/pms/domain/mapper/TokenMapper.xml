@@ -34,10 +34,22 @@
 		#{tokenId},
 		#{tokenType},
 		now(),
-		now()
+		#{expiredTime}
 		)
 	</insert>
 
+	<delete id="deleteExpiredToken" parameterType="String">
+		DELETE FROM pms.token
+		WHERE user_id = #{userId} 
+		AND expired_time IS NOT NULL 
+		AND expired_time <![CDATA[<]]>  now() 
+	</delete>
+	
+	<update id="updateTokenExpiredTime" parameterType="kr.co.adflow.pms.domain.Token">
+		UPDATE pms.token
+		SET expired_time = #{expiredTime}
+		WHERE token_id = #{tokenId} 
+	</update>
 	
 
 </mapper>	

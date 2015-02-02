@@ -7,5 +7,9 @@ public interface TokenMapper {
 	int insertToken(Token token);
 
 	Token selectToken(String tokenId);
+	
+	int deleteExpiredToken(String userId);
+	
+	int updateTokenExpiredTime(Token token);
 
 }

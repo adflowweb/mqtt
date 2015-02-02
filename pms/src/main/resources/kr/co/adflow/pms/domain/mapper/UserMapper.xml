@@ -24,6 +24,26 @@
 		WHERE 
 		a.user_id = #{userId}
 	</select>
+	
+	<select id="listAll" parameterType="String"
+		resultMap="UserResult">
+		SELECT user_id, role, password, user_name, ip_filters, status, 
+		message_count_limit_day, issue_time, update_time
+		FROM user
+	</select>
+	
+	<resultMap id="AuthResult" type="kr.co.adflow.pms.domain.User">
+		<result property="userId" column="user_id" />
+		<result property="role" column="role" />
+	</resultMap>
+	
+	<select id="selectAuth" parameterType="kr.co.adflow.pms.domain.User"
+		resultMap="AuthResult">
+		SELECT user_id, role
+		FROM user a
+		WHERE a.user_id = #{userId}
+		AND a.password = #{password}
+	</select>
 
 	<update id="updateUserStatus" parameterType="kr.co.adflow.pms.domain.User">
 		UPDATE  user

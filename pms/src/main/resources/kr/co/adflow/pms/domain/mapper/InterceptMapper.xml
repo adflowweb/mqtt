@@ -19,6 +19,17 @@
 	AND b.role = #{role}
 	</select>
 	
+	<select id="selectCashedApplicationToken" parameterType="kr.co.adflow.pms.domain.AppKey" resultType="java.util.Date">
+	SELECT expired_time 
+	FROM pms.token a , pms.user b
+	WHERE a.user_id = b.user_id 
+	AND a.token_type = 'T' 
+	AND b.status = 0
+	AND a.token_id = #{applicationKey} 
+	AND b.role = #{role}
+	AND expired_time <![CDATA[>=]]>  now()
+	</select>
+	
 	<select id="selectCashedUserId" parameterType="String" resultType="String">
 	SELECT a.user_id 
 	FROM pms.token a
