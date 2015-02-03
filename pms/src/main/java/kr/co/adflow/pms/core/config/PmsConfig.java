@@ -27,6 +27,11 @@ public class PmsConfig {
 	public static final String USER_ROLE_INTERFACE = "inf";
 	public static final String USER_ROLE_SYSTEM = "sys";
 
+	public static final int USER_STATUS_NORMAL = 0;
+	public static final int USER_STATUS_ABNORMAL = -1;
+	public static final int USER_STATUS_BROCK = 2;
+
+	
 	public static final String TOKEN_TYPE_APPLICATION = "A";
 	public static final String TOKEN_TYPE_TOKEN = "T";
 

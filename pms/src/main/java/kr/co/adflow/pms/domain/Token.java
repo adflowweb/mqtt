@@ -8,6 +8,7 @@ public class Token {
 	private String tokenId;
 	private String tokenType;
 	private Date issueTime;
+	private String issueId;
 	private Date expiredTime;
 
 	public String getUserId() {
@@ -48,6 +49,14 @@ public class Token {
 
 	public void setExpiredTime(Date expiredTime) {
 		this.expiredTime = expiredTime;
+	}
+
+	public String getIssueId() {
+		return issueId;
+	}
+
+	public void setIssueId(String issueId) {
+		this.issueId = issueId;
 	}
 
 }

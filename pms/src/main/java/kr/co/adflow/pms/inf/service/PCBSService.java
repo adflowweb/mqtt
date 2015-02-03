@@ -4,6 +4,6 @@ import kr.co.adflow.pms.inf.request.UserReq;
 
 public interface PCBSService {
 
-	String addUser(UserReq userReq);
+	String addUser(UserReq userReq,String appKey);
 
 }

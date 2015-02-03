@@ -29,6 +29,8 @@ public class SystemInterceptor extends HandlerInterceptorAdapter {
 	
 	public boolean preHandle(HttpServletRequest request,
 			HttpServletResponse response, Object handler) throws Exception {
+		
+		logger.info("SystemInterceptor.preHandle");
 
 		String token = request.getHeader(PmsConfig.HEADER_APPLICATION_TOKEN);
 
@@ -56,6 +58,8 @@ public class SystemInterceptor extends HandlerInterceptorAdapter {
 		long diffTime = expiredTime.getTime() - System.currentTimeMillis();
 		
 		long checkTime = 1000 * 60 * 20;
+		
+		
 		
 		if (diffTime < checkTime) {
 			//3 만료시간 연장

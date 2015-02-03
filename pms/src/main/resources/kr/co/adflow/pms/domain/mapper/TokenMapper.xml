@@ -9,12 +9,18 @@
 		<result property="tokenId" column="token_id" />
 		<result property="tokenType" column="token_type" />
 		<result property="issueTime" column="issue_time" />
+		<result property="issueId" column="issue_id" />
 		<result property="expiredTime" column="expired_time" />
 	</resultMap>
 
 	<select id="selectToken" parameterType="String"
-		resultType="kr.co.adflow.pms.domain.User">
-		SELECT user_id, token_id, token_type, issue_time, expired_time
+		resultType="kr.co.adflow.pms.domain.Token">
+		SELECT user_id
+		, token_id
+		, token_type
+		, issue_time
+		, expired_time
+		, issue_id
 		FROM token a
 		WHERE 
 		a.token_id = #{tokenId}
@@ -27,16 +33,23 @@
 		,token_id
 		,token_type
 		,issue_time
+		,issue_id
 		,expired_time
 		)
 		values(
-		#{userId},
-		#{tokenId},
-		#{tokenType},
-		now(),
-		#{expiredTime}
+		#{userId}
+		,#{tokenId}
+		,#{tokenType}
+		,now()
+		,#{issueId}
+		,#{expiredTime}
 		)
 	</insert>
+	
+	<delete id="deleteUserToken" parameterType="String">
+		DELETE FROM pms.token
+		WHERE user_id = #{userId} 
+	</delete>
 
 	<delete id="deleteExpiredToken" parameterType="String">
 		DELETE FROM pms.token

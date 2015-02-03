@@ -29,7 +29,7 @@ public class PushMessageServiceImpl implements PushMessageService {
 
 		String[] msgIdArray = null;
 
-		String senderId = interceptMapper.selectCashedUserId(appKey);
+		String issueId = interceptMapper.selectCashedUserId(appKey);
 
 		Message msg = new Message();
 
@@ -37,8 +37,9 @@ public class PushMessageServiceImpl implements PushMessageService {
 		msg.setMsgType(PmsConfig.MESSAGE_HEADER_TYPE_DEFAULT);
 		msg.setExpiry(PmsConfig.MESSAGE_HEADER_EXPIRY_DEFAULT);
 		msg.setQos(PmsConfig.MESSAGE_HEADER_QOS_DEFAULT);
-		msg.setSenderId(senderId);
+		msg.setIssueId(issueId);
 		msg.setReservationTime(message.getReservationTime());
+		msg.setUpdateId(issueId);
 
 		msg.setServiceId(PmsConfig.MESSAGE_SERVICE_ID_DEFAULT);
 		msg.setAck(message.isAck());
@@ -53,6 +54,8 @@ public class PushMessageServiceImpl implements PushMessageService {
 			msg.setReceiver(receivers[i]);
 			msg.setMsgId(this.getMsgId());
 			msg.setStatus(PmsConfig.MESSAGE_STATUS_SENDING);
+			
+			
 			messageMapper.insertMessage(msg);
 			messageMapper.insertContent(msg);
 			msgIdArray[i] = msg.getMsgId();

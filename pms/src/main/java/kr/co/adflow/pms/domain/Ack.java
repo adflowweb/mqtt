@@ -9,6 +9,7 @@ public class Ack {
 	private String tokenId;
 	private Date ackTime;
 	private Date issueTime;
+	private String issueId;
 
 	public String getMsgId() {
 		return msgId;
@@ -48,6 +49,14 @@ public class Ack {
 
 	public void setIssueTime(Date issueTime) {
 		this.issueTime = issueTime;
+	}
+
+	public String getIssueId() {
+		return issueId;
+	}
+
+	public void setIssueId(String issueId) {
+		this.issueId = issueId;
 	}
 
 }

@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -34,11 +35,12 @@ public class PCBSController extends BaseController {
 	@RequestMapping(value = "/inf/service/users", method = RequestMethod.POST, consumes = PmsConfig.HEADER_CONTENT_TYPE, produces = PmsConfig.HEADER_CONTENT_TYPE)
 	@ResponseBody
 	public Response<Result<HashMap<String, String>>> addUser(
-			@RequestBody UserReq user) throws Exception {
+			@RequestBody UserReq user
+			,@RequestHeader(PmsConfig.HEADER_APPLICATION_KEY) String appKey) throws Exception {
 
 		logger.debug("addUser");
 
-		String userId = pcbsService.addUser(user);
+		String userId = pcbsService.addUser(user,appKey);
 
 		Result<HashMap<String, String>> result = new Result<HashMap<String, String>>();
 		result.setSuccess(true);

@@ -10,9 +10,11 @@ public class User {
 	private String userName;
 	private String ipFilters;
 	private int status;
-	private int msgCntLimitDay;
+	private int msgCntLimit;
 	private Date issueTime;
-	private Date updateTime;
+	private String issueId;
+	private String action;
+
 
 	public String getUserId() {
 		return userId;
@@ -54,14 +56,6 @@ public class User {
 		this.ipFilters = ipFilters;
 	}
 
-	public int getMsgCntLimitDay() {
-		return msgCntLimitDay;
-	}
-
-	public void setMsgCntLimitDay(int msgCntLimitDay) {
-		this.msgCntLimitDay = msgCntLimitDay;
-	}
-
 	public Date getIssueTime() {
 		return issueTime;
 	}
@@ -70,13 +64,6 @@ public class User {
 		this.issueTime = issueTime;
 	}
 
-	public Date getUpdateTime() {
-		return updateTime;
-	}
-
-	public void setUpdateTime(Date updateTime) {
-		this.updateTime = updateTime;
-	}
 
 	public int getStatus() {
 		return status;
@@ -84,6 +71,30 @@ public class User {
 
 	public void setStatus(int status) {
 		this.status = status;
+	}
+
+	public int getMsgCntLimit() {
+		return msgCntLimit;
+	}
+
+	public void setMsgCntLimit(int msgCntLimit) {
+		this.msgCntLimit = msgCntLimit;
+	}
+
+	public String getIssueId() {
+		return issueId;
+	}
+
+	public void setIssueId(String issueId) {
+		this.issueId = issueId;
+	}
+
+	public String getAction() {
+		return action;
+	}
+
+	public void setAction(String action) {
+		this.action = action;
 	}
 
 }

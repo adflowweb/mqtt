@@ -6,50 +6,15 @@
 
 	<resultMap id="UserResult" type="kr.co.adflow.pms.domain.User">
 		<result property="userId" column="user_id" />
-		<result property="role" column="role" />
 		<result property="password" column="password" />
 		<result property="userName" column="user_name" />
+		<result property="role" column="role" />
 		<result property="ipFilters" column="ip_filters" />
 		<result property="status" column="status" />
-		<result property="msgCntLimitDay" column="message_count_limit_day" />
+		<result property="msgCntLimit" column="message_count_limit" />
 		<result property="issueTime" column="issue_time" />
-		<result property="updateTime" column="update_time" />
+		<result property="issueId" column="issue_id" />
 	</resultMap>
-
-	<select id="select" parameterType="String"
-		resultType="kr.co.adflow.pms.domain.User">
-		SELECT user_id, role, password, user_name, ip_filters, status, 
-		message_count_limit_day, issue_time, update_time
-		FROM user a
-		WHERE 
-		a.user_id = #{userId}
-	</select>
-	
-	<select id="listAll" parameterType="String"
-		resultMap="UserResult">
-		SELECT user_id, role, password, user_name, ip_filters, status, 
-		message_count_limit_day, issue_time, update_time
-		FROM user
-	</select>
-	
-	<resultMap id="AuthResult" type="kr.co.adflow.pms.domain.User">
-		<result property="userId" column="user_id" />
-		<result property="role" column="role" />
-	</resultMap>
-	
-	<select id="selectAuth" parameterType="kr.co.adflow.pms.domain.User"
-		resultMap="AuthResult">
-		SELECT user_id, role
-		FROM user a
-		WHERE a.user_id = #{userId}
-		AND a.password = #{password}
-	</select>
-
-	<update id="updateUserStatus" parameterType="kr.co.adflow.pms.domain.User">
-		UPDATE  user
-		SET status = #{status}, update_time = now()
-		WHERE user_id = #{userId}
-	</update>
 
 	<insert id="insertUser" parameterType="kr.co.adflow.pms.domain.User">
 		INSERT INTO user
@@ -59,22 +24,119 @@
 		,user_name
 		,ip_filters
 		,status
-		,message_count_limit_day
+		,message_count_limit
 		,issue_time
-		,update_time
+		,issue_id
 		)
 		values(
-		#{userId},
-		#{role},
-		#{password},
-		#{userName},
-		#{ipFilters},
-		#{status},
-		#{msgCntLimitDay},
-		now(),
-		now()
+		#{userId}
+		,#{role}
+		,#{password}
+		,#{userName}
+		,#{ipFilters}
+		,#{status}
+		,#{msgCntLimit}
+		,now()
+		,#{issueId}
 		)
 	</insert>
 
+	<select id="select" parameterType="String" resultMap="UserResult">
+		SELECT
+		user_id
+		, role
+		, password
+		, user_name
+		, ip_filters
+		, status
+		,message_count_limit
+		, issue_time
+		, issue_id
+		FROM user a
+		WHERE
+		a.user_id = #{userId}
+	</select>
 
+	<select id="listAll" parameterType="String" resultMap="UserResult">
+		SELECT
+		user_id
+		, role
+		, password
+		, user_name
+		, ip_filters
+		, status
+		,message_count_limit
+		, issue_time
+		, issue_id
+		FROM user
+	</select>
+
+	<resultMap id="AuthResult" type="kr.co.adflow.pms.domain.User">
+		<result property="userId" column="user_id" />
+		<result property="role" column="role" />
+	</resultMap>
+
+	<select id="selectAuth" parameterType="kr.co.adflow.pms.domain.User"
+		resultMap="AuthResult">
+		SELECT user_id, role
+		FROM user a
+		WHERE a.user_id = #{userId}
+		AND a.password = #{password}
+	</select>
+
+	<update id="updateUserStatus" parameterType="kr.co.adflow.pms.domain.User">
+		UPDATE user
+		SET
+		status = #{status}
+		, issue_time = now()
+		, issue_id = #{issueId}
+		WHERE
+		user_id = #{userId}
+	</update>
+
+	<update id="updateUser" parameterType="kr.co.adflow.pms.domain.User">
+		UPDATE user
+		SET role =
+		#{role}
+		,user_name = #{userName}
+		,ip_filters = #{ipFilters}
+		,status =
+		#{status}
+		,message_count_limit = #{msgCntLimit}
+		,issue_time = now()
+		,issue_id = #{issueId}
+		WHERE user_id = #{userId}
+	</update>
+
+	<delete id="deleteUser" parameterType="String">
+		DELETE FROM user
+		WHERE user_id = #{userId}
+	</delete>
+
+	<insert id="logUserHistory" parameterType="kr.co.adflow.pms.domain.User">
+		INSERT INTO user_h
+		(user_id
+		,role
+		,password
+		,user_name
+		,ip_filters
+		,status
+		,message_count_limit
+		,issue_time
+		,issue_id
+		,action
+		)
+		values(
+		#{userId}
+		,#{role}
+		,#{password}
+		,#{userName}
+		,#{ipFilters}
+		,#{status}
+		,#{msgCntLimit}
+		,now()
+		,#{issueId}
+		,#{action}
+		)
+	</insert>
 </mapper>	

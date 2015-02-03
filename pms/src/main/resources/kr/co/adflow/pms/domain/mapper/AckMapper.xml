@@ -8,8 +8,9 @@
 		<result property="msgId" column="user_id" />
 		<result property="ackType" column="token_id" />
 		<result property="tokenId" column="token_type" />
-		<result property="ackTime" column="issue_time" />
-		<result property="issueTime" column="expired_time" />
+		<result property="ackTime" column="ack_time" />
+		<result property="issueTime" column="issue_time" />
+		<result property="issueId" column="issue_id" />
 	</resultMap>
 
 
@@ -20,13 +21,15 @@
 		,token_id
 		,ack_time
 		,issue_time
+		,issue_id
 		)
 		values(
 		#{msgId},
 		#{ackType},
 		#{tokenId},
 		#{ackTime},
-		now()
+		now(),
+		#{issueId}
 		)
 	</insert>
 

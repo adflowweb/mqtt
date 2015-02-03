@@ -11,5 +11,7 @@ public interface TokenMapper {
 	int deleteExpiredToken(String userId);
 	
 	int updateTokenExpiredTime(Token token);
+	
+	int deleteUserToken(String userId);
 
 }

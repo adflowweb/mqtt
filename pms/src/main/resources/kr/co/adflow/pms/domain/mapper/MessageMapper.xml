@@ -5,30 +5,46 @@
 <mapper namespace="kr.co.adflow.pms.domain.mapper.MessageMapper">
 
 	<resultMap id="MessageResult" type="kr.co.adflow.pms.domain.Message">
-		<result property="serverId" column="server_id" />
 		<result property="msgId" column="msg_id" />
 		<result property="msgType" column="msg_type" />
-		<result property="senderId" column="sender_id" />
 		<result property="receiver" column="receiver" />
-		<result property="reservationTime" column="reservation_time" />
-		<result property="ack" column="ack" />
-		<result property="status" column="status" />
 		<result property="serviceId" column="service_id" />
-		<result property="qos" column="qos" />
+		<result property="ack" column="is_ack" />
+		<result property="status" column="status" />
+		<result property="reservation" column="is_reservation" />
+		<result property="reservationTime" column="reservation_time" />
+		<result property="serverId" column="server_id" />
 		<result property="expiry" column="expiry" />
+		<result property="qos" column="qos" />
 		<result property="retained" column="retained" />
 		<result property="contentType" column="content_type" />
 		<result property="content" column="content" />
 		<result property="issueTime" column="issue_time" />
+		<result property="issueId" column="issue_id" />
 		<result property="updateTime" column="update_time" />
+		<result property="updateId" column="update_id" />
 	</resultMap>
 
 	<select id="select" parameterType="String"
 		resultType="kr.co.adflow.pms.domain.Message">
-		SELECT a.msg_id, a.msg_type, a.sender_id, a.receiver,
-		a.status, a.service_id,  a.qos, a.expiry, a.retained, a.ack,
-		a.reservation_time, a.issue_time, a.update_time,
-		b.content_type, b.content
+		SELECT a.msg_id
+		, a.msg_type
+		, a.receiver
+		, a.service_id
+		, a.is_ack
+		, a.status
+		, a.is_reservation
+		, a.reservation_time
+		, a.server_id
+		, a.expiry
+		, a.qos
+		, a.retained
+		, a.issue_time
+		, a.issue_id
+		, a.update_time
+		, a.update_id
+		, b.content_type
+		, b.content
 		FROM message a, content b
 		WHERE a.msg_id = b.msg_id
 		and
@@ -37,10 +53,24 @@
 
 	<select id="selectList" parameterType="Map"
 		resultMap="MessageResult">
-		SELECT a.msg_id, a.msg_type, a.sender_id, a.receiver,
-		a.status, a.service_id,  a.qos, a.expiry, a.retained, a.ack,
-		a.reservation_time, a.issue_time, a.update_time,
-		b.content_type, b.content
+		SELECT a.msg_id
+		, a.msg_type
+		, a.receiver
+		, a.service_id
+		, a.is_ack
+		, a.status
+		, a.is_reservation
+		, a.reservation_time
+		, a.server_id
+		, a.expiry
+		, a.qos
+		, a.retained
+		, a.issue_time
+		, a.issue_id
+		, a.update_time
+		, a.update_id
+		, b.content_type
+		, b.content
 		FROM message a, content b
 		WHERE a.msg_id = b.msg_id
 		AND a.status = 0
@@ -51,55 +81,59 @@
 
 
 	<update id="updateStatus" parameterType="kr.co.adflow.pms.domain.Message">
-		UPDATE  message
-		SET status = #{status}, update_time = #{updateTime}
+		UPDATE  pms.message
+		SET status = #{status}, update_time = #{updateTime},update_id = #{updateId}
 		WHERE msg_id = #{msgId}
 	</update>
 
 	<insert id="insertMessage" parameterType="kr.co.adflow.pms.domain.Message">
-		INSERT INTO message
+		INSERT INTO pms.message
 		(msg_id
 		,msg_type
-		,sender_id
 		,receiver
-		,status
 		,service_id
-		,qos
-		,expiry
-		,ack
-		,retained
+		,is_ack
+		,status
+		,is_reservation
 		,reservation_time
-		,issue_time
-		,update_time
 		,server_id
+		,expiry
+		,qos
+		,retained
+		,issue_time
+		,issue_id
+		,update_time
+		,update_id
 		)
 		values(
-		#{msgId},
-		#{msgType},
-		#{senderId},
-		#{receiver},
-		#{status},
-		#{serviceId},
-		#{qos},
-		#{expiry},
-		#{ack},
-		#{retained},
-		#{reservationTime},
-		now(),
-		now(),
-		#{serverId}
+		#{msgId}
+		,#{msgType}
+		,#{receiver}
+		,#{serviceId}
+		,#{ack}
+		,#{status}
+		,#{reservation}
+		,#{reservationTime}
+		,#{serverId}
+	    ,#{expiry}
+		,#{qos}
+		,#{retained}
+		,now()
+		,#{issueId}
+		,now()
+		,#{updateId}
 		)
 	</insert>
 	<insert id="insertContent" parameterType="kr.co.adflow.pms.domain.Message">
-		INSERT INTO content
+		INSERT INTO pms.content
 		(msg_id
 		,content_type
 		,content
 		)
 		values(
-		#{msgId},
-		#{contentType},
-		#{content}
+		 #{msgId}
+		,#{contentType}
+		,#{content}
 		)
 	</insert>
 

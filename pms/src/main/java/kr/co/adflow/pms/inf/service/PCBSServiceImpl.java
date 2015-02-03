@@ -4,6 +4,7 @@ import kr.co.adflow.pms.core.config.PmsConfig;
 import kr.co.adflow.pms.core.util.KeyGenerator;
 import kr.co.adflow.pms.domain.Token;
 import kr.co.adflow.pms.domain.User;
+import kr.co.adflow.pms.domain.mapper.InterceptMapper;
 import kr.co.adflow.pms.domain.mapper.TokenMapper;
 import kr.co.adflow.pms.domain.mapper.UserMapper;
 import kr.co.adflow.pms.inf.request.UserReq;
@@ -18,22 +19,31 @@ public class PCBSServiceImpl implements PCBSService {
 	private UserMapper userMapper;
 	@Autowired
 	private TokenMapper tokenMapper;
+	@Autowired
+	private InterceptMapper interceptMapper;
 
 	@Override
-	public String addUser(UserReq userReq) {
+	public String addUser(UserReq userReq,String appKey) {
+		
+		String issueId = interceptMapper.selectCashedUserId(appKey);
 
 		User user = new User();
 		user.setUserId(userReq.getUserId());
 		user.setPassword(this.getPassword(userReq));
 		user.setRole(PmsConfig.USER_ROLE_SERVICE);
 		user.setIpFilters(PmsConfig.INTERCEPTER_IP_FILTER);
-		user.setMsgCntLimitDay(userReq.getMsgCntLimitDay());
+		user.setMsgCntLimit(userReq.getMsgCntLimit());
 		user.setStatus(-1);
+		user.setIssueId(issueId);
+		
 		Token token = new Token();
 		token.setUserId(userReq.getUserId());
-		token.setTokenType(PmsConfig.HEADER_APPLICATION_KEY);
+		token.setTokenType(PmsConfig.TOKEN_TYPE_APPLICATION);
 		token.setTokenId(this.getTokenId(userReq));
+		token.setIssueId(issueId);
 
+		user.setAction("addUser");
+		userMapper.logUserHistory(user);
 		userMapper.insertUser(user);
 		tokenMapper.insertToken(token);
 		user.setStatus(0);

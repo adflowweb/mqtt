@@ -4,7 +4,7 @@ public class UserReq {
 
 	private String userId;
 	private String password;
-	private int msgCntLimitDay;
+	private int msgCntLimit;
 
 	public String getUserId() {
 		return userId;
@@ -22,12 +22,12 @@ public class UserReq {
 		this.password = password;
 	}
 
-	public int getMsgCntLimitDay() {
-		return msgCntLimitDay;
+	public int getMsgCntLimit() {
+		return msgCntLimit;
 	}
 
-	public void setMsgCntLimitDay(int msgCntLimitDay) {
-		this.msgCntLimitDay = msgCntLimitDay;
+	public void setMsgCntLimit(int msgCntLimit) {
+		this.msgCntLimit = msgCntLimit;
 	}
 
 }

@@ -70,7 +70,7 @@ public class KeyGenerator {
 		result = generateHash(str2);
 		
 		//TODO pw 로직 변경
-		//result = generateHash(str1 + "#" + result);
+		result = generateHash(str1 + "#" + result);
 		
 		return result;
 	}
@@ -95,5 +95,7 @@ public class KeyGenerator {
 
 		return sb.toString();
 	}
+	
+	
 
 }

@@ -63,7 +63,7 @@ public class DirectMsgHandler implements ProducerCallback<Object> {
 
 			msgObject.put("type", msg.getMsgType());
 			msgObject.put("id", msg.getMsgId());
-			msgObject.put("sender", msg.getSenderId());
+			msgObject.put("sender", msg.getIssueId());
 			msgObject.put("receiver", msg.getReceiver());
 			msgObject.put("ack", msg.isAck());
 			msgObject.put("contentType", msg.getContentType());
