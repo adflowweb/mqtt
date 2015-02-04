@@ -1,6 +1,7 @@
 package kr.co.adflow.pms.domain.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import kr.co.adflow.pms.domain.User;
 
@@ -21,5 +22,11 @@ public interface UserMapper {
 	List<User> listAll();
 	
 	int logUserHistory(User user);
+	
+	int getMsgCntLimit(String userId);
+	
+	int updateMsgCntLimit(User user);
+	
+	int discountMsgCntLimit(User user);
 
 }

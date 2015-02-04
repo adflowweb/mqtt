@@ -4,6 +4,7 @@ import java.util.Date;
 
 public class Ack {
 
+	private String keyMon;
 	private String msgId;
 	private String ackType;
 	private String tokenId;
@@ -57,6 +58,14 @@ public class Ack {
 
 	public void setIssueId(String issueId) {
 		this.issueId = issueId;
+	}
+
+	public String getKeyMon() {
+		return keyMon;
+	}
+
+	public void setKeyMon(String keyMon) {
+		this.keyMon = keyMon;
 	}
 
 }

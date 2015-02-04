@@ -4,14 +4,19 @@ import java.util.Date;
 
 public class Message {
 
+	private String keyMon;
 	private String msgId;
 	private int msgType;
 	private String receiver;
+	private String receiverTopic;
 	private String serviceId;
 	private boolean ack;
 	private int status;
 	private boolean reservation;
 	private Date reservationTime;
+	private int resendCount;
+	private int resendInterval;
+	private String resendId;
 	private String serverId;
 	private long expiry;
 	private int qos;
@@ -130,6 +135,36 @@ public class Message {
 	}
 	public void setContent(String content) {
 		this.content = content;
+	}
+	public String getKeyMon() {
+		return keyMon;
+	}
+	public void setKeyMon(String keyMon) {
+		this.keyMon = keyMon;
+	}
+	public int getResendCount() {
+		return resendCount;
+	}
+	public void setResendCount(int resendCount) {
+		this.resendCount = resendCount;
+	}
+	public int getResendInterval() {
+		return resendInterval;
+	}
+	public void setResendInterval(int resendInterval) {
+		this.resendInterval = resendInterval;
+	}
+	public String getReceiverTopic() {
+		return receiverTopic;
+	}
+	public void setReceiverTopic(String receiverTopic) {
+		this.receiverTopic = receiverTopic;
+	}
+	public String getResendId() {
+		return resendId;
+	}
+	public void setResendId(String resendId) {
+		this.resendId = resendId;
 	}
 
 

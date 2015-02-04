@@ -8,11 +8,15 @@
 		<result property="msgId" column="msg_id" />
 		<result property="msgType" column="msg_type" />
 		<result property="receiver" column="receiver" />
+		<result property="receiverTopic" column="receiver_topic" />
 		<result property="serviceId" column="service_id" />
 		<result property="ack" column="is_ack" />
 		<result property="status" column="status" />
 		<result property="reservation" column="is_reservation" />
 		<result property="reservationTime" column="reservation_time" />
+		<result property="resendCount" column="resend_count" />
+		<result property="resendInterval" column="resend_interval" />
+		<result property="resendId" column="resend_id" />		
 		<result property="serverId" column="server_id" />
 		<result property="expiry" column="expiry" />
 		<result property="qos" column="qos" />
@@ -30,11 +34,15 @@
 		SELECT a.msg_id
 		, a.msg_type
 		, a.receiver
+		, a.receiver_topic
 		, a.service_id
 		, a.is_ack
 		, a.status
 		, a.is_reservation
 		, a.reservation_time
+		, a.resend_count
+		, a.resend_interval
+		, a.resend_id
 		, a.server_id
 		, a.expiry
 		, a.qos
@@ -45,7 +53,7 @@
 		, a.update_id
 		, b.content_type
 		, b.content
-		FROM message a, content b
+		FROM pms.message${keyMon} a, pms.content${keyMon} b
 		WHERE a.msg_id = b.msg_id
 		and
 		a.msg_id = #{msgId}
@@ -56,11 +64,15 @@
 		SELECT a.msg_id
 		, a.msg_type
 		, a.receiver
+		, a.receiver_topic
 		, a.service_id
 		, a.is_ack
 		, a.status
 		, a.is_reservation
 		, a.reservation_time
+		, a.resend_count
+		, a.resend_interval
+		, a.resend_id
 		, a.server_id
 		, a.expiry
 		, a.qos
@@ -71,31 +83,73 @@
 		, a.update_id
 		, b.content_type
 		, b.content
-		FROM message a, content b
+		FROM pms.message${keyMon} a, pms.content${keyMon} b
 		WHERE a.msg_id = b.msg_id
 		AND a.status = 0
+		AND a.is_reservation IS FALSE
 		AND a.server_id = #{serverId}
 		ORDER BY issue_time ASC
+		limit #{limit}
+	</select>
+	
+	<select id="selectReservationList" parameterType="Map"
+		resultMap="MessageResult">
+		SELECT a.msg_id
+		, a.msg_type
+		, a.receiver
+		, a.receiver_topic
+		, a.service_id
+		, a.is_ack
+		, a.status
+		, a.is_reservation
+		, a.reservation_time
+		, a.resend_count
+		, a.resend_interval
+		, a.resend_id
+		, a.server_id
+		, a.expiry
+		, a.qos
+		, a.retained
+		, a.issue_time
+		, a.issue_id
+		, a.update_time
+		, a.update_id
+		, b.content_type
+		, b.content
+		FROM pms.message${keyMon} a, pms.content${keyMon} b
+		WHERE a.msg_id = b.msg_id
+		AND a.status = 0
+		AND a.is_reservation IS TRUE
+		AND a.server_id = #{serverId}
+		AND a.reservation_time <![CDATA[<]]> DATE_ADD(NOW(), INTERVAL 1 MINUTE)
+		ORDER BY a.reservation_time ASC, a.issue_time ASC
 		limit #{limit}
 	</select>
 
 
 	<update id="updateStatus" parameterType="kr.co.adflow.pms.domain.Message">
-		UPDATE  pms.message
-		SET status = #{status}, update_time = #{updateTime},update_id = #{updateId}
+		UPDATE  pms.message${keyMon}
+		SET status = #{status}
+		,receiver_topic = #{receiverTopic}
+		,update_time = now()
+		,update_id = #{updateId}
 		WHERE msg_id = #{msgId}
 	</update>
 
 	<insert id="insertMessage" parameterType="kr.co.adflow.pms.domain.Message">
-		INSERT INTO pms.message
+		INSERT INTO pms.message${keyMon}
 		(msg_id
 		,msg_type
 		,receiver
+		,receiver_topic
 		,service_id
 		,is_ack
 		,status
 		,is_reservation
 		,reservation_time
+		,resend_count
+		,resend_interval
+		,resend_id
 		,server_id
 		,expiry
 		,qos
@@ -109,11 +163,15 @@
 		#{msgId}
 		,#{msgType}
 		,#{receiver}
+		,#{receiverTopic}
 		,#{serviceId}
 		,#{ack}
 		,#{status}
 		,#{reservation}
 		,#{reservationTime}
+		,#{resendCount}
+		,#{resendInterval}
+		,#{resendId}
 		,#{serverId}
 	    ,#{expiry}
 		,#{qos}
@@ -125,7 +183,7 @@
 		)
 	</insert>
 	<insert id="insertContent" parameterType="kr.co.adflow.pms.domain.Message">
-		INSERT INTO pms.content
+		INSERT INTO pms.content${keyMon}
 		(msg_id
 		,content_type
 		,content

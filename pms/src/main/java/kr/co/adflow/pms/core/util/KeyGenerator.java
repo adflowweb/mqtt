@@ -25,21 +25,10 @@ public class KeyGenerator {
 	public static String generateMsgId() {
 		String id = KeyGenerator.generate();
 
-		return KeyGenerator.getYYYYMM() + id;
+		return DateUtil.getYYYYMM() + id;
 	}
 
-	public static String getYYYYMM() {
 
-		return KeyGenerator.getDate(new Date(), "YYYYMM");
-	}
-
-	private static String getDate(Date date, String pattern) {
-
-		SimpleDateFormat fmt = new SimpleDateFormat(pattern);
-
-		return fmt.format(date);
-
-	}
 
 	public static String generateToken(String str) {
 

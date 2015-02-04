@@ -21,14 +21,14 @@
 		, issue_time
 		, expired_time
 		, issue_id
-		FROM token a
+		FROM pms.token a
 		WHERE 
 		a.token_id = #{tokenId}
 	</select>
 
 
 	<insert id="insertToken" parameterType="kr.co.adflow.pms.domain.Token">
-		INSERT INTO token
+		INSERT INTO pms.token
 		(user_id
 		,token_id
 		,token_type

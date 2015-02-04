@@ -44,7 +44,8 @@ public class AckMessageDrivenBean implements MessageListener {
 
 		String text = new String(body);
 		JSONObject msgObject = new JSONObject(text);
-
+		
+		ack.setKeyMon(this.getKeyMon(msgObject.getString("msgID")));
 		ack.setMsgId(msgObject.getString("msgID"));
 		ack.setAckType(msgObject.getString("ackType"));
 		ack.setTokenId(msgObject.getString("token"));
@@ -52,6 +53,12 @@ public class AckMessageDrivenBean implements MessageListener {
 
 		return ack;
 
+	}
+
+	private String getKeyMon(String string) {
+		String result = string.substring(0, 6);
+		logger.debug("getKeyMon is {}",result);
+		return result;
 	}
 
 }

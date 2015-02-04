@@ -17,7 +17,7 @@
 	</resultMap>
 
 	<insert id="insertUser" parameterType="kr.co.adflow.pms.domain.User">
-		INSERT INTO user
+		INSERT INTO pms.user
 		(user_id
 		,role
 		,password
@@ -52,7 +52,7 @@
 		,message_count_limit
 		, issue_time
 		, issue_id
-		FROM user a
+		FROM pms.user a
 		WHERE
 		a.user_id = #{userId}
 	</select>
@@ -68,7 +68,7 @@
 		,message_count_limit
 		, issue_time
 		, issue_id
-		FROM user
+		FROM pms.user
 	</select>
 
 	<resultMap id="AuthResult" type="kr.co.adflow.pms.domain.User">
@@ -79,13 +79,13 @@
 	<select id="selectAuth" parameterType="kr.co.adflow.pms.domain.User"
 		resultMap="AuthResult">
 		SELECT user_id, role
-		FROM user a
+		FROM pms.user a
 		WHERE a.user_id = #{userId}
 		AND a.password = #{password}
 	</select>
 
 	<update id="updateUserStatus" parameterType="kr.co.adflow.pms.domain.User">
-		UPDATE user
+		UPDATE pms.user
 		SET
 		status = #{status}
 		, issue_time = now()
@@ -95,7 +95,7 @@
 	</update>
 
 	<update id="updateUser" parameterType="kr.co.adflow.pms.domain.User">
-		UPDATE user
+		UPDATE pms.user
 		SET role =
 		#{role}
 		,user_name = #{userName}
@@ -109,12 +109,12 @@
 	</update>
 
 	<delete id="deleteUser" parameterType="String">
-		DELETE FROM user
+		DELETE FROM pms.user
 		WHERE user_id = #{userId}
 	</delete>
 
 	<insert id="logUserHistory" parameterType="kr.co.adflow.pms.domain.User">
-		INSERT INTO user_h
+		INSERT INTO pms.user_h
 		(user_id
 		,role
 		,password
@@ -139,4 +139,27 @@
 		,#{action}
 		)
 	</insert>
+	
+	<select id="getMsgCntLimit" parameterType="String" resultType="int">
+		SELECT a.message_count_limit
+		FROM pms.user a
+		WHERE
+		a.user_id = #{userId}
+	</select>
+	
+	<update id="updateMsgCntLimit" parameterType="kr.co.adflow.pms.domain.User">
+		UPDATE pms.user
+		SET message_count_limit = #{msgCntLimit}
+		,issue_time = now()
+		,issue_id = #{issueId}
+		WHERE user_id = #{userId}
+	</update>
+	
+	<update id="discountMsgCntLimit" parameterType="kr.co.adflow.pms.domain.User">
+		UPDATE pms.user
+		SET message_count_limit = message_count_limit <![CDATA[-]]> #{msgCntLimit}
+		,issue_time = now()
+		,issue_id = #{userId}
+		WHERE user_id = #{userId}
+	</update>
 </mapper>	

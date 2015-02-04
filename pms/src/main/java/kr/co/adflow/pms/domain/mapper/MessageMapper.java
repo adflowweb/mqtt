@@ -16,5 +16,7 @@ public interface MessageMapper {
 	List<Message> selectList(Map<String, Object> param);
 
 	int updateStatus(Message msg);
+	
+	List<Message> selectReservationList(Map<String, Object> param);
 
 }

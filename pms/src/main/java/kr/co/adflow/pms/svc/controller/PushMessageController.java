@@ -36,6 +36,14 @@ public class PushMessageController extends BaseController {
 		if (msg.getReceivers() == null || msg.getReceivers().length == 0) {
 			//
 			throw new RuntimeException("getReceivers is null");
+		} else {
+			String[] receivers = msg.getReceivers();
+			for (int i = 0; i < receivers.length; i++) {
+				if (!isValid(receivers[i])) {
+					throw new RuntimeException("getReceivers not valid" + receivers[i]);
+				}
+			}
+			
 		}
 
 		String[] msgIdArray = pushMessageService.sendMessage(appKey, msg);
@@ -48,6 +56,23 @@ public class PushMessageController extends BaseController {
 		Response<Result<String[]>> res = new Response(result);
 		return res;
 
+	}
+	
+	private boolean isValid(String receiver) {
+		//1. 01012341234
+		//2. 082*1234*1234
+		//3. 00*1234*1234
+		
+		String str = receiver.trim();
+		
+		if (11 > str.length() || str.length() > 13) {
+			return false;
+		}
+		
+		// 1. 010 일때는 모두 숫자
+		// 2. 아닐 때는 * 2개
+		
+		return true;
 	}
 
 }

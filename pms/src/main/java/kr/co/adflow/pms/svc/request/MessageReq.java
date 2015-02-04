@@ -8,6 +8,8 @@ public class MessageReq {
 	private String contentType;
 	private String content;
 	private Date reservationTime;
+	private int resendCount;
+	private int resendInterval;
 	private boolean ack;
 
 	public String getContentType() {
@@ -48,6 +50,22 @@ public class MessageReq {
 
 	public void setReceivers(String[] receivers) {
 		this.receivers = receivers;
+	}
+
+	public int getResendCount() {
+		return resendCount;
+	}
+
+	public void setResendCount(int resendCount) {
+		this.resendCount = resendCount;
+	}
+
+	public int getResendInterval() {
+		return resendInterval;
+	}
+
+	public void setResendInterval(int resendInterval) {
+		this.resendInterval = resendInterval;
 	}
 
 }
