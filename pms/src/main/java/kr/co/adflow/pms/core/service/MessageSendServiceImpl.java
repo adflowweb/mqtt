@@ -123,7 +123,8 @@ public class MessageSendServiceImpl implements MessageSendService {
 		// 1. 01012341234
 		// 2. 82*1234*1234
 		// 3. 00*1234*1234
-		return "mms/"+ receiver;
+		//return "mms/"+ receiver;
+		return receiver;
 	}
 
 	@Override

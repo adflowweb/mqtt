@@ -63,11 +63,11 @@ public class PushMessageController extends BaseController {
 		//2. 082*1234*1234
 		//3. 00*1234*1234
 		
-		String str = receiver.trim();
-		
-		if (11 > str.length() || str.length() > 13) {
-			return false;
-		}
+//		String str = receiver.trim();
+//		
+//		if (11 > str.length() || str.length() > 13) {
+//			return false;
+//		}
 		
 		// 1. 010 일때는 모두 숫자
 		// 2. 아닐 때는 * 2개
