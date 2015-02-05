@@ -22,7 +22,11 @@
     <interceptor>
         <mapping path="/adm/sys/**" />
         <beans:bean class="kr.co.adflow.pms.adm.filter.SystemInterceptor"/> 
-    </interceptor>    
+    </interceptor>  
+    <interceptor>
+        <mapping path="/adm/svc/**" />
+        <beans:bean class="kr.co.adflow.pms.adm.filter.SvcInterceptor"/> 
+    </interceptor>        
 </interceptors>
 
 

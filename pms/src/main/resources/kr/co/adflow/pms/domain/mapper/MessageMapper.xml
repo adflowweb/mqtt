@@ -125,6 +125,42 @@
 		ORDER BY a.reservation_time ASC, a.issue_time ASC
 		limit #{limit}
 	</select>
+	
+	<select id="getSvcMessageListCnt" parameterType="kr.co.adflow.pms.domain.MsgParams"
+		resultType="Integer">
+		SELECT COUNT(*)
+		FROM pms.message${keyMon}
+		WHERE  issue_id = #{issueId}
+		ORDER BY issue_time DESC,update_time DESC
+	</select>
+	
+	<select id="getSvcMessageList" parameterType="kr.co.adflow.pms.domain.MsgParams"
+		resultMap="MessageResult">
+		SELECT a.msg_id
+		, a.msg_type
+		, a.receiver
+		, a.receiver_topic
+		, a.service_id
+		, a.is_ack
+		, a.status
+		, a.is_reservation
+		, a.reservation_time
+		, a.resend_count
+		, a.resend_interval
+		, a.resend_id
+		, a.server_id
+		, a.expiry
+		, a.qos
+		, a.retained
+		, a.issue_time
+		, a.issue_id
+		, a.update_time
+		, a.update_id
+		FROM pms.message${keyMon} a
+		WHERE a.issue_id = #{issueId}
+		ORDER BY issue_time DESC,update_time DESC
+		limit #{iDisplayStart} , #{iDisplayLength}
+	</select>
 
 
 	<update id="updateStatus" parameterType="kr.co.adflow.pms.domain.Message">

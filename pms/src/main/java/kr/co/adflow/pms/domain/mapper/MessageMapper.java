@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import kr.co.adflow.pms.domain.Message;
+import kr.co.adflow.pms.domain.MsgParams;
 
 public interface MessageMapper {
 
@@ -13,10 +14,14 @@ public interface MessageMapper {
 
 	Message select(String msgId);
 
-	List<Message> selectList(Map<String, Object> param);
+	List<Message> selectList(Map<String, Object> params);
 
 	int updateStatus(Message msg);
 	
-	List<Message> selectReservationList(Map<String, Object> param);
+	List<Message> selectReservationList(Map<String, Object> params);
+	
+	List<Message> getSvcMessageList(MsgParams params);
+	
+	int getSvcMessageListCnt(MsgParams params);
 
 }
