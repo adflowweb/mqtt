@@ -22,7 +22,9 @@ public class PmsConfig {
 	public static final int MESSAGE_STATUS_ABNORMAL = -1;
 	public static final int MESSAGE_STATUS_SENDING = 0;
 	public static final int MESSAGE_STATUS_SEND = 1;
+	public static final int MESSAGE_STATUS_RESEVATION_CANCEL = 2;
 	
+	public static final String USER_ROLE_SERVICE_ADMIN = "svcadm";
 	public static final String USER_ROLE_SERVICE = "svc";
 	public static final String USER_ROLE_INTERFACE = "inf";
 	public static final String USER_ROLE_SYSTEM = "sys";

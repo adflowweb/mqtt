@@ -2,12 +2,10 @@ package kr.co.adflow.pms.adm.request;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-public class UserReq {
+public class UserUpdateReq {
 	
 	@NotEmpty
 	private String userId;
-	@NotEmpty
-	private String password;
 	@NotEmpty
 	private int msgCntLimit;
 	@NotEmpty
@@ -20,12 +18,6 @@ public class UserReq {
 	}
 	public void setUserId(String userId) {
 		this.userId = userId;
-	}
-	public String getPassword() {
-		return password;
-	}
-	public void setPassword(String password) {
-		this.password = password;
 	}
 	public int getMsgCntLimit() {
 		return msgCntLimit;

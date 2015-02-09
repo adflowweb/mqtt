@@ -7,15 +7,19 @@ import kr.co.adflow.pms.core.controller.BaseController;
 import kr.co.adflow.pms.response.Response;
 import kr.co.adflow.pms.response.Result;
 
+import javax.validation.Valid;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
+//
 @Controller
 public class CommonController extends BaseController {
 
@@ -27,8 +31,7 @@ public class CommonController extends BaseController {
 
 	@RequestMapping(value = "/adm/cmm/auth", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
-	public Response<Result<AuthRes>> authUser(@RequestBody AuthReq auth)
-			throws Exception {
+	public Response<Result<AuthRes>> authUser(@RequestBody @Valid AuthReq auth) {
 
 		AuthRes authRes = commonService.authUser(auth);
 

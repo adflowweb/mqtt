@@ -1,9 +1,14 @@
 package kr.co.adflow.pms.inf.request;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 public class UserReq {
 
+	@NotEmpty
 	private String userId;
+	@NotEmpty
 	private String password;
+	@NotEmpty
 	private int msgCntLimit;
 
 	public String getUserId() {

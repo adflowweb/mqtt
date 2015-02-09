@@ -1,8 +1,11 @@
 package kr.co.adflow.pms.adm.service;
 
 import java.util.List;
+import java.util.Map;
 
 import kr.co.adflow.pms.adm.request.UserReq;
+import kr.co.adflow.pms.adm.request.UserUpdateReq;
+import kr.co.adflow.pms.adm.response.MessagesRes;
 import kr.co.adflow.pms.domain.User;
 
 public interface SystemService {
@@ -13,8 +16,12 @@ public interface SystemService {
 	
 	public User retrieveUser(String userId);
 	
-	public int updateUser(UserReq userReq,String appKey);
+	public int updateUser(UserUpdateReq userReq,String appKey);
 	
 	public int deleteUser(String userId,String appKey);
+	
+	public MessagesRes getSysMessageList(Map<String,String> params);
+	
+	public MessagesRes getSysResevationMessageList(Map<String,String> params);
 
 }

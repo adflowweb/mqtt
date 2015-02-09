@@ -4,6 +4,7 @@
 	xmlns:beans="http://www.springframework.org/schema/beans"
 	xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:c="http://www.springframework.org/schema/c"
 	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
 		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.1.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
@@ -12,13 +13,17 @@
 	<!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
 	
 	<!-- Enables the Spring MVC @Controller programming model -->
-	<annotation-driven />
-	
+	<annotation-driven validator="validator" />
+
 <interceptors>
     <interceptor>
         <mapping path="/svc/*" />
         <beans:bean class="kr.co.adflow.pms.svc.filter.SeviceInterceptor"/> 
     </interceptor>
+    <interceptor>
+        <mapping path="/adm/cmm/**" />
+        <beans:bean class="kr.co.adflow.pms.adm.filter.CommonInterceptor"/> 
+    </interceptor>     
     <interceptor>
         <mapping path="/adm/sys/**" />
         <beans:bean class="kr.co.adflow.pms.adm.filter.SystemInterceptor"/> 
@@ -26,7 +31,11 @@
     <interceptor>
         <mapping path="/adm/svc/**" />
         <beans:bean class="kr.co.adflow.pms.adm.filter.SvcInterceptor"/> 
-    </interceptor>        
+    </interceptor>   
+    <interceptor>
+        <mapping path="/adm/svcadm/**" />
+        <beans:bean class="kr.co.adflow.pms.adm.filter.SvcAdmInterceptor"/> 
+    </interceptor>           
 </interceptors>
 
 
@@ -43,7 +52,6 @@
 	<task:annotation-driven executor="myExecutor" scheduler="myScheduler"/>
 	<task:executor id="myExecutor" pool-size="5"/>
 	<task:scheduler id="myScheduler" pool-size="5"/>
-	
 
-	
+
 </beans:beans>

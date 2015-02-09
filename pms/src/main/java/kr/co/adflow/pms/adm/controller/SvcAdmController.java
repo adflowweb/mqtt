@@ -27,11 +27,11 @@ import kr.co.adflow.pms.response.Response;
 import kr.co.adflow.pms.response.Result;
 
 @Controller
-@RequestMapping(value = "/adm/svc")
-public class SvcController extends BaseController {
+@RequestMapping(value = "/adm/svcadm")
+public class SvcAdmController extends BaseController {
 	
 	private static final Logger logger = LoggerFactory
-			.getLogger(SvcController.class);
+			.getLogger(SvcAdmController.class);
 	
 	@Autowired
 	private SvcService svcService;

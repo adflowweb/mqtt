@@ -2,6 +2,9 @@ package kr.co.adflow.pms.domain;
 
 import java.util.Date;
 
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class User {
 
 	private String userId;

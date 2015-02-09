@@ -43,7 +43,7 @@ public class MessageSendExecutor {
 
 	}
 	
-	@Scheduled(cron="0 * * * * *")
+	@Scheduled(cron="0 0 12 * * *")
 	public void createTable() {
 		
 		String name = DateUtil.getYYYYMM(0);

@@ -45,7 +45,6 @@
 		SELECT
 		user_id
 		, role
-		, password
 		, user_name
 		, ip_filters
 		, status
@@ -61,7 +60,6 @@
 		SELECT
 		user_id
 		, role
-		, password
 		, user_name
 		, ip_filters
 		, status
@@ -160,6 +158,14 @@
 		SET message_count_limit = message_count_limit <![CDATA[-]]> #{msgCntLimit}
 		,issue_time = now()
 		,issue_id = #{userId}
+		WHERE user_id = #{userId}
+	</update>
+	
+	<update id="updatePassword" parameterType="kr.co.adflow.pms.domain.User">
+		UPDATE pms.user
+		SET password = #{password}
+		,issue_time = now()
+		,issue_id = #{issueId}
 		WHERE user_id = #{userId}
 	</update>
 </mapper>	

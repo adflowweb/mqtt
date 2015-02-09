@@ -28,5 +28,7 @@ public interface UserMapper {
 	int updateMsgCntLimit(User user);
 	
 	int discountMsgCntLimit(User user);
+	
+	int updatePassword(User user);
 
 }

@@ -4,7 +4,6 @@ import java.util.HashMap;
 
 import kr.co.adflow.pms.core.config.PmsConfig;
 import kr.co.adflow.pms.core.controller.BaseController;
-import kr.co.adflow.pms.domain.mapper.TableMgtMapper;
 import kr.co.adflow.pms.inf.request.UserReq;
 import kr.co.adflow.pms.inf.service.PCBSService;
 import kr.co.adflow.pms.response.Response;
@@ -29,8 +28,6 @@ public class PCBSController extends BaseController {
 	@Autowired
 	private PCBSService pcbsService;
 
-	@Autowired
-	private TableMgtMapper tableMgtMapper;
 
 	@RequestMapping(value = "/inf/service/users", method = RequestMethod.POST, consumes = PmsConfig.HEADER_CONTENT_TYPE, produces = PmsConfig.HEADER_CONTENT_TYPE)
 	@ResponseBody

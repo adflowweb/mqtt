@@ -23,5 +23,9 @@ public interface MessageMapper {
 	List<Message> getSvcMessageList(MsgParams params);
 	
 	int getSvcMessageListCnt(MsgParams params);
+	
+	List<Message> getSvcResevationMessageList(MsgParams params);
+	
+	int getSvcResevationMessageListCnt(MsgParams params);
 
 }

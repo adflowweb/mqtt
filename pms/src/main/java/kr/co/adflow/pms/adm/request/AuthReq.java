@@ -1,8 +1,13 @@
 package kr.co.adflow.pms.adm.request;
 
-public class AuthReq {
+import org.hibernate.validator.constraints.NotEmpty;
 
+public class AuthReq {
+	
+	@NotEmpty
 	private String userId;
+	
+	@NotEmpty
 	private String password;
 
 	public String getUserId() {

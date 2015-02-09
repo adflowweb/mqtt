@@ -13,6 +13,7 @@ import java.util.Map;
 
 
 
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,6 +78,44 @@ public class SvcServiceImpl implements SvcService {
 	private int getInt(String string) {
 		
 		return Integer.parseInt(string);
+	}
+
+	@Override
+	public MessagesRes getSvcResevationMessageList(Map<String, String> params) {
+		
+		MessagesRes res = null;
+		
+		String issueId = interceptMapper.selectCashedUserId(params.get("appKey"));
+		
+		if (params.get("cSearchDate") == null) {
+			//error
+			throw new RuntimeException("");
+		} 
+		
+		MsgParams msgParams = new MsgParams();
+		
+		msgParams.setKeyMon(params.get("cSearchDate"));
+		
+		logger.info("msgParams :::::::{}",issueId);
+		msgParams.setIssueId(issueId);
+		
+		msgParams.setiDisplayStart(this.getInt(params.get("iDisplayStart")));
+		msgParams.setiDisplayLength(this.getInt(params.get("iDisplayLength")));
+
+		logger.info("msgParams :::::::{}",msgParams.getIssueId());
+		
+		int cnt = messageMapper.getSvcResevationMessageListCnt(msgParams);
+		logger.info("cnt :::::::{}",cnt);
+		
+		List<Message> list = messageMapper.getSvcResevationMessageList(msgParams);
+		logger.info("list size :::::::{}",list.size());
+		
+		res = new MessagesRes();
+		res.setRecordsFiltered(cnt);
+		res.setRecordsTotal(cnt);
+		res.setData(list);
+		
+		return res;
 	}
 
 }

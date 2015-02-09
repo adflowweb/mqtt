@@ -16,7 +16,7 @@
 	</logger>
 	
 	<!-- Application Loggers -->
-	<logger name="kr.co.adflow">
+	<logger name="kr.co.adflow.pms.domain">
 		<level value="info" />
 	</logger>
 	
