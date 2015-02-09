@@ -122,7 +122,7 @@ public class SvcController extends BaseController {
 
 	}
 	
-	@RequestMapping(value = "/messages/resevations", method = RequestMethod.GET)
+	@RequestMapping(value = "/messages/reservations", method = RequestMethod.GET)
 	@ResponseBody
 	public Response<Result<MessagesRes>> getResevationMessageList(@RequestParam Map<String,String> params
 			,@RequestHeader(PmsConfig.HEADER_APPLICATION_TOKEN) String appKey) throws Exception {
