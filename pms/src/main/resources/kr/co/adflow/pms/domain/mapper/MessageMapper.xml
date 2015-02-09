@@ -27,6 +27,10 @@
 		<result property="issueId" column="issue_id" />
 		<result property="updateTime" column="update_time" />
 		<result property="updateId" column="update_id" />
+		<result property="pmaAckType" column="pma_ack_type" />
+		<result property="pmaAckTime" column="pma_ack_time" />
+		<result property="appAckType" column="app_ack_type" />
+		<result property="appAckTime" column="app_ack_time" />
 	</resultMap>
 
 	<select id="select" parameterType="String"
@@ -129,12 +133,15 @@
 	<select id="getSvcMessageListCnt" parameterType="kr.co.adflow.pms.domain.MsgParams"
 		resultType="Integer">
 		SELECT COUNT(*)
-		FROM pms.message${keyMon}
-		WHERE  1=1
+		FROM
+        pms.message${keyMon} a left outer join pms.ack${keyMon} b on a.msg_id = b.msg_id and b.ack_type = 'pma',
+        pms.message${keyMon} c left outer join pms.ack${keyMon} d on c.msg_id = d.msg_id and d.ack_type = 'app'		
+		WHERE a.msg_id = c.msg_id
+		AND a.is_reservation IS FALSE
 		<if test="issueId != null and issueId != ''">
 		AND issue_id = #{issueId}
 		</if>
-		ORDER BY issue_time DESC,update_time DESC
+		ORDER BY a.issue_time DESC,a.update_time DESC
 	</select>
 	
 	<select id="getSvcMessageList" parameterType="kr.co.adflow.pms.domain.MsgParams"
@@ -159,24 +166,34 @@
 		, a.issue_id
 		, a.update_time
 		, a.update_id
-		FROM pms.message${keyMon} a
-		WHERE 1=1
+        ,b.ack_type as pma_ack_type
+        ,b.ack_time as pma_ack_time
+        ,d.ack_type as app_ack_type
+        ,d.ack_time as app_ack_time		
+		FROM
+        pms.message${keyMon} a left outer join pms.ack${keyMon} b on a.msg_id = b.msg_id and b.ack_type = 'pma',
+        pms.message${keyMon} c left outer join pms.ack${keyMon} d on c.msg_id = d.msg_id and d.ack_type = 'app'		
+		WHERE a.msg_id = c.msg_id
+		AND a.is_reservation IS FALSE
 		<if test="issueId != null and issueId != ''">
 		AND a.issue_id = #{issueId}
 		</if>
-		ORDER BY issue_time DESC,update_time DESC
+		ORDER BY a.issue_time DESC,a.update_time DESC
 		limit #{iDisplayStart} , #{iDisplayLength}
 	</select>
 	
 	<select id="getSvcResevationMessageListCnt" parameterType="kr.co.adflow.pms.domain.MsgParams"
 		resultType="Integer">
 		SELECT COUNT(*)
-		FROM pms.message${keyMon} 
-		WHERE  is_reservation IS TRUE
+		FROM
+        pms.message${keyMon} a left outer join pms.ack${keyMon} b on a.msg_id = b.msg_id and b.ack_type = 'pma',
+        pms.message${keyMon} c left outer join pms.ack${keyMon} d on c.msg_id = d.msg_id and d.ack_type = 'app'		
+		WHERE a.msg_id = c.msg_id
+		AND  a.is_reservation IS TRUE
 		<if test="issueId != null and issueId != ''">
 		AND issue_id = #{issueId}
 		</if>
-		ORDER BY issue_time DESC,update_time DESC
+		ORDER BY a.issue_time DESC,a.update_time DESC
 	</select>
 	
 	<select id="getSvcResevationMessageList" parameterType="kr.co.adflow.pms.domain.MsgParams"
@@ -201,8 +218,11 @@
 		, a.issue_id
 		, a.update_time
 		, a.update_id
-		FROM pms.message${keyMon} a
-		WHERE a.is_reservation IS TRUE
+		FROM
+        pms.message${keyMon} a left outer join pms.ack${keyMon} b on a.msg_id = b.msg_id and b.ack_type = 'pma',
+        pms.message${keyMon} c left outer join pms.ack${keyMon} d on c.msg_id = d.msg_id and d.ack_type = 'app'		
+		WHERE a.msg_id = c.msg_id
+		AND a.is_reservation IS TRUE
 	    <if test="issueId != null and issueId != ''">
 		AND a.issue_id = #{issueId}
 		</if>

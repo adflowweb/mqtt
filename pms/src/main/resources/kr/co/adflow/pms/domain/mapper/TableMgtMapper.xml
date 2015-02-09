@@ -46,7 +46,7 @@
 		   msg_id varchar(50) NOT NULL ,
 		  content mediumtext,
 		  content_type varchar(50) DEFAULT NULL,
-		  KEY id (msg_id),
+		  PRIMARY KEY (msg_id),
 		  FOREIGN KEY (msg_id) REFERENCES pms.message${value} (msg_id) ON DELETE CASCADE ON UPDATE CASCADE
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 	</update>
@@ -64,7 +64,7 @@
 	  ack_time datetime DEFAULT NULL,
 	  issue_time datetime DEFAULT NULL,
 	  issue_id VARCHAR(100),
-	  KEY id (msg_id,ack_type),
+	  PRIMARY KEY (msg_id,ack_type),
 	  FOREIGN KEY (msg_id) references pms.message${value} (msg_id) ON DELETE CASCADE ON UPDATE CASCADE
 	) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 	</update>		

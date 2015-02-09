@@ -25,7 +25,12 @@ public class Message {
 	private String issueId;
 	private Date updateTime;
 	private String updateId;
-
+	
+	private String pmaAckType;
+	private Date pmaAckTime;
+	private String appAckType;
+	private Date appAckTime;
+	
 	private String contentType;
 	private String content;
 	public String getMsgId() {
@@ -165,6 +170,30 @@ public class Message {
 	}
 	public void setResendId(String resendId) {
 		this.resendId = resendId;
+	}
+	public String getPmaAckType() {
+		return pmaAckType;
+	}
+	public void setPmaAckType(String pmaAckType) {
+		this.pmaAckType = pmaAckType;
+	}
+	public Date getPmaAckTime() {
+		return pmaAckTime;
+	}
+	public void setPmaAckTime(Date pmaAckTime) {
+		this.pmaAckTime = pmaAckTime;
+	}
+	public String getAppAckType() {
+		return appAckType;
+	}
+	public void setAppAckType(String appAckType) {
+		this.appAckType = appAckType;
+	}
+	public Date getAppAckTime() {
+		return appAckTime;
+	}
+	public void setAppAckTime(Date appAckTime) {
+		this.appAckTime = appAckTime;
 	}
 
 
