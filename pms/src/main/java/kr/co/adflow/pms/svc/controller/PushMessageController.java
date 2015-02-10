@@ -17,10 +17,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -101,18 +103,66 @@ public class PushMessageController extends BaseController {
 		
 		List<MessageResult> list = pushMessageService.getMessageResult(msgIds, appKey);
 		
-		//User user = accountService.retrieveAccount(appKey);
-//		
-//		if (user == null) {
-//			throw new RuntimeException("not found");
-//		} 
-		
 		Result<List<MessageResult>> result = new Result<List<MessageResult>>();
 		result.setSuccess(true);
 
 		result.setData(list);
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		Response<Result<List<MessageResult>>> res = new Response(result);
+		return res;
+	}
+	
+	@RequestMapping(value = "/messages/{msgId}", method = RequestMethod.DELETE, consumes = PmsConfig.HEADER_CONTENT_TYPE, produces = PmsConfig.HEADER_CONTENT_TYPE)
+	@ResponseBody
+	public Response<Result<Integer>> cancelReservationMessage(
+			@RequestHeader(PmsConfig.HEADER_APPLICATION_KEY) String appKey
+			,@PathVariable("msgId") String msgId) throws Exception {
+		
+		Integer delCnt = pushMessageService.cancelMessage(appKey,msgId);
+
+		Result<Integer> result = new Result<Integer>();
+		result.setSuccess(true);
+
+		result.setData(delCnt);
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		Response<Result<Integer>> res = new Response(result);
+		return res;
+	}
+	
+	
+	@RequestMapping(value = "/validation", method = RequestMethod.GET,params = "phoneNo", consumes = PmsConfig.HEADER_CONTENT_TYPE, produces = PmsConfig.HEADER_CONTENT_TYPE)
+	@ResponseBody
+	public Response<Result<Boolean>> validPhoneNo(
+			@RequestParam("phoneNo") String phoneNo) throws Exception {
+		
+		logger.info("validPhoneNo :{}",phoneNo);
+		
+		Boolean isValid = pushMessageService.validPhoneNo(phoneNo);
+		
+		Result<Boolean> result = new Result<Boolean>();
+		result.setSuccess(true);
+
+		result.setData(isValid);
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		Response<Result<Boolean>> res = new Response(result);
+		return res;
+	}
+	
+	@RequestMapping(value = "/validation", method = RequestMethod.GET, params = "ufmiNo", consumes = PmsConfig.HEADER_CONTENT_TYPE, produces = PmsConfig.HEADER_CONTENT_TYPE)
+	@ResponseBody
+	public Response<Result<Boolean>> validUfmiNo(
+			@RequestParam("ufmiNo") String ufmiNo) throws Exception {
+		
+		logger.info("validUfmiNo :{}",ufmiNo);
+		
+		Boolean isValid = pushMessageService.validUfmiNo(ufmiNo);
+		
+		Result<Boolean> result = new Result<Boolean>();
+		result.setSuccess(true);
+
+		result.setData(isValid);
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		Response<Result<Boolean>> res = new Response(result);
 		return res;
 	}
 	

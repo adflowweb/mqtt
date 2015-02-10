@@ -12,4 +12,10 @@ public interface PushMessageService {
 
 	public List<MessageResult> getMessageResult(MessageIdsReq msgIds, String appKey);
 
+	public Boolean validPhoneNo(String phoneNo);
+
+	public Boolean validUfmiNo(String ufmiNo);
+
+	public Integer cancelMessage(String appKey, String msgId);
+
 }

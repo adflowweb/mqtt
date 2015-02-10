@@ -14,6 +14,7 @@ import kr.co.adflow.pms.domain.MsgIdsParams;
 import kr.co.adflow.pms.domain.mapper.InterceptMapper;
 import kr.co.adflow.pms.domain.mapper.MessageMapper;
 import kr.co.adflow.pms.domain.mapper.UserMapper;
+import kr.co.adflow.pms.domain.mapper.ValidationMapper;
 import kr.co.adflow.pms.svc.request.MessageIdsReq;
 import kr.co.adflow.pms.svc.request.MessageReq;
 
@@ -34,6 +35,9 @@ public class PushMessageServiceImpl implements PushMessageService {
 	private UserMapper userMapper;
 	@Autowired
 	private InterceptMapper interceptMapper;
+	
+	@Autowired
+	private ValidationMapper validationMapper;
 
 	@Override
 	public String[] sendMessage(String appKey, MessageReq message) {
@@ -137,6 +141,42 @@ public class PushMessageServiceImpl implements PushMessageService {
 			throw new RuntimeException("msgId not found");
 		}
 		return msgIds[0].substring(0, 6);
+	}
+
+	@Override
+	public Boolean validPhoneNo(String phoneNo) {
+		return validationMapper.validPhoneNo(this.getPushUserId(phoneNo));
+	}
+
+	private String getPushUserId(String phoneNo) {
+		return "+82"+phoneNo;
+	}
+
+	@Override
+	public Boolean validUfmiNo(String ufmiNo) {
+		return validationMapper.validUfmiNo(this.getPushUfmi(ufmiNo));
+	}
+
+	private String getPushUfmi(String ufmiNo) {
+		return ufmiNo;
+	}
+
+	@Override
+	public Integer cancelMessage(String appKey, String msgId) {
+		
+		String issueId = interceptMapper.selectCashedUserId(appKey);
+		
+		Message msg = new Message();
+		msg.setKeyMon(this.getKeyMon(msgId));
+		msg.setMsgId(msgId);
+		msg.setUpdateId(issueId);
+		
+		return messageMapper.cancelMessage(msg);
+	}
+
+	private String getKeyMon(String msgId) {
+		// TODO Auto-generated method stub
+		return msgId.substring(0, 6);
 	}
 
 }

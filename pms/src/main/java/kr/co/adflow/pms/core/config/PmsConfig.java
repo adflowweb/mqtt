@@ -14,7 +14,7 @@ public class PmsConfig {
 	
 	public static final String INTERCEPTER_IP_FILTER = "0.0.0.0";
 
-	public static final int MESSAGE_HEADER_TYPE_DEFAULT = 20;
+	public static final int MESSAGE_HEADER_TYPE_DEFAULT = 10;
 	public static final int MESSAGE_HEADER_EXPIRY_DEFAULT = 0;
 	public static final int MESSAGE_HEADER_QOS_DEFAULT = 2;
 	public static final String MESSAGE_SERVICE_ID_DEFAULT = "kr.co.ktpowertel.push.mms";

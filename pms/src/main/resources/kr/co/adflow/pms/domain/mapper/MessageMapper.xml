@@ -318,5 +318,14 @@
 	   </foreach>
 		ORDER BY a.issue_time DESC,a.update_time DESC
 	</select>
+	
+	<update id="cancelMessage" parameterType="kr.co.adflow.pms.domain.Message">
+		UPDATE  pms.message${keyMon}
+		SET status = #{status}
+		,update_time = now()
+		,update_id = #{updateId}
+		WHERE msg_id = #{msgId}
+		AND status = 0
+	</update>
 
 </mapper>	

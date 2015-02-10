@@ -30,5 +30,7 @@ public interface MessageMapper {
 	int getSvcResevationMessageListCnt(MsgParams params);
 	
 	List<Message> getMessageResult(MsgIdsParams param);
+	
+	int cancelMessage(Message msg);
 
 }
