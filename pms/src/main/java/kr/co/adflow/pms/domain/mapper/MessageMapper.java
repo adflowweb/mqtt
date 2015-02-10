@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import kr.co.adflow.pms.domain.Message;
+import kr.co.adflow.pms.domain.MsgIdsParams;
 import kr.co.adflow.pms.domain.MsgParams;
 
 public interface MessageMapper {
@@ -27,5 +28,7 @@ public interface MessageMapper {
 	List<Message> getSvcResevationMessageList(MsgParams params);
 	
 	int getSvcResevationMessageListCnt(MsgParams params);
+	
+	List<Message> getMessageResult(MsgIdsParams param);
 
 }

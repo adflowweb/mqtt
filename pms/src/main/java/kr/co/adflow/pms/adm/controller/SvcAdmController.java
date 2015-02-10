@@ -130,7 +130,7 @@ public class SvcAdmController extends BaseController {
 		String sEcho = (String) params.get("sEcho");
 		params.put("appKey", appKey);
 		
-		MessagesRes messagesRes = svcService.getSvcMessageList(params);
+		MessagesRes messagesRes = svcService.getSvcResevationMessageList(params);
 		
 		messagesRes.setsEcho(sEcho);
 		

@@ -1,12 +1,20 @@
 package kr.co.adflow.pms.svc.service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import kr.co.adflow.pms.core.config.PmsConfig;
 import kr.co.adflow.pms.core.util.DateUtil;
 import kr.co.adflow.pms.core.util.KeyGenerator;
 import kr.co.adflow.pms.domain.Message;
+import kr.co.adflow.pms.domain.MessageResult;
+import kr.co.adflow.pms.domain.MsgIdsParams;
 import kr.co.adflow.pms.domain.mapper.InterceptMapper;
 import kr.co.adflow.pms.domain.mapper.MessageMapper;
 import kr.co.adflow.pms.domain.mapper.UserMapper;
+import kr.co.adflow.pms.svc.request.MessageIdsReq;
 import kr.co.adflow.pms.svc.request.MessageReq;
 
 import org.slf4j.Logger;
@@ -86,6 +94,49 @@ public class PushMessageServiceImpl implements PushMessageService {
 
 	private String getMsgId() {
 		return KeyGenerator.generateMsgId();
+	}
+
+	@Override
+	public List<MessageResult> getMessageResult(MessageIdsReq msgIds,
+			String appKey) {
+		
+		List<MessageResult> resultList = null;
+		
+		String issueId = interceptMapper.selectCashedUserId(appKey);
+		
+		MsgIdsParams param = new MsgIdsParams();
+		
+		param.setKeyMon(this.getKeyMon(msgIds.getMsgIds()));
+		param.setIssueId(issueId);
+		param.setMsgIds(msgIds.getMsgIds());
+		
+		List<Message> list = messageMapper.getMessageResult(param);
+		
+		resultList = new ArrayList<MessageResult>();
+		MessageResult messageResult = null;
+		for (Message msg: list) {
+			messageResult = new MessageResult();
+			
+			messageResult.setMsgId(msg.getMsgId());
+			messageResult.setReceiver(msg.getReceiver());
+			messageResult.setResendCount(msg.getResendCount());
+			messageResult.setReservation(msg.isReservation());
+			messageResult.setStatus(msg.getStatus());
+			messageResult.setUpdateTime(msg.getUpdateTime());
+			messageResult.setAppAckType(msg.getAppAckType());
+			messageResult.setAppAckTime(msg.getAppAckTime());
+			
+			resultList.add(messageResult);
+		}
+		
+		return resultList;
+	}
+
+	private String getKeyMon(String[] msgIds) {
+		if (msgIds.length < 1) {
+			throw new RuntimeException("msgId not found");
+		}
+		return msgIds[0].substring(0, 6);
 	}
 
 }

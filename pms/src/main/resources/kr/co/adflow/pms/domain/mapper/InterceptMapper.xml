@@ -29,13 +29,9 @@
 	AND b.role = #{role}
 	AND expired_time <![CDATA[>=]]>  now()
 	</select>
-	
 	<select id="selectCashedUserId" parameterType="String" resultType="String">
 	SELECT a.user_id 
 	FROM pms.token a
 	WHERE a.token_id = #{applicationKey} 
 	</select>
-	
-	
-
 </mapper>	

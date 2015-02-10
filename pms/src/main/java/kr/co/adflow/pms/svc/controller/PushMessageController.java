@@ -1,9 +1,15 @@
 package kr.co.adflow.pms.svc.controller;
 
+import java.util.List;
+
+import kr.co.adflow.pms.adm.service.AccountService;
 import kr.co.adflow.pms.core.config.PmsConfig;
 import kr.co.adflow.pms.core.controller.BaseController;
+import kr.co.adflow.pms.domain.MessageResult;
+import kr.co.adflow.pms.domain.User;
 import kr.co.adflow.pms.response.Response;
 import kr.co.adflow.pms.response.Result;
+import kr.co.adflow.pms.svc.request.MessageIdsReq;
 import kr.co.adflow.pms.svc.request.MessageReq;
 import kr.co.adflow.pms.svc.service.PushMessageService;
 
@@ -18,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
+@RequestMapping(value = "/svc")
 public class PushMessageController extends BaseController {
 
 	private static final Logger logger = LoggerFactory
@@ -25,8 +32,11 @@ public class PushMessageController extends BaseController {
 
 	@Autowired
 	private PushMessageService pushMessageService;
+	
+	@Autowired
+	private AccountService accountService;
 
-	@RequestMapping(value = "/svc/messages", method = RequestMethod.POST, consumes = PmsConfig.HEADER_CONTENT_TYPE, produces = PmsConfig.HEADER_CONTENT_TYPE)
+	@RequestMapping(value = "/messages", method = RequestMethod.POST, consumes = PmsConfig.HEADER_CONTENT_TYPE, produces = PmsConfig.HEADER_CONTENT_TYPE)
 	@ResponseBody
 	public Response<Result<String[]>> sendMessage(
 			@RequestHeader(PmsConfig.HEADER_APPLICATION_KEY) String appKey,
@@ -56,6 +66,54 @@ public class PushMessageController extends BaseController {
 		Response<Result<String[]>> res = new Response(result);
 		return res;
 
+	}
+	
+	@RequestMapping(value = "/messages/msgCntLimit", method = RequestMethod.GET, consumes = PmsConfig.HEADER_CONTENT_TYPE, produces = PmsConfig.HEADER_CONTENT_TYPE)
+	@ResponseBody
+	public Response<Result<Integer>> getMsgCntLimit(
+			@RequestHeader(PmsConfig.HEADER_APPLICATION_KEY) String appKey) throws Exception {
+		logger.debug("getMsgCntLimit");
+		
+		User user = accountService.retrieveAccount(appKey);
+		
+		if (user == null) {
+			throw new RuntimeException("not found");
+		} 
+		
+		Result<Integer> result = new Result<Integer>();
+		result.setSuccess(true);
+
+		result.setData(user.getMsgCntLimit());
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		Response<Result<Integer>> res = new Response(result);
+		return res;
+	}
+	
+	
+	@RequestMapping(value = "/messages/result", method = RequestMethod.POST, consumes = PmsConfig.HEADER_CONTENT_TYPE, produces = PmsConfig.HEADER_CONTENT_TYPE)
+	@ResponseBody
+	public Response<Result<List<MessageResult>>> getMessageResult(
+			@RequestHeader(PmsConfig.HEADER_APPLICATION_KEY) String appKey
+			,@RequestBody MessageIdsReq msgIds) throws Exception {
+		
+		//1. msgId 의 앞의5자 YYYYMM 이 같아야 함
+		
+		
+		List<MessageResult> list = pushMessageService.getMessageResult(msgIds, appKey);
+		
+		//User user = accountService.retrieveAccount(appKey);
+//		
+//		if (user == null) {
+//			throw new RuntimeException("not found");
+//		} 
+		
+		Result<List<MessageResult>> result = new Result<List<MessageResult>>();
+		result.setSuccess(true);
+
+		result.setData(list);
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		Response<Result<List<MessageResult>>> res = new Response(result);
+		return res;
 	}
 	
 	private boolean isValid(String receiver) {

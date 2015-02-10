@@ -298,5 +298,25 @@
 		,#{content}
 		)
 	</insert>
+	
+	<select id="getMessageResult" parameterType="kr.co.adflow.pms.domain.MsgIdsParams"
+		resultMap="MessageResult">
+		SELECT a.msg_id
+		, a.receiver
+		, a.status
+		, a.is_reservation
+		, a.resend_count
+		, a.update_time
+        , b.ack_type as app_ack_type
+        , b.ack_time as app_ack_time		
+		FROM
+        pms.message${keyMon} a left outer join pms.ack${keyMon} b on a.msg_id = b.msg_id and b.ack_type = 'app'		
+		WHERE a.issue_id = #{issueId}
+        AND a.msg_id IN
+       <foreach item="id" index="index" collection="msgIds" open="(" separator="," close=")" >
+			#{id}
+	   </foreach>
+		ORDER BY a.issue_time DESC,a.update_time DESC
+	</select>
 
 </mapper>	
