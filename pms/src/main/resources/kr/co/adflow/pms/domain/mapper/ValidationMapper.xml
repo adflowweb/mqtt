@@ -12,7 +12,7 @@
         AND ufmi IS NOT NULL
 	</select>
 
-		<select id="validUfmiNo" parameterType="String" resultType="boolean">
+	<select id="validUfmiNo" parameterType="String" resultType="boolean">
 		SELECT CASE WHEN count(*) > 0 
 		THEN TRUE ELSE FALSE END AS result
 		FROM push.user 

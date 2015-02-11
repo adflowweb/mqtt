@@ -13,7 +13,6 @@
 		<result property="issueId" column="issue_id" />
 	</resultMap>
 
-
 	<insert id="insertAck" parameterType="kr.co.adflow.pms.domain.Ack">
 		INSERT INTO pms.ack${keyMon}
 		(msg_id
@@ -32,7 +31,4 @@
 		#{issueId}
 		)
 	</insert>
-
-	
-
 </mapper>	
