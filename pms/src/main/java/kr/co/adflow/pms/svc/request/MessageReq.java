@@ -10,7 +10,6 @@ public class MessageReq {
 	private Date reservationTime;
 	private int resendCount;
 	private int resendInterval;
-	private boolean ack;
 
 	public String getContentType() {
 		return contentType;
@@ -26,14 +25,6 @@ public class MessageReq {
 
 	public void setContent(String content) {
 		this.content = content;
-	}
-
-	public boolean isAck() {
-		return ack;
-	}
-
-	public void setAck(boolean ack) {
-		this.ack = ack;
 	}
 
 	public Date getReservationTime() {

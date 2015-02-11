@@ -64,7 +64,7 @@ public class PushMessageServiceImpl implements PushMessageService {
 		msg.setUpdateId(issueId);
 
 		msg.setServiceId(PmsConfig.MESSAGE_SERVICE_ID_DEFAULT);
-		msg.setAck(message.isAck());
+		msg.setAck(PmsConfig.MESSAGE_ACK_DEFAULT);
 		msg.setContentType(message.getContentType());
 		msg.setContent(message.getContent());
 		

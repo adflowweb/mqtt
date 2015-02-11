@@ -17,6 +17,7 @@ public class PmsConfig {
 	public static final int MESSAGE_HEADER_TYPE_DEFAULT = 10;
 	public static final int MESSAGE_HEADER_EXPIRY_DEFAULT = 0;
 	public static final int MESSAGE_HEADER_QOS_DEFAULT = 2;
+	public static final boolean MESSAGE_ACK_DEFAULT = true;
 	public static final String MESSAGE_SERVICE_ID_DEFAULT = "kr.co.ktpowertel.push.mms";
 
 	public static final int MESSAGE_STATUS_ABNORMAL = -1;

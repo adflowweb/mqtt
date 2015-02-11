@@ -51,7 +51,7 @@ public class PlatformServiceImpl implements PlatformService {
 	private static final int CMD_PTT_UPDATE = 105;
 
 	/** The Constant CMD_USER_MESSAGE. */
-	private static final int CMD_USER_MESSAGE = 106;
+	private static final int CMD_USER_MESSAGE = 10;
 
 	/** The Constant DIG_ACCOUNT_INFO_INTENT_NAME. */
 	private static final String DIG_ACCOUNT_INFO_ACTION_NAME = "kr.co.ktpowertel.push.digAccountInfo";

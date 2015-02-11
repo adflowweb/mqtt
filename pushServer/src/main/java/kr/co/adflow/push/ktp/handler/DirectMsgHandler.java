@@ -55,17 +55,28 @@ public class DirectMsgHandler implements ProducerCallback<Object> {
 			
 			JSONObject msgObject = new JSONObject();
 			try {
+				
+				msgObject.put("type", msg.getType());
+				msgObject.put("id", msg.getId());
+				msgObject.put("sender", msg.getSender());
+				msgObject.put("receiver", msg.getReceiver());
+				msgObject.put("qos", msg.getQos());
+				msgObject.put("issue", msg.getIssue());
+				msgObject.put("issueSms", msg.getIssueSms());
+				msgObject.put("contentType", msg.getContentType());
+				msgObject.put("serviceID", msg.getServiceID());
+				msgObject.put("ack", msg.isAck());
 			
-			msgObject.put("msgType", msg.getType());
-			msgObject.put("msgId", msg.getId());
-			msgObject.put("sender", msg.getSender());
-			msgObject.put("receiver", msg.getReceiver());
-			//msgObject.put("qos", msg.getQos());
-			//msgObject.put("issue", msg.getIssue());
-			//msgObject.put("issueSms", msg.getIssueSms());
-			msgObject.put("contentType", msg.getContentType());
-			msgObject.put("serviceId", msg.getServiceID());
-			msgObject.put("ack", msg.isAck());
+//			msgObject.put("msgType", msg.getType());
+//			msgObject.put("msgId", msg.getId());
+//			msgObject.put("sender", msg.getSender());
+//			msgObject.put("receiver", msg.getReceiver());
+//			//msgObject.put("qos", msg.getQos());
+//			//msgObject.put("issue", msg.getIssue());
+//			//msgObject.put("issueSms", msg.getIssueSms());
+//			msgObject.put("contentType", msg.getContentType());
+//			msgObject.put("serviceId", msg.getServiceID());
+//			msgObject.put("ack", msg.isAck());
 			
 			
 			if ("application/json".equals(msg.getContentType())) {
