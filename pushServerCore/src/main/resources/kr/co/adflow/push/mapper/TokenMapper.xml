@@ -59,6 +59,7 @@
 		THEN 1 ELSE 0 END 
 		FROM token 
 		WHERE userID = #{userID}
+		AND ufmi IS NOT NULL
 	</select>
 
 	<delete id="delete" parameterType="java.lang.String">

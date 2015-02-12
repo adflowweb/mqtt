@@ -78,9 +78,7 @@ public class DirectMsgHandler implements ProducerCallback<Object> {
 			msgObject.put("serviceId", msg.getServiceID());
 			if (msg.isAck()) {
 				msgObject.put("ack",1 );
-			} else {
-				msgObject.put("ack",0 );
-			}
+			} 
 			
 			
 			
