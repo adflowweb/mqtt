@@ -2,11 +2,15 @@ package kr.co.adflow.pms.domain;
 
 import java.util.Date;
 
+import kr.co.adflow.pms.core.util.JsonDateSerializer;
+
+import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 
+@JsonAutoDetect
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class MessageResult {
 	
@@ -15,11 +19,12 @@ public class MessageResult {
 	private int status;
 	private boolean reservation;
 	private int resendCount;
-	
+
+	@JsonSerialize(using=JsonDateSerializer.class)
 	private Date updateTime;
 	
 	private String appAckType;
-	
+	@JsonSerialize(using=JsonDateSerializer.class)
 	private Date appAckTime;
 	
 	public String getMsgId() {

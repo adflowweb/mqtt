@@ -1,6 +1,7 @@
 package kr.co.adflow.pms.svc.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import kr.co.adflow.pms.adm.service.AccountService;
 import kr.co.adflow.pms.core.config.PmsConfig;
@@ -40,7 +41,7 @@ public class PushMessageController extends BaseController {
 
 	@RequestMapping(value = "/messages", method = RequestMethod.POST, consumes = PmsConfig.HEADER_CONTENT_TYPE, produces = PmsConfig.HEADER_CONTENT_TYPE)
 	@ResponseBody
-	public Response<Result<String[]>> sendMessage(
+	public Response<Result<List<Map<String,String>>>> sendMessage(
 			@RequestHeader(PmsConfig.HEADER_APPLICATION_KEY) String appKey,
 			@RequestBody MessageReq msg) throws Exception {
 		logger.debug("sendMessage");
@@ -58,14 +59,14 @@ public class PushMessageController extends BaseController {
 			
 		}
 
-		String[] msgIdArray = pushMessageService.sendMessage(appKey, msg);
+		List<Map<String,String>> resultList = pushMessageService.sendMessage(appKey, msg);
 
-		Result<String[]> result = new Result<String[]>();
+		Result<List<Map<String,String>>> result = new Result<List<Map<String,String>>>();
 		result.setSuccess(true);
 
-		result.setData(msgIdArray);
+		result.setData(resultList);
 		@SuppressWarnings({ "unchecked", "rawtypes" })
-		Response<Result<String[]>> res = new Response(result);
+		Response<Result<List<Map<String,String>>>> res = new Response(result);
 		return res;
 
 	}
