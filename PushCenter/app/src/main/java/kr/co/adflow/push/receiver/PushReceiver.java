@@ -24,6 +24,12 @@ public class PushReceiver extends BroadcastReceiver {
     private static final String TAG = "PushReceiver";
     private static final int wakeLockHoldTime = 10000; // 웨이크락홀드타임 10초
 
+    public static final int USIM_NOT_FOUND = 2001;
+    public static final String USIM_NOT_FOUND_MESSAGE = "USIM이 없습니다.";
+    public static final int USIM_CHANGED = 2002;
+    public static final String USIM_CHANGED_MESSAGE = "USIM이 변경되었습니다.";
+    public static final String KR_CO_KTPOWERTEL_PUSH_CONN_STATUS = "kr.co.ktpowertel.push.connStatus";
+
     public PushReceiver() {
         super();
     }
@@ -58,7 +64,7 @@ public class PushReceiver extends BroadcastReceiver {
 //				// testCodeEnd
 
                 PushPreference preference = new PushPreference(context);
-                String oldPhoneNum = preference.getValue(PushPreference.PHONENUM, null);
+                String oldPhoneNum = preference.getValue(PushPreference.PHONENUM, "");
                 Log.d(TAG, "저장된전화번호=" + oldPhoneNum);
 
                 //유심변경 체크
@@ -66,14 +72,22 @@ public class PushReceiver extends BroadcastReceiver {
                 String newPhoneNumber = tMgr.getLine1Number();
                 Log.d(TAG, "전화번호=" + newPhoneNumber);
 
-                if (oldPhoneNum == null || oldPhoneNum.equals("")) {
+                if (newPhoneNumber == null || newPhoneNumber.equals("")) {
+                    Log.d(TAG, "USIM이없습니다.");
+                    preference.put(PushPreference.PHONENUM, newPhoneNumber);
+                    //remove token
+                    preference.remove(PushPreference.TOKEN);
+                    Log.d(TAG, "토큰을삭제했습니다.");
+                    //sendBroadcast
+                    sendBroadcast(context, USIM_NOT_FOUND_MESSAGE, USIM_NOT_FOUND, null);
+                } else if (oldPhoneNum == null || oldPhoneNum.equals("")) {
                     Log.d(TAG, "이전부팅때저장된전화번호가없습니다.");
                     preference.put(PushPreference.PHONENUM, newPhoneNumber);
                     //remove token
                     preference.remove(PushPreference.TOKEN);
                     Log.d(TAG, "토큰을삭제했습니다.");
                     //sendBroadcast
-                    sendBroadcast(context, "USIM이변경되었습니다.");
+                    sendBroadcast(context, USIM_CHANGED_MESSAGE, USIM_CHANGED, "{\"oldPhone\":\"" + oldPhoneNum + "\",\"newPhone\":\"" + newPhoneNumber + "\"}");
                 } else if (oldPhoneNum.equals(newPhoneNumber)) {
                     //같은유심
                     Log.d(TAG, "이전부팅전화번호와같습니다.");
@@ -85,7 +99,7 @@ public class PushReceiver extends BroadcastReceiver {
                     preference.remove(PushPreference.TOKEN);
                     Log.d(TAG, "토큰을삭제했습니다.");
                     //sendBroadcast
-                    sendBroadcast(context, "USIM이변경되었습니다.");
+                    sendBroadcast(context, USIM_CHANGED_MESSAGE, USIM_CHANGED, "{\"oldPhone\":\"" + oldPhoneNum + "\",\"newPhone\":\"" + newPhoneNumber + "\"}");
                 }
 
                 //서버정보저장
@@ -144,15 +158,20 @@ public class PushReceiver extends BroadcastReceiver {
     }
 
     /**
-     * @param event
+     * @param context
+     * @param eventMsg
+     * @param eventCode
      * @throws Exception
      */
-    private void sendBroadcast(Context context, String event) throws Exception {
-        Log.d(TAG, "sendBroadcast시작(event=" + event + ")");
-        String serviceID = "kr.co.ktpowertel.push.connStatus";
-        Log.d(TAG, "serviceID=" + serviceID);
-        Intent i = new Intent(serviceID);
-        i.putExtra("event", event);
+    private void sendBroadcast(Context context, String eventMsg, int eventCode, String eventInfo) throws Exception {
+        Log.d(TAG, "sendBroadcast시작(eventMsg=" + eventMsg + ", eventCode=" + eventCode + ", eventInfo=" + eventInfo + ")");
+        Intent i = new Intent(KR_CO_KTPOWERTEL_PUSH_CONN_STATUS);
+        i.putExtra("eventMsg", eventMsg);
+        i.putExtra("eventCode", eventCode);
+        if (eventInfo != null) {
+            i.putExtra("eventInfo", eventInfo);
+        }
+        Log.d(TAG, "intent =" + i);
         context.sendBroadcast(i);
         Log.d(TAG, "sendBroadcast종료()");
     }

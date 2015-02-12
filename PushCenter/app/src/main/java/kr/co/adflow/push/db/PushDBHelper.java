@@ -22,10 +22,10 @@ public class PushDBHelper extends SQLiteOpenHelper {
     // Database Nameß
     private static final String DATABASE_NAME = "PushDB";
     private static final String TABLE_MESSAGE = "message";
-    //    private static final String[] MESSAGE_COLUMNS = {"msgid", "serviceid", "topic", "payload", "qos", "ack",
-//            "broadcast", "acked", "broadcasted", "receivedate", "token"};
-    private static final String[] MESSAGE_COLUMNS = {"msgid", "serviceid", "topic", "payload", "qos", "ack", "receivedate"};
-    private static final String TABLE_JOB = "message";
+    private static final String[] MESSAGE_COLUMNS = {"msgid", "serviceid", "topic", "payload", "qos", "ack",
+            "broadcast", "acked", "broadcasted", "receivedate", "token"};
+    //private static final String[] MESSAGE_COLUMNS = {"msgid", "serviceid", "topic", "payload", "qos", "ack", "receivedate"};
+    private static final String TABLE_JOB = "job";
     private static final String[] JOB_COLUMNS = {"id", "type", "topic", "content"};
     private static SimpleDateFormat sdf = new java.text.SimpleDateFormat(
             "yyyy-MM-dd HH:mm:ss");
@@ -280,31 +280,37 @@ public class PushDBHelper extends SQLiteOpenHelper {
 
         // 1. get reference to writable DB
         SQLiteDatabase db = this.getWritableDatabase();
+        Cursor result = null;
 
-        // 2. create ContentValues to add key "column"/value
-        ContentValues values = new ContentValues();
-        values.put("type", type);
-        values.put("topic", topic);
-        values.put("content", content);
+        try {
+            // 2. create ContentValues to add key "column"/value
+            ContentValues values = new ContentValues();
+            values.put("type", type);
+            values.put("topic", topic);
+            values.put("content", content);
 
-        // 3. insert
-        db.insertOrThrow(TABLE_JOB, // table
-                null, // nullColumnHack
-                values);
+            // 3. insert
+            db.insertOrThrow(TABLE_JOB, // table
+                    null, // nullColumnHack
+                    values);
 
-        Cursor result = db.rawQuery("select last_insert_rowid()", null);
+            result = db.rawQuery("select last_insert_rowid()", null);
 
-        int id = 0;
-        // result(Cursor 객체)가 비어 있으면 false 리턴
-        if (result.moveToFirst()) {
-            id = result.getInt(0);
+            int id = 0;
+            // result(Cursor 객체)가 비어 있으면 false 리턴
+            if (result.moveToFirst()) {
+                id = result.getInt(0);
+            }
+
+            Log.d(TAG, "addJob종료(id=" + id + ")");
+            return id;
+        } finally {
+            if (result != null) {
+                result.close();
+            }
+            // 4. close
+            db.close();
         }
-        result.close();
-
-        // 4. close
-        db.close();
-        Log.d(TAG, "addJob종료(id=" + id + ")");
-        return id;
     }
 
 //    /**
@@ -342,23 +348,27 @@ public class PushDBHelper extends SQLiteOpenHelper {
 //        return job;
 //    }
 
-//    /**
-//     * @param id
-//     */
-//    public synchronized void deteletJob(int id) {
-//        Log.d(TAG, "deteletJob시작(id=" + id + ")");
-//        // 1. get reference to writable DB
-//        SQLiteDatabase db = this.getWritableDatabase();
-//        // 2. delete
-//        db.delete(TABLE_JOB, // table name
-//                " id = ?", // selections
-//                new String[]{String.valueOf(id)}); // selections
-//        // args
-//        // 3. close
-//        db.close();
-//        // log
-//        Log.d(TAG, "deteletJob종료()");
-//    }
+    /**
+     * @param id
+     */
+    public synchronized void deteletJob(int id) {
+        Log.d(TAG, "deteletJob시작(id=" + id + ")");
+        // 1. get reference to writable DB
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        try {
+            // 2. delete
+            db.delete(TABLE_JOB, // table name
+                    " id = ?", // selections
+                    new String[]{String.valueOf(id)}); // selections
+            // args
+            // log
+            Log.d(TAG, "deteletJob종료()");
+        } finally {
+            // 3. close
+            db.close();
+        }
+    }
 
 //    /**
 //     * @return
@@ -464,7 +474,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
         try {
             db.execSQL("UPDATE " + TABLE_MESSAGE + " SET "
                     + " acked = 1 WHERE "
-                    + " serviceid  = '" + serviceID + "' and id = '" + msgID + "' ");
+                    + " serviceid  = '" + serviceID + "' and msgid = '" + msgID + "' ");
             Log.d(TAG, "updateAcked종료()");
         } finally {
             // 4. close
@@ -481,7 +491,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
         try {
             db.execSQL("UPDATE " + TABLE_MESSAGE + " SET "
                     + " broadcast = 1 WHERE "
-                    + " serviceid  = '" + serviceID + "' and id = '" + msgID + "' ");
+                    + " serviceid  = '" + serviceID + "' and msgid = '" + msgID + "' ");
             Log.d(TAG, "updateBroadCast종료()");
         } finally {
             // 4. close
@@ -508,7 +518,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
         try {
             db.execSQL("UPDATE " + TABLE_MESSAGE + " SET "
                     + " broadcasted = 1 WHERE "
-                    + " serviceid  = '" + serviceID + "' and id = '" + msgID + "' ");
+                    + " serviceid  = '" + serviceID + "' and msgid = '" + msgID + "' ");
             Log.d(TAG, "updateBroadCasted종료()");
         } finally {
             // 4. close
