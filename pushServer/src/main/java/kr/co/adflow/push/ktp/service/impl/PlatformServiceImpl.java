@@ -51,13 +51,16 @@ public class PlatformServiceImpl implements PlatformService {
 	private static final int CMD_PTT_UPDATE = 105;
 
 	/** The Constant CMD_USER_MESSAGE. */
-	private static final int CMD_USER_MESSAGE = 10;
+	//private static final int CMD_USER_MESSAGE = 10;
+	private static final int CMD_USER_MESSAGE = 106;
 
 	/** The Constant DIG_ACCOUNT_INFO_INTENT_NAME. */
 	private static final String DIG_ACCOUNT_INFO_ACTION_NAME = "kr.co.ktpowertel.push.digAccountInfo";
 
 	/** The Constant DIG_USER_MESSAGE_INTENT_NAME. */
 	private static final String DIG_USER_MESSAGE_ACTION_NAME = "kr.co.ktpowertel.push.userMessage";
+	
+	private static final String PMA_USER_MESSAGE_ACTION_NAME = "kr.co.ktpowertel.push.pma";
 
 	private static final String CONTENT_TYPE_JSON = "application/json";
 
@@ -120,6 +123,7 @@ public class PlatformServiceImpl implements PlatformService {
 		message.setType(CMD_FW_UPGRADE);
 		message.setQos(DeliveryMode.PERSISTENT);
 		message.setStatus(Message.STATUS_WAIT_FOR_SENDING);
+		message.setServiceID(PMA_USER_MESSAGE_ACTION_NAME);
 		message.setSender(fwInfo.getSender());
 		message.setReceiver(fwInfo.getReceiver());
 		message.setContentType(fwInfo.getContentType());
@@ -157,7 +161,7 @@ public class PlatformServiceImpl implements PlatformService {
 		message.setType(CMD_PTT_UPDATE);
 		message.setStatus(Message.STATUS_WAIT_FOR_SENDING);
 		message.setQos(DeliveryMode.PERSISTENT);
-		message.setServiceID(DIG_ACCOUNT_INFO_ACTION_NAME);
+		message.setServiceID(PMA_USER_MESSAGE_ACTION_NAME);
 
 		message.setSender(digInfo.getSender());
 		message.setReceiver(digInfo.getReceiver());
@@ -226,7 +230,7 @@ public class PlatformServiceImpl implements PlatformService {
 		message.setStatus(Message.STATUS_WAIT_FOR_SENDING);
 		message.setQos(DeliveryMode.PERSISTENT);
 		message.setIssue(new Date());
-
+		message.setServiceID(PMA_USER_MESSAGE_ACTION_NAME);
 		message.setSender(keepAliveTime.getSender());
 		message.setReceiver(keepAliveTime.getReceiver());
 		message.setContentType(CONTENT_TYPE_JSON);

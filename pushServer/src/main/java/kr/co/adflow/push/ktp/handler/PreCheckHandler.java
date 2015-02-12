@@ -22,7 +22,7 @@ public class PreCheckHandler implements ProducerCallback<Object> {
 	//final static private int TIME_TO_LIVE = 3000;
 	
 	/** The Constant PRECHECK_MESSAGE. */
-	final static private String PRECHECK_MESSAGE = "{\"type\":103}";
+	final static private String PRECHECK_MESSAGE = "{\"msgType\":103}";
 	
 	
 	/** The time to live. */

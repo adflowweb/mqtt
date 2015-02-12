@@ -101,7 +101,7 @@ public class MessageSendServiceImpl implements MessageSendService {
 			}
 			msg.setMsgId(msgId);
 			//msg.getReceiverTopic();
-			msg.setStatus(1);
+			msg.setStatus(PmsConfig.MESSAGE_STATUS_SEND);
 
 			int resultCnt = messageMapper.updateStatus(msg);
 			logger.info("update count is {}", resultCnt);
