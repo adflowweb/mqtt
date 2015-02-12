@@ -434,7 +434,7 @@
 				<clientid>${env.HOSTNAME}</clientid>
 
 				<!-- application log level 설정 -->
-				<log.level>info</log.level>
+				<log.level>debug</log.level>
 
 				<db.driverClass>com.mysql.jdbc.Driver</db.driverClass>
 				<db.connectionURL>jdbc:mysql://14.63.217.141:3306/push?useUnicode=true<![CDATA[&amp;]]>characterEncoding=utf8

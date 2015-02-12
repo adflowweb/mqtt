@@ -4,9 +4,10 @@
      "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.co.adflow.push.mapper.UserMapper">
 
-	<select id="get" parameterType="java.lang.String" resultType="kr.co.adflow.push.domain.User">
-		SELECT * FROM user WHERE userid =
-		#{userID}
+	<select id="get" parameterType="java.lang.String" resultMap="UserResult">
+		SELECT userid, password, name, title, dept, email, phone, role, ufmi
+		FROM user 
+		WHERE userid = #{userID}
 	</select>
 
 	<resultMap id="UserResult" type="kr.co.adflow.push.domain.User">
@@ -22,12 +23,14 @@
 	</resultMap>
 
 	<select id="getAdmin" resultMap="UserResult">
-		SELECT * FROM user WHERE role =
-		'admin'
+		SELECT userid, password, name, title, dept, email, phone, role, ufmi
+		 FROM user 
+		WHERE role = 'admin'
 	</select>
 
 	<select id="getAllUser" resultMap="UserResult">
-		SELECT * FROM user
+		SELECT userid, password, name, title, dept, email, phone, role, ufmi
+		FROM user
 	</select>
 
 	<insert id="post" parameterType="kr.co.adflow.push.domain.User">

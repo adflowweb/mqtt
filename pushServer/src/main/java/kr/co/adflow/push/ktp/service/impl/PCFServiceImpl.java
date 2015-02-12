@@ -58,6 +58,7 @@ public class PCFServiceImpl implements PCFService {
 		logger.debug("get시작(token={})",token);
 
 		String[] subsList = null;
+		PCFMessageAgent agent = null;
 		try {
 
 			// MQEnvironment.userID = "adflow";
@@ -71,7 +72,7 @@ public class PCFServiceImpl implements PCFService {
 
 			// PCFMessageAgent agent = new PCFMessageAgent("adflow.net", 1414,
 			// "ADFlowAdminPCF");
-			PCFMessageAgent agent = new PCFMessageAgent(pcfHost, pcfPort,
+			agent = new PCFMessageAgent(pcfHost, pcfPort,
 					pcfChannel);
 			PCFMessage request = new PCFMessage(
 					MQConstants.MQCMD_INQUIRE_SUBSCRIPTION);
@@ -93,6 +94,7 @@ public class PCFServiceImpl implements PCFService {
 //				subsList[i] = new Subscribe();
 //				subsList[i].setTopic(topic);
 			}
+			
 		} catch (PCFException pcfe) {
 			if (pcfe.getMessage().indexOf("2428") > 0) {
 				logger.error("해당 토큰관련 subscriptions 가 없습니다. -errorcode:2428");
@@ -107,6 +109,14 @@ public class PCFServiceImpl implements PCFService {
 		} catch (IOException ioe) {
 			logger.error("IOException is ",ioe);
 			throw ioe;
+		} finally {
+			
+			if (agent != null) {
+				logger.info("agent disconnect" );
+				agent.disconnect();
+			} else {
+				logger.info("agent null" );
+			}
 		}
 
 		// logger.debug("get종료(Subscribe result=" + subsList + ")");
@@ -121,6 +131,7 @@ public class PCFServiceImpl implements PCFService {
 		logger.debug("get시작(token=" + token + ")");
 
 		Status status = new Status();
+		PCFMessageAgent agent = null;
 		try {
 
 			// MQEnvironment.userID = "adflow";
@@ -134,7 +145,7 @@ public class PCFServiceImpl implements PCFService {
 
 			// PCFMessageAgent agent = new PCFMessageAgent("adflow.net", 1414,
 			// "ADFlowAdminPCF");
-			PCFMessageAgent agent = new PCFMessageAgent(pcfHost, pcfPort,
+			agent = new PCFMessageAgent(pcfHost, pcfPort,
 					pcfChannel);
 			PCFMessage request = new PCFMessage(
 					MQConstants.MQCMD_INQUIRE_CHANNEL_STATUS);
@@ -177,6 +188,13 @@ public class PCFServiceImpl implements PCFService {
 		} catch (IOException ioe) {
 			logger.error("IOException is",ioe);
 			throw ioe;
+		} finally {
+			if (agent != null) {
+				logger.info("agent disconnect" );
+				agent.disconnect();
+			} else {
+				logger.info("agent null" );
+			}
 		}
 
 		// logger.debug("get종료(Subscribe result=" + subsList + ")");

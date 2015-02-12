@@ -9,6 +9,7 @@ package kr.co.adflow.push.domain.ktp.request;
  */
 public class Ufmi {
 	
+	
 	/** The ufmi. */
 	private String ufmi;
 

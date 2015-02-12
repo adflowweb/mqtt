@@ -187,4 +187,14 @@ public class UserServiceImpl implements UserService {
 	}
 	//140901 <kicho> - end
 	
+	public int updateUFMI(User user) throws Exception {
+		int result = 0;
+		User param = userDao.get(user.getUserID());
+		param.setUfmi(user.getUfmi());
+		result = userDao.put(param);
+		
+		return result;
+
+	}
+	
 }

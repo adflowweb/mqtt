@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jms="http://www.springframework.org/schema/jms"
+	xsi:schemaLocation="http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.1.xsd
+		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-4.0.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+		http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-3.1.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
+
+	<!-- Root Context: defines shared resources visible to all other web components -->
+
+	<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean"
+		scope="singleton">
+		<property name="jndiName">
+			<value>java:comp/env/jdbc/push</value>
+		</property>
+		<property name="resourceRef" value="true" />
+	</bean>
+
+	<!-- 트랜잭션 -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="kr.co.adflow.pms.domain.mapper" />
+	</bean>
+
+
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<!-- 아래부분은 매핑할 xml파일이 있는 패키지경로를 설정한다. -->
+		<property name="typeAliasesPackage" value="kr.co.adflow.pms.domain.mapper" />
+		<property name="mapperLocations"
+			value="classpath:kr/co/adflow/pms/domain/mapper/*.xml" />
+	</bean>
+	
+
+
+	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+
+	<!-- jmsConnectionFactory -->
+	<bean id="tJmsFactory" class="com.ibm.mq.jms.MQTopicConnectionFactory">
+		<property name="hostName" value="14.63.217.141" />
+		<property name="port" value="1414" />
+		<property name="queueManager" value="MQTT" />
+		<property name="transportType" value="1" />
+		<property name="channel" value="ADFlowJMS" />
+	</bean>
+
+	<bean id="tJmsCredentialsConnectionFactory"
+		class="org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter">
+		<property name="targetConnectionFactory" ref="tJmsFactory" />
+		<property name="username" value="adflow" />
+		<property name="password" value="!ADFlow@" />
+	</bean>
+
+	<!-- springConnectionFactory -->
+	<bean id="tJmsConnectionFactory"
+		class="org.springframework.jms.connection.CachingConnectionFactory">
+		<property name="targetConnectionFactory" ref="tJmsCredentialsConnectionFactory" />
+		<property name="sessionCacheSize" value="50" />
+
+	</bean>
+
+	<!-- dynamicDestinationResolver -->
+	<bean id="tJmsDestinationResolver"
+		class="org.springframework.jms.support.destination.DynamicDestinationResolver">
+	</bean>
+
+	<!-- jmsTemplate -->
+	<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory" ref="tJmsConnectionFactory" />
+		<property name="destinationResolver">
+			<ref bean="tJmsDestinationResolver" />
+		</property>
+		<property name="pubSubDomain">
+			<value>true</value>
+		</property>
+	</bean>
+	
+<!-- 	<jms:listener-container> -->
+
+<!--     <jms:listener destination="queue.orders" ref="orderService" method="placeOrder"/> -->
+
+<!--     <jms:listener destination="queue.confirmations" ref="confirmationLogger" method="log"/> -->
+
+<!--    </jms:listener-container> -->
+
+	<bean id="qJmsFactory" class="com.ibm.mq.jms.MQQueueConnectionFactory">
+		<property name="hostName" value="14.63.217.141" />
+		<property name="port" value="1414" />
+		<property name="queueManager" value="MQTT" />
+		<property name="transportType" value="1" />
+		<property name="channel" value="ADFlowJMS" />
+	</bean>
+	
+	<bean id="qJmsCredentialsConnectionFactory"
+		class="org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter">
+		<property name="targetConnectionFactory" ref="qJmsFactory" />
+		<property name="username" value="adflow" />
+		<property name="password" value="!ADFlow@" />
+	</bean>
+	
+		<bean id="qJmsConnectionFactory"
+		class="org.springframework.jms.connection.CachingConnectionFactory">
+		<property name="targetConnectionFactory" ref="qJmsCredentialsConnectionFactory" />
+		<property name="sessionCacheSize" value="50" />
+
+	</bean>
+	
+
+	<bean id="qJmsContainer"
+		class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+		<property name="connectionFactory" ref="qJmsConnectionFactory" />
+		<property name="destination" ref="qJmsDestination" />
+		<property name="messageListener" ref="ackMessageDrivenBean" />
+	</bean>
+	
+	<bean id="ackMessageDrivenBean" class="kr.co.adflow.pms.core.handler.AckMessageDrivenBean">
+	</bean>
+	<bean id="qJmsDestination" class="com.ibm.mq.jms.MQQueue">
+		<property name="baseQueueName">
+			<value>MMS.ACK</value>
+		</property>
+	</bean>
+	
+ 
+  <!-- Creates the JSR-303 Validator -->
+  <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
+
+</beans>

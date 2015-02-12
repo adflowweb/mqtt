@@ -120,12 +120,12 @@ abstract public class AbstractTokenServiceImpl implements TokenService {
 //		device.setApnsToken(user.getApnsToken());
 		//KTP-skip-end
 		
-		
-		try {
-			deviceDao.post(device);
-		} catch (DuplicateKeyException e) {
-			logger.debug("디바이스가이미등록되어있습니다.device=" + device.getDeviceID());
-		}
+		// ktp device info skip 20150120
+//		try {
+//			deviceDao.post(device);
+//		} catch (DuplicateKeyException e) {
+//			logger.debug("디바이스가이미등록되어있습니다.device=" + device.getDeviceID());
+//		}
 
 		// select 최신 token
 		// select * from token where userid='kicho' and deviceid='test' order by
