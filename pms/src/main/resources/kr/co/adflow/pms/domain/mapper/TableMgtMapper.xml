@@ -22,6 +22,7 @@
 		  is_reservation BOOLEAN DEFAULT false,
 		  reservation_time datetime DEFAULT NULL,
 		  resend_count int(10) unsigned DEFAULT NULL,
+		  resend_max_count int(10) unsigned DEFAULT NULL,
 		  resend_interval int(10) unsigned DEFAULT NULL,
 		  resend_id varchar(50) DEFAULT NULL,
 		  server_id varchar(10) DEFAULT NULL,

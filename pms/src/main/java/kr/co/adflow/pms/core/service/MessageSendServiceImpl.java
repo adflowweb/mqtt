@@ -55,14 +55,20 @@ public class MessageSendServiceImpl implements MessageSendService {
 		param.put("limit", limit);
 
 		List<Message> list = messageMapper.selectList(param);
+		
+		logger.info("list cnt :: {}" ,list.size());
 
 		int updateCnt = 0;
 		for (Message msg : list) {
 			
 			msg.setKeyMon(this.getKeyMon(msg.getMsgId()));
 			
-
 			
+			logger.info("msg.getMsgId() {}" ,msg.getMsgId());
+			logger.info("msg.getReceiverTopic() {}",msg.getReceiverTopic());
+			logger.info("msg.getReceiver() {}", msg.getReceiver());
+
+			if (msg.getReceiverTopic() == null || msg.getReceiverTopic().trim().length() == 0) { // admin 이 보낸 메시지는 topic 있는지 확인 안함
 			// msg.getReceiverTopic(); 처리
 			if (!this.validReceiverUserId(msg.getReceiver())) {
 				msg.setStatus(PmsConfig.MESSAGE_STATUS_RECEIVER_NOT_FOUNT);
@@ -71,6 +77,11 @@ public class MessageSendServiceImpl implements MessageSendService {
 			}
 			
 			msg.setReceiverTopic(this.getReceiverTopic(msg.getReceiver()));
+			
+			} else {
+				// msg.getReceiverTopic() 이미 있음
+				logger.info("Message Receiver topic name :",msg.getReceiverTopic());
+			}
 			
 			if (userMapper.getMsgCntLimit(msg.getIssueId()) < 1) {
 				msg.setStatus(PmsConfig.MESSAGE_STATUS_COUNT_OVER);
@@ -93,6 +104,7 @@ public class MessageSendServiceImpl implements MessageSendService {
 					reservationTime =  reservationTime + interval;
 					msg.setReservationTime(new Date(reservationTime));
 					msg.setMsgId(this.getMsgId());
+					msg.setResendCount(++i);
 					msg.setResendId(msgId);
 					messageMapper.insertMessage(msg);
 					messageMapper.insertContent(msg);
@@ -196,7 +208,7 @@ public class MessageSendServiceImpl implements MessageSendService {
 			msg.setKeyMon(this.getKeyMon(msg.getMsgId()));
 			
 
-			
+			if (msg.getReceiverTopic() == null || msg.getReceiverTopic().trim().length() == 0) { // admin 이 보낸 메시지는 topic 있는지 확인 안함
 			// msg.getReceiverTopic(); 처리
 			if (!this.validReceiverUserId(msg.getReceiver())) {
 				msg.setStatus(-2);
@@ -205,6 +217,10 @@ public class MessageSendServiceImpl implements MessageSendService {
 			}
 			
 			msg.setReceiverTopic(this.getReceiverTopic(msg.getReceiver()));
+			} else {
+				// msg.getReceiverTopic() 이미 있음
+				logger.info("Message Receiver topic name :",msg.getReceiverTopic());
+			}
 			
 			if (userMapper.getMsgCntLimit(msg.getIssueId()) < 1) {
 				msg.setStatus(-3);

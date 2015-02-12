@@ -56,9 +56,11 @@ public class PlatformServiceImpl implements PlatformService {
 
 	/** The Constant DIG_ACCOUNT_INFO_INTENT_NAME. */
 	private static final String DIG_ACCOUNT_INFO_ACTION_NAME = "kr.co.ktpowertel.push.digAccountInfo";
+	
+	private static final String FW_INFO_ACTION_NAME = "kr.co.ktpowertel.push.fwUpdateInfo";
 
 	/** The Constant DIG_USER_MESSAGE_INTENT_NAME. */
-	private static final String DIG_USER_MESSAGE_ACTION_NAME = "kr.co.ktpowertel.push.userMessage";
+	private static final String USER_MESSAGE_ACTION_NAME = "kr.co.ktpowertel.push.userMessage";
 	
 	private static final String PMA_USER_MESSAGE_ACTION_NAME = "kr.co.ktpowertel.push.pma";
 
@@ -123,7 +125,7 @@ public class PlatformServiceImpl implements PlatformService {
 		message.setType(CMD_FW_UPGRADE);
 		message.setQos(DeliveryMode.PERSISTENT);
 		message.setStatus(Message.STATUS_WAIT_FOR_SENDING);
-		message.setServiceID(PMA_USER_MESSAGE_ACTION_NAME);
+		message.setServiceID(FW_INFO_ACTION_NAME);
 		message.setSender(fwInfo.getSender());
 		message.setReceiver(fwInfo.getReceiver());
 		message.setContentType(fwInfo.getContentType());
@@ -161,7 +163,7 @@ public class PlatformServiceImpl implements PlatformService {
 		message.setType(CMD_PTT_UPDATE);
 		message.setStatus(Message.STATUS_WAIT_FOR_SENDING);
 		message.setQos(DeliveryMode.PERSISTENT);
-		message.setServiceID(PMA_USER_MESSAGE_ACTION_NAME);
+		message.setServiceID(DIG_ACCOUNT_INFO_ACTION_NAME);
 
 		message.setSender(digInfo.getSender());
 		message.setReceiver(digInfo.getReceiver());
@@ -272,7 +274,7 @@ public class PlatformServiceImpl implements PlatformService {
 
 			Message message = new Message();
 			message.setType(CMD_USER_MESSAGE);
-			message.setServiceID(DIG_USER_MESSAGE_ACTION_NAME);
+			message.setServiceID(USER_MESSAGE_ACTION_NAME);
 			message.setStatus(Message.STATUS_WAIT_FOR_SENDING);
 
 			message.setQos(userMessage.getQos());

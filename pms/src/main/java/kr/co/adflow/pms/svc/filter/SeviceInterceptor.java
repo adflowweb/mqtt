@@ -16,6 +16,8 @@ public class SeviceInterceptor extends HandlerInterceptorAdapter {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(SeviceInterceptor.class);
+	
+	private static final String DEFAULT_ROLE = "svc";
 
 	@Autowired
 	private InterceptMapper interceptMapper;
@@ -48,6 +50,10 @@ public class SeviceInterceptor extends HandlerInterceptorAdapter {
 			response.sendError(401);
 			return false;
 		}
+		
+		String remoteIpAddress = this.getRemoteIpAddress(request);
+		logger.info("remoteIpAddress :: {}", remoteIpAddress);
+		
 		if ("0.0.0.0".equals(ipFilters)) {
 			response.sendError(401);
 			return false;
@@ -57,27 +63,44 @@ public class SeviceInterceptor extends HandlerInterceptorAdapter {
 			return true;
 		}
 
-		return this.ipFiltering(getRemoteIpAddress(request), ipFilters);
+		return this.ipFiltering(remoteIpAddress, ipFilters);
 
 	}
 
 	private boolean ipFiltering(String remoteIpAddress, String ipFilters) {
-
+		
 		logger.info("remoteIpAddress :: {}", remoteIpAddress);
+		if (ipFilters.indexOf(PmsConfig.INTERCEPTER_IP_FILTER_DELIM) == -1) {
+			if (remoteIpAddress.equals(ipFilters.trim())) {
+				return true;
+			} else {
+				return false;
+			}
+			
+		} else {
+			String[] ipArray = ipFilters.split(PmsConfig.INTERCEPTER_IP_FILTER_DELIM);
+			for (int i = 0; i < ipArray.length; i++) {
+				
+				if (remoteIpAddress.equals(ipArray[i].trim())) {
+					return true;
+				} 
+			}
+			
+		}
 
-		return true;
+		return false;
 	}
 
 	private String getRemoteIpAddress(HttpServletRequest request) {
-
-		return request.getRemoteAddr();
+//TODO 필요시 x-forward-for 로직 추가
+		return request.getRemoteAddr().trim();
 	}
 
 	private AppKey getAppKey(String applicationKey) {
 
 		AppKey appKey = new AppKey();
 		appKey.setApplicationKey(applicationKey);
-		appKey.setRole("svc");
+		appKey.setRole(DEFAULT_ROLE);
 
 		return appKey;
 	}

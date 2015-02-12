@@ -17,7 +17,7 @@
 	
 	<!-- Application Loggers -->
 	<logger name="kr.co.adflow.pms.domain">
-		<level value="info" />
+		<level value="trace" />
 	</logger>
 	
 	<!-- 3rdparty Loggers -->

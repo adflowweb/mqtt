@@ -1,4 +1,4 @@
-package kr.co.adflow.pms.svc.request;
+package kr.co.adflow.pms.adm.request;
 
 import java.util.Date;
 
@@ -15,6 +15,19 @@ public class MessageReq {
 	private Date reservationTime;
 	private int resendMaxCount;
 	private int resendInterval;
+	
+	// admin 수정 가능
+	
+	private int msgType;
+	@NotEmpty
+	private String serviceId;
+	
+	private boolean ack;
+	
+	private long expiry;
+	
+	private int qos;
+
 
 	public String getContentType() {
 		return contentType;
@@ -56,6 +69,46 @@ public class MessageReq {
 
 	public void setResendInterval(int resendInterval) {
 		this.resendInterval = resendInterval;
+	}
+
+	public int getMsgType() {
+		return msgType;
+	}
+
+	public void setMsgType(int msgType) {
+		this.msgType = msgType;
+	}
+
+	public String getServiceId() {
+		return serviceId;
+	}
+
+	public void setServiceId(String serviceId) {
+		this.serviceId = serviceId;
+	}
+
+	public boolean isAck() {
+		return ack;
+	}
+
+	public void setAck(boolean ack) {
+		this.ack = ack;
+	}
+
+	public long getExpiry() {
+		return expiry;
+	}
+
+	public void setExpiry(long expiry) {
+		this.expiry = expiry;
+	}
+
+	public int getQos() {
+		return qos;
+	}
+
+	public void setQos(int qos) {
+		this.qos = qos;
 	}
 
 	public int getResendMaxCount() {

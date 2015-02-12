@@ -8,6 +8,7 @@ import kr.co.adflow.pms.core.config.PmsConfig;
 import kr.co.adflow.pms.core.controller.BaseController;
 import kr.co.adflow.pms.domain.MessageResult;
 import kr.co.adflow.pms.domain.User;
+import kr.co.adflow.pms.domain.validator.UserValidator;
 import kr.co.adflow.pms.response.Response;
 import kr.co.adflow.pms.response.Result;
 import kr.co.adflow.pms.svc.request.MessageIdsReq;
@@ -38,6 +39,9 @@ public class PushMessageController extends BaseController {
 	
 	@Autowired
 	private AccountService accountService;
+	
+	@Autowired
+	private UserValidator userValidator;
 
 	@RequestMapping(value = "/messages", method = RequestMethod.POST, consumes = PmsConfig.HEADER_CONTENT_TYPE, produces = PmsConfig.HEADER_CONTENT_TYPE)
 	@ResponseBody
@@ -168,20 +172,7 @@ public class PushMessageController extends BaseController {
 	}
 	
 	private boolean isValid(String receiver) {
-		//1. 01012341234
-		//2. 082*1234*1234
-		//3. 00*1234*1234
-		
-//		String str = receiver.trim();
-//		
-//		if (11 > str.length() || str.length() > 13) {
-//			return false;
-//		}
-		
-		// 1. 010 일때는 모두 숫자
-		// 2. 아닐 때는 * 2개
-		
-		return true;
+			return userValidator.validRequestValue(receiver);
 	}
 
 }
