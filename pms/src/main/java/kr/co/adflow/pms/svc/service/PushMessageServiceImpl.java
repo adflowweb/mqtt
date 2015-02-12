@@ -79,7 +79,7 @@ public class PushMessageServiceImpl implements PushMessageService {
 			msg.setReservation(true);
 		}
 		
-		msg.setResendCount(message.getResendCount());
+		msg.setResendMaxCount(message.getResendMaxCount());
 		msg.setResendInterval(message.getResendInterval());
 
 		String[] receivers = message.getReceivers();

@@ -15,6 +15,7 @@ public class Message {
 	private boolean reservation;
 	private Date reservationTime;
 	private int resendCount;
+	private int resendMaxCount;
 	private int resendInterval;
 	private String resendId;
 	private String serverId;
@@ -194,6 +195,12 @@ public class Message {
 	}
 	public void setAppAckTime(Date appAckTime) {
 		this.appAckTime = appAckTime;
+	}
+	public int getResendMaxCount() {
+		return resendMaxCount;
+	}
+	public void setResendMaxCount(int resendMaxCount) {
+		this.resendMaxCount = resendMaxCount;
 	}
 
 
