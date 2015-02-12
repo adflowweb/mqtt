@@ -1,19 +1,15 @@
 package kr.co.adflow.push.service.impl;
 
 import android.app.AlarmManager;
-import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.RemoteException;
 import android.util.Log;
-import android.view.WindowManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,7 +31,7 @@ public class PushServiceImpl extends Service implements PushService {
     private PushPreference preference;
 
     // Binder given to clients
-//	private final IBinder binder = new LocalBinder();
+    // private final IBinder binder = new LocalBinder();
     public static PushServiceImpl instance;
 
     public PushServiceImpl() {
@@ -84,6 +80,37 @@ public class PushServiceImpl extends Service implements PushService {
                     res.put("error", e.toString());
                     returnData.put("result", res);
 
+                } catch (JSONException ex) {
+                    ex.printStackTrace();
+                }
+                //return "{\"result\":{\"success\":false, \"error\":\"" + e + "\"}}";
+                long stop = System.currentTimeMillis();
+                Log.d(TAG, "걸린시간=" + (stop - start) + "ms");
+                return returnData.toString();
+            }
+        }
+
+        @Override
+        public String updateUFMI(String ufmi) throws RemoteException {
+            Log.d(TAG, "updateUFMI시작(ufmi=" + ufmi + ")");
+            long start = System.currentTimeMillis();
+
+            JSONObject returnData = new JSONObject();
+            JSONObject res = new JSONObject();
+            try {
+                String phoneNum = preference.getValue(PushPreference.PHONENUM, null);
+                String result = PushServiceImpl.getInstance().updateUFMI(phoneNum, ufmi);
+                Log.d(TAG, "updateUFMI종료(result=" + result + ")");
+                long stop = System.currentTimeMillis();
+                Log.d(TAG, "걸린시간=" + (stop - start) + "ms");
+                return result;
+            } catch (Exception e) {
+                Log.e(TAG, "updateUFMI중에러발생", e);
+
+                try {
+                    res.put("success", false);
+                    res.put("error", e.toString());
+                    returnData.put("result", res);
                 } catch (JSONException ex) {
                     ex.printStackTrace();
                 }
@@ -405,10 +432,11 @@ public class PushServiceImpl extends Service implements PushService {
 //        }
     };
 
+
     private void ack(String msgID, String tokenID) throws Exception {
         Log.d(TAG, "ack시작(msgID=" + msgID + ", tokenID=" + tokenID + ")");
         JSONObject ack = new JSONObject();
-        ack.put("msgID", msgID);
+        ack.put("msgId", msgID);
         ack.put("token", tokenID);
         ack.put("ackType", "app");
         ack.put("ackTime", System.currentTimeMillis());
@@ -460,76 +488,80 @@ public class PushServiceImpl extends Service implements PushService {
                 Log.d(TAG, "푸시핸들러를재시작합니다.");
                 restartPushHandler();
                 Log.d(TAG, "푸시핸들러를재시작되었습니다.");
-            } else if (intent.getAction().equals("kr.co.adflow.push.service.ACK")) {
-                Log.d(TAG, "메시지에크를시작합니다.");
-                Bundle bundle = intent.getExtras();
-
-                if (bundle == null) {
-                    Log.e(TAG, "bundle이 존재하지않습니다.");
-                    return Service.START_STICKY;
-                }
-
-                for (String key : bundle.keySet()) {
-                    Log.d(TAG, key + "=" + bundle.get(key));
-                }
-
-                String msgID = bundle.getString(PushPreference.MSGID);
-                Log.d(TAG, "msgID=" + msgID);
-
-                String token = bundle.getString(PushPreference.TOKEN);
-                Log.d(TAG, "token=" + token);
-
-                if (msgID != null && token != null) {
-                    JSONObject ack = new JSONObject();
-                    ack.put("msgID", msgID);
-                    ack.put("token", token);
-                    ack.put("ackType", "pma");
-                    ack.put("ackTime", System.currentTimeMillis());
-                    Log.d(TAG, "ack=" + ack);
-                    publish(PushHandler.ACK_TOPIC, ack.toString().getBytes(), 2); // qos 2 로 전송
-                }
-                Log.d(TAG, "메시지에크를종료합니다.");
-            } else if (intent.getAction().equals(
-                    "kr.co.adflow.push.service.FWUPDATE")) {
-                Log.d(TAG, "firmUpdate시작");
-                // Device model
-                String phoneModel = android.os.Build.MODEL;
-                Log.d(TAG, "phoneModel=" + phoneModel);
-
-                Bundle bundle = intent.getExtras();
-                String msg = bundle.getString("Message");
-                Log.d(TAG, "msg=" + msg);
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("firmware update");
-                //builder.setIcon(R.drawable.icon);
-                builder.setMessage(msg);
-
-                builder.setPositiveButton("예", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        //Do something
-                        Log.d(TAG, "펌웨어업데이트를 선택하였습니다.");
-                        Intent intent = new Intent();
-                        intent.setAction("android.settings.SYSTEM_UPDATE_SETTINGS");
-                        intent.setFlags(intent.FLAG_ACTIVITY_NEW_TASK);
-                        //intent.setComponent(ComponentName
-                        //       .unflattenFromString("com.google.android.gsf/.update.SystemUpdateActivity"));
-                        startActivity(intent);
-                        dialog.dismiss();
-                    }
-                });
-
-                builder.setNegativeButton("아니오", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        //Do something
-                        Log.d(TAG, "펌웨어업데이트를 취소하였습니다.");
-                        dialog.dismiss();
-                    }
-                });
-
-                AlertDialog alert = builder.create();
-                alert.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
-                alert.show();
             }
+
+//            else if (intent.getAction().equals("kr.co.adflow.push.service.ACK")) {
+//                Log.d(TAG, "메시지에크를시작합니다.");
+//                Bundle bundle = intent.getExtras();
+//
+//                if (bundle == null) {
+//                    Log.e(TAG, "bundle이 존재하지않습니다.");
+//                    return Service.START_STICKY;
+//                }
+//
+//                for (String key : bundle.keySet()) {
+//                    Log.d(TAG, key + "=" + bundle.get(key));
+//                }
+//
+//                String msgID = bundle.getString(PushPreference.MSGID);
+//                Log.d(TAG, "msgID=" + msgID);
+//
+//                String token = bundle.getString(PushPreference.TOKEN);
+//                Log.d(TAG, "token=" + token);
+//
+//                if (msgID != null && token != null) {
+//                    JSONObject ack = new JSONObject();
+//                    ack.put("msgID", msgID);
+//                    ack.put("token", token);
+//                    ack.put("ackType", "pma");
+//                    ack.put("ackTime", System.currentTimeMillis());
+//                    Log.d(TAG, "ack=" + ack);
+//                    publish(PushHandler.ACK_TOPIC, ack.toString().getBytes(), 2); // qos 2 로 전송
+//                }
+//                Log.d(TAG, "메시지에크를종료합니다.");
+//            }
+
+//            else if (intent.getAction().equals(
+//                    "kr.co.adflow.push.service.FWUPDATE")) {
+//                Log.d(TAG, "firmUpdate시작");
+//                // Device model
+//                String phoneModel = android.os.Build.MODEL;
+//                Log.d(TAG, "phoneModel=" + phoneModel);
+//
+//                Bundle bundle = intent.getExtras();
+//                String msg = bundle.getString("Message");
+//                Log.d(TAG, "msg=" + msg);
+//                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//                builder.setTitle("firmware update");
+//                //builder.setIcon(R.drawable.icon);
+//                builder.setMessage(msg);
+//
+//                builder.setPositiveButton("예", new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int whichButton) {
+//                        //Do something
+//                        Log.d(TAG, "펌웨어업데이트를 선택하였습니다.");
+//                        Intent intent = new Intent();
+//                        intent.setAction("android.settings.SYSTEM_UPDATE_SETTINGS");
+//                        intent.setFlags(intent.FLAG_ACTIVITY_NEW_TASK);
+//                        //intent.setComponent(ComponentName
+//                        //       .unflattenFromString("com.google.android.gsf/.update.SystemUpdateActivity"));
+//                        startActivity(intent);
+//                        dialog.dismiss();
+//                    }
+//                });
+//
+//                builder.setNegativeButton("아니오", new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int whichButton) {
+//                        //Do something
+//                        Log.d(TAG, "펌웨어업데이트를 취소하였습니다.");
+//                        dialog.dismiss();
+//                    }
+//                });
+//
+//                AlertDialog alert = builder.create();
+//                alert.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+//                alert.show();
+            //}
 //            } else if (intent.getAction().equals(
 //                    "kr.co.adflow.push.service.STOP")) {
 //                Log.d(TAG, "푸시서비스를종료합니다.");
@@ -550,7 +582,11 @@ public class PushServiceImpl extends Service implements PushService {
             else {
                 Log.e(TAG, "적절한처리핸들러가없습니다.");
             }
-        } catch (Exception e) {
+        } catch (
+                Exception e
+                )
+
+        {
             Log.e(TAG, "예외상황발생", e);
         }
 
@@ -753,11 +789,11 @@ public class PushServiceImpl extends Service implements PushService {
      * java.lang.String)
      */
     @Override
-    public String auth(String url, String userID, String deviceID, String ufmi)
+    public String auth(String url, String userID, String deviceID)
             throws Exception {
         Log.d(TAG, "auth시작(url=" + url + ", userID=" + userID + ", deviceID="
-                + deviceID + ", ufmi=" + ufmi + ")");
-        String ret = pushHandler.auth(url, userID, deviceID, ufmi);
+                + deviceID + ")");
+        String ret = pushHandler.auth(url, userID, deviceID);
         Log.d(TAG, "auth종료(return=" + ret + ")");
         return ret;
     }
@@ -770,4 +806,10 @@ public class PushServiceImpl extends Service implements PushService {
         return ret;
     }
 
+    private String updateUFMI(String phoneNum, String ufmi) throws Exception {
+        Log.d(TAG, "updateUFMI시작(phoneNum=" + phoneNum + ", ufmi=" + ufmi + ")");
+        String ret = pushHandler.updateUFMI(phoneNum, ufmi);
+        Log.d(TAG, "updateUFMI종료(return=" + ret + ")");
+        return ret;
+    }
 }

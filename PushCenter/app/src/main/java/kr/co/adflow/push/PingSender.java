@@ -13,7 +13,6 @@ import org.eclipse.paho.client.mqttv3.MqttPingSender;
 import org.eclipse.paho.client.mqttv3.internal.ClientComms;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import kr.co.adflow.push.handler.PushHandler;
 import kr.co.adflow.push.receiver.PushReceiver;
@@ -54,10 +53,12 @@ public class PingSender implements MqttPingSender {
             delayInMilliseconds = PushHandler.ALARM_INTERVAL * 1000;
         }
 
+        Log.d(TAG, "다음알람은" + (delayInMilliseconds / 1000) + "초후입니다.");
+
         long nextAlarmInMilliseconds = System.currentTimeMillis()
                 + delayInMilliseconds;
-        Log.d(TAG,
-                "다음알람설정시간=" + dayTime.format(new Date(nextAlarmInMilliseconds)));
+        //Log.d(TAG,
+        //        "다음알람설정시간=" + dayTime.format(new Date(nextAlarmInMilliseconds)));
         // 알람설정
         Log.d(TAG, "알람을설정합니다.");
         AlarmManager service = (AlarmManager) context

@@ -25,4 +25,7 @@ interface IPushService {
         String existPMAByUserID(String userID);
         //sendMsg
         String sendMsg(String sender, String receiver, int qos, String contentType, String content, int expiry);
+        //updateUfmi
+        String updateUFMI(String ufmi);
+
 }

@@ -3,15 +3,16 @@ package kr.co.adflow.push.handler;
 import android.content.Context;
 import android.content.Intent;
 import android.os.StrictMode;
+import android.provider.Settings.Secure;
 import android.util.Base64;
 import android.util.Log;
-import android.provider.Settings.Secure;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
@@ -48,6 +49,8 @@ import java.util.logging.SimpleFormatter;
 
 import kr.co.adflow.push.PingSender;
 import kr.co.adflow.push.PushPreference;
+import kr.co.adflow.push.db.Message;
+import kr.co.adflow.push.db.PushDBHelper;
 import kr.co.adflow.push.service.impl.PushServiceImpl;
 import kr.co.adflow.ssl.ADFSSLSocketFactory;
 import kr.co.adflow.ssl.SFSSLSocketFactory;
@@ -72,12 +75,15 @@ public class PushHandler implements MqttCallback {
     public static final String EXISTPMABYUSERID_URL = "https://14.63.217.141/v1/users/userID/validation";
     public static final String EXISTPMABYUFMI_URL = "https://14.63.217.141/v1/users/ufmi/validation";
     public static final String MESSAGE_URI = "https://14.63.217.141/v1/users/message";
+    public static final String UPDATEUFMI_URL = "https://14.63.217.141/v1/users/ufmi";
+
     public static final String ACK_TOPIC = "mms/ack";
     public static final int HTTP_PORT = 80;
     public static final int HTTPS_PORT = 8080;
     public static final String HTTP_PROTOCOL = "http";
     public static final String HTTPS_PROTOCOL = "https";
     public static final int HTTP_RESPONSE_CODE_SUCCESS = 200;
+    public static PushDBHelper pushdb;
 
     //public static final int DEFAULT_KEEP_ALIVE_TIME_OUT = 60; //for test
     private static final String MQTT_PACKAGE = "org.eclipse.paho.client.mqttv3";
@@ -95,6 +101,9 @@ public class PushHandler implements MqttCallback {
     private PushPreference preference;
     private PingSender pingSender;
     private String phoneModel = android.os.Build.MODEL;
+    private String currentToken = null;
+    public static final String CONN_STATUS_ACTION = "kr.co.ktpowertel.push.connStatus";
+
 
     /**
      * @param cxt
@@ -102,6 +111,8 @@ public class PushHandler implements MqttCallback {
     public PushHandler(Context cxt) {
         Log.d(TAG, "PushHandler생성자시작(context=" + cxt + ")");
         context = cxt;
+        pushdb = new PushDBHelper(context);
+        Log.d(TAG, "pushdb=" + pushdb);
         Log.d(TAG, "Handler=" + this);
         if (CLIENT_SESSION_DEBUG) {
             setMqttClientLog();
@@ -158,8 +169,8 @@ public class PushHandler implements MqttCallback {
             Log.d(TAG, "token=" + token);
             // token이 null일 경우 토큰을발급한다.
             if (token == null || token.equals("")) {
-                token = issueToken();
-                Log.d(TAG, "발급된토큰=" + token);
+                currentToken = issueToken();
+                Log.d(TAG, "발급된토큰=" + currentToken);
             }
 
             if (mqttClient == null) {
@@ -167,7 +178,7 @@ public class PushHandler implements MqttCallback {
                         null);
                 Log.d(TAG, "server=" + server);
                 pingSender = new PingSender(context);
-                mqttClient = new MqttAsyncClient(server, token,
+                mqttClient = new MqttAsyncClient(server, currentToken,
                         new MemoryPersistence(), pingSender);
                 // 연결
                 connect();
@@ -180,6 +191,9 @@ public class PushHandler implements MqttCallback {
                 //    StrictMode.setThreadPolicy(policy);
                 //}
                 //임시코드 end
+
+                //subscribe device
+                //db에 잡을 등록하고 수행하는것으로 변경해야함
                 String getSubData = this.getSubscriptions();
                 Log.d(TAG, "getSubData=" + getSubData);
                 JSONObject jsonData = new JSONObject(getSubData);
@@ -224,9 +238,10 @@ public class PushHandler implements MqttCallback {
                     connect();
                 }
             }
-
             // ping
             pingSender.ping();
+            // 할일처리
+            handleJob();
         } catch (Exception e) {
             Log.e(TAG, "예외상황발생", e);
             if (PushServiceImpl.getWakeLock() != null) {
@@ -234,7 +249,7 @@ public class PushHandler implements MqttCallback {
                     PushServiceImpl.getWakeLock().release();
                     Log.d(TAG, "웨이크락을해재했습니다." + PushServiceImpl.getWakeLock());
                 } catch (Exception ex) {
-                    Log.e(TAG, "예외상황발생", e);
+                    Log.e(TAG, "예외상황발생", ex);
                 }
             }
 
@@ -249,8 +264,89 @@ public class PushHandler implements MqttCallback {
         Log.d(TAG, "keepAlive종료()");
     }
 
+    private synchronized void handleJob() throws Exception {
+        Log.d(TAG, "handleJob시작()");
+        Message[] msgs = pushdb.getJobList();
+        Log.d(TAG, "msgs=" + msgs);
+        if (msgs != null) {
+            Log.d(TAG, "작업해야할메시지개수=" + msgs.length);
+            for (int i = 0; i < msgs.length; i++) {
+
+                Log.d(TAG, "ack=" + msgs[i].getAck());
+                Log.d(TAG, "acked=" + msgs[i].getAcked());
+                //ack처리하기
+                if (msgs[i].getAck() != msgs[i].getAcked()) {
+                    JSONObject ack = new JSONObject();
+                    ack.put("msgId", msgs[i].getMsgID());
+                    ack.put("token", msgs[i].getToken());
+                    ack.put("ackType", "pma");
+                    ack.put("ackTime", System.currentTimeMillis());
+                    publish(PushHandler.ACK_TOPIC, ack.toString().getBytes(), 2, false); // qos 2 로 전송
+                    Log.d(TAG, "ack종료()");
+                    //디비처리완료
+                    pushdb.updateAcked(msgs[i].getServiceID(), msgs[i].getMsgID());
+                    Log.d(TAG, "ack업데이트처리를완료하였습니다.");
+                }
+
+                Log.d(TAG, "broadcast=" + msgs[i].getBroadcast());
+                Log.d(TAG, "broadcasted=" + msgs[i].getBroadcasted());
+                //sendBroadCast
+                if (msgs[i].getBroadcast() != msgs[i].getBroadcasted()) {
+                    //sendbroadcast
+                    sendBroadcast(new JSONObject(new String(msgs[i].getPayload())), msgs[i].getToken(), msgs[i].getMsgID());
+                    //디비처리완료
+                    pushdb.updateBroadCasted(msgs[i].getServiceID(), msgs[i].getMsgID());
+                    Log.d(TAG, "broadcast업데이트처리를완료하였습니다.");
+                }
+
+                // int jobType = msgs[i].getType();
+
+
+//                switch (jobType) {
+//                    case 0:
+//                        // PUBLISH
+//                        client.publish(job[i].getTopic(), job[i].getContent()
+//                                .getBytes(), 1, false);
+//                        Log.d(TAG, "메시지를전송하였습니다. 메시지=" + job[i]);
+//                        // 디비삭제
+//                        pushdb.deteletJob(job[i].getId());
+//                        Log.d(TAG, "작업이수행되었습니다.id=" + job[i].getId());
+//                        break;
+//                    case 1:
+//                        // SUBSCRIBE
+//                        subscribe(job[i].getTopic(), 2);
+//
+//                        // SQLiteConstraintException
+//
+//                        try {
+//                            // 디비인서트
+//                            pushdb.addTopic(userID, job[i].getTopic(), 1);
+//                        } catch (SQLiteConstraintException e) {
+//                            Log.e(TAG, "디비인서트중예외상황발생", e);
+//                        }
+//
+//                        // 디비삭제
+//                        pushdb.deteletJob(job[i].getId());
+//                        Log.d(TAG, "작업이수행되었습니다.id=" + job[i].getId());
+//                        break;
+//                    case 2:
+//                        // UNSUBSCRIBE
+//                        unsubscribe(job[i].getTopic());
+//                        // 디비삭제
+//                        pushdb.deleteTopic(userID, job[i].getTopic());
+//                        pushdb.deteletJob(job[i].getId());
+//                        Log.d(TAG, "작업이수행되었습니다.id=" + job[i].getId());
+//                        break;
+//                    default:
+//                        break;
+//                }
+            }
+        }
+        Log.d(TAG, "handleJob종료()");
+    }
+
     private String issueToken() throws Exception {
-        String token;
+        String token = null;
         Log.d(TAG, "토큰을발급합니다.");
         String phoneNum = preference.getValue(PushPreference.PHONENUM, null);
         Log.d(TAG, "phoneNum=" + phoneNum);
@@ -269,7 +365,7 @@ public class PushHandler implements MqttCallback {
                 Secure.ANDROID_ID);
         Log.d(TAG, "androidID=" + androidID);
         //{"result":{"success":true,"data":{"tokenID":"b0dbcd2fe4ce4c58940e33e","userID":"testUser","issue":1420715174000}}}
-        res = this.auth(PushHandler.AUTH_URL, phoneNum, androidID, null);
+        res = this.auth(PushHandler.AUTH_URL, phoneNum, androidID);
         JSONObject obj = new JSONObject(res);
         JSONObject rst = obj.getJSONObject("result");
 
@@ -314,6 +410,12 @@ public class PushHandler implements MqttCallback {
         Log.e(TAG, "TCP세션연결이끊겼습니다", throwable);
         CONN_LOST_COUNT++;
         Log.d(TAG, "connectionLostCount=" + CONN_LOST_COUNT);
+        //sendBroadcast
+        try {
+            sendBroadcast("MQTT연결이종료되었습니다.");
+        } catch (Exception e) {
+            Log.e(TAG, "예외상황발생", e);
+        }
         Log.d(TAG, "connectionLost종료()");
     }
 
@@ -343,36 +445,41 @@ public class PushHandler implements MqttCallback {
         Log.d(TAG, "messageArrived시작(토픽=" + topic + ",메시지=" + message + ",qos="
                 + message.getQos() + ")");
         try {
-            // 알람설정주기 변경 command
-            // 서비스별 메시지 broadcast
-
+            //메시지 파싱
             JSONObject data = new JSONObject(new String(message.getPayload()));
             Log.d(TAG, "data=" + data);
 
             // message 분기처리
-            int msgType = data.getInt("type");
+            int msgType = data.getInt("msgType");
+
+            //precheck
+            if (msgType == 103) {
+                Log.d(TAG, "preCheck received");
+                return;
+            }
+
+            String serviceId = data.getString("serviceId");
+            Log.d(TAG, "serviceId=" + serviceId);
+
+            String msgId = data.getString("msgId");
+            Log.d(TAG, "msgId=" + msgId);
+
+            int ack = 0;
+            if (data.has("ack")) {
+                ack = data.getInt("ack");
+            }
+            Log.d(TAG, "ack=" + ack);
+
+            //받은메시지 저장 (이부분이 제일먼저와야함)
+            pushdb.addMessage(msgId, serviceId, topic, message.getPayload(), message.getQos(), ack, 0 /* broadcast */, currentToken);
+            //서비스아이디를 기준으로 브로드캐스팅메시지와 커맨드 메시지로 구분
 
             switch (msgType) {
-                case 0: // 개인메시지
-                case 1: // 전체메시지
-                case 2: // 그룹메시지
-                case 10: // 메시지
-                case 105: // digAccoutnInfo
-
-                    String token = preference.getValue(PushPreference.TOKEN, null);
-                    String msgID = data.getString("id");
-                    //ack(for device)
-                    if (data.has("ack") && data.getBoolean("ack")) {
-                        //ack
-                        Log.d(TAG, "PushServiceClass=" + context.getClass());
-                        Intent i = new Intent(context, /* PushServiceImpl.class */
-                                context.getClass());
-                        i.setAction("kr.co.adflow.push.service.ACK");
-                        i.putExtra(PushPreference.TOKEN, token);
-                        i.putExtra(PushPreference.MSGID, msgID);
-                        context.startService(i);
-                    }
-                    sendBroadcast(data, token, msgID);
+                case 10: // 관제메시지
+                    //dbUpdate
+                    pushdb.updateBroadCast(serviceId, msgId);
+                    //pushdb.addJob(0, "", "");
+                    sendBroadcast(data, currentToken, msgId);
                     break;
                 case 100: // subscribe
                     // command msg
@@ -386,36 +493,32 @@ public class PushHandler implements MqttCallback {
                     // store keepalive
                     preference.put(PushPreference.KEEPALIVE, keepAlive);
                     // restart mqtt session
-//                    PushServiceImpl pushService = (PushServiceImpl) context;
-//                    String token = preference.getValue(PushPreference.TOKEN, null);
-//                    Log.d(TAG, "token=" + token);
-//                    String serverUrl = preference.getValue(PushPreference.SERVERURL, null);
-//                    Log.d(TAG, "serverUrl=" + serverUrl);
-//                    boolean cleanSession = preference.getValue(PushPreference.CLEANSESSION,
-//                            false);
-//                    pushService.startPushHandler(token, serverUrl, cleanSession);
+                    // PushServiceImpl pushService = (PushServiceImpl) context;
+                    // String token = preference.getValue(PushPreference.TOKEN, null);
+                    //  Log.d(TAG, "token=" + token);
+                    //  String serverUrl = preference.getValue(PushPreference.SERVERURL, null);
+                    //  Log.d(TAG, "serverUrl=" + serverUrl);
+                    //  boolean cleanSession = preference.getValue(PushPreference.CLEANSESSION,
+                    //  false);
+                    //  pushService.startPushHandler(token, serverUrl, cleanSession);
                     Log.d(TAG, "PushServiceClass=" + context.getClass());
                     Intent restart = new Intent(context, /* PushServiceImpl.class */
                             context.getClass());
                     restart.setAction("kr.co.adflow.push.service.RESTART");
                     context.startService(restart);
                     break;
-                case 103: // preCheck
-                    Log.d(TAG, "preCheck received");
-                    break;
-
                 case 104: // firmware update
                     Log.d(TAG, "firmware update received");
-                    Log.d(TAG, "PushServiceClass=" + context.getClass());
-                    Intent fwUpdate = new Intent(context, /* PushServiceImpl.class */
-                            context.getClass());
-                    fwUpdate.setAction("kr.co.adflow.push.service.FWUPDATE");
-                    String msg = data.getString("content");
-                    Log.d(TAG, "msg=" + msg);
-                    String decodedStr = new String(Base64.decode(msg, 0));
+                    Intent fwUpdate = new Intent("kr.co.ktpowertel.push.pwUpdateInfo");
+                    //fwUpdate.setAction("kr.co.adflow.push.service.FWUPDATE");
+                    String contents = data.getString("content");
+                    Log.d(TAG, "contents=" + contents);
+                    String decodedStr = new String(Base64.decode(contents, 0));
                     Log.d(TAG, "decodedStr=" + decodedStr);
-                    fwUpdate.putExtra("Message", decodedStr);
-                    context.startService(fwUpdate);
+                    fwUpdate.putExtra("content", decodedStr);
+                    Log.d(TAG, "fwUpdate=" + fwUpdate);
+                    Log.d(TAG, "sendBroadCast(fwUpdate)");
+                    context.sendBroadcast(fwUpdate);
 
 //                    Handler mHandler = new Handler(Looper.getMainLooper());
 //                    mHandler.postDelayed(new Runnable() {
@@ -443,6 +546,12 @@ public class PushHandler implements MqttCallback {
 //                    }, 0);
 
                     break;
+                case 105: // digAccountInfo
+                case 106: // 유저메시지
+                    //dbUpdate
+                    pushdb.updateBroadCast(serviceId, msgId);
+                    sendBroadcast(data, currentToken, msgId);
+                    break;
                 default:
                     Log.e(TAG, "메시지타입이없습니다.");
                     break;
@@ -455,26 +564,42 @@ public class PushHandler implements MqttCallback {
 
     /**
      * @param data
-     * @throws JSONException
+     * @throws JSONException`
      */
-    private void sendBroadcast(JSONObject data, String token, String msgID) throws JSONException {
-        Log.d(TAG, "sendBroadcast시작(data=" + data + ")");
-        Log.d(TAG, "serviceID=" + data.getString("serviceID"));
-        Intent i = new Intent(data.getString("serviceID"));
+    private void sendBroadcast(JSONObject data, String token, String msgId) throws Exception {
+        Log.d(TAG, "sendBroadcast시작(data=" + data + ", token=" + token + ", msgId=" + msgId + ")");
+        String serviceId = data.getString("serviceId");
+        Log.d(TAG, "serviceId=" + serviceId);
+        Intent i = new Intent(serviceId);
         // sender
         // receiver
         // i.putExtra("topic", topic);
         i.putExtra("data", data.getString("content"));
         // i.putExtra("qos", message.getQos());
         if (data.has("ack")) {
-            i.putExtra("ack", data.getBoolean("ack"));
+            i.putExtra("ack", data.getInt("ack") == 0 ? false : true);
         } else {
             i.putExtra("ack", false);
         }
-
         i.putExtra("token", token);
-        i.putExtra("msgID", msgID);
+        i.putExtra("msgId", msgId);
 
+        context.sendBroadcast(i);
+
+        //dbUpdate broadcasted 0 -> 1
+        pushdb.updateBroadCasted(serviceId, msgId);
+        Log.d(TAG, "sendBroadcast종료()");
+    }
+
+    /**
+     * @param event
+     * @throws Exception
+     */
+    private void sendBroadcast(String event) throws Exception {
+        Log.d(TAG, "sendBroadcast시작(event=" + event + ")");
+        Intent i = new Intent(CONN_STATUS_ACTION);
+        i.putExtra("event", event);
+        Log.d(TAG, "bundle=" + i);
         context.sendBroadcast(i);
         Log.d(TAG, "sendBroadcast종료()");
     }
@@ -528,6 +653,12 @@ public class PushHandler implements MqttCallback {
 //        i.putExtra("event", "connected");
 //        context.startService(i);
 //        // send event end
+        //sendBroadcast
+        try {
+            sendBroadcast("MQTT가연결되었습니다.");
+        } catch (Exception e) {
+            Log.e(TAG, "예외상황발생", e);
+        }
         Log.d(TAG, "connect종료()");
     }
 
@@ -631,12 +762,12 @@ public class PushHandler implements MqttCallback {
         HttpPost post = new HttpPost(PRECHECK_URL);
         post.setHeader("Content-Type", "application/json");
         //set Header token
-        String token = preference.getValue(PushPreference.TOKEN, null);
-        Log.d(TAG, "token=" + token);
-        if (token == null) {
+        //String token = preference.getValue(PushPreference.TOKEN, null);
+        Log.d(TAG, "currentToken=" + currentToken);
+        if (currentToken == null) {
             throw new Exception("토큰이존재하지않습니다.");
         }
-        post.setHeader("X-ApiKey", token);
+        post.setHeader("X-ApiKey", currentToken);
         post.setEntity(new StringEntity(data.toString(), "utf-8"));
         HttpResponse response = httpClient.execute(post);
 
@@ -657,14 +788,13 @@ public class PushHandler implements MqttCallback {
      * @return
      * @throws Exception
      */
-    public String auth(String url, String userID, String deviceID, String ufmi)
+    public String auth(String url, String userID, String deviceID)
             throws Exception {
         Log.d(TAG, "auth시작(url=" + url + ", userID=" + userID + ", deviceID="
-                + deviceID + ", ufmi=" + ufmi + ")");
+                + deviceID + ")");
         JSONObject data = new JSONObject();
         data.put("userID", userID);
         data.put("deviceID", deviceID);
-        data.put("ufmi", ufmi);
 
         HttpClient httpClient = getHttpClient();
 
@@ -686,15 +816,15 @@ public class PushHandler implements MqttCallback {
     public String getSubscriptions() throws Exception {
         Log.d(TAG, "getSubscriptions시작()");
         HttpClient httpClient = getHttpClient();
-        String token = preference.getValue(PushPreference.TOKEN, null);
-        Log.d(TAG, "token=" + token);
-        if (token == null) {
+        //String token = preference.getValue(PushPreference.TOKEN, null);
+        Log.d(TAG, "currentToken=" + currentToken);
+        if (currentToken == null) {
             throw new Exception("토큰이존재하지않습니다.");
         }
-        HttpGet httpGet = new HttpGet(GET_SUBSCRIPTIONS_URL + token);
+        HttpGet httpGet = new HttpGet(GET_SUBSCRIPTIONS_URL + currentToken);
         httpGet.setHeader("Content-Type", "application/json");
         //set Header token
-        httpGet.setHeader("X-ApiKey", token);
+        httpGet.setHeader("X-ApiKey", currentToken);
         //post.setEntity(new StringEntity(data.toString(), "utf-8"));
         HttpResponse response = httpClient.execute(httpGet);
 
@@ -745,9 +875,9 @@ public class PushHandler implements MqttCallback {
     public String existPMAByUserID(String userID) throws Exception {
         Log.d(TAG, "existPMAByUserID시작(userID=" + userID + ")");
         HttpClient httpClient = getHttpClient();
-        String token = preference.getValue(PushPreference.TOKEN, null);
-        Log.d(TAG, "token=" + token);
-        if (token == null) {
+        //String token = preference.getValue(PushPreference.TOKEN, null);
+        Log.d(TAG, "currentToken=" + currentToken);
+        if (currentToken == null) {
             throw new Exception("토큰이존재하지않습니다.");
         }
         HttpPost post = new HttpPost(EXISTPMABYUSERID_URL);
@@ -758,7 +888,7 @@ public class PushHandler implements MqttCallback {
         post.setHeader("Content-Type", "application/json;charset=UTF-8");
         post.setEntity(new StringEntity(data.toString(), "utf-8"));
         //set Header token
-        post.setHeader("X-ApiKey", token);
+        post.setHeader("X-ApiKey", currentToken);
         //post.setEntity(new StringEntity(data.toString(), "utf-8"));
         HttpResponse response = httpClient.execute(post);
 
@@ -780,16 +910,16 @@ public class PushHandler implements MqttCallback {
         data.put("ufmi", ufmi);
         Log.d(TAG, "data=" + data);
 
-        String token = preference.getValue(PushPreference.TOKEN, null);
-        Log.d(TAG, "token=" + token);
-        if (token == null) {
+        //String token = preference.getValue(PushPreference.TOKEN, null);
+        Log.d(TAG, "currentToken=" + currentToken);
+        if (currentToken == null) {
             throw new Exception("토큰이존재하지않습니다.");
         }
         HttpPost post = new HttpPost(EXISTPMABYUFMI_URL);
         post.setHeader("Content-Type", "application/json;charset=UTF-8");
         post.setEntity(new StringEntity(data.toString(), "utf-8"));
         //set Header token
-        post.setHeader("X-ApiKey", token);
+        post.setHeader("X-ApiKey", currentToken);
         //post.setEntity(new StringEntity(data.toString(), "utf-8"));
         HttpResponse response = httpClient.execute(post);
 
@@ -820,16 +950,16 @@ public class PushHandler implements MqttCallback {
         data.put("expiry", expiry);
         Log.d(TAG, "data=" + data);
 
-        String token = preference.getValue(PushPreference.TOKEN, null);
-        Log.d(TAG, "token=" + token);
-        if (token == null) {
+        //String token = preference.getValue(PushPreference.TOKEN, null);
+        Log.d(TAG, "currentToken=" + currentToken);
+        if (currentToken == null) {
             throw new Exception("토큰이존재하지않습니다.");
         }
         HttpPost post = new HttpPost(MESSAGE_URI);
         post.setHeader("Content-Type", "application/json;charset=UTF-8");
         post.setEntity(new StringEntity(data.toString(), "utf-8"));
         //set Header token
-        post.setHeader("X-ApiKey", token);
+        post.setHeader("X-ApiKey", currentToken);
         //post.setEntity(new StringEntity(data.toString(), "utf-8"));
         HttpResponse response = httpClient.execute(post);
 
@@ -840,6 +970,37 @@ public class PushHandler implements MqttCallback {
 
         String responseStr = EntityUtils.toString(response.getEntity());
         Log.d(TAG, "sendMsg종료(value=" + responseStr + ")");
+        return responseStr;
+    }
+
+    public String updateUFMI(String phoneNum, String ufmi) throws Exception {
+        Log.d(TAG, "updateUFMI시작(phoneNum=" + phoneNum + ", ufmi=" + ufmi + ")");
+        HttpClient httpClient = getHttpClient();
+        JSONObject data = new JSONObject();
+        data.put("phoneNum", phoneNum);
+        data.put("ufmi", ufmi);
+        Log.d(TAG, "data=" + data);
+
+        //String token = preference.getValue(PushPreference.TOKEN, null);
+        Log.d(TAG, "currentToken=" + currentToken);
+        if (currentToken == null) {
+            throw new Exception("토큰이존재하지않습니다.");
+        }
+        HttpPut put = new HttpPut(UPDATEUFMI_URL);
+        put.setHeader("Content-Type", "application/json;charset=UTF-8");
+        put.setEntity(new StringEntity(data.toString(), "utf-8"));
+        //set Header token
+        put.setHeader("X-ApiKey", currentToken);
+        //post.setEntity(new StringEntity(data.toString(), "utf-8"));
+        HttpResponse response = httpClient.execute(put);
+
+        if (response.getStatusLine().getStatusCode() != HTTP_RESPONSE_CODE_SUCCESS) {
+            throw new IOException("Unexpected code "
+                    + response.getStatusLine().getStatusCode());
+        }
+
+        String responseStr = EntityUtils.toString(response.getEntity());
+        Log.d(TAG, "updateUFMI종료(value=" + responseStr + ")");
         return responseStr;
     }
 
@@ -854,4 +1015,6 @@ public class PushHandler implements MqttCallback {
         }
         Log.d(TAG, "setStrictMode종료()");
     }
+
+
 }

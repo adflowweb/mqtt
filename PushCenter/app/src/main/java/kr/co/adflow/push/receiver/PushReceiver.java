@@ -72,6 +72,8 @@ public class PushReceiver extends BroadcastReceiver {
                     //remove token
                     preference.remove(PushPreference.TOKEN);
                     Log.d(TAG, "토큰을삭제했습니다.");
+                    //sendBroadcast
+                    sendBroadcast(context, "USIM이변경되었습니다.");
                 } else if (oldPhoneNum.equals(newPhoneNumber)) {
                     //같은유심
                     Log.d(TAG, "이전부팅전화번호와같습니다.");
@@ -82,6 +84,8 @@ public class PushReceiver extends BroadcastReceiver {
                     //remove token
                     preference.remove(PushPreference.TOKEN);
                     Log.d(TAG, "토큰을삭제했습니다.");
+                    //sendBroadcast
+                    sendBroadcast(context, "USIM이변경되었습니다.");
                 }
 
                 //서버정보저장
@@ -137,5 +141,19 @@ public class PushReceiver extends BroadcastReceiver {
             Log.e(TAG, "예외상황발생", e);
         }
         Log.d(TAG, "onReceive종료()");
+    }
+
+    /**
+     * @param event
+     * @throws Exception
+     */
+    private void sendBroadcast(Context context, String event) throws Exception {
+        Log.d(TAG, "sendBroadcast시작(event=" + event + ")");
+        String serviceID = "kr.co.ktpowertel.push.connStatus";
+        Log.d(TAG, "serviceID=" + serviceID);
+        Intent i = new Intent(serviceID);
+        i.putExtra("event", event);
+        context.sendBroadcast(i);
+        Log.d(TAG, "sendBroadcast종료()");
     }
 }
