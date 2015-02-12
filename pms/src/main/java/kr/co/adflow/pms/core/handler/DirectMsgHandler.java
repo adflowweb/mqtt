@@ -61,13 +61,26 @@ public class DirectMsgHandler implements ProducerCallback<Object> {
 		JSONObject msgObject = new JSONObject();
 		try {
 
-			msgObject.put("type", msg.getMsgType());
-			msgObject.put("id", msg.getMsgId());
+			msgObject.put("msgType", msg.getMsgType());
+			msgObject.put("msgId", msg.getMsgId());
 			msgObject.put("sender", msg.getIssueId());
 			msgObject.put("receiver", msg.getReceiver());
-			msgObject.put("ack", msg.isAck());
+			if (msg.isAck()) {
+				msgObject.put("ack", 1);
+			} else {
+				msgObject.put("ack", 0);
+			}
+			
 			msgObject.put("contentType", msg.getContentType());
-			msgObject.put("serviceID", msg.getServiceId());
+			msgObject.put("serviceId", msg.getServiceId());
+			
+//			msgObject.put("type", msg.getMsgType());
+//			msgObject.put("id", msg.getMsgId());
+//			msgObject.put("sender", msg.getIssueId());
+//			msgObject.put("receiver", msg.getReceiver());
+//			msgObject.put("ack", msg.isAck());
+//			msgObject.put("contentType", msg.getContentType());
+//			msgObject.put("serviceID", msg.getServiceId());
 
 			if ("application/json".equals(msg.getContentType())) {
 				JSONObject contentObject = new JSONObject(msg.getContent());

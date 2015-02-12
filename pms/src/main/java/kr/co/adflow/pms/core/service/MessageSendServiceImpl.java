@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import kr.co.adflow.pms.core.config.PmsConfig;
 import kr.co.adflow.pms.core.handler.DirectMsgHandler;
 import kr.co.adflow.pms.core.util.DateUtil;
 import kr.co.adflow.pms.core.util.KeyGenerator;
@@ -11,6 +12,9 @@ import kr.co.adflow.pms.domain.Message;
 import kr.co.adflow.pms.domain.User;
 import kr.co.adflow.pms.domain.mapper.MessageMapper;
 import kr.co.adflow.pms.domain.mapper.UserMapper;
+import kr.co.adflow.pms.domain.mapper.ValidationMapper;
+import kr.co.adflow.pms.domain.validator.UserValidator;
+import kr.co.adflow.pms.svc.service.PushMessageService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,9 +32,18 @@ public class MessageSendServiceImpl implements MessageSendService {
 	private MessageMapper messageMapper;
 	@Autowired
 	private UserMapper userMapper;
+	
+	@Autowired
+	private PushMessageService pushMessageService;
 
 	@Autowired
 	private JmsTemplate jmsTemplate;
+	
+	@Autowired
+	private ValidationMapper validationMapper;
+	
+	@Autowired
+	private UserValidator userValidator;
 
 	@Override
 	public int sendMessageArray(String serverId, int limit) {
@@ -48,21 +61,23 @@ public class MessageSendServiceImpl implements MessageSendService {
 			
 			msg.setKeyMon(this.getKeyMon(msg.getMsgId()));
 			
-			if (userMapper.getMsgCntLimit(msg.getIssueId()) < 1) {
-				msg.setStatus(-2);
-				messageMapper.updateStatus(msg);
-				continue;
-			}
+
 			
 			// msg.getReceiverTopic(); 처리
 			if (!this.validReceiverUserId(msg.getReceiver())) {
-				msg.setStatus(-2);
+				msg.setStatus(PmsConfig.MESSAGE_STATUS_RECEIVER_NOT_FOUNT);
 				messageMapper.updateStatus(msg);
 				continue;
 			}
 			
-			msg.setReceiverTopic(ReceiverTopic(msg.getReceiver()));
-
+			msg.setReceiverTopic(this.getReceiverTopic(msg.getReceiver()));
+			
+			if (userMapper.getMsgCntLimit(msg.getIssueId()) < 1) {
+				msg.setStatus(PmsConfig.MESSAGE_STATUS_COUNT_OVER);
+				messageMapper.updateStatus(msg);
+				continue;
+			}
+			
 			jmsTemplate.execute(msg.getReceiverTopic(), new DirectMsgHandler(msg));
 
 			
@@ -103,9 +118,32 @@ public class MessageSendServiceImpl implements MessageSendService {
 	}
 	
 	private boolean validReceiverUserId(String receiver) {
-		// TODO Auto-generated method stub
-		// type 에 따라 push.user 에서 조회
-		return true;
+		
+		boolean result = false;
+		
+		int type = userValidator.getRequestType(receiver);
+		
+		if (PmsConfig.SERVICE_REQUEST_FORMAT_TYPE_PHONE == type) {
+			result = validationMapper.validPhoneNo(userValidator.getRegstPhoneNo(receiver));
+		}
+		
+		
+		if (PmsConfig.SERVICE_REQUEST_FORMAT_TYPE_UFMI1 == type || PmsConfig.SERVICE_REQUEST_FORMAT_TYPE_UFMI2 == type) {
+			result = validationMapper.validUfmiNo(userValidator.getRegstUfmiNo(receiver));
+		} 
+			
+		
+		return result;
+
+	}
+
+	private boolean isPhoneNo(String receiver) {
+		if ("010".equals(receiver.substring(0, 3))) {
+			return true;
+		} else {
+			return false;
+		}
+		
 	}
 
 	private String getKeyMon(String string) {
@@ -118,13 +156,28 @@ public class MessageSendServiceImpl implements MessageSendService {
 		return KeyGenerator.generateMsgId();
 	}
 	
-	private String ReceiverTopic(String receiver) {
-		//TODO
-		// 1. 01012341234
-		// 2. 82*1234*1234
-		// 3. 00*1234*1234
-		//return "mms/"+ receiver;
-		return receiver;
+	private String getReceiverTopic(String receiver) {
+		
+		String result = null;
+		
+		int type = userValidator.getRequestType(receiver);
+		
+		if (PmsConfig.SERVICE_REQUEST_FORMAT_TYPE_PHONE == type) {
+			result = userValidator.getSubscribPhoneNo(receiver);
+		}
+		
+		
+		if (PmsConfig.SERVICE_REQUEST_FORMAT_TYPE_UFMI1 == type) {
+			result = userValidator.getSubscribUfmi1(receiver);
+		} 
+		
+		
+		if (PmsConfig.SERVICE_REQUEST_FORMAT_TYPE_UFMI2 == type) {
+			result = userValidator.getSubscribUfmi2(receiver);
+		} 
+			
+		
+		return result;
 	}
 
 	@Override
@@ -142,11 +195,7 @@ public class MessageSendServiceImpl implements MessageSendService {
 			
 			msg.setKeyMon(this.getKeyMon(msg.getMsgId()));
 			
-			if (userMapper.getMsgCntLimit(msg.getIssueId()) < 1) {
-				msg.setStatus(-3);
-				messageMapper.updateStatus(msg);
-				continue;
-			}
+
 			
 			// msg.getReceiverTopic(); 처리
 			if (!this.validReceiverUserId(msg.getReceiver())) {
@@ -155,7 +204,13 @@ public class MessageSendServiceImpl implements MessageSendService {
 				continue;
 			}
 			
-			msg.setReceiverTopic(ReceiverTopic(msg.getReceiver()));
+			msg.setReceiverTopic(this.getReceiverTopic(msg.getReceiver()));
+			
+			if (userMapper.getMsgCntLimit(msg.getIssueId()) < 1) {
+				msg.setStatus(-3);
+				messageMapper.updateStatus(msg);
+				continue;
+			}
 
 			jmsTemplate.execute(msg.getReceiverTopic(), new DirectMsgHandler(msg));
 

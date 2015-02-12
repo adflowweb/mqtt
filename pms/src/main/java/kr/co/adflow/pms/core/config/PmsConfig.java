@@ -20,7 +20,9 @@ public class PmsConfig {
 	public static final boolean MESSAGE_ACK_DEFAULT = true;
 	public static final String MESSAGE_SERVICE_ID_DEFAULT = "kr.co.ktpowertel.push.mms";
 
-	public static final int MESSAGE_STATUS_ABNORMAL = -1;
+	public static final int MESSAGE_STATUS_RECEIVER_NOT_FOUNT = -2;
+	public static final int MESSAGE_STATUS_COUNT_OVER = -1;
+	public static final int MESSAGE_STATUS_ABNORMAL = -99;
 	public static final int MESSAGE_STATUS_SENDING = 0;
 	public static final int MESSAGE_STATUS_SEND = 1;
 	public static final int MESSAGE_STATUS_RESEVATION_CANCEL = 2;
@@ -37,5 +39,10 @@ public class PmsConfig {
 	
 	public static final String TOKEN_TYPE_APPLICATION = "A";
 	public static final String TOKEN_TYPE_TOKEN = "T";
+	
+	public static final int SERVICE_REQUEST_FORMAT_TYPE_ERROR = -1;
+	public static final int SERVICE_REQUEST_FORMAT_TYPE_UFMI1 = 1;
+	public static final int SERVICE_REQUEST_FORMAT_TYPE_UFMI2 = 2;
+	public static final int SERVICE_REQUEST_FORMAT_TYPE_PHONE = 3;
 
 }

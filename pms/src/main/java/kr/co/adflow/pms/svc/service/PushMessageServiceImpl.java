@@ -15,6 +15,7 @@ import kr.co.adflow.pms.domain.mapper.InterceptMapper;
 import kr.co.adflow.pms.domain.mapper.MessageMapper;
 import kr.co.adflow.pms.domain.mapper.UserMapper;
 import kr.co.adflow.pms.domain.mapper.ValidationMapper;
+import kr.co.adflow.pms.domain.validator.UserValidator;
 import kr.co.adflow.pms.svc.request.MessageIdsReq;
 import kr.co.adflow.pms.svc.request.MessageReq;
 
@@ -38,11 +39,16 @@ public class PushMessageServiceImpl implements PushMessageService {
 	
 	@Autowired
 	private ValidationMapper validationMapper;
+	
+	@Autowired
+	private UserValidator userValidator;
 
 	@Override
-	public String[] sendMessage(String appKey, MessageReq message) {
+	public List<Map<String,String>> sendMessage(String appKey, MessageReq message) {
 
-		String[] msgIdArray = null;
+		//String[] msgIdArray = null;
+		
+		List<Map<String,String>> resultList = null;
 
 		//1. get userId by appKey 
 		String issueId = interceptMapper.selectCashedUserId(appKey);
@@ -78,22 +84,35 @@ public class PushMessageServiceImpl implements PushMessageService {
 
 		String[] receivers = message.getReceivers();
 
-		msgIdArray = new String[receivers.length];
-
+		//msgIdArray = new String[receivers.length];
+		
+		
+		
 		for (int i = 0; i < receivers.length; i++) {
+			if (!userValidator.validRequestValue(receivers[i])) {
+				throw new RuntimeException("receivers formatting error count : " + i);
+			}
+		}
+		
+		resultList = new ArrayList<Map<String,String>>(receivers.length);
+		
+		Map<String,String> msgMap = null;
+		for (int i = 0; i < receivers.length; i++) {
+
+			msgMap = new HashMap<String,String>();
 			msg.setReceiver(receivers[i]);
 			msg.setMsgId(this.getMsgId());
 			msg.setStatus(PmsConfig.MESSAGE_STATUS_SENDING);
-
-			
 			messageMapper.insertMessage(msg);
 			messageMapper.insertContent(msg);
-			msgIdArray[i] = msg.getMsgId();
+			msgMap.put("msgId", msg.getMsgId());
+			msgMap.put("receiver", msg.getReceiver());
+			
+			resultList.add(msgMap);
 			logger.info("message id :: {}", msg.getMsgId());
-
 		}
 
-		return msgIdArray;
+		return resultList;
 	}
 
 	private String getMsgId() {
@@ -149,7 +168,7 @@ public class PushMessageServiceImpl implements PushMessageService {
 	}
 
 	private String getPushUserId(String phoneNo) {
-		return "+82"+phoneNo;
+		return userValidator.getRegstPhoneNo(phoneNo);
 	}
 
 	@Override
@@ -158,7 +177,7 @@ public class PushMessageServiceImpl implements PushMessageService {
 	}
 
 	private String getPushUfmi(String ufmiNo) {
-		return ufmiNo;
+		return userValidator.getRegstUfmiNo(ufmiNo);
 	}
 
 	@Override

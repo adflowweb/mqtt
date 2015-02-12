@@ -2,10 +2,15 @@ package kr.co.adflow.pms.svc.request;
 
 import java.util.Date;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 public class MessageReq {
 
+	@NotEmpty
 	private String[] receivers;
+	@NotEmpty
 	private String contentType;
+	@NotEmpty
 	private String content;
 	private Date reservationTime;
 	private int resendCount;
