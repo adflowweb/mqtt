@@ -95,16 +95,18 @@ public class MessageSendServiceImpl implements MessageSendService {
 			
 			// 재전송 로직 추가
 			String msgId = msg.getMsgId();
-			if (msg.getResendCount() > 0) {
+			if (msg.getResendMaxCount() > 0) {
+				
 				long reservationTime = System.currentTimeMillis();
-				for (int i = 0; i < msg.getResendCount(); i++) {
+				int resendCnt = 2;
+				for (int i = 0; i < msg.getResendMaxCount(); i++) {
 					int intervalM = msg.getResendInterval();
 					msg.setReservation(true);
 					long interval = intervalM * 1000 * 60;
 					reservationTime =  reservationTime + interval;
 					msg.setReservationTime(new Date(reservationTime));
 					msg.setMsgId(this.getMsgId());
-					msg.setResendCount(++i);
+					msg.setResendCount(resendCnt++);
 					msg.setResendId(msgId);
 					messageMapper.insertMessage(msg);
 					messageMapper.insertContent(msg);
@@ -223,7 +225,7 @@ public class MessageSendServiceImpl implements MessageSendService {
 			}
 			
 			if (userMapper.getMsgCntLimit(msg.getIssueId()) < 1) {
-				msg.setStatus(-3);
+				msg.setStatus(PmsConfig.MESSAGE_STATUS_COUNT_OVER);
 				messageMapper.updateStatus(msg);
 				continue;
 			}
@@ -231,7 +233,7 @@ public class MessageSendServiceImpl implements MessageSendService {
 			jmsTemplate.execute(msg.getReceiverTopic(), new DirectMsgHandler(msg));
 
 			
-			msg.setStatus(1);
+			msg.setStatus(PmsConfig.MESSAGE_STATUS_SEND);
 
 			int resultCnt = messageMapper.updateStatus(msg);
 			logger.info("update count is {}", resultCnt);
