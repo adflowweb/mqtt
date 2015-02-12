@@ -34,7 +34,7 @@ public class MainActivity extends ActionBarActivity {
         mainActivity = this;
     }
 
-    private TextView txtView;
+    public TextView txtView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

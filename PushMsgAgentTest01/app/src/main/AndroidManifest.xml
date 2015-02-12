@@ -22,7 +22,11 @@
             android:enabled="true"
             android:exported="true">
             <intent-filter>
-                <action android:name="kr.co.adflow.push.client" />
+                <action android:name="kr.co.ktpowertel.push.digAccountInfo" />
+                <action android:name="kr.co.ktpowertel.push.fwUpdateInfo" />
+                <action android:name="kr.co.ktpowertel.push.userMessage" />
+                <action android:name="kr.co.ktpowertel.push.mms" />
+                <action android:name="kr.co.ktpowertel.push.connStatus" />
             </intent-filter>
         </receiver>
     </application>
