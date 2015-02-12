@@ -138,7 +138,8 @@ public class MainActivity extends ActionBarActivity {
                         if (mBinder != null) {
                             try {
                                 long start = System.currentTimeMillis();
-                                String result = mBinder.subscribe("users", 2);
+                                String result = mBinder.subscribe("mms/821029998341", 2);
+                                result = mBinder.subscribe("mms/P1/82/200/8003", 2);
                                 long stop = System.currentTimeMillis();
                                 txtView.setText("result=" + result + ", 걸린시간=" + (stop - start) + "ms");
                                 Log.d(TAG, "result=" + result);
