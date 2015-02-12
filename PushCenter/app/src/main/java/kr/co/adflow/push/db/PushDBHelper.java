@@ -22,9 +22,9 @@ public class PushDBHelper extends SQLiteOpenHelper {
     // Database Nameß
     private static final String DATABASE_NAME = "PushDB";
     private static final String TABLE_MESSAGE = "message";
-    private static final String[] MESSAGE_COLUMNS = {"msgid", "serviceid", "topic", "payload", "qos", "ack",
-            "broadcast", "acked", "broadcasted", "receivedate", "token"};
-    //private static final String[] MESSAGE_COLUMNS = {"msgid", "serviceid", "topic", "payload", "qos", "ack", "receivedate"};
+    //private static final String[] MESSAGE_COLUMNS = {"msgid", "serviceid", "topic", "payload", "qos", "ack",
+    //        "broadcast", "acked", "broadcasted", "receivedate", "token"};
+    private static final String[] MESSAGE_COLUMNS = {"msgid", "serviceid", "topic", "payload", "qos", "ack", "receivedate", "token"};
     private static final String TABLE_JOB = "job";
     private static final String[] JOB_COLUMNS = {"id", "type", "topic", "content"};
     private static SimpleDateFormat sdf = new java.text.SimpleDateFormat(
@@ -59,9 +59,14 @@ public class PushDBHelper extends SQLiteOpenHelper {
 //        // create message table
 //        db.execSQL(CREATE_MESSAGE_TABLE);
 
+//        String CREATE_MESSAGE_TABLE = "CREATE TABLE message ( "
+//                + "msgid TEXT, serviceid TEXT, topic TEXT, payload BLOB, qos INTEGER, ack INTEGER, "
+//                + "broadcast INTEGER, acked INTEGER, broadcasted INTEGER, receivedate TEXT, token TEXT, PRIMARY KEY (msgid, serviceid))";
+
         String CREATE_MESSAGE_TABLE = "CREATE TABLE message ( "
                 + "msgid TEXT, serviceid TEXT, topic TEXT, payload BLOB, qos INTEGER, ack INTEGER, "
-                + "broadcast INTEGER, acked INTEGER, broadcasted INTEGER, receivedate TEXT, token TEXT, PRIMARY KEY (msgid, serviceid))";
+                + "receivedate TEXT, token TEXT, PRIMARY KEY (msgid, serviceid))";
+
         // create message table
         db.execSQL(CREATE_MESSAGE_TABLE);
 
@@ -425,8 +430,8 @@ public class PushDBHelper extends SQLiteOpenHelper {
 //        return req;
 //    }
 
-    public synchronized void addMessage(String msgID, String serviceID, String topic, byte[] payload, int qos, int ack, int broadcast, String token) throws Exception {
-        Log.d(TAG, "addMessage시작(msgID=" + msgID + ", serviceID=" + serviceID + ", topic=" + topic + ", payloadLength=" + payload.length + ", qos=" + qos + ", ack=" + ack + ")");
+    public synchronized void addMessage(String msgID, String serviceID, String topic, byte[] payload, int qos, int ack, String token) throws Exception {
+        Log.d(TAG, "addMessage시작(msgID=" + msgID + ", serviceID=" + serviceID + ", topic=" + topic + ", payloadLength=" + payload.length + ", qos=" + qos + ", ack=" + ack + ", token=" + token + ")");
         // 1. get reference to writable DB
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -439,9 +444,9 @@ public class PushDBHelper extends SQLiteOpenHelper {
             values.put("payload", payload);
             values.put("qos", qos);
             values.put("ack", ack);
-            values.put("broadcast", broadcast);
-            values.put("acked", 0);
-            values.put("broadcasted", 0);
+            // values.put("broadcast", broadcast);
+            //values.put("acked", 0);
+            //values.put("broadcasted", 0);
             values.put("token", token);
 
 //            if (serviceID.equals("kr.co.adflow.push.pma")) {
@@ -465,38 +470,38 @@ public class PushDBHelper extends SQLiteOpenHelper {
         }
     }
 
-    public synchronized void updateAcked(String serviceID, String msgID) throws Exception {
-        Log.d(TAG, "updateAcked시작(serviceID=" + serviceID + ", msgID=" + msgID + ")");
+//    public synchronized void updateAcked(String serviceID, String msgID) throws Exception {
+//        Log.d(TAG, "updateAcked시작(serviceID=" + serviceID + ", msgID=" + msgID + ")");
+//
+//        // 1. get reference to writable DB
+//        SQLiteDatabase db = this.getWritableDatabase();
+//
+//        try {
+//            db.execSQL("UPDATE " + TABLE_MESSAGE + " SET "
+//                    + " acked = 1 WHERE "
+//                    + " serviceid  = '" + serviceID + "' and msgid = '" + msgID + "' ");
+//            Log.d(TAG, "updateAcked종료()");
+//        } finally {
+//            // 4. close
+//            db.close();
+//        }
+//    }
 
-        // 1. get reference to writable DB
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        try {
-            db.execSQL("UPDATE " + TABLE_MESSAGE + " SET "
-                    + " acked = 1 WHERE "
-                    + " serviceid  = '" + serviceID + "' and msgid = '" + msgID + "' ");
-            Log.d(TAG, "updateAcked종료()");
-        } finally {
-            // 4. close
-            db.close();
-        }
-    }
-
-    public synchronized void updateBroadCast(String serviceID, String msgID) throws Exception {
-        Log.d(TAG, "updateBroadCast시작(serviceID=" + serviceID + ", msgID=" + msgID + ")");
-
-        // 1. get reference to writable DB
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        try {
-            db.execSQL("UPDATE " + TABLE_MESSAGE + " SET "
-                    + " broadcast = 1 WHERE "
-                    + " serviceid  = '" + serviceID + "' and msgid = '" + msgID + "' ");
-            Log.d(TAG, "updateBroadCast종료()");
-        } finally {
-            // 4. close
-            db.close();
-        }
+//    public synchronized void updateBroadCast(String serviceID, String msgID) throws Exception {
+//        Log.d(TAG, "updateBroadCast시작(serviceID=" + serviceID + ", msgID=" + msgID + ")");
+//
+//        // 1. get reference to writable DB
+//        SQLiteDatabase db = this.getWritableDatabase();
+//
+//        try {
+//            db.execSQL("UPDATE " + TABLE_MESSAGE + " SET "
+//                    + " broadcast = 1 WHERE "
+//                    + " serviceid  = '" + serviceID + "' and msgid = '" + msgID + "' ");
+//            Log.d(TAG, "updateBroadCast종료()");
+//        } finally {
+//            // 4. close
+//            db.close();
+//        }
 
 //        try {
 //            db.execSQL("UPDATE " + TABLE_MESSAGE + " SET "
@@ -507,24 +512,24 @@ public class PushDBHelper extends SQLiteOpenHelper {
 //            // 4. close
 //            db.close();
 //        }
-    }
+//    }
 
-    public synchronized void updateBroadCasted(String serviceID, String msgID) throws Exception {
-        Log.d(TAG, "updateBroadCasted시작(serviceID=" + serviceID + ", msgID=" + msgID + ")");
-
-        // 1. get reference to writable DB
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        try {
-            db.execSQL("UPDATE " + TABLE_MESSAGE + " SET "
-                    + " broadcasted = 1 WHERE "
-                    + " serviceid  = '" + serviceID + "' and msgid = '" + msgID + "' ");
-            Log.d(TAG, "updateBroadCasted종료()");
-        } finally {
-            // 4. close
-            db.close();
-        }
-    }
+//    public synchronized void updateBroadCasted(String serviceID, String msgID) throws Exception {
+//        Log.d(TAG, "updateBroadCasted시작(serviceID=" + serviceID + ", msgID=" + msgID + ")");
+//
+//        // 1. get reference to writable DB
+//        SQLiteDatabase db = this.getWritableDatabase();
+//
+//        try {
+//            db.execSQL("UPDATE " + TABLE_MESSAGE + " SET "
+//                    + " broadcasted = 1 WHERE "
+//                    + " serviceid  = '" + serviceID + "' and msgid = '" + msgID + "' ");
+//            Log.d(TAG, "updateBroadCasted종료()");
+//        } finally {
+//            // 4. close
+//            db.close();
+//        }
+//    }
 
 //    public synchronized void addMessage(String userID, JSONObject msg)
 //            throws Exception {
@@ -562,20 +567,77 @@ public class PushDBHelper extends SQLiteOpenHelper {
 //        Log.d(TAG, "addMessage종료()");
 //    }
 
+    /**
+     * @return
+     * @throws Exception
+     */
+    public Job[] getJobList() throws Exception {
+        Log.d(TAG, "getJobList시작()");
+        // 1. get reference to readable DB
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        try {
+            // 2. build query
+            Cursor cursor = db.query(TABLE_JOB, // a. table
+                    JOB_COLUMNS, // b. column names
+                    null, // c. selections
+                    null, // d. selections args
+                    null, // e. group by
+                    null, // f. having
+                    null, // g. order by
+                    null); // h. limit
+            // 3. if we got results get the first one
+            if (cursor != null)
+                cursor.moveToFirst();
+
+            int count = cursor.getCount();
+            Log.d(TAG, "해야할일갯수=" + count);
+
+            if (count == 0) {
+                Log.d(TAG, "getJobList종료(해야할일이없음)");
+                return null;
+            }
+
+            Job[] job = new Job[count];
+            int i = 0;
+            while (cursor.isAfterLast() == false) {
+                // 4. build req object
+                job[i] = new Job();
+                job[i].setId(cursor.getInt(0));
+                job[i].setType(cursor.getInt(1));
+                job[i].setTopic(cursor.getString(2));
+                job[i].setContent(cursor.getString(3));
+                Log.d(TAG, "job[" + i + "]=" + job[i]);
+                i++;
+                cursor.moveToNext();
+            }
+
+            // log
+            Log.d(TAG, "getJobList종료(job=" + job + ")");
+            // 5. return req
+            return job;
+        } finally {
+            db.close();
+        }
+    }
+
 //    /**
 //     * @return
 //     * @throws Exception
 //     */
-//    public Job[] getJobList() throws Exception {
+//    public Message[] getJobList() throws Exception {
 //        Log.d(TAG, "getJobList시작()");
 //        // 1. get reference to readable DB
 //        SQLiteDatabase db = this.getReadableDatabase();
 //
 //        try {
 //            // 2. build query
+//            // Cursor cursor =
+//            // db.rawQuery("select * from request where senddate is null", null);
+//
 //            Cursor cursor = db.query(TABLE_MESSAGE, // a. table
 //                    MESSAGE_COLUMNS, // b. column names
-//                    null, // c. selections
+//                    " ack != acked or broadcast != broadcasted ", // c. selections // 에크작업이나 브로드캐스팅작업이 완료안된것만 리스트업
 //                    null, // d. selections args
 //                    null, // e. group by
 //                    null, // f. having
@@ -593,47 +655,53 @@ public class PushDBHelper extends SQLiteOpenHelper {
 //                return null;
 //            }
 //
-//            Job[] job = new Job[count];
+//            Message[] req = new Message[count];
+//
 //            int i = 0;
 //            while (cursor.isAfterLast() == false) {
 //                // 4. build req object
-//                job[i] = new Job();
-//                job[i].setId(cursor.getInt(0));
-//                job[i].setType(cursor.getInt(1));
-//                job[i].setTopic(cursor.getString(2));
-//                job[i].setContent(cursor.getString(3));
-//                Log.d(TAG, "job[" + i + "]=" + job[i]);
+//                req[i] = new Message();
+//                req[i].setMsgID(cursor.getString(0));
+//                req[i].setServiceID(cursor.getString(1));
+//                req[i].setTopic(cursor.getString(2));
+//                req[i].setPayload(cursor.getBlob(3));
+//                req[i].setQos(cursor.getInt(4));
+//                req[i].setAck(cursor.getInt(5));
+//                req[i].setBroadcast(cursor.getInt(6));
+//                req[i].setAcked(cursor.getInt(7));
+//                req[i].setBroadcasted(cursor.getInt(8));
+//                req[i].setReceivedate(cursor.getString(9));
+//                req[i].setToken(cursor.getString(10));
+//
+//                Log.d(TAG, "req[" + i + "]=" + req[i]);
 //                i++;
 //                cursor.moveToNext();
 //            }
 //
 //            // log
-//            Log.d(TAG, "getJobList종료(job=" + job + ")");
+//            Log.d(TAG, "getJobList종료(req=" + req + ")");
 //            // 5. return req
-//            return job;
+//            return req;
 //        } finally {
 //            db.close();
 //        }
 //    }
 
     /**
+     * @param msgID
      * @return
      * @throws Exception
      */
-    public Message[] getJobList() throws Exception {
-        Log.d(TAG, "getJobList시작()");
+    public synchronized Message getMessage(String msgID) throws Exception {
+        Log.d(TAG, "getMessage시작()");
         // 1. get reference to readable DB
         SQLiteDatabase db = this.getReadableDatabase();
-
         try {
             // 2. build query
-            // Cursor cursor =
-            // db.rawQuery("select * from request where senddate is null", null);
-
             Cursor cursor = db.query(TABLE_MESSAGE, // a. table
                     MESSAGE_COLUMNS, // b. column names
-                    " ack != acked or broadcast != broadcasted ", // c. selections // 에크작업이나 브로드캐스팅작업이 완료안된것만 리스트업
-                    null, // d. selections args
+                    "msgid = ?", // c. selections
+                    new String[]{msgID}, // d. selections args
                     null, // e. group by
                     null, // f. having
                     null, // g. order by
@@ -642,80 +710,27 @@ public class PushDBHelper extends SQLiteOpenHelper {
             if (cursor != null)
                 cursor.moveToFirst();
 
-            int count = cursor.getCount();
-            Log.d(TAG, "잡레코드카운트=" + count);
-
-            if (count == 0) {
-                Log.d(TAG, "getJobList종료(req=null)");
-                return null;
-            }
-
-            Message[] req = new Message[count];
-
-            int i = 0;
-            while (cursor.isAfterLast() == false) {
-                // 4. build req object
-                req[i] = new Message();
-                req[i].setMsgID(cursor.getString(0));
-                req[i].setServiceID(cursor.getString(1));
-                req[i].setTopic(cursor.getString(2));
-                req[i].setPayload(cursor.getBlob(3));
-                req[i].setQos(cursor.getInt(4));
-                req[i].setAck(cursor.getInt(5));
-                req[i].setBroadcast(cursor.getInt(6));
-                req[i].setAcked(cursor.getInt(7));
-                req[i].setBroadcasted(cursor.getInt(8));
-                req[i].setReceivedate(cursor.getString(9));
-                req[i].setToken(cursor.getString(10));
-
-                Log.d(TAG, "req[" + i + "]=" + req[i]);
-                i++;
-                cursor.moveToNext();
-            }
-
+            // 4. build book object
+            Message msg = new Message();
+            msg.setMsgID(cursor.getString(0));
+            msg.setServiceID(cursor.getString(1));
+            msg.setTopic(cursor.getString(2));
+            msg.setPayload(cursor.getBlob(3));
+            msg.setQos(cursor.getInt(4));
+            msg.setAck(cursor.getInt(5));
+            //msg.setBroadcast(cursor.getInt(6));
+            //msg.setAcked(cursor.getInt(7));
+            //msg.setBroadcasted(cursor.getInt(8));
+            msg.setReceivedate(cursor.getString(6));
+            msg.setToken(cursor.getString(7));
             // log
-            Log.d(TAG, "getJobList종료(req=" + req + ")");
-            // 5. return req
-            return req;
+            Log.d(TAG, "getMessage종료(msg=" + msg + ")");
+            // 5. return user
+            return msg;
         } finally {
             db.close();
         }
     }
-
-
-//    public synchronized Message getMessage(int id) throws Exception {
-//        Log.d(TAG, "getMessage시작()");
-//        // 1. get reference to readable DB
-//        SQLiteDatabase db = this.getReadableDatabase();
-//        // 2. build query
-//        Cursor cursor = db.query(TABLE_MESSAGE, // a. table
-//                MESSAGE_COLUMNS, // b. column names
-//                "id = ?", // c. selections
-//                new String[]{String.valueOf(id)}, // d. selections args
-//                null, // e. group by
-//                null, // f. having
-//                null, // g. order by
-//                null); // h. limit
-//        // 3. if we got results get the first one
-//        if (cursor != null)
-//            cursor.moveToFirst();
-//
-//        // 4. build book object
-//        Message msg = new Message();
-//        msg.setId(cursor.getInt(0));
-//        msg.setUserID(cursor.getString(1));
-//        msg.setAck(cursor.getInt(2) != 0);
-//        msg.setType(cursor.getInt(3));
-//        msg.setContent(cursor.getString(4));
-//        msg.setReceivedate(cursor.getString(5));
-//        msg.setCategory(cursor.getString(6));
-//        msg.setRead(cursor.getInt(7) != 0);
-//        // log
-//        Log.d(TAG, "getMessage종료(msg=" + msg + ")");
-//        db.close();
-//        // 5. return user
-//        return msg;
-//    }
 
 //    public synchronized Message[] getAllMessages() throws Exception {
 //        Log.d(TAG, "getAllMessages시작()");
@@ -892,7 +907,6 @@ public class PushDBHelper extends SQLiteOpenHelper {
         }
         db.close();
     }
-
 
 //    public synchronized int getUnreadCount() {
 //        Log.d(TAG, "getUnreadCount시작()");

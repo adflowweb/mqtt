@@ -34,7 +34,6 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -48,11 +47,14 @@ import java.util.logging.SimpleFormatter;
 
 import kr.co.adflow.push.PingSender;
 import kr.co.adflow.push.PushPreference;
+import kr.co.adflow.push.db.Job;
 import kr.co.adflow.push.db.Message;
 import kr.co.adflow.push.db.PushDBHelper;
 import kr.co.adflow.push.service.impl.PushServiceImpl;
 import kr.co.adflow.ssl.ADFSSLSocketFactory;
 import kr.co.adflow.ssl.SFSSLSocketFactory;
+
+import static kr.co.adflow.push.db.Job.BROADCAST;
 
 /**
  * @author nadir93
@@ -195,8 +197,6 @@ public class PushHandler implements MqttCallback {
                         new MemoryPersistence(), pingSender);
                 // 연결
                 connect();
-                //기본서브스크립션체크
-                checkDefaultSubscription();
             } else {
                 // Log.d(TAG, "현재연결시도중이거나연결되어있는토큰=" + client.getClientId());
                 Log.d(TAG, "mqttClient연결상태="
@@ -224,121 +224,42 @@ public class PushHandler implements MqttCallback {
         Log.d(TAG, "keepAlive종료()");
     }
 
-    /**
-     * @throws Exception
-     */
-    private void checkDefaultSubscription() throws Exception {
-        //subscribe device
-        //db에 잡을 등록하고 수행하는것으로 변경해야함
-        String getSubData = this.getSubscriptions();
-        Log.d(TAG, "getSubData=" + getSubData);
-        JSONObject jsonData = new JSONObject(getSubData);
-        Log.d(TAG, "jsonData=" + jsonData.toString());
-        JSONObject resultData = jsonData.getJSONObject("result");
-        Log.d(TAG, "resultData=" + resultData.toString());
-        boolean resultSuccess = resultData.getBoolean("success");
-        Log.d(TAG, "resultSuccess=" + resultSuccess);
-        if (resultSuccess == true) {
-            JSONArray dataJsonArray = resultData.getJSONArray("data");
-            int dataArrLength = dataJsonArray.length();
-            if (dataArrLength == 0) {
-                subscribe("devices/" + phoneModel, 2);
-            } else {
-                for (int i = 0; i < dataArrLength; i++) {
-                    if (dataJsonArray.getString(i).contains("devices/")) {
-                        String dataPhoneModel = dataJsonArray.getString(i).substring(8);
-                        Log.d(TAG, "dataPhoneModel=" + dataPhoneModel);
-                        if (!dataPhoneModel.equals(phoneModel)) {
-                            unsubscribe("devices/" + dataPhoneModel);
-                            subscribe("devices/" + phoneModel, 2);
-                        }
-                    }
-
-                }
-            }
-        } else {
-            Log.d(TAG, "서브스크립션을가져오는데실패했습니다.");
-        }
-    }
-
     private void handleJob() throws Exception {
         Log.d(TAG, "handleJob시작()");
-        Message[] msgs = pushdb.getJobList();
-        Log.d(TAG, "msgs=" + msgs);
-        if (msgs != null) {
-            Log.d(TAG, "작업해야할메시지개수=" + msgs.length);
-            for (int i = 0; i < msgs.length; i++) {
-
-                Log.d(TAG, "ack=" + msgs[i].getAck());
-                Log.d(TAG, "acked=" + msgs[i].getAcked());
-                //ack처리하기
-                if (msgs[i].getAck() != msgs[i].getAcked()) {
-                    JSONObject ack = new JSONObject();
-                    ack.put("msgId", msgs[i].getMsgID());
-                    ack.put("token", msgs[i].getToken());
-                    ack.put("ackType", "pma");
-                    ack.put("ackTime", System.currentTimeMillis());
-                    publish(PushHandler.ACK_TOPIC, ack.toString().getBytes(), 2, false); // qos 2 로 전송
-                    Log.d(TAG, "ack종료()");
-                    //디비처리완료
-                    pushdb.updateAcked(msgs[i].getServiceID(), msgs[i].getMsgID());
-                    Log.d(TAG, "ack업데이트처리를완료하였습니다.");
+        Job[] jobs = pushdb.getJobList();
+        Log.d(TAG, "jobs=" + jobs);
+        if (jobs != null) {
+            Log.d(TAG, "작업해야할메시지개수=" + jobs.length);
+            for (int i = 0; i < jobs.length; i++) {
+                int jobType = jobs[i].getType();
+                switch (jobType) {
+                    case 0: // PUBLISH
+                        break;
+                    case 1:  // SUBSCRIBE
+                        break;
+                    case 2:
+                        break;
+                    case 3: // BROADCAST
+                        Log.d(TAG, "브로드캐스트작업시작");
+                        String content = jobs[i].getContent();
+                        JSONObject data = new JSONObject(content);
+                        String msgId = data.getString("msgId");
+                        Message msg = pushdb.getMessage(msgId);
+                        // sendbroadcast
+                        sendBroadcast(new JSONObject(new String(msg.getPayload())), msg.getToken(), msg.getMsgID());
+                        pushdb.deteletJob(jobs[i].getId());
+                        Log.d(TAG, "브로드캐스트작업이수행되었습니다.id=" + jobs[i].getId());
+                        break;
+                    case 4: //ACK
+                        Log.d(TAG, "ACK작업시작");
+                        String ackContent = jobs[i].getContent();
+                        publish(PushHandler.ACK_TOPIC, ackContent.getBytes(), 2 /* qos 2 로 전송 */, false /* retain */);
+                        pushdb.deteletJob(jobs[i].getId());
+                        Log.d(TAG, "ACK작업이수행되었습니다.id=" + jobs[i].getId());
+                        break;
+                    default:
+                        break;
                 }
-
-                Log.d(TAG, "broadcast=" + msgs[i].getBroadcast());
-                Log.d(TAG, "broadcasted=" + msgs[i].getBroadcasted());
-                //sendBroadCast
-                if (msgs[i].getBroadcast() != msgs[i].getBroadcasted()) {
-                    //sendbroadcast
-                    sendBroadcast(new JSONObject(new String(msgs[i].getPayload())), msgs[i].getToken(), msgs[i].getMsgID());
-                    //디비처리완료
-                    pushdb.updateBroadCasted(msgs[i].getServiceID(), msgs[i].getMsgID());
-                    Log.d(TAG, "broadcasted업데이트처리를완료하였습니다.");
-
-                    //pushdb.deteletJob(0);
-                }
-
-                // int jobType = msgs[i].getType();
-
-
-//                switch (jobType) {
-//                    case 0:
-//                        // PUBLISH
-//                        client.publish(job[i].getTopic(), job[i].getContent()
-//                                .getBytes(), 1, false);
-//                        Log.d(TAG, "메시지를전송하였습니다. 메시지=" + job[i]);
-//                        // 디비삭제
-//                        pushdb.deteletJob(job[i].getId());
-//                        Log.d(TAG, "작업이수행되었습니다.id=" + job[i].getId());
-//                        break;
-//                    case 1:
-//                        // SUBSCRIBE
-//                        subscribe(job[i].getTopic(), 2);
-//
-//                        // SQLiteConstraintException
-//
-//                        try {
-//                            // 디비인서트
-//                            pushdb.addTopic(userID, job[i].getTopic(), 1);
-//                        } catch (SQLiteConstraintException e) {
-//                            Log.e(TAG, "디비인서트중예외상황발생", e);
-//                        }
-//
-//                        // 디비삭제
-//                        pushdb.deteletJob(job[i].getId());
-//                        Log.d(TAG, "작업이수행되었습니다.id=" + job[i].getId());
-//                        break;
-//                    case 2:
-//                        // UNSUBSCRIBE
-//                        unsubscribe(job[i].getTopic());
-//                        // 디비삭제
-//                        pushdb.deleteTopic(userID, job[i].getTopic());
-//                        pushdb.deteletJob(job[i].getId());
-//                        Log.d(TAG, "작업이수행되었습니다.id=" + job[i].getId());
-//                        break;
-//                    default:
-//                        break;
-//                }
             }
         }
         Log.d(TAG, "handleJob종료()");
@@ -469,9 +390,18 @@ public class PushHandler implements MqttCallback {
             }
             Log.d(TAG, "ack=" + ack);
 
-            //받은메시지 저장 (이부분이 제일먼저와야함)
-            pushdb.addMessage(msgId, serviceId, topic, message.getPayload(), message.getQos(), ack, 0 /* broadcast default value = 0 */, currentToken);
-            //서비스아이디를 기준으로 브로드캐스팅메시지와 커맨드 메시지로 구분
+            //받은메시지 저장
+            pushdb.addMessage(msgId, serviceId, topic, message.getPayload(), message.getQos(), ack, currentToken);
+
+            if (ack == 1) {
+                // ack job 저장
+                JSONObject ackJson = new JSONObject();
+                ackJson.put("msgId", msgId);
+                ackJson.put("token", currentToken);
+                ackJson.put("ackType", "pma");
+                ackJson.put("ackTime", System.currentTimeMillis());
+                pushdb.addJob(Job.ACK, ACK_TOPIC, ackJson.toString());
+            }
 
             switch (msgType) {
                 case SET_KEEP_ALIVE_MESSAGE: // keepAlive 설정변경
@@ -490,22 +420,13 @@ public class PushHandler implements MqttCallback {
                 case FIRMWARE_UPDATE_MESSAGE:
                 case DIG_ACCOUNT_INFO_MESSAGE:
                 case USER_MESSAGE:
-                    //broadcast 해야하는 메시지로 db 업데이트
-                    pushdb.updateBroadCast(serviceId, msgId);
-
-                    //testCode
-                    //int jobID = pushdb.addJob(Job.BROADCAST, "", "{\"msgId\":\"" + msgId + "\"}");
-                    //end
-
+                    //broadcast 작업추가
+                    int jobID = pushdb.addJob(BROADCAST, "", "{\"msgId\":\"" + msgId + "\"}");
+                    Log.d(TAG, "broadcast작업이추가되었습니다.");
                     sendBroadcast(data, currentToken, msgId);
-                    //broadcast 완료상태로 데이타베이스 업데이트
-                    pushdb.updateBroadCasted(serviceId, msgId);
-                    Log.d(TAG, "broadcasted업데이트처리를완료하였습니다.");
-
-                    //testCode
-                    // pushdb.deteletJob(jobID);
-                    //end
-
+                    //broadcast 작업제거
+                    pushdb.deteletJob(jobID);
+                    Log.d(TAG, "broadcast작업이삭제되었습니다.");
                     break;
                 default:
                     Log.e(TAG, "메시지타입이없습니다.");
