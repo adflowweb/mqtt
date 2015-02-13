@@ -141,7 +141,6 @@
         pms.message${keyMon} a left outer join pms.ack${keyMon} b on a.msg_id = b.msg_id and b.ack_type = 'pma',
         pms.message${keyMon} c left outer join pms.ack${keyMon} d on c.msg_id = d.msg_id and d.ack_type = 'app'		
 		WHERE a.msg_id = c.msg_id
-		AND a.is_reservation IS FALSE
 		<if test="issueId != null and issueId != ''">
 		AND a.issue_id = #{issueId}
 		</if>
@@ -179,7 +178,6 @@
         pms.message${keyMon} a left outer join pms.ack${keyMon} b on a.msg_id = b.msg_id and b.ack_type = 'pma',
         pms.message${keyMon} c left outer join pms.ack${keyMon} d on c.msg_id = d.msg_id and d.ack_type = 'app'		
 		WHERE a.msg_id = c.msg_id
-		AND a.is_reservation IS FALSE
 		<if test="issueId != null and issueId != ''">
 		AND a.issue_id = #{issueId}
 		</if>
@@ -194,6 +192,7 @@
         pms.message${keyMon} a left outer join pms.ack${keyMon} b on a.msg_id = b.msg_id and b.ack_type = 'pma',
         pms.message${keyMon} c left outer join pms.ack${keyMon} d on c.msg_id = d.msg_id and d.ack_type = 'app'		
 		WHERE a.msg_id = c.msg_id
+		AND a.status = 0
 		AND  a.is_reservation IS TRUE
 		<if test="issueId != null and issueId != ''">
 		AND a.issue_id = #{issueId}
@@ -228,6 +227,7 @@
         pms.message${keyMon} a left outer join pms.ack${keyMon} b on a.msg_id = b.msg_id and b.ack_type = 'pma',
         pms.message${keyMon} c left outer join pms.ack${keyMon} d on c.msg_id = d.msg_id and d.ack_type = 'app'		
 		WHERE a.msg_id = c.msg_id
+		AND a.status = 0
 		AND a.is_reservation IS TRUE
 	    <if test="issueId != null and issueId != ''">
 		AND a.issue_id = #{issueId}

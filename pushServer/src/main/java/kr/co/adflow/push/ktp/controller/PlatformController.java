@@ -242,7 +242,8 @@ public class PlatformController {
 	public Response updateUFMI(@RequestBody UpdateUfmi ufmi) throws Exception {
 
 		User user = new User();
-		user.setUserID(ufmi.getUserID());
+		//user.setUserID(ufmi.getUserID());
+		user.setUserID(ufmi.getPhoneNum());
 		user.setUfmi(ufmi.getUfmi());
 		
 		userService.updateUFMI(user);

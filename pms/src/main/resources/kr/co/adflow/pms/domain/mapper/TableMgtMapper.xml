@@ -65,7 +65,7 @@
 	  ack_time datetime DEFAULT NULL,
 	  issue_time datetime DEFAULT NULL,
 	  issue_id VARCHAR(100),
-	  PRIMARY KEY (msg_id,ack_type),
+	  PRIMARY KEY (msg_id,ack_type,token_id),
 	  FOREIGN KEY (msg_id) references pms.message${value} (msg_id) ON DELETE CASCADE ON UPDATE CASCADE
 	) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 	</update>		

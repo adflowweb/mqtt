@@ -27,6 +27,11 @@
 		<url-pattern>/</url-pattern>
 	</servlet-mapping>
 
+	<servlet-mapping>
+		<servlet-name>appServlet</servlet-name>
+		<url-pattern>/pcs/*</url-pattern>
+	</servlet-mapping>
+
 	<filter>
 		<filter-name>encodingFilter</filter-name>
 		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
