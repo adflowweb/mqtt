@@ -113,460 +113,6 @@ public class PushDBHelper extends SQLiteOpenHelper {
         Log.d(TAG, "onUpgrade종료()");
     }
 
-//    /**
-//     * @param user
-//     */
-//    public synchronized void addUser(User user) {
-//        Log.d(TAG, "addUser시작(user=" + user + ")");
-//
-//        // 1. get reference to writable DB
-//        SQLiteDatabase db = this.getWritableDatabase();
-//
-//        // 2. create ContentValues to add key "column"/value
-//        ContentValues values = new ContentValues();
-//        values.put("userid", user.getUserID()); // get userid
-//        values.put("password", user.getPassword()); // get password
-//        values.put("tokenid", user.getTokenID()); // get tokenid
-//        values.put("currentuser", user.isCurrentUser() ? 1 : 0); // getcurrentuser
-//
-//        // 3. insert
-//        db.insertOrThrow(TABLE_USER, // table
-//                null, // nullColumnHack
-//                values); // key/value -> keys = column names/ values = column
-//        // values
-//        // 4. close
-//        db.close();
-//        Log.d(TAG, "addUser종료()");
-//    }
-
-//    /**
-//     * @param userid
-//     * @return
-//     */
-//    public synchronized User getUser(String userid) {
-//        Log.d(TAG, "getUser시작(userid=" + userid + ")");
-//        User user = null;
-//        try {
-//            // 1. get reference to readable DB
-//            SQLiteDatabase db = this.getReadableDatabase();
-//            // 2. build query
-//            Cursor cursor = db.query(TABLE_USER, // a. table
-//                    USER_COLUMNS, // b. column names
-//                    " userid = ?", // c. selections
-//                    new String[]{userid}, // d. selections args
-//                    null, // e. group by
-//                    null, // f. having
-//                    null, // g. order by
-//                    null); // h. limit
-//
-//            Log.d(TAG, "rowCount=" + cursor.getCount());
-//            if (cursor.getCount() == 0) {
-//                return null;
-//            }
-//            // 3. if we got results get the first one
-//            if (cursor != null)
-//                cursor.moveToFirst();
-//            // 4. build book object
-//            user = new User();
-//            user.setUserID(cursor.getString(0));
-//            user.setPassword(cursor.getString(1));
-//            user.setTokenID(cursor.getString(2));
-//            user.setCurrentUser(cursor.getInt(3) != 0);
-//            // log
-//            Log.d(TAG, "getUser종료(user=" + user + ")");
-//            db.close();
-//            // 5. return user
-//        } catch (CursorIndexOutOfBoundsException e) {
-//            Log.e(TAG, "에러발생", e);
-//        }
-//        return user;
-//    }
-
-//    /**
-//     * @return
-//     * @throws Exception
-//     */
-//    public synchronized User getCurrentUser() throws Exception {
-//        Log.d(TAG, "getCurrentUser시작()");
-//        User user = null;
-//        try {
-//            // 1. get reference to readable DB
-//            SQLiteDatabase db = this.getReadableDatabase();
-//            // 2. build query
-//            Cursor cursor = db.query(TABLE_USER, // a. table
-//                    USER_COLUMNS, // b. column names
-//                    " currentuser = ?", // c. selections
-//                    new String[]{"1"}, // d. selections args
-//                    null, // e. group by
-//                    null, // f. having
-//                    null, // g. order by
-//                    null); // h. limit
-//            Log.d(TAG, "rowCount=" + cursor.getCount());
-//            if (cursor.getCount() == 0) {
-//                return null;
-//            }
-//            // 3. if we got results get the first one
-//            if (cursor != null)
-//                cursor.moveToFirst();
-//
-//            // 4. build book object
-//            user = new User();
-//            user.setUserID(cursor.getString(0));
-//            user.setPassword(cursor.getString(1));
-//            user.setTokenID(cursor.getString(2));
-//            user.setCurrentUser(cursor.getInt(3) != 0);
-//            // log
-//            Log.d(TAG, "getCurrentUser종료(user=" + user + ")");
-//            db.close();
-//
-//        } catch (CursorIndexOutOfBoundsException e) {
-//            Log.e(TAG, "에러발생", e);
-//        }
-//        // 5. return user
-//        return user;
-//    }
-
-//    /**
-//     * @param user
-//     * @return
-//     */
-//    public synchronized int updateUser(User user) {
-//        Log.d(TAG, "updateUser시작(user=" + user + ")");
-//        // 1. get reference to writable DB
-//        SQLiteDatabase db = this.getWritableDatabase();
-//        // 2. create ContentValues to add key "column"/value
-//        ContentValues values = new ContentValues();
-//        values.put("userid", user.getUserID()); // get userid
-//        values.put("password", user.getPassword()); // get password
-//        values.put("tokenid", user.getTokenID()); // get tokenid
-//        values.put("currentuser", user.isCurrentUser() ? 1 : 0); // getcurrentuser
-//
-//        // 3. updating row
-//        int i = db.update(TABLE_USER, // table
-//                values, // column/value
-//                USER_ID + " = ?", // selections
-//                new String[]{user.getUserID()}); // selection
-//        // args
-//        // 4. close
-//        db.close();
-//        Log.d(TAG, "updateUser종료(update=" + i + ")");
-//        return i;
-//    }
-
-//    /**
-//     * @param user
-//     */
-//    public synchronized void deleteUser(User user) {
-//        Log.d(TAG, "deleteUser시작(user=" + user + ")");
-//        // 1. get reference to writable DB
-//        SQLiteDatabase db = this.getWritableDatabase();
-//        // 2. delete
-//        db.delete(TABLE_USER, // table name
-//                USER_ID + " = ?", // selections
-//                new String[]{user.getUserID()}); // selections
-//        // args
-//        // 3. close
-//        db.close();
-//        // log
-//        Log.d(TAG, "deleteUser종료()");
-//    }
-
-    /**
-     * @param type
-     * @param topic
-     * @param content
-     * @return
-     * @throws Exception
-     */
-    public synchronized int addJob(int type, String topic, String content)
-            throws Exception {
-        Log.d(TAG, "addJob시작(type=" + type + ", topic=" + topic + ", content="
-                + content + ")");
-
-        // 1. get reference to writable DB
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor result = null;
-
-        try {
-            // 2. create ContentValues to add key "column"/value
-            ContentValues values = new ContentValues();
-            values.put("type", type);
-            values.put("topic", topic);
-            values.put("content", content);
-
-            // 3. insert
-            db.insertOrThrow(TABLE_JOB, // table
-                    null, // nullColumnHack
-                    values);
-
-            result = db.rawQuery("select last_insert_rowid()", null);
-
-            int id = 0;
-            // result(Cursor 객체)가 비어 있으면 false 리턴
-            if (result.moveToFirst()) {
-                id = result.getInt(0);
-            }
-
-            Log.d(TAG, "addJob종료(id=" + id + ")");
-            return id;
-        } finally {
-            if (result != null) {
-                result.close();
-            }
-            // 4. close
-            db.close();
-        }
-    }
-
-//    /**
-//     * @param id
-//     * @return
-//     * @throws Exception
-//     */
-//    public synchronized Job getJob(int id) throws Exception {
-//        Log.d(TAG, "getJob시작()");
-//        // 1. get reference to readable DB
-//        SQLiteDatabase db = this.getReadableDatabase();
-//        // 2. build query
-//        Cursor cursor = db.query(TABLE_JOB, // a. table
-//                JOB_COLUMNS, // b. column names
-//                "id = ?", // c. selections
-//                new String[]{String.valueOf(id)}, // d. selections args
-//                null, // e. group by
-//                null, // f. having
-//                null, // g. order by
-//                null); // h. limit
-//        // 3. if we got results get the first one
-//        if (cursor != null)
-//            cursor.moveToFirst();
-//
-//        // 4. build req object
-//        Job job = new Job();
-//        job.setId(cursor.getInt(0));
-//        job.setType(cursor.getInt(1));
-//        job.setTopic(cursor.getString(2));
-//        job.setContent(cursor.getString(3));
-//        // log
-//        Log.d(TAG, "getJob종료(job=" + job + ")");
-//        db.close();
-//        // 5. return job
-//        return job;
-//    }
-
-    /**
-     * @param id
-     */
-    public synchronized void deteletJob(int id) {
-        Log.d(TAG, "deteletJob시작(id=" + id + ")");
-        // 1. get reference to writable DB
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        try {
-            // 2. delete
-            db.delete(TABLE_JOB, // table name
-                    " id = ?", // selections
-                    new String[]{String.valueOf(id)}); // selections
-            // args
-            // log
-            Log.d(TAG, "deteletJob종료()");
-        } finally {
-            // 3. close
-            db.close();
-        }
-    }
-
-//    /**
-//     * @return
-//     * @throws Exception
-//     */
-//    public Job[] getJobList() throws Exception {
-//        Log.d(TAG, "getJobList시작()");
-//        // 1. get reference to readable DB
-//        SQLiteDatabase db = this.getReadableDatabase();
-//        // 2. build query
-//
-//        // Cursor cursor =
-//        // db.rawQuery("select * from request where senddate is null", null);
-//
-//        Cursor cursor = db.query(TABLE_JOB, // a. table
-//                JOB_COLUMNS, // b. column names
-//                null, // c. selections
-//                null, // d. selections args
-//                null, // e. group by
-//                null, // f. having
-//                null, // g. order by
-//                null); // h. limit
-//        // 3. if we got results get the first one
-//        if (cursor != null)
-//            cursor.moveToFirst();
-//
-//        int count = cursor.getCount();
-//        Log.d(TAG, "잡레코드카운트=" + count);
-//
-//        if (count == 0) {
-//            Log.d(TAG, "getJobList종료(req=null)");
-//            return null;
-//        }
-//
-//        Job[] req = new Job[count];
-//
-//        int i = 0;
-//        while (cursor.isAfterLast() == false) {
-//            // 4. build req object
-//            req[i] = new Job();
-//            req[i].setId(cursor.getInt(0));
-//            req[i].setType(cursor.getInt(1));
-//            req[i].setTopic(cursor.getString(2));
-//            req[i].setContent(cursor.getString(3));
-//            Log.d(TAG, "req[" + i + "]=" + req[i]);
-//            i++;
-//            cursor.moveToNext();
-//        }
-//
-//        // log
-//        Log.d(TAG, "getJobList종료(req=" + req + ")");
-//        db.close();
-//        // 5. return req
-//        return req;
-//    }
-
-    public synchronized void addMessage(String msgID, String serviceID, String topic, byte[] payload, int qos, int ack, String token) throws Exception {
-        Log.d(TAG, "addMessage시작(msgID=" + msgID + ", serviceID=" + serviceID + ", topic=" + topic + ", payloadLength=" + payload.length + ", qos=" + qos + ", ack=" + ack + ", token=" + token + ")");
-        // 1. get reference to writable DB
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        try {
-            // 2. create ContentValues to add key "column"/value
-            ContentValues values = new ContentValues();
-            values.put("msgid", msgID);
-            values.put("serviceid", serviceID);
-            values.put("topic", topic);
-            values.put("payload", payload);
-            values.put("qos", qos);
-            values.put("ack", ack);
-            // values.put("broadcast", broadcast);
-            //values.put("acked", 0);
-            //values.put("broadcasted", 0);
-            values.put("token", token);
-
-//            if (serviceID.equals("kr.co.adflow.push.pma")) {
-//                values.put("broadcast", 0);
-//            } else {
-//                values.put("broadcast", 1); // 브로드캐스팅해야함
-//            }
-
-            // values.put("status", 0); // default 0
-            Date now = new Date();
-            values.put("receivedate", sdf.format(now));
-
-            // 3. insert
-            db.insertOrThrow(TABLE_MESSAGE, // table
-                    null, // nullColumnHack
-                    values);
-            Log.d(TAG, "addMessage종료()");
-        } finally {
-            // 4. close
-            db.close();
-        }
-    }
-
-//    public synchronized void updateAcked(String serviceID, String msgID) throws Exception {
-//        Log.d(TAG, "updateAcked시작(serviceID=" + serviceID + ", msgID=" + msgID + ")");
-//
-//        // 1. get reference to writable DB
-//        SQLiteDatabase db = this.getWritableDatabase();
-//
-//        try {
-//            db.execSQL("UPDATE " + TABLE_MESSAGE + " SET "
-//                    + " acked = 1 WHERE "
-//                    + " serviceid  = '" + serviceID + "' and msgid = '" + msgID + "' ");
-//            Log.d(TAG, "updateAcked종료()");
-//        } finally {
-//            // 4. close
-//            db.close();
-//        }
-//    }
-
-//    public synchronized void updateBroadCast(String serviceID, String msgID) throws Exception {
-//        Log.d(TAG, "updateBroadCast시작(serviceID=" + serviceID + ", msgID=" + msgID + ")");
-//
-//        // 1. get reference to writable DB
-//        SQLiteDatabase db = this.getWritableDatabase();
-//
-//        try {
-//            db.execSQL("UPDATE " + TABLE_MESSAGE + " SET "
-//                    + " broadcast = 1 WHERE "
-//                    + " serviceid  = '" + serviceID + "' and msgid = '" + msgID + "' ");
-//            Log.d(TAG, "updateBroadCast종료()");
-//        } finally {
-//            // 4. close
-//            db.close();
-//        }
-
-//        try {
-//            db.execSQL("UPDATE " + TABLE_MESSAGE + " SET "
-//                    + " status = status + 10 WHERE "
-//                    + " serviceid  = " + serviceID + " and id = " + msgID + " ");
-//            Log.d(TAG, "updateBroadCast종료()");
-//        } finally {
-//            // 4. close
-//            db.close();
-//        }
-//    }
-
-//    public synchronized void updateBroadCasted(String serviceID, String msgID) throws Exception {
-//        Log.d(TAG, "updateBroadCasted시작(serviceID=" + serviceID + ", msgID=" + msgID + ")");
-//
-//        // 1. get reference to writable DB
-//        SQLiteDatabase db = this.getWritableDatabase();
-//
-//        try {
-//            db.execSQL("UPDATE " + TABLE_MESSAGE + " SET "
-//                    + " broadcasted = 1 WHERE "
-//                    + " serviceid  = '" + serviceID + "' and msgid = '" + msgID + "' ");
-//            Log.d(TAG, "updateBroadCasted종료()");
-//        } finally {
-//            // 4. close
-//            db.close();
-//        }
-//    }
-
-//    public synchronized void addMessage(String userID, JSONObject msg)
-//            throws Exception {
-//        Log.d(TAG, "addMessage시작(msg=" + msg + ")");
-//
-//        // messageArrived시작(토픽=/users/nadir93,메시지={"id":6,"ack":true,"type":0,"content":
-//        // {"notification":{"notificationStyle":1,"contentTitle":"교육장소공지","contentText":"교육장소공지입니다.",
-//        // "ticker":"부산은행교육장소알림장소: 수림연수원 시간: 3월 22일 오전: 12시","summaryText":"장소: 수림연수원 시간: 3월 22일 오전:1시",
-//        // "image":""} } },qos=1)
-//
-//        // 1. get reference to writable DB
-//        SQLiteDatabase db = this.getWritableDatabase();
-//
-//        // 2. create ContentValues to add key "column"/value
-//        ContentValues values = new ContentValues();
-//        values.put("userid", userID);
-//        values.put("id", msg.getInt("id"));
-//        values.put("ack", msg.getBoolean("ack") ? 1 : 0);
-//        values.put("type", msg.getInt("type"));
-//        Date now = new Date();
-//        values.put("receivedate", sdf.format(now));
-//        values.put("content", msg.getString("content"));
-//        if (msg.has("category")) {
-//            values.put("category", msg.getString("category"));
-//        }
-//        values.put("read", 1); // 찬호 요청
-//
-//        // 3. insert
-//        db.insertOrThrow(TABLE_MESSAGE, // table
-//                null, // nullColumnHack
-//                values);
-//
-//        // 4. close
-//        db.close();
-//        Log.d(TAG, "addMessage종료()");
-//    }
-
     /**
      * @return
      * @throws Exception
@@ -621,71 +167,150 @@ public class PushDBHelper extends SQLiteOpenHelper {
         }
     }
 
-//    /**
-//     * @return
-//     * @throws Exception
-//     */
-//    public Message[] getJobList() throws Exception {
-//        Log.d(TAG, "getJobList시작()");
-//        // 1. get reference to readable DB
-//        SQLiteDatabase db = this.getReadableDatabase();
-//
-//        try {
-//            // 2. build query
-//            // Cursor cursor =
-//            // db.rawQuery("select * from request where senddate is null", null);
-//
-//            Cursor cursor = db.query(TABLE_MESSAGE, // a. table
-//                    MESSAGE_COLUMNS, // b. column names
-//                    " ack != acked or broadcast != broadcasted ", // c. selections // 에크작업이나 브로드캐스팅작업이 완료안된것만 리스트업
-//                    null, // d. selections args
-//                    null, // e. group by
-//                    null, // f. having
-//                    null, // g. order by
-//                    null); // h. limit
-//            // 3. if we got results get the first one
-//            if (cursor != null)
-//                cursor.moveToFirst();
-//
-//            int count = cursor.getCount();
-//            Log.d(TAG, "잡레코드카운트=" + count);
-//
-//            if (count == 0) {
-//                Log.d(TAG, "getJobList종료(req=null)");
-//                return null;
-//            }
-//
-//            Message[] req = new Message[count];
-//
-//            int i = 0;
-//            while (cursor.isAfterLast() == false) {
-//                // 4. build req object
-//                req[i] = new Message();
-//                req[i].setMsgID(cursor.getString(0));
-//                req[i].setServiceID(cursor.getString(1));
-//                req[i].setTopic(cursor.getString(2));
-//                req[i].setPayload(cursor.getBlob(3));
-//                req[i].setQos(cursor.getInt(4));
-//                req[i].setAck(cursor.getInt(5));
-//                req[i].setBroadcast(cursor.getInt(6));
-//                req[i].setAcked(cursor.getInt(7));
-//                req[i].setBroadcasted(cursor.getInt(8));
-//                req[i].setReceivedate(cursor.getString(9));
-//                req[i].setToken(cursor.getString(10));
-//
-//                Log.d(TAG, "req[" + i + "]=" + req[i]);
-//                i++;
-//                cursor.moveToNext();
-//            }
-//
-//            // log
-//            Log.d(TAG, "getJobList종료(req=" + req + ")");
-//            // 5. return req
-//            return req;
-//        } finally {
-//            db.close();
-//        }
-//    }
+    /**
+     * @param type
+     * @param topic
+     * @param content
+     * @return
+     * @throws Exception
+     */
+    public synchronized int addJob(int type, String topic, String content)
+            throws Exception {
+        Log.d(TAG, "addJob시작(type=" + type + ", topic=" + topic + ", content="
+                + content + ")");
+
+        // 1. get reference to writable DB
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor result = null;
+
+        try {
+            // 2. create ContentValues to add key "column"/value
+            ContentValues values = new ContentValues();
+            values.put("type", type);
+            values.put("topic", topic);
+            values.put("content", content);
+
+            // 3. insert
+            db.insertOrThrow(TABLE_JOB, // table
+                    null, // nullColumnHack
+                    values);
+            result = db.rawQuery("select last_insert_rowid()", null);
+
+            int id = 0;
+            // result(Cursor 객체)가 비어 있으면 false 리턴
+            if (result.moveToFirst()) {
+                id = result.getInt(0);
+            }
+
+            Log.d(TAG, "addJob종료(id=" + id + ")");
+            return id;
+        } finally {
+            if (result != null) {
+                result.close();
+            }
+            // 4. close
+            db.close();
+        }
+    }
+
+    /**
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    public synchronized Job getJob(int id) throws Exception {
+        Log.d(TAG, "getJob시작(id=" + id + ")");
+        // 1. get reference to readable DB
+        SQLiteDatabase db = this.getReadableDatabase();
+        try {
+            // 2. build query
+            Cursor cursor = db.query(TABLE_JOB, // a. table
+                    JOB_COLUMNS, // b. column names
+                    "id = ?", // c. selections
+                    new String[]{String.valueOf(id)}, // d. selections args
+                    null, // e. group by
+                    null, // f. having
+                    null, // g. order by
+                    null); // h. limit
+            // 3. if we got results get the first one
+            if (cursor != null)
+                cursor.moveToFirst();
+
+            // 4. build req object
+            Job job = new Job();
+            job.setId(cursor.getInt(0));
+            job.setType(cursor.getInt(1));
+            job.setTopic(cursor.getString(2));
+            job.setContent(cursor.getString(3));
+            // log
+            Log.d(TAG, "getJob종료(job=" + job + ")");
+            // 5. return job
+            return job;
+        } finally {
+            db.close();
+        }
+    }
+
+    /**
+     * @param id
+     */
+    public synchronized void deteletJob(int id) {
+        Log.d(TAG, "deteletJob시작(id=" + id + ")");
+        // 1. get reference to writable DB
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        try {
+            // 2. delete
+            db.delete(TABLE_JOB, // table name
+                    " id = ?", // selections
+                    new String[]{String.valueOf(id)}); // selections
+            // args
+            // log
+            Log.d(TAG, "deteletJob종료()");
+        } finally {
+            // 3. close
+            db.close();
+        }
+    }
+
+    /**
+     * @param msgID
+     * @param serviceID
+     * @param topic
+     * @param payload
+     * @param qos
+     * @param ack
+     * @param token
+     * @throws Exception
+     */
+    public synchronized void addMessage(String msgID, String serviceID, String topic, byte[] payload, int qos, int ack, String token) throws Exception {
+        Log.d(TAG, "addMessage시작(msgID=" + msgID + ", serviceID=" + serviceID + ", topic=" + topic + ", payloadLength=" + payload.length + ", qos=" + qos + ", ack=" + ack + ", token=" + token + ")");
+        // 1. get reference to writable DB
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        try {
+            // 2. create ContentValues to add key "column"/value
+            ContentValues values = new ContentValues();
+            values.put("msgid", msgID);
+            values.put("serviceid", serviceID);
+            values.put("topic", topic);
+            values.put("payload", payload);
+            values.put("qos", qos);
+            values.put("ack", ack);
+            values.put("token", token);
+            Date now = new Date();
+            values.put("receivedate", sdf.format(now));
+
+            // 3. insert
+            db.insertOrThrow(TABLE_MESSAGE, // table
+                    null, // nullColumnHack
+                    values);
+            Log.d(TAG, "addMessage종료()");
+        } finally {
+            // 4. close
+            db.close();
+        }
+    }
 
     /**
      * @param msgID
@@ -718,9 +343,6 @@ public class PushDBHelper extends SQLiteOpenHelper {
             msg.setPayload(cursor.getBlob(3));
             msg.setQos(cursor.getInt(4));
             msg.setAck(cursor.getInt(5));
-            //msg.setBroadcast(cursor.getInt(6));
-            //msg.setAcked(cursor.getInt(7));
-            //msg.setBroadcasted(cursor.getInt(8));
             msg.setReceivedate(cursor.getString(6));
             msg.setToken(cursor.getString(7));
             // log

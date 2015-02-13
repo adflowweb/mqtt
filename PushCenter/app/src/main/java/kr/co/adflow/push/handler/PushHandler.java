@@ -61,6 +61,8 @@ import static kr.co.adflow.push.db.Job.BROADCAST;
  */
 public class PushHandler implements MqttCallback {
 
+    public static final int FIRST_MQTT_CONNECTED = 1000;
+    public static final String FIRST_MQTT_CONNECTED_MESSAGE = "초기 MQTT연결이 성공하였습니다.";
     public static final int MQTT_CONNECTED = 1001;
     public static final String MQTT_CONNECTED_MESSAGE = "MQTT연결이 성공하였습니다.";
     public static final int MQTT_DISCONNECTED = 1002;
@@ -116,6 +118,8 @@ public class PushHandler implements MqttCallback {
     private String phoneModel = android.os.Build.MODEL;
     private String currentToken = null;
     public static final String CONN_STATUS_ACTION = "kr.co.ktpowertel.push.connStatus";
+
+    private static boolean firstConnection = true;
 
     /**
      * @param cxt
@@ -210,18 +214,27 @@ public class PushHandler implements MqttCallback {
             pingSender.ping();
             // 할일처리
             handleJob();
+            // 오래된메시지삭제
+            expireMsg();
         } catch (Exception e) {
-            Log.e(TAG, "예외상황발생", e);
+            Log.e(TAG, "keepAlive처리시예외상황발생", e);
             if (PushServiceImpl.getWakeLock() != null) {
                 try {
                     PushServiceImpl.getWakeLock().release();
                     Log.d(TAG, "웨이크락을해재했습니다." + PushServiceImpl.getWakeLock());
                 } catch (Exception ex) {
-                    Log.e(TAG, "예외상황발생", ex);
+                    Log.e(TAG, "웨이크락해제시예외상황발생", ex);
                 }
             }
         }
         Log.d(TAG, "keepAlive종료()");
+    }
+
+    /**
+     * 오래된 메시지 삭제
+     */
+    private void expireMsg() {
+
     }
 
     private void handleJob() throws Exception {
@@ -237,7 +250,7 @@ public class PushHandler implements MqttCallback {
                         break;
                     case 1:  // SUBSCRIBE
                         break;
-                    case 2:
+                    case 2: // UNSUBSCRIBE
                         break;
                     case 3: // BROADCAST
                         Log.d(TAG, "브로드캐스트작업시작");
@@ -248,14 +261,14 @@ public class PushHandler implements MqttCallback {
                         // sendbroadcast
                         sendBroadcast(new JSONObject(new String(msg.getPayload())), msg.getToken(), msg.getMsgID());
                         pushdb.deteletJob(jobs[i].getId());
-                        Log.d(TAG, "브로드캐스트작업이수행되었습니다.id=" + jobs[i].getId());
+                        Log.d(TAG, "브로드캐스트작업이수행되었습니다.jodID=" + jobs[i].getId());
                         break;
                     case 4: //ACK
                         Log.d(TAG, "ACK작업시작");
                         String ackContent = jobs[i].getContent();
                         publish(PushHandler.ACK_TOPIC, ackContent.getBytes(), 2 /* qos 2 로 전송 */, false /* retain */);
                         pushdb.deteletJob(jobs[i].getId());
-                        Log.d(TAG, "ACK작업이수행되었습니다.id=" + jobs[i].getId());
+                        Log.d(TAG, "ACK작업이수행되었습니다.jobID=" + jobs[i].getId());
                         break;
                     default:
                         break;
@@ -400,7 +413,8 @@ public class PushHandler implements MqttCallback {
                 ackJson.put("token", currentToken);
                 ackJson.put("ackType", "pma");
                 ackJson.put("ackTime", System.currentTimeMillis());
-                pushdb.addJob(Job.ACK, ACK_TOPIC, ackJson.toString());
+                int ackJob = pushdb.addJob(Job.ACK, ACK_TOPIC, ackJson.toString());
+                Log.d(TAG, "ack작업이추가되었습니다.jobID=" + ackJob);
             }
 
             switch (msgType) {
@@ -422,11 +436,11 @@ public class PushHandler implements MqttCallback {
                 case USER_MESSAGE:
                     //broadcast 작업추가
                     int jobID = pushdb.addJob(BROADCAST, "", "{\"msgId\":\"" + msgId + "\"}");
-                    Log.d(TAG, "broadcast작업이추가되었습니다.");
+                    Log.d(TAG, "broadcast작업이추가되었습니다.jobID=" + jobID);
                     sendBroadcast(data, currentToken, msgId);
                     //broadcast 작업제거
                     pushdb.deteletJob(jobID);
-                    Log.d(TAG, "broadcast작업이삭제되었습니다.");
+                    Log.d(TAG, "broadcast작업이삭제되었습니다.jobID=" + jobID);
                     break;
                 default:
                     Log.e(TAG, "메시지타입이없습니다.");
@@ -533,7 +547,14 @@ public class PushHandler implements MqttCallback {
 
         //sendBroadcast
         try {
-            sendBroadcast(MQTT_CONNECTED_MESSAGE, MQTT_CONNECTED);
+            if (firstConnection) {
+                //부팅후 최초 연결시
+                sendBroadcast(FIRST_MQTT_CONNECTED_MESSAGE, FIRST_MQTT_CONNECTED);
+                firstConnection = !firstConnection;
+            } else {
+                sendBroadcast(MQTT_CONNECTED_MESSAGE, MQTT_CONNECTED);
+            }
+
         } catch (Exception e) {
             Log.e(TAG, "예외상황발생", e);
         }
