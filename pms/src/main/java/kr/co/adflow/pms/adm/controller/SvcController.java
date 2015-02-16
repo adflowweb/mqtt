@@ -23,8 +23,11 @@ import kr.co.adflow.pms.adm.service.SvcService;
 import kr.co.adflow.pms.core.config.PmsConfig;
 import kr.co.adflow.pms.core.controller.BaseController;
 import kr.co.adflow.pms.domain.User;
+import kr.co.adflow.pms.domain.validator.UserValidator;
 import kr.co.adflow.pms.response.Response;
 import kr.co.adflow.pms.response.Result;
+import kr.co.adflow.pms.svc.request.MessageReq;
+import kr.co.adflow.pms.svc.service.PushMessageService;
 
 @Controller
 @RequestMapping(value = "/adm/svc")
@@ -38,6 +41,12 @@ public class SvcController extends BaseController {
 	
 	@Autowired
 	private AccountService accountService;
+	
+	@Autowired
+	private PushMessageService pushMessageService;
+	
+	@Autowired
+	private UserValidator userValidator;
 	
 	@RequestMapping(value = "/account", method = RequestMethod.GET)
 	@ResponseBody
@@ -143,5 +152,41 @@ public class SvcController extends BaseController {
 		return res;
 
 	}
+	
+	@RequestMapping(value = "/messages", method = RequestMethod.POST, consumes = PmsConfig.HEADER_CONTENT_TYPE, produces = PmsConfig.HEADER_CONTENT_TYPE)
+	@ResponseBody
+	public Response<Result<List<Map<String,String>>>> sendMessage(
+			@RequestHeader(PmsConfig.HEADER_APPLICATION_TOKEN) String appKey,
+			@RequestBody MessageReq msg) throws Exception {
+		logger.debug("sendMessage");
+
+		if (msg.getReceivers() == null || msg.getReceivers().length == 0) {
+			//
+			throw new RuntimeException("getReceivers is null");
+		} else {
+			String[] receivers = msg.getReceivers();
+			for (int i = 0; i < receivers.length; i++) {
+				if (!isValid(receivers[i])) {
+					throw new RuntimeException("getReceivers not valid" + receivers[i]);
+				}
+			}
+			
+		}
+
+		List<Map<String,String>> resultList = pushMessageService.sendMessage(appKey, msg);
+
+		Result<List<Map<String,String>>> result = new Result<List<Map<String,String>>>();
+		result.setSuccess(true);
+
+		result.setData(resultList);
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		Response<Result<List<Map<String,String>>>> res = new Response(result);
+		return res;
+
+	}
+	
+	private boolean isValid(String receiver) {
+		return userValidator.validRequestValue(receiver);
+}
 
 }
