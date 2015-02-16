@@ -17,6 +17,7 @@ public class User {
 	private Date issueTime;
 	private String issueId;
 	private String action;
+	private String applicationToken;
 
 
 	public String getUserId() {
@@ -98,6 +99,14 @@ public class User {
 
 	public void setAction(String action) {
 		this.action = action;
+	}
+
+	public String getApplicationToken() {
+		return applicationToken;
+	}
+
+	public void setApplicationToken(String applicationToken) {
+		this.applicationToken = applicationToken;
 	}
 
 }

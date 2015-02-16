@@ -14,6 +14,7 @@
 		<result property="msgCntLimit" column="message_count_limit" />
 		<result property="issueTime" column="issue_time" />
 		<result property="issueId" column="issue_id" />
+		<result property="applicationToken" column="application_token" />
 	</resultMap>
 
 	<insert id="insertUser" parameterType="kr.co.adflow.pms.domain.User">
@@ -43,17 +44,20 @@
 
 	<select id="select" parameterType="String" resultMap="UserResult">
 		SELECT
-		user_id
-		, role
-		, user_name
-		, ip_filters
-		, status
-		,message_count_limit
-		, issue_time
-		, issue_id
-		FROM pms.user a
+		a.user_id
+		, a.role
+		, a.user_name
+		, a.ip_filters
+		, a.status
+		, a.message_count_limit
+		, a.issue_time
+		, a.issue_id
+        , b.token_id as application_token
+		FROM pms.user a, pms.token b
 		WHERE
-		a.user_id = #{userId}
+        a.user_id = b.user_id
+        AND b.token_type = 'A'
+		AND a.user_id = #{userId}
 	</select>
 
 	<select id="listAll" parameterType="String" resultMap="UserResult">

@@ -62,8 +62,13 @@ public class SeviceInterceptor extends HandlerInterceptorAdapter {
 		if ("*.*.*.*".equals(ipFilters)) {
 			return true;
 		}
+		
+		if (!this.ipFiltering(remoteIpAddress, ipFilters)) {
+			response.sendError(401);
+			return false;
+		}
 
-		return this.ipFiltering(remoteIpAddress, ipFilters);
+		return true;
 
 	}
 
@@ -87,7 +92,6 @@ public class SeviceInterceptor extends HandlerInterceptorAdapter {
 			}
 			
 		}
-
 		return false;
 	}
 
