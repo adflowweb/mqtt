@@ -10,8 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 
-@JsonAutoDetect
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@JsonAutoDetect
 public class MessageResult {
 	
 	private String msgId;
@@ -23,8 +23,12 @@ public class MessageResult {
 	@JsonSerialize(using=JsonDateSerializer.class)
 	private Date updateTime;
 	
+	private String pmaAckType;
+	@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL,using=JsonDateSerializer.class)
+	private Date pmaAckTime;
+	
 	private String appAckType;
-	@JsonSerialize(using=JsonDateSerializer.class)
+	@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL,using=JsonDateSerializer.class)
 	private Date appAckTime;
 	
 	public String getMsgId() {
@@ -75,6 +79,18 @@ public class MessageResult {
 	}
 	public void setUpdateTime(Date updateTime) {
 		this.updateTime = updateTime;
+	}
+	public String getPmaAckType() {
+		return pmaAckType;
+	}
+	public void setPmaAckType(String pmaAckType) {
+		this.pmaAckType = pmaAckType;
+	}
+	public Date getPmaAckTime() {
+		return pmaAckTime;
+	}
+	public void setPmaAckTime(Date pmaAckTime) {
+		this.pmaAckTime = pmaAckTime;
 	}
 
 }

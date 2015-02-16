@@ -316,11 +316,15 @@
 		, a.resend_count
 		, a.resend_max_count
 		, a.update_time
-        , b.ack_type as app_ack_type
-        , b.ack_time as app_ack_time		
+        , b.ack_type as pma_ack_type
+        , b.ack_time as pma_ack_time		
+        , d.ack_type as app_ack_type
+        , d.ack_time as app_ack_time		
 		FROM
-        pms.message${keyMon} a left outer join pms.ack${keyMon} b on a.msg_id = b.msg_id and b.ack_type = 'app'		
-		WHERE a.issue_id = #{issueId}
+		pms.message${keyMon} a left outer join pms.ack${keyMon} b on a.msg_id = b.msg_id and b.ack_type = 'pma',
+        pms.message${keyMon} c left outer join pms.ack${keyMon} d on c.msg_id = d.msg_id and d.ack_type = 'app'		
+		WHERE a.msg_id = c.msg_id
+		AND a.issue_id = #{issueId}
         AND a.msg_id IN
        <foreach item="id" index="index" collection="msgIds" open="(" separator="," close=")" >
 			#{id}

@@ -146,6 +146,8 @@ public class PushMessageServiceImpl implements PushMessageService {
 			messageResult.setReservation(msg.isReservation());
 			messageResult.setStatus(msg.getStatus());
 			messageResult.setUpdateTime(msg.getUpdateTime());
+			messageResult.setPmaAckType(msg.getPmaAckType());
+			messageResult.setPmaAckTime(msg.getPmaAckTime());
 			messageResult.setAppAckType(msg.getAppAckType());
 			messageResult.setAppAckTime(msg.getAppAckTime());
 			

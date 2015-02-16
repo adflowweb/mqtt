@@ -20,6 +20,7 @@ public class JsonDateSerializer extends JsonSerializer<Date> {
 
 		String formattedDate = dateFormat.format(date);
 		gen.writeString(formattedDate);
+
 	}
 
 }
