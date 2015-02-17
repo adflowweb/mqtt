@@ -1,11 +1,22 @@
 package kr.co.adflow.pms.core.util;
 
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 public class DateUtil {
+	
+	public static String FORMAT_DATE_ISO="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+	//public static String FORMAT_DATE_ISO="yyyy-MM-dd'T'HH:mm:ss.sssZ";
+		
+	
+	public static void main(String[] agrs) {
+		System.out.println(fromISODateString("2015-02-07T14:48:00.000Z").getTime());
+	}
 	
 	public static Date afterMinute(int minute,long millis) {
 		Calendar cal = Calendar.getInstance();
@@ -36,6 +47,20 @@ public class DateUtil {
 
 		return fmt.format(date);
 
+	}
+	
+	public static Date fromISODateString(String isoDateString)
+	{	
+		Date result = null;
+		DateFormat dateFormat = new SimpleDateFormat(FORMAT_DATE_ISO);
+		try {
+			result = dateFormat.parse(isoDateString);
+		} catch (ParseException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e.toString());
+		}
+		
+		return result;
 	}
 
 }

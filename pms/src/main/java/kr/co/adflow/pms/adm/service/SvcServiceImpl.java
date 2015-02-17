@@ -1,9 +1,12 @@
 package kr.co.adflow.pms.adm.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+
 
 
 
@@ -62,11 +65,11 @@ public class SvcServiceImpl implements SvcService {
 	private UserMapper userMapper;
 
 	@Override
-	public MessagesRes getSvcMessageList(Map<String, String> params) {
+	public MessagesRes getSvcMessageList(Map<String, Object> params) {
 		
 		MessagesRes res = null;
 		
-		String issueId = interceptMapper.selectCashedUserId(params.get("appKey"));
+		String issueId = interceptMapper.selectCashedUserId((String)params.get("appKey"));
 		
 		if (params.get("cSearchDate") == null) {
 			//error
@@ -74,16 +77,26 @@ public class SvcServiceImpl implements SvcService {
 		
 		MsgParams msgParams = new MsgParams();
 		
-		msgParams.setKeyMon(params.get("cSearchDate"));
-		
-		logger.info("msgParams :::::::{}",issueId);
+		msgParams.setKeyMon((String)params.get("cSearchDate"));
 		msgParams.setIssueId(issueId);
+		msgParams.setiDisplayStart(this.getInt((String)params.get("iDisplayStart")));
+		msgParams.setiDisplayLength(this.getInt((String)params.get("iDisplayLength")));
 		
-		msgParams.setiDisplayStart(this.getInt(params.get("iDisplayStart")));
-		msgParams.setiDisplayLength(this.getInt(params.get("iDisplayLength")));
-
-		logger.info("msgParams :::::::{}",msgParams.getIssueId());
+		msgParams.setDateStart(this.getDate((String)params.get("cSearchDateStart")));
+		msgParams.setDateEnd(this.getDate((String)params.get("cSearchDateEnd")));
 		
+		msgParams.setStatusArray(this.getStringArray((String)params.get("cSearchStatus")));
+		
+		String filter = (String)params.get("cSearchFilter");
+		msgParams.setAckType(-1);
+		if ("receiver".equals(filter)) {
+			msgParams.setReceiver((String)params.get("cSearchContent"));
+		} else if ("msgId".equals(filter)) {
+			msgParams.setMsgId((String)params.get("cSearchContent"));
+		} else if ("ack".equals(filter)) {
+			msgParams.setAckType(this.getInt((String)params.get("cSearchContent")));
+		}
+				
 		int cnt = messageMapper.getSvcMessageListCnt(msgParams);
 		logger.info("cnt :::::::{}",cnt);
 		
@@ -98,8 +111,19 @@ public class SvcServiceImpl implements SvcService {
 		return res;
 	}
 
+	private String[] getStringArray(String string) {
+		if ("ALL".equals(string)) {
+			return null;
+		} 
+		return string.split(",");
+	}
+
+	private Date getDate(String string) {
+		return DateUtil.fromISODateString(string);
+	}
+
 	private int getInt(String string) {
-		
+		System.out.println(string);
 		return Integer.parseInt(string);
 	}
 

@@ -141,9 +141,36 @@
         pms.message${keyMon} a left outer join pms.ack${keyMon} b on a.msg_id = b.msg_id and b.ack_type = 'pma',
         pms.message${keyMon} c left outer join pms.ack${keyMon} d on c.msg_id = d.msg_id and d.ack_type = 'app'		
 		WHERE a.msg_id = c.msg_id
+		<if test="dateStart != null ">
+		AND a.update_time <![CDATA[>]]>  #{dateStart}
+		</if>
+		<if test="dateEnd != null ">
+		AND a.update_time <![CDATA[<]]> #{dateEnd}
+		</if>		
 		<if test="issueId != null and issueId != ''">
 		AND a.issue_id = #{issueId}
 		</if>
+		<if test="receiver != null and receiver != ''">
+		AND a.receiver = #{receiver}
+		</if>
+		<if test="msgId != null and msgId != ''">
+		AND a.msg_id = #{msgId}
+		</if>		
+		<if test="ackType != -1 and ackType == 0">
+		AND b.ack_type IS NULL
+		</if>
+		<if test="ackType != -1 and ackType == 1">
+		AND b.ack_type = 'pma'
+		</if>
+		<if test="ackType != -1 and ackType == 2">
+		AND d.ack_type = 'app'
+		</if>
+		<if test="statusArray != null and statusArray.length != 0">
+		AND a.status IN
+	 	 <foreach item="status" index="index" collection="statusArray" open="(" separator="," close=")" >
+			#{status}
+	  	 </foreach>
+	   </if>
 		ORDER BY a.issue_time DESC,a.update_time DESC
 	</select>
 	
@@ -178,9 +205,36 @@
         pms.message${keyMon} a left outer join pms.ack${keyMon} b on a.msg_id = b.msg_id and b.ack_type = 'pma',
         pms.message${keyMon} c left outer join pms.ack${keyMon} d on c.msg_id = d.msg_id and d.ack_type = 'app'		
 		WHERE a.msg_id = c.msg_id
+		<if test="dateStart != null ">
+		AND a.update_time <![CDATA[>]]>  #{dateStart}
+		</if>
+		<if test="dateEnd != null ">
+		AND a.update_time <![CDATA[<]]> #{dateEnd}
+		</if>		
 		<if test="issueId != null and issueId != ''">
 		AND a.issue_id = #{issueId}
 		</if>
+		<if test="receiver != null and receiver != ''">
+		AND a.receiver = #{receiver}
+		</if>
+		<if test="msgId != null and msgId != ''">
+		AND a.msg_id = #{msgId}
+		</if>		
+		<if test="ackType != -1 and ackType == 0">
+		AND b.ack_type IS NULL
+		</if>
+		<if test="ackType != -1 and ackType == 1">
+		AND b.ack_type = 'pma'
+		</if>
+		<if test="ackType != -1 and ackType == 2">
+		AND d.ack_type = 'app'
+		</if>
+		<if test="statusArray != null and statusArray.length != 0">
+		AND a.status IN
+	 	 <foreach item="status" index="index" collection="statusArray" open="(" separator="," close=")" >
+			#{status}
+	  	 </foreach>
+	   </if>
 		ORDER BY a.issue_time DESC,a.update_time DESC
 		limit #{iDisplayStart} , #{iDisplayLength}
 	</select>

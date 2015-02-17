@@ -8,7 +8,7 @@ import kr.co.adflow.pms.adm.response.MessagesRes;
 
 public interface SvcService {
 	
-	public MessagesRes getSvcMessageList(Map<String,String> params);
+	public MessagesRes getSvcMessageList(Map<String,Object> params);
 	
 	public MessagesRes getSvcResevationMessageList(Map<String,String> params);
 
