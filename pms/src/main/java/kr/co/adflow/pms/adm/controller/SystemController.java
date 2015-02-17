@@ -273,4 +273,16 @@ public class SystemController extends BaseController {
 		return res;
 
 	}
+	
+	
+	@RequestMapping(value = "/server", method = RequestMethod.GET)
+	@ResponseBody
+	public Response getServerInfo() throws Exception {
+		Result result = new Result();
+		result.setSuccess(true);
+		result.setData(systemService.getServerInfo());
+		Response res = new Response(result);
+		logger.debug("response=" + res);
+		return res;
+	}
 }

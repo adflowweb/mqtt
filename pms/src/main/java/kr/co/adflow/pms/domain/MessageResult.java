@@ -10,15 +10,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 
-@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+
 @JsonAutoDetect
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class MessageResult {
 	
 	private String msgId;
 	private String receiver;
 	private int status;
 	private boolean reservation;
-	private int resendCount;
+	@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL,using=JsonDateSerializer.class)
+	private Date reservationTime;
+
+//	private int resendCount;
 
 	@JsonSerialize(using=JsonDateSerializer.class)
 	private Date updateTime;
@@ -55,12 +59,6 @@ public class MessageResult {
 	public void setReservation(boolean reservation) {
 		this.reservation = reservation;
 	}
-	public int getResendCount() {
-		return resendCount;
-	}
-	public void setResendCount(int resendCount) {
-		this.resendCount = resendCount;
-	}
 
 	public String getAppAckType() {
 		return appAckType;
@@ -91,6 +89,12 @@ public class MessageResult {
 	}
 	public void setPmaAckTime(Date pmaAckTime) {
 		this.pmaAckTime = pmaAckTime;
+	}
+	public Date getReservationTime() {
+		return reservationTime;
+	}
+	public void setReservationTime(Date reservationTime) {
+		this.reservationTime = reservationTime;
 	}
 
 }

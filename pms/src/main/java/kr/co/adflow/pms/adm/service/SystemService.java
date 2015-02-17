@@ -6,6 +6,7 @@ import java.util.Map;
 import kr.co.adflow.pms.adm.request.UserReq;
 import kr.co.adflow.pms.adm.request.UserUpdateReq;
 import kr.co.adflow.pms.adm.response.MessagesRes;
+import kr.co.adflow.pms.domain.ServerInfo;
 import kr.co.adflow.pms.domain.User;
 
 public interface SystemService {
@@ -23,5 +24,7 @@ public interface SystemService {
 	public MessagesRes getSysMessageList(Map<String,String> params);
 	
 	public MessagesRes getSysResevationMessageList(Map<String,String> params);
+
+	public ServerInfo getServerInfo();
 
 }

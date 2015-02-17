@@ -313,6 +313,7 @@
 		, a.receiver
 		, a.status
 		, a.is_reservation
+		, a.reservation_time
 		, a.resend_count
 		, a.resend_max_count
 		, a.update_time

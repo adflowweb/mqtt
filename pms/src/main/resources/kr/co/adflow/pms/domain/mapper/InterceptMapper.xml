@@ -3,6 +3,7 @@
      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
      "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.co.adflow.pms.domain.mapper.InterceptMapper">
+<cache eviction="LRU" flushInterval="60000" size="100" readOnly="true"/>
 
 	<resultMap id="keyResult" type="java.util.Map">
 		<result property="ipFilters" column="ip_filters" />

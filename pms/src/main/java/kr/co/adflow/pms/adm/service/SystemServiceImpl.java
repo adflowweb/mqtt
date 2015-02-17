@@ -13,9 +13,11 @@ import kr.co.adflow.pms.adm.request.UserReq;
 import kr.co.adflow.pms.adm.request.UserUpdateReq;
 import kr.co.adflow.pms.adm.response.MessagesRes;
 import kr.co.adflow.pms.core.config.PmsConfig;
+import kr.co.adflow.pms.core.dao.ServerDao;
 import kr.co.adflow.pms.core.util.KeyGenerator;
 import kr.co.adflow.pms.domain.Message;
 import kr.co.adflow.pms.domain.MsgParams;
+import kr.co.adflow.pms.domain.ServerInfo;
 import kr.co.adflow.pms.domain.Token;
 import kr.co.adflow.pms.domain.User;
 import kr.co.adflow.pms.domain.mapper.InterceptMapper;
@@ -38,6 +40,9 @@ public class SystemServiceImpl implements SystemService {
 	
 	@Autowired
 	private MessageMapper messageMapper;
+	
+	@Autowired
+	private ServerDao serverDao;
 	
 	@Override
 	public List<User> listAllUser() {
@@ -221,6 +226,16 @@ public class SystemServiceImpl implements SystemService {
 		res.setData(list);
 		
 		return res;
+	}
+
+	@Override
+	public ServerInfo getServerInfo() {
+		// TODO Auto-generated method stub
+		try {
+			return serverDao.get();
+		} catch (Exception e) {
+			throw new RuntimeException("getServerInfo error");
+		}
 	}
 	
 
