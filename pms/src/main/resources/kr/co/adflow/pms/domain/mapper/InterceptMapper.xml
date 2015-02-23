@@ -30,6 +30,7 @@
 	AND b.role = #{role}
 	AND expired_time <![CDATA[>=]]>  now()
 	</select>
+	
 	<select id="selectCashedUserId" parameterType="String" resultType="String">
 	SELECT a.user_id 
 	FROM pms.token a

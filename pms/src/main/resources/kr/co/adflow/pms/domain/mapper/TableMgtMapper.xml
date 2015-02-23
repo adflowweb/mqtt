@@ -13,6 +13,7 @@
 	<update id="createMessage" parameterType="String">
 		CREATE TABLE pms.message${value} (
 		  msg_id varchar(50) NOT NULL ,
+		  group_id varchar(50) DEFAULT NULL,  
 		  msg_type int(10) unsigned DEFAULT NULL,
 		  receiver varchar(50) DEFAULT NULL,
 		  receiver_topic varchar(50) DEFAULT NULL,
@@ -34,7 +35,7 @@
 		  update_time datetime DEFAULT NULL,
 		  update_id VARCHAR(100),
 		  PRIMARY KEY (msg_id)
-		) ENGINE=InnoDB AUTO_INCREMENT=395 DEFAULT CHARSET=utf8;
+		) ENGINE=InnoDB AUTO_INCREMENT=395 DEFAULT CHARSET=utf8
 	</update>
 	
 	<select id="selectContent" parameterType="String" resultType="int">
@@ -49,7 +50,7 @@
 		  content_type varchar(50) DEFAULT NULL,
 		  PRIMARY KEY (msg_id),
 		  FOREIGN KEY (msg_id) REFERENCES pms.message${value} (msg_id) ON DELETE CASCADE ON UPDATE CASCADE
-		) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8
 	</update>
 	
 	<select id="selectAck" parameterType="String" resultType="int">
@@ -65,9 +66,12 @@
 	  ack_time datetime DEFAULT NULL,
 	  issue_time datetime DEFAULT NULL,
 	  issue_id VARCHAR(100),
+	  service_id varchar(100) DEFAULT NULL,
+	  callback_status tinyint(1)  DEFAULT 0,
+	  callback_count tinyint(1)  DEFAULT 0,
 	  PRIMARY KEY (msg_id,ack_type,token_id),
 	  FOREIGN KEY (msg_id) references pms.message${value} (msg_id) ON DELETE CASCADE ON UPDATE CASCADE
-	) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+	) ENGINE=InnoDB DEFAULT CHARSET=utf8
 	</update>		
 
 </mapper>	
