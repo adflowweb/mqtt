@@ -65,7 +65,7 @@ public class SvcServiceImpl implements SvcService {
 	private UserMapper userMapper;
 
 	@Override
-	public MessagesRes getSvcMessageList(Map<String, Object> params) {
+	public MessagesRes getSvcMessageList(Map<String, String> params) {
 		
 		MessagesRes res = null;
 		
@@ -77,24 +77,24 @@ public class SvcServiceImpl implements SvcService {
 		
 		MsgParams msgParams = new MsgParams();
 		
-		msgParams.setKeyMon((String)params.get("cSearchDate"));
+		msgParams.setKeyMon(params.get("cSearchDate"));
 		msgParams.setIssueId(issueId);
-		msgParams.setiDisplayStart(this.getInt((String)params.get("iDisplayStart")));
-		msgParams.setiDisplayLength(this.getInt((String)params.get("iDisplayLength")));
+		msgParams.setiDisplayStart(this.getInt(params.get("iDisplayStart")));
+		msgParams.setiDisplayLength(this.getInt(params.get("iDisplayLength")));
 		
-		msgParams.setDateStart(this.getDate((String)params.get("cSearchDateStart")));
-		msgParams.setDateEnd(this.getDate((String)params.get("cSearchDateEnd")));
+		msgParams.setDateStart(this.getDate(params.get("cSearchDateStart")));
+		msgParams.setDateEnd(this.getDate(params.get("cSearchDateEnd")));
 		
-		msgParams.setStatusArray(this.getStringArray((String)params.get("cSearchStatus")));
+		msgParams.setStatusArray(this.getStringArray(params.get("cSearchStatus")));
 		
-		String filter = (String)params.get("cSearchFilter");
+		String filter = params.get("cSearchFilter");
 		msgParams.setAckType(-1);
 		if ("receiver".equals(filter)) {
-			msgParams.setReceiver((String)params.get("cSearchContent"));
+			msgParams.setReceiver(params.get("cSearchContent"));
 		} else if ("msgId".equals(filter)) {
-			msgParams.setMsgId((String)params.get("cSearchContent"));
+			msgParams.setMsgId(params.get("cSearchContent"));
 		} else if ("ack".equals(filter)) {
-			msgParams.setAckType(this.getInt((String)params.get("cSearchContent")));
+			msgParams.setAckType(this.getInt(params.get("cSearchContent")));
 		}
 				
 		int cnt = messageMapper.getSvcMessageListCnt(msgParams);

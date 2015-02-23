@@ -51,14 +51,17 @@ public class DateUtil {
 	
 	public static Date fromISODateString(String isoDateString)
 	{	
+		if (isoDateString == null) {
+			return null;
+		}
 		Date result = null;
 		DateFormat dateFormat = new SimpleDateFormat(FORMAT_DATE_ISO);
 		try {
 			result = dateFormat.parse(isoDateString);
-		} catch (ParseException e) {
-			e.printStackTrace();
-			throw new RuntimeException(e.toString());
-		}
+	} catch (Exception e) {
+		e.printStackTrace();
+		throw new RuntimeException(e.toString());
+	}
 		
 		return result;
 	}

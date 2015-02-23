@@ -111,7 +111,7 @@ public class SvcController extends BaseController {
 	
 	@RequestMapping(value = "/messages", method = RequestMethod.GET)
 	@ResponseBody
-	public Response<Result<MessagesRes>> getMessageList(@RequestParam Map<String,Object> params
+	public Response<Result<MessagesRes>> getMessageList(@RequestParam Map<String,String> params
 			,@RequestHeader(PmsConfig.HEADER_APPLICATION_TOKEN) String appKey) throws Exception {
 
 		String sEcho = (String) params.get("sEcho");
