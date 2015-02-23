@@ -3,6 +3,8 @@ package kr.co.adflow.pms.svc.controller;
 import java.util.List;
 import java.util.Map;
 
+import javax.validation.Valid;
+
 import kr.co.adflow.pms.adm.service.AccountService;
 import kr.co.adflow.pms.core.config.PmsConfig;
 import kr.co.adflow.pms.core.controller.BaseController;
@@ -47,7 +49,7 @@ public class PushMessageController extends BaseController {
 	@ResponseBody
 	public Response<Result<List<Map<String,String>>>> sendMessage(
 			@RequestHeader(PmsConfig.HEADER_APPLICATION_KEY) String appKey,
-			@RequestBody MessageReq msg) throws Exception {
+			@RequestBody @Valid MessageReq msg) throws Exception {
 		logger.debug("sendMessage");
 
 		if (msg.getReceivers() == null || msg.getReceivers().length == 0) {
@@ -61,6 +63,10 @@ public class PushMessageController extends BaseController {
 				}
 			}
 			
+		}
+		
+		if (msg.getReservationTime() != null && msg.getReservationTime().getTime() < System.currentTimeMillis()) {
+			throw new RuntimeException("ReservationTime is the past time");
 		}
 
 		List<Map<String,String>> resultList = pushMessageService.sendMessage(appKey, msg);

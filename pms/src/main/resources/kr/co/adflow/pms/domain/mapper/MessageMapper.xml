@@ -248,8 +248,20 @@
 		WHERE a.msg_id = c.msg_id
 		AND a.status = 0
 		AND  a.is_reservation IS TRUE
+		<if test="dateStart != null ">
+		AND a.update_time <![CDATA[>]]>  #{dateStart}
+		</if>
+		<if test="dateEnd != null ">
+		AND a.update_time <![CDATA[<]]> #{dateEnd}
+		</if>		
 		<if test="issueId != null and issueId != ''">
 		AND a.issue_id = #{issueId}
+		</if>
+		<if test="receiver != null and receiver != ''">
+		AND a.receiver = #{receiver}
+		</if>
+		<if test="msgId != null and msgId != ''">
+		AND a.msg_id = #{msgId}
 		</if>
 		ORDER BY a.issue_time DESC,a.update_time DESC
 	</select>
@@ -283,8 +295,20 @@
 		WHERE a.msg_id = c.msg_id
 		AND a.status = 0
 		AND a.is_reservation IS TRUE
-	    <if test="issueId != null and issueId != ''">
+		<if test="dateStart != null ">
+		AND a.update_time <![CDATA[>]]>  #{dateStart}
+		</if>
+		<if test="dateEnd != null ">
+		AND a.update_time <![CDATA[<]]> #{dateEnd}
+		</if>		
+		<if test="issueId != null and issueId != ''">
 		AND a.issue_id = #{issueId}
+		</if>
+		<if test="receiver != null and receiver != ''">
+		AND a.receiver = #{receiver}
+		</if>
+		<if test="msgId != null and msgId != ''">
+		AND a.msg_id = #{msgId}
 		</if>
 		ORDER BY issue_time DESC,update_time DESC
 		limit #{iDisplayStart} , #{iDisplayLength}

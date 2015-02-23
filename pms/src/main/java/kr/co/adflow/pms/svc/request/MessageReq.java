@@ -3,6 +3,8 @@ package kr.co.adflow.pms.svc.request;
 import java.util.Date;
 
 import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.Range;
+import org.springframework.format.annotation.NumberFormat;
 
 public class MessageReq {
 
@@ -13,7 +15,10 @@ public class MessageReq {
 	@NotEmpty
 	private String content;
 	private Date reservationTime;
+	
+	@Range(min=0,max=100)
 	private int resendMaxCount;
+	@Range(min=0,max=1440)
 	private int resendInterval;
 
 	public String getContentType() {
@@ -21,7 +26,7 @@ public class MessageReq {
 	}
 
 	public void setContentType(String contentType) {
-		this.contentType = contentType;
+		this.contentType = contentType; 
 	}
 
 	public String getContent() {

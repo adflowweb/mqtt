@@ -73,6 +73,7 @@ public class SvcServiceImpl implements SvcService {
 		
 		if (params.get("cSearchDate") == null) {
 			//error
+			throw new RuntimeException("");
 		} 
 		
 		MsgParams msgParams = new MsgParams();
@@ -142,14 +143,26 @@ public class SvcServiceImpl implements SvcService {
 		MsgParams msgParams = new MsgParams();
 		
 		msgParams.setKeyMon(params.get("cSearchDate"));
-		
-		logger.info("msgParams :::::::{}",issueId);
 		msgParams.setIssueId(issueId);
 		
 		msgParams.setiDisplayStart(this.getInt(params.get("iDisplayStart")));
 		msgParams.setiDisplayLength(this.getInt(params.get("iDisplayLength")));
 
-		logger.info("msgParams :::::::{}",msgParams.getIssueId());
+		msgParams.setDateStart(this.getDate(params.get("cSearchDateStart")));
+		msgParams.setDateEnd(this.getDate(params.get("cSearchDateEnd")));
+		
+		// 예약 발송 예정만 처리?
+		//msgParams.setStatusArray(this.getStringArray(params.get("cSearchStatus")));
+		
+		String filter = params.get("cSearchFilter");
+		msgParams.setAckType(-1);
+		if ("receiver".equals(filter)) {
+			msgParams.setReceiver(params.get("cSearchContent"));
+		} else if ("msgId".equals(filter)) {
+			msgParams.setMsgId(params.get("cSearchContent"));
+		} else if ("ack".equals(filter)) {
+			msgParams.setAckType(this.getInt(params.get("cSearchContent")));
+		}
 		
 		int cnt = messageMapper.getSvcResevationMessageListCnt(msgParams);
 		logger.info("cnt :::::::{}",cnt);

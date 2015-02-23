@@ -1,5 +1,6 @@
 package kr.co.adflow.pms.adm.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +15,7 @@ import kr.co.adflow.pms.adm.request.UserUpdateReq;
 import kr.co.adflow.pms.adm.response.MessagesRes;
 import kr.co.adflow.pms.core.config.PmsConfig;
 import kr.co.adflow.pms.core.dao.ServerDao;
+import kr.co.adflow.pms.core.util.DateUtil;
 import kr.co.adflow.pms.core.util.KeyGenerator;
 import kr.co.adflow.pms.domain.Message;
 import kr.co.adflow.pms.domain.MsgParams;
@@ -169,7 +171,21 @@ public class SystemServiceImpl implements SystemService {
 		msgParams.setiDisplayStart(this.getInt(params.get("iDisplayStart")));
 		msgParams.setiDisplayLength(this.getInt(params.get("iDisplayLength")));
 
-		logger.info("msgParams :::::::{}",msgParams.getIssueId());
+		msgParams.setDateStart(this.getDate(params.get("cSearchDateStart")));
+		msgParams.setDateEnd(this.getDate(params.get("cSearchDateEnd")));
+		
+		msgParams.setStatusArray(this.getStringArray(params.get("cSearchStatus")));
+		
+		String filter = params.get("cSearchFilter");
+		msgParams.setAckType(-1);
+		if ("receiver".equals(filter)) {
+			msgParams.setReceiver(params.get("cSearchContent"));
+		} else if ("msgId".equals(filter)) {
+			msgParams.setMsgId(params.get("cSearchContent"));
+		} else if ("ack".equals(filter)) {
+			msgParams.setAckType(this.getInt(params.get("cSearchContent")));
+		}
+
 		
 		int cnt = messageMapper.getSvcMessageListCnt(msgParams);
 		logger.info("cnt :::::::{}",cnt);
@@ -212,7 +228,22 @@ public class SystemServiceImpl implements SystemService {
 		msgParams.setiDisplayStart(this.getInt(params.get("iDisplayStart")));
 		msgParams.setiDisplayLength(this.getInt(params.get("iDisplayLength")));
 
-		logger.info("msgParams :::::::{}",msgParams.getIssueId());
+		msgParams.setDateStart(this.getDate(params.get("cSearchDateStart")));
+		msgParams.setDateEnd(this.getDate(params.get("cSearchDateEnd")));
+		
+		// 예약 발송 예정만 처리?
+		//msgParams.setStatusArray(this.getStringArray(params.get("cSearchStatus")));
+		
+		String filter = params.get("cSearchFilter");
+		logger.info("filter :::::::{}",filter);
+		msgParams.setAckType(-1);
+		if ("receiver".equals(filter)) {
+			msgParams.setReceiver(params.get("cSearchContent"));
+		} else if ("msgId".equals(filter)) {
+			msgParams.setMsgId(params.get("cSearchContent"));
+		} else if ("ack".equals(filter)) {
+			msgParams.setAckType(this.getInt(params.get("cSearchContent")));
+		}
 		
 		int cnt = messageMapper.getSvcResevationMessageListCnt(msgParams);
 		logger.info("cnt :::::::{}",cnt);
@@ -238,5 +269,15 @@ public class SystemServiceImpl implements SystemService {
 		}
 	}
 	
+	private String[] getStringArray(String string) {
+		if ("ALL".equals(string)) {
+			return null;
+		} 
+		return string.split(",");
+	}
+
+	private Date getDate(String string) {
+		return DateUtil.fromISODateString(string);
+	}
 
 }
