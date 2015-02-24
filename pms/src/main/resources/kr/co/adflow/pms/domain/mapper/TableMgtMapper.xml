@@ -66,7 +66,7 @@
 	  ack_time datetime DEFAULT NULL,
 	  issue_time datetime DEFAULT NULL,
 	  issue_id VARCHAR(100),
-	  service_id varchar(100) DEFAULT NULL,
+	  server_id varchar(10) DEFAULT NULL,
 	  callback_status tinyint(1)  DEFAULT 0,
 	  callback_count tinyint(1)  DEFAULT 0,
 	  PRIMARY KEY (msg_id,ack_type,token_id),

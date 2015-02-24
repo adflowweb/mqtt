@@ -2,9 +2,9 @@ package kr.co.adflow.pms.core.config;
 
 public class PmsConfig {
 
+	public static final String EXECUTOR_SERVER_ID = "S01";
 	public static final int EXECUTOR_DELAY_TIME = 10000;
 	public static final int EXECUTOR_SEND_LIMIT = 100;
-	public static final String EXECUTOR_SERVER_ID = "S02";
 
 	public static final String HEADER_APPLICATION_TOKEN = "X-Application-Token";
 	public static final String HEADER_APPLICATION_KEY = "X-Application-Key";
