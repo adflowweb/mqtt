@@ -11,6 +11,7 @@ public class Ack {
 	private Date ackTime;
 	private Date issueTime;
 	private String issueId;
+	private String serverId;
 
 	public String getMsgId() {
 		return msgId;
@@ -66,6 +67,14 @@ public class Ack {
 
 	public void setKeyMon(String keyMon) {
 		this.keyMon = keyMon;
+	}
+
+	public String getServerId() {
+		return serverId;
+	}
+
+	public void setServerId(String serverId) {
+		this.serverId = serverId;
 	}
 
 }

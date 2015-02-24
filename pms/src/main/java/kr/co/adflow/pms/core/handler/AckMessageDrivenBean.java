@@ -7,8 +7,11 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 
+import kr.co.adflow.pms.core.config.PmsConfig;
 import kr.co.adflow.pms.domain.Ack;
+import kr.co.adflow.pms.domain.CtlQ;
 import kr.co.adflow.pms.domain.mapper.AckMapper;
+import kr.co.adflow.pms.domain.mapper.CtlQMapper;
 
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -22,6 +25,9 @@ public class AckMessageDrivenBean implements MessageListener {
 
 	@Autowired
 	private AckMapper ackMapper;
+	
+	@Autowired
+	private CtlQMapper ctlQMapper;
 
 	public void onMessage(Message message) {
 
@@ -34,9 +40,26 @@ public class AckMessageDrivenBean implements MessageListener {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		int cnt = ackMapper.insertAck(this.getAck(body));
+		Ack ack = this.getAck(body);
+		int cnt = ackMapper.insertAck(ack);
+		//callback
+		if (ack.getAckType().equals("app")) {
+			ctlQMapper.insertQ(this.getCtlQ(ack));
+		}
 		logger.info("ack result : {}", cnt);
 
+	}
+	
+	private CtlQ getCtlQ(Ack ack) {
+		CtlQ ctlQ = new CtlQ();
+		
+		ctlQ.setExeType(PmsConfig.CONTROL_QUEUE_EXECUTOR_TYPE_CALLBACK);
+		ctlQ.setTableName(ack.getKeyMon());
+		ctlQ.setMsgId(ack.getMsgId());
+		ctlQ.setIssueTime(new Date());
+		ctlQ.setServerId(PmsConfig.EXECUTOR_SERVER_ID);
+		
+		return ctlQ;
 	}
 
 	private Ack getAck(byte[] body) {
@@ -50,6 +73,7 @@ public class AckMessageDrivenBean implements MessageListener {
 		ack.setAckType(msgObject.getString("ackType"));
 		ack.setTokenId(msgObject.getString("token"));
 		ack.setAckTime(new Date(msgObject.getLong("ackTime")));
+		ack.setServerId(PmsConfig.EXECUTOR_SERVER_ID);
 
 		return ack;
 

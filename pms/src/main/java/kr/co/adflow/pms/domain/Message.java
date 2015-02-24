@@ -5,6 +5,7 @@ import java.util.Date;
 public class Message {
 
 	private String keyMon;
+	private String groupId;
 	private String msgId;
 	private int msgType;
 	private String receiver;
@@ -201,6 +202,12 @@ public class Message {
 	}
 	public void setResendMaxCount(int resendMaxCount) {
 		this.resendMaxCount = resendMaxCount;
+	}
+	public String getGroupId() {
+		return groupId;
+	}
+	public void setGroupId(String groupId) {
+		this.groupId = groupId;
 	}
 
 

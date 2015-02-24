@@ -2,7 +2,7 @@ package kr.co.adflow.pms.core.config;
 
 public class PmsConfig {
 
-	public static final String EXECUTOR_SERVER_ID = "S01";
+	public static final String EXECUTOR_SERVER_ID = "S12";
 	public static final int EXECUTOR_DELAY_TIME = 10000;
 	public static final int EXECUTOR_SEND_LIMIT = 100;
 
@@ -18,6 +18,7 @@ public class PmsConfig {
 	public static final int MESSAGE_HEADER_TYPE_DEFAULT = 10;
 	public static final int MESSAGE_HEADER_EXPIRY_DEFAULT = 0;
 	public static final int MESSAGE_HEADER_QOS_DEFAULT = 2;
+	public static final int MESSAGE_SIZE_LIMIT_DEFAULT = 1048576; //1MB
 	public static final boolean MESSAGE_ACK_DEFAULT = true;
 	public static final String MESSAGE_SERVICE_ID_DEFAULT = "kr.co.ktpowertel.push.mms";
 
@@ -45,5 +46,9 @@ public class PmsConfig {
 	public static final int SERVICE_REQUEST_FORMAT_TYPE_UFMI1 = 1;
 	public static final int SERVICE_REQUEST_FORMAT_TYPE_UFMI2 = 2;
 	public static final int SERVICE_REQUEST_FORMAT_TYPE_PHONE = 3;
+	
+	public static final String CONTROL_QUEUE_EXECUTOR_TYPE_MESSAGE = "message";
+	public static final String CONTROL_QUEUE_EXECUTOR_TYPE_RESERVATION = "reservation";
+	public static final String CONTROL_QUEUE_EXECUTOR_TYPE_CALLBACK = "callback";
 
 }

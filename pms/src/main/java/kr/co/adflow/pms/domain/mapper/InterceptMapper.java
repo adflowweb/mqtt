@@ -11,5 +11,11 @@ public interface InterceptMapper {
 	Date selectCashedApplicationToken(AppKey appKey);
 
 	String selectCashedUserId(String applicationKey);
+	
+	int getCashedMessageSizeLimit(String userId);
+	
+	int getCashedMessageExpiry(String userId);
+	
+	int getCashedMessageQos(String userId);
 
 }

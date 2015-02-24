@@ -58,38 +58,56 @@ public class SystemServiceImpl implements SystemService {
 		
 		String issueId = interceptMapper.selectCashedUserId(appKey);
 		
-		User user = new User();
-		user.setUserId(userReq.getUserId());
-		user.setUserName(userReq.getUserName());
-		user.setPassword(this.getPassword(userReq));
-		user.setRole(userReq.getRole());
-		user.setIssueId(issueId);
+		User paramUser = new User();
+		paramUser.setUserId(userReq.getUserId());
+		paramUser.setUserName(userReq.getUserName());
+		paramUser.setPassword(this.getPassword(userReq));
+		paramUser.setRole(userReq.getRole());
+		paramUser.setIssueId(issueId);
 		
 		if (userReq.getIpFilters() == null || userReq.getIpFilters().trim().length() == 0) {
-			user.setIpFilters(PmsConfig.INTERCEPTER_IP_FILTER);
+			paramUser.setIpFilters(PmsConfig.INTERCEPTER_IP_FILTER);
 		} else {
-			user.setIpFilters(userReq.getIpFilters());
+			paramUser.setIpFilters(userReq.getIpFilters());
 		}
 		
-		user.setMsgCntLimit(userReq.getMsgCntLimit());
-		user.setStatus(-1);
+		paramUser.setMsgCntLimit(userReq.getMsgCntLimit());
+		// 추가 옵션
+		if (userReq.isOptions()) {
+			paramUser.setDefaultExpiry(userReq.getDefaultExpiry());
+			paramUser.setDefaultQos(userReq.getDefaultQos());
+			paramUser.setMsgSizeLimit(userReq.getMsgSizeLimit());
+			paramUser.setCallbackUrl(userReq.getCallbackUrl());
+			paramUser.setCallbackMethod(userReq.getCallbackMethod());
+			paramUser.setCallbackCntLimit(userReq.getCallbackCntLimit());			
+		} else {
+			paramUser.setDefaultExpiry(-1);
+			paramUser.setDefaultQos(-1);
+			paramUser.setMsgSizeLimit(-1);
+			paramUser.setCallbackUrl(null);
+			paramUser.setCallbackMethod(null);
+			paramUser.setCallbackCntLimit(-1);
+		}
+
+		
+		paramUser.setStatus(-1);
 		Token token = new Token();
 		token.setUserId(userReq.getUserId());
 		token.setTokenType(PmsConfig.TOKEN_TYPE_APPLICATION);
 		token.setTokenId(this.getTokenId(userReq));
 
 		//
-		user.setAction("createUser");
-		userMapper.logUserHistory(user);
+		paramUser.setAction("createUser");
+		userMapper.logUserHistory(paramUser);
 		
-		userMapper.insertUser(user);
+		userMapper.insertUser(paramUser);
 		tokenMapper.insertToken(token);
-		user.setStatus(PmsConfig.USER_STATUS_NORMAL);
-		userMapper.updateUserStatus(user);
+		paramUser.setStatus(PmsConfig.USER_STATUS_NORMAL);
+		userMapper.updateUserStatus(paramUser);
 		//
 		// userMapper udate
 
-		return user.getUserId();
+		return paramUser.getUserId();
 	}
 	
 	private String getPassword(UserReq req) {
@@ -112,29 +130,47 @@ public class SystemServiceImpl implements SystemService {
 
 		String issueId = interceptMapper.selectCashedUserId(appKey);
 		
-		User param = userMapper.select(userReq.getUserId());
+		User paramUser = userMapper.select(userReq.getUserId());
 		
 		if (userReq.getUserName() != null)
-		param.setUserName(userReq.getUserName());
+			paramUser.setUserName(userReq.getUserName());
 		
 		if (userReq.getMsgCntLimit() != 0)
-		param.setMsgCntLimit(userReq.getMsgCntLimit());
+			paramUser.setMsgCntLimit(userReq.getMsgCntLimit());
 		
 		if (userReq.getRole() != null)
-		param.setRole(userReq.getRole());
+			paramUser.setRole(userReq.getRole());
 		
 		//TODO validation 필요?
 		if (userReq.getIpFilters() != null)
-		param.setIpFilters(userReq.getIpFilters());
+			paramUser.setIpFilters(userReq.getIpFilters());
 		
-		
-		param.setStatus(PmsConfig.USER_STATUS_NORMAL);
-		param.setIssueId(issueId);
-		
-		param.setAction("updateUser");
-		userMapper.logUserHistory(param);
+		// 추가 옵션
+		if (userReq.isOptions()) {
+			paramUser.setDefaultExpiry(userReq.getDefaultExpiry());
+			paramUser.setDefaultQos(userReq.getDefaultQos());
+			paramUser.setMsgSizeLimit(userReq.getMsgSizeLimit());
+			paramUser.setCallbackUrl(userReq.getCallbackUrl());
+			paramUser.setCallbackMethod(userReq.getCallbackMethod());
+			paramUser.setCallbackCntLimit(userReq.getCallbackCntLimit());			
+		} else {
+			paramUser.setDefaultExpiry(-1);
+			paramUser.setDefaultQos(-1);
+			paramUser.setMsgSizeLimit(-1);
+			paramUser.setCallbackUrl(null);
+			paramUser.setCallbackMethod(null);
+			paramUser.setCallbackCntLimit(-1);
+		}
 
-		return userMapper.updateUser(param);
+		
+		
+		paramUser.setStatus(PmsConfig.USER_STATUS_NORMAL);
+		paramUser.setIssueId(issueId);
+		
+		paramUser.setAction("updateUser");
+		userMapper.logUserHistory(paramUser);
+
+		return userMapper.updateUser(paramUser);
 	}
 
 	@Override

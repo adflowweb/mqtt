@@ -8,8 +8,10 @@ import kr.co.adflow.pms.core.config.PmsConfig;
 import kr.co.adflow.pms.core.handler.DirectMsgHandler;
 import kr.co.adflow.pms.core.util.DateUtil;
 import kr.co.adflow.pms.core.util.KeyGenerator;
+import kr.co.adflow.pms.domain.CtlQ;
 import kr.co.adflow.pms.domain.Message;
 import kr.co.adflow.pms.domain.User;
+import kr.co.adflow.pms.domain.mapper.CtlQMapper;
 import kr.co.adflow.pms.domain.mapper.MessageMapper;
 import kr.co.adflow.pms.domain.mapper.UserMapper;
 import kr.co.adflow.pms.domain.mapper.ValidationMapper;
@@ -44,13 +46,18 @@ public class MessageSendServiceImpl implements MessageSendService {
 	
 	@Autowired
 	private UserValidator userValidator;
+	
+	@Autowired
+	private CtlQMapper ctlQMapper;
+
 
 	@Override
 	public int sendMessageArray(String serverId, int limit) {
 
 		HashMap<String, Object> param = new HashMap<String, Object>();
 
-		param.put("keyMon", DateUtil.getYYYYMM());
+		//param.put("keyMon", DateUtil.getYYYYMM());
+		param.put("keyMon", this.getMessageTableName(serverId));
 		param.put("serverId", serverId);
 		param.put("limit", limit);
 
@@ -111,6 +118,8 @@ public class MessageSendServiceImpl implements MessageSendService {
 					messageMapper.insertMessage(msg);
 					messageMapper.insertContent(msg);
 					
+					ctlQMapper.insertQ(this.getCtlQ(msg));
+					
 				}
 			}
 			msg.setMsgId(msgId);
@@ -118,6 +127,7 @@ public class MessageSendServiceImpl implements MessageSendService {
 			msg.setStatus(PmsConfig.MESSAGE_STATUS_SEND);
 
 			int resultCnt = messageMapper.updateStatus(msg);
+			ctlQMapper.deleteQ(msg.getMsgId());
 			logger.info("update count is {}", resultCnt);
 			// message_cnt - result_count
 			User user = new User();
@@ -129,6 +139,20 @@ public class MessageSendServiceImpl implements MessageSendService {
 
 		logger.info("sendMessageArray is cnt {}", updateCnt);
 		return updateCnt;
+	}
+	
+	private String getMessageTableName(String serverId) {
+		CtlQ result = null;
+		CtlQ paramCtlQ = new CtlQ();
+		paramCtlQ.setExeType(PmsConfig.CONTROL_QUEUE_EXECUTOR_TYPE_MESSAGE);
+		paramCtlQ.setServerId(serverId);
+		result = ctlQMapper.fetchQ(paramCtlQ);
+		
+		if (result == null) {
+			return DateUtil.getYYYYMM();
+		} else {
+			return result.getTableName();
+		}
 	}
 	
 	private boolean validReceiverUserId(String receiver) {
@@ -149,6 +173,24 @@ public class MessageSendServiceImpl implements MessageSendService {
 		
 		return result;
 
+	}
+	
+	private CtlQ getCtlQ(Message msg) {
+		CtlQ ctlQ = new CtlQ();
+		
+		if (msg.isReservation()) {
+			ctlQ.setExeType(PmsConfig.CONTROL_QUEUE_EXECUTOR_TYPE_RESERVATION);
+			ctlQ.setIssueTime(msg.getReservationTime());
+		} else {
+			ctlQ.setExeType(PmsConfig.CONTROL_QUEUE_EXECUTOR_TYPE_MESSAGE);
+			ctlQ.setIssueTime(new Date());
+		}
+		
+		ctlQ.setTableName(msg.getKeyMon());
+		ctlQ.setMsgId(msg.getMsgId());
+		ctlQ.setServerId(msg.getServerId());
+		
+		return ctlQ;
 	}
 
 	private boolean isPhoneNo(String receiver) {
@@ -193,12 +235,29 @@ public class MessageSendServiceImpl implements MessageSendService {
 		
 		return result;
 	}
+	
+	private String getReservationTableName(String serverId) {
+		CtlQ result = null;
+		CtlQ paramCtlQ = new CtlQ();
+		paramCtlQ.setExeType(PmsConfig.CONTROL_QUEUE_EXECUTOR_TYPE_RESERVATION);
+		paramCtlQ.setServerId(serverId);
+		result = ctlQMapper.fetchQ(paramCtlQ);
+		
+		if (result == null) {
+			return DateUtil.getYYYYMM();
+		} else {
+			return result.getTableName();
+		}
+	}
+	
+
 
 	@Override
 	public int sendReservationMessageArray(String serverId, int limit) {
 		HashMap<String, Object> param = new HashMap<String, Object>();
 
-		param.put("keyMon", DateUtil.getYYYYMM());
+		//param.put("keyMon", DateUtil.getYYYYMM());
+		param.put("keyMon", this.getReservationTableName(serverId));
 		param.put("serverId", serverId);
 		param.put("limit", limit);
 
@@ -236,6 +295,7 @@ public class MessageSendServiceImpl implements MessageSendService {
 			msg.setStatus(PmsConfig.MESSAGE_STATUS_SEND);
 
 			int resultCnt = messageMapper.updateStatus(msg);
+			ctlQMapper.deleteQ(msg.getMsgId());
 			logger.info("update count is {}", resultCnt);
 			// message_cnt - result_count
 			User user = new User();

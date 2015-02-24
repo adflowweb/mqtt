@@ -12,6 +12,12 @@
 		<result property="ipFilters" column="ip_filters" />
 		<result property="status" column="status" />
 		<result property="msgCntLimit" column="message_count_limit" />
+		<result property="defaultExpiry" column="default_expiry" />
+		<result property="defaultQos" column="default_qos" />
+		<result property="msgSizeLimit" column="message_size_limit" />
+		<result property="callbackUrl" column="callback_url" />
+		<result property="callbackMethod" column="callback_method" />
+		<result property="callbackCntLimit" column="callback_count_limit" />
 		<result property="issueTime" column="issue_time" />
 		<result property="issueId" column="issue_id" />
 		<result property="applicationToken" column="application_token" />
@@ -26,6 +32,12 @@
 		,ip_filters
 		,status
 		,message_count_limit
+		,default_expiry
+		,default_qos
+		,message_size_limit
+		,callback_url
+		,callback_method
+		,callback_count_limit
 		,issue_time
 		,issue_id
 		)
@@ -37,6 +49,12 @@
 		,#{ipFilters}
 		,#{status}
 		,#{msgCntLimit}
+		,#{defaultExpiry}
+		,#{defaultQos}
+		,#{msgSizeLimit}
+		,#{callbackUrl}
+		,#{callbackMethod}
+		,#{callbackCntLimit}
 		,now()
 		,#{issueId}
 		)
@@ -50,6 +68,12 @@
 		, a.ip_filters
 		, a.status
 		, a.message_count_limit
+		, a.default_expiry
+		, a.default_qos
+		, a.message_size_limit
+		, a.callback_url
+		, a.callback_method
+		, a.callback_count_limit
 		, a.issue_time
 		, a.issue_id
         , b.token_id as application_token
@@ -68,6 +92,12 @@
 		, ip_filters
 		, status
 		,message_count_limit
+		,default_expiry
+		,default_qos
+		,message_size_limit		
+		,callback_url		
+		,callback_method		
+		,callback_count_limit		
 		, issue_time
 		, issue_id
 		FROM pms.user
@@ -105,6 +135,12 @@
 		,status =
 		#{status}
 		,message_count_limit = #{msgCntLimit}
+		,default_expiry = #{defaultExpiry}
+		,default_qos = #{defalutQos}
+		,message_size_limit = #{msgSizeLimit}
+		,callback_url = #{callbackUrl}
+		,callback_method = #{callbackMethod}
+		,callback_count_limit = #{callbackCntLimit}
 		,issue_time = now()
 		,issue_id = #{issueId}
 		WHERE user_id = #{userId}
@@ -124,6 +160,12 @@
 		,ip_filters
 		,status
 		,message_count_limit
+		,default_expiry
+		,default_qos
+		,message_size_limit		
+		,callback_url		
+		,callback_method		
+		,callback_count_limit		
 		,issue_time
 		,issue_id
 		,action
@@ -136,6 +178,12 @@
 		,#{ipFilters}
 		,#{status}
 		,#{msgCntLimit}
+		,#{defaultExpiry}
+		,#{defaultQos}
+		,#{msgSizeLimit}		
+		,#{callbackUrl}		
+		,#{callbackMethod}		
+		,#{callbackCntLimit}		
 		,now()
 		,#{issueId}
 		,#{action}

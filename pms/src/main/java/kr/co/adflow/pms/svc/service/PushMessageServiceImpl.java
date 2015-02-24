@@ -1,16 +1,21 @@
 package kr.co.adflow.pms.svc.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import kr.co.adflow.pms.core.config.PmsConfig;
+import kr.co.adflow.pms.core.util.CheckUtil;
 import kr.co.adflow.pms.core.util.DateUtil;
 import kr.co.adflow.pms.core.util.KeyGenerator;
+import kr.co.adflow.pms.domain.Ack;
+import kr.co.adflow.pms.domain.CtlQ;
 import kr.co.adflow.pms.domain.Message;
 import kr.co.adflow.pms.domain.MessageResult;
 import kr.co.adflow.pms.domain.MsgIdsParams;
+import kr.co.adflow.pms.domain.mapper.CtlQMapper;
 import kr.co.adflow.pms.domain.mapper.InterceptMapper;
 import kr.co.adflow.pms.domain.mapper.MessageMapper;
 import kr.co.adflow.pms.domain.mapper.UserMapper;
@@ -42,7 +47,11 @@ public class PushMessageServiceImpl implements PushMessageService {
 	
 	@Autowired
 	private UserValidator userValidator;
+	
+	@Autowired
+	private CtlQMapper ctlQMapper;
 
+	
 	@Override
 	public List<Map<String,String>> sendMessage(String appKey, MessageReq message) {
 
@@ -52,6 +61,10 @@ public class PushMessageServiceImpl implements PushMessageService {
 
 		//1. get userId by appKey 
 		String issueId = interceptMapper.selectCashedUserId(appKey);
+		
+		if (message.getContent().getBytes().length > this.getMessageSizeLimit(issueId)) {
+			throw new RuntimeException(" message body size limit over :" + this.getMessageSizeLimit(issueId));
+		}
 		//2. get max count by userId
 		//3. check max count
 		if (userMapper.getMsgCntLimit(issueId) < message.getReceivers().length) {
@@ -64,8 +77,8 @@ public class PushMessageServiceImpl implements PushMessageService {
 		
 		msg.setServerId(PmsConfig.EXECUTOR_SERVER_ID);
 		msg.setMsgType(PmsConfig.MESSAGE_HEADER_TYPE_DEFAULT);
-		msg.setExpiry(PmsConfig.MESSAGE_HEADER_EXPIRY_DEFAULT);
-		msg.setQos(PmsConfig.MESSAGE_HEADER_QOS_DEFAULT);
+		msg.setExpiry(this.getMessageExpiry(issueId));
+		msg.setQos(this.getMessageQos(issueId));
 		msg.setIssueId(issueId);
 		msg.setUpdateId(issueId);
 
@@ -96,15 +109,30 @@ public class PushMessageServiceImpl implements PushMessageService {
 		
 		resultList = new ArrayList<Map<String,String>>(receivers.length);
 		
+		String groupId = null;
 		Map<String,String> msgMap = null;
 		for (int i = 0; i < receivers.length; i++) {
 
 			msgMap = new HashMap<String,String>();
 			msg.setReceiver(receivers[i]);
 			msg.setMsgId(this.getMsgId());
+			//MEMO 여러 건일때 0 번째 msgId 를 대표로 groupId에 추가
+			if (i == 0) {
+				groupId = msg.getMsgId();
+			}
+			msg.setGroupId(groupId);
+			//MEMO resend msg 인 경우 resendId 에 msgId 추가
+			if (msg.getResendCount() > 0) {
+				msg.setResendId(msg.getMsgId());
+			} else {
+				msg.setResendId(null);
+			}
+			
 			msg.setStatus(PmsConfig.MESSAGE_STATUS_SENDING);
 			messageMapper.insertMessage(msg);
 			messageMapper.insertContent(msg);
+			
+			ctlQMapper.insertQ(this.getCtlQ(msg));
 			msgMap.put("msgId", msg.getMsgId());
 			msgMap.put("receiver", msg.getReceiver());
 			
@@ -113,6 +141,24 @@ public class PushMessageServiceImpl implements PushMessageService {
 		}
 
 		return resultList;
+	}
+	
+	private CtlQ getCtlQ(Message msg) {
+		CtlQ ctlQ = new CtlQ();
+		
+		if (msg.isReservation()) {
+			ctlQ.setExeType(PmsConfig.CONTROL_QUEUE_EXECUTOR_TYPE_RESERVATION);
+			ctlQ.setIssueTime(msg.getReservationTime());
+		} else {
+			ctlQ.setExeType(PmsConfig.CONTROL_QUEUE_EXECUTOR_TYPE_MESSAGE);
+			ctlQ.setIssueTime(new Date());
+		}
+		
+		ctlQ.setTableName(msg.getKeyMon());
+		ctlQ.setMsgId(msg.getMsgId());
+		ctlQ.setServerId(msg.getServerId());
+		
+		return ctlQ;
 	}
 
 	private String getMsgId() {
@@ -199,6 +245,18 @@ public class PushMessageServiceImpl implements PushMessageService {
 	private String getKeyMon(String msgId) {
 		// TODO Auto-generated method stub
 		return msgId.substring(0, 6);
+	}
+	
+	private int getMessageSizeLimit(String userId) {
+		return CheckUtil.getMessageSizeLimit(interceptMapper.getCashedMessageSizeLimit(userId));
+	}
+	
+	private int getMessageExpiry(String userId) {
+		return CheckUtil.getMessageExpiry(interceptMapper.getCashedMessageExpiry(userId));
+	}
+	
+	private int getMessageQos(String userId) {
+		return CheckUtil.getMessageQos(interceptMapper.getCashedMessageQos(userId));
 	}
 
 }

@@ -24,6 +24,8 @@ import java.util.Map;
 
 
 
+
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,7 @@ import kr.co.adflow.pms.adm.controller.SystemController;
 import kr.co.adflow.pms.adm.request.MessageReq;
 import kr.co.adflow.pms.adm.response.MessagesRes;
 import kr.co.adflow.pms.core.config.PmsConfig;
+import kr.co.adflow.pms.core.util.CheckUtil;
 import kr.co.adflow.pms.core.util.DateUtil;
 import kr.co.adflow.pms.core.util.KeyGenerator;
 import kr.co.adflow.pms.domain.Message;
@@ -177,6 +180,18 @@ public class SvcServiceImpl implements SvcService {
 		
 		return res;
 	}
+	
+	private int getMessageSizeLimit(String userId) {
+		return CheckUtil.getMessageSizeLimit(interceptMapper.getCashedMessageSizeLimit(userId));
+	}
+	
+	private int getMessageExpiry(String userId) {
+		return CheckUtil.getMessageExpiry(interceptMapper.getCashedMessageExpiry(userId));
+	}
+	
+	private int getMessageQos(String userId) {
+		return CheckUtil.getMessageQos(interceptMapper.getCashedMessageQos(userId));
+	}
 
 	@Override
 	public List<Map<String, String>> sendMessage(String appKey, MessageReq message) {
@@ -186,6 +201,10 @@ public class SvcServiceImpl implements SvcService {
 
 				//1. get userId by appKey 
 				String issueId = interceptMapper.selectCashedUserId(appKey);
+				
+				if (message.getContent().getBytes().length > this.getMessageSizeLimit(issueId)) {
+					throw new RuntimeException(" message body size limit over :" + this.getMessageSizeLimit(issueId));
+				}
 				//2. get max count by userId
 				//3. check max count
 				if (userMapper.getMsgCntLimit(issueId) < message.getReceivers().length) {
@@ -205,13 +224,13 @@ public class SvcServiceImpl implements SvcService {
 				}
 				
 				if (message.getExpiry() == 0) {
-					msg.setExpiry(PmsConfig.MESSAGE_HEADER_EXPIRY_DEFAULT);
+					msg.setExpiry(this.getMessageExpiry(issueId));
 				} else {
 					msg.setExpiry(message.getExpiry());
 				}
 				
 				if (message.getQos() == 0) {
-					msg.setQos(PmsConfig.MESSAGE_HEADER_QOS_DEFAULT);
+					msg.setQos(this.getMessageQos(issueId));
 				} else {
 					msg.setQos(message.getQos());
 				}
@@ -252,12 +271,27 @@ public class SvcServiceImpl implements SvcService {
 				resultList = new ArrayList<Map<String,String>>(receivers.length);
 				
 				Map<String,String> msgMap = null;
+				String groupId = null;
 				for (int i = 0; i < receivers.length; i++) {
 
 					msgMap = new HashMap<String,String>();
 					msg.setReceiver(receivers[i]);
 					msg.setReceiverTopic(receivers[i]);
 					msg.setMsgId(this.getMsgId());
+					
+					//MEMO 여러 건일때 0 번째 msgId 를 대표로 groupId에 추가
+					if (i == 0) {
+						groupId = msg.getMsgId();
+					}
+					msg.setGroupId(groupId);
+					//MEMO resend msg 인 경우 resendId 에 msgId 추가
+					if (msg.getResendCount() > 0) {
+						msg.setResendId(msg.getMsgId());
+					} else {
+						msg.setResendId(null);
+					}
+
+					
 					msg.setStatus(PmsConfig.MESSAGE_STATUS_SENDING);
 					messageMapper.insertMessage(msg);
 					messageMapper.insertContent(msg);

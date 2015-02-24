@@ -5,6 +5,7 @@
 <mapper namespace="kr.co.adflow.pms.domain.mapper.MessageMapper">
 
 	<resultMap id="MessageResult" type="kr.co.adflow.pms.domain.Message">
+		<result property="groupId" column="group_id" />
 		<result property="msgId" column="msg_id" />
 		<result property="msgType" column="msg_type" />
 		<result property="receiver" column="receiver" />
@@ -36,7 +37,8 @@
 
 	<select id="select" parameterType="String"
 		resultType="kr.co.adflow.pms.domain.Message">
-		SELECT a.msg_id
+		SELECT a.goup_id
+		, a.msg_id
 		, a.msg_type
 		, a.receiver
 		, a.receiver_topic
@@ -67,7 +69,8 @@
 
 	<select id="selectList" parameterType="Map"
 		resultMap="MessageResult">
-		SELECT a.msg_id
+		SELECT a.group_id
+		, a.msg_id
 		, a.msg_type
 		, a.receiver
 		, a.receiver_topic
@@ -101,7 +104,8 @@
 	
 	<select id="selectReservationList" parameterType="Map"
 		resultMap="MessageResult">
-		SELECT a.msg_id
+		SELECT a.group_id
+		, a.msg_id
 		, a.msg_type
 		, a.receiver
 		, a.receiver_topic
@@ -176,7 +180,8 @@
 	
 	<select id="getSvcMessageList" parameterType="kr.co.adflow.pms.domain.MsgParams"
 		resultMap="MessageResult">
-		SELECT a.msg_id
+		SELECT a.group_id
+		, a.msg_id
 		, a.msg_type
 		, a.receiver
 		, a.receiver_topic
@@ -268,7 +273,8 @@
 	
 	<select id="getSvcResevationMessageList" parameterType="kr.co.adflow.pms.domain.MsgParams"
 		resultMap="MessageResult">
-		SELECT a.msg_id
+		SELECT a.group_id
+		, a.msg_id
 		, a.msg_type
 		, a.receiver
 		, a.receiver_topic
@@ -326,7 +332,8 @@
 
 	<insert id="insertMessage" parameterType="kr.co.adflow.pms.domain.Message">
 		INSERT INTO pms.message${keyMon}
-		(msg_id
+		(group_id
+		,msg_id
 		,msg_type
 		,receiver
 		,receiver_topic
@@ -349,7 +356,8 @@
 		,update_id
 		)
 		values(
-		#{msgId}
+		 #{groupId}
+		,#{msgId}
 		,#{msgType}
 		,#{receiver}
 		,#{receiverTopic}
@@ -387,7 +395,8 @@
 	
 	<select id="getMessageResult" parameterType="kr.co.adflow.pms.domain.MsgIdsParams"
 		resultMap="MessageResult">
-		SELECT a.msg_id
+		SELECT a.goup_id
+		, a.msg_id
 		, a.receiver
 		, a.status
 		, a.is_reservation
