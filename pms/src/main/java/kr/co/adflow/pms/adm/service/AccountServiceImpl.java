@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import kr.co.adflow.pms.adm.request.AccountReq;
 import kr.co.adflow.pms.adm.request.AuthReq;
 import kr.co.adflow.pms.adm.request.PasswordReq;
+import kr.co.adflow.pms.core.util.CheckUtil;
 import kr.co.adflow.pms.core.util.KeyGenerator;
 import kr.co.adflow.pms.domain.User;
 import kr.co.adflow.pms.domain.mapper.InterceptMapper;
@@ -22,10 +23,15 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public User retrieveAccount(String appKey) {
-		
+		User resultUser = null;
 		String userId = interceptMapper.selectCashedUserId(appKey);
-	
-		return userMapper.select(userId);
+		resultUser = userMapper.select(userId);
+		
+		resultUser.setDefaultExpiry(CheckUtil.getMessageExpiry(resultUser.getDefaultExpiry()));
+		resultUser.setDefaultQos(CheckUtil.getMessageQos(resultUser.getDefaultQos()));
+		resultUser.setMsgSizeLimit(CheckUtil.getMessageSizeLimit(resultUser.getMsgSizeLimit()));
+		
+		return resultUser;
 	}
 
 	@Override

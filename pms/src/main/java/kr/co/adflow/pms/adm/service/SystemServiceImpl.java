@@ -15,6 +15,7 @@ import kr.co.adflow.pms.adm.request.UserUpdateReq;
 import kr.co.adflow.pms.adm.response.MessagesRes;
 import kr.co.adflow.pms.core.config.PmsConfig;
 import kr.co.adflow.pms.core.dao.ServerDao;
+import kr.co.adflow.pms.core.util.CheckUtil;
 import kr.co.adflow.pms.core.util.DateUtil;
 import kr.co.adflow.pms.core.util.KeyGenerator;
 import kr.co.adflow.pms.domain.Message;
@@ -122,7 +123,15 @@ public class SystemServiceImpl implements SystemService {
 
 	@Override
 	public User retrieveUser(String userId) {
-		return userMapper.select(userId);
+		User resultUser = null;
+		resultUser = userMapper.select(userId);
+		
+		resultUser.setDefaultExpiry(CheckUtil.getMessageExpiry(resultUser.getDefaultExpiry()));
+		resultUser.setDefaultQos(CheckUtil.getMessageQos(resultUser.getDefaultQos()));
+		resultUser.setMsgSizeLimit(CheckUtil.getMessageSizeLimit(resultUser.getMsgSizeLimit()));
+		
+		return resultUser;
+
 	}
 
 	@Override
@@ -220,6 +229,8 @@ public class SystemServiceImpl implements SystemService {
 			msgParams.setMsgId(params.get("cSearchContent"));
 		} else if ("ack".equals(filter)) {
 			msgParams.setAckType(this.getInt(params.get("cSearchContent")));
+		} else if ("userId".equals(filter)) {
+			msgParams.setIssueId(params.get("cSearchContent"));
 		}
 
 		
