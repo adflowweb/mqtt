@@ -136,7 +136,7 @@
 		#{status}
 		,message_count_limit = #{msgCntLimit}
 		,default_expiry = #{defaultExpiry}
-		,default_qos = #{defalutQos}
+		,default_qos = #{defaultQos}
 		,message_size_limit = #{msgSizeLimit}
 		,callback_url = #{callbackUrl}
 		,callback_method = #{callbackMethod}

@@ -19,6 +19,7 @@ import kr.co.adflow.push.domain.ktp.request.Ufmi;
 import kr.co.adflow.push.domain.ktp.request.UpdateUfmi;
 import kr.co.adflow.push.domain.ktp.request.UserID;
 import kr.co.adflow.push.domain.ktp.request.UserMessage;
+import kr.co.adflow.push.exception.PushException;
 import kr.co.adflow.push.ktp.service.PlatformService;
 import kr.co.adflow.push.service.UserService;
 
@@ -79,6 +80,20 @@ public class PlatformController {
 	@ResponseBody
 	public Response modifyFwInfo(@RequestBody FwInfo fwInfo) throws Exception {
 		
+		if (fwInfo.getSender() == null || fwInfo.getSender().trim().length() == 0) {
+			throw new PushException("Sender is empty.");
+		}
+		if (fwInfo.getReceiver() == null || fwInfo.getReceiver().trim().length() == 0) {
+			throw new PushException("Receiver is empty.");
+		}
+		if (fwInfo.getContentType() == null || fwInfo.getContentType().trim().length() == 0) {
+			throw new PushException("ContentType is empty.");
+		}
+		if (fwInfo.getContent() == null || fwInfo.getContent().trim().length() == 0) {
+			throw new PushException("Content is empty.");
+		}
+		
+		
 		
 		platformService.modifyFwInfo(fwInfo);
 		
@@ -132,6 +147,19 @@ public class PlatformController {
 	@ResponseBody
 	public Response modifyDigInfo(@RequestBody DigInfo digInfo) throws Exception {
 		
+		if (digInfo.getSender() == null || digInfo.getSender().trim().length() == 0) {
+			throw new PushException("Sender is empty.");
+		}
+		if (digInfo.getReceiver() == null || digInfo.getReceiver().trim().length() == 0) {
+			throw new PushException("Receiver is empty.");
+		}
+		if (digInfo.getContentType() == null || digInfo.getContentType().trim().length() == 0) {
+			throw new PushException("ContentType is empty.");
+		}
+		if (digInfo.getContent() == null || digInfo.getContent().trim().length() == 0) {
+			throw new PushException("Content is empty.");
+		}
+		
 		platformService.modifyDigInfo(digInfo);
 
 		Result result = new Result();
@@ -183,6 +211,18 @@ public class PlatformController {
 	@ResponseBody
 	public Response sendUserMessage(@RequestBody UserMessage msg) throws Exception {
 		
+		if (msg.getSender() == null || msg.getSender().trim().length() == 0) {
+			throw new PushException("Sender is empty.");
+		}
+		if (msg.getReceiver() == null || msg.getReceiver().trim().length() == 0) {
+			throw new PushException("Receiver is empty.");
+		}
+		if (msg.getContentType() == null || msg.getContentType().trim().length() == 0) {
+			throw new PushException("ContentType is empty.");
+		}
+		if (msg.getContent() == null || msg.getContent().trim().length() == 0) {
+			throw new PushException("Content is empty.");
+		}
 		
 		platformService.sendUserMessage(msg);
 
@@ -208,6 +248,11 @@ public class PlatformController {
 	@RequestMapping(value = "users/userID/validation", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
 	public Response validUserID(@RequestBody UserID userID) throws Exception {
+		
+		if (userID.getUserID() == null || userID.getUserID().trim().length() == 0) {
+			throw new PushException("UserID is empty.");
+		}
+		
 		Result result = new Result();
 		result.setSuccess(true);
 		Validation valid = new Validation(platformService.validUserID(userID));
@@ -227,6 +272,10 @@ public class PlatformController {
 	@RequestMapping(value = "users/ufmi/validation", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
 	public Response validUFMI(@RequestBody Ufmi ufmi) throws Exception {
+		
+		if (ufmi.getUfmi() == null || ufmi.getUfmi().trim().length() == 0) {
+			throw new PushException("ufmi is empty.");
+		}
 
 		Result result = new Result();
 		result.setSuccess(true);
@@ -240,6 +289,13 @@ public class PlatformController {
 	@RequestMapping(value = "users/ufmi", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
 	@ResponseBody
 	public Response updateUFMI(@RequestBody UpdateUfmi ufmi) throws Exception {
+		
+		if (ufmi.getPhoneNum() == null || ufmi.getPhoneNum().trim().length() == 0) {
+			throw new PushException("PhoneNum is empty.");
+		}
+		if (ufmi.getUfmi() == null || ufmi.getUfmi().trim().length() == 0) {
+			throw new PushException("Ufmi is empty.");
+		}
 
 		User user = new User();
 		//user.setUserID(ufmi.getUserID());

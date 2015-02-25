@@ -50,7 +50,16 @@ public class SystemServiceImpl implements SystemService {
 	@Override
 	public List<User> listAllUser() {
 		
-		return userMapper.listAll();
+		List<User> resultUsers = null;
+		resultUsers = userMapper.listAll();
+		
+		for (User resultUser :resultUsers ) {
+			resultUser.setDefaultExpiry(CheckUtil.getMessageExpiry(resultUser.getDefaultExpiry()));
+			resultUser.setDefaultQos(CheckUtil.getMessageQos(resultUser.getDefaultQos()));
+			resultUser.setMsgSizeLimit(CheckUtil.getMessageSizeLimit(resultUser.getMsgSizeLimit()));
+		}
+		
+		return resultUsers;
 	}
 
 	@Override
