@@ -230,6 +230,10 @@ public class SystemServiceImpl implements SystemService {
 		
 		msgParams.setStatusArray(this.getStringArray(params.get("cSearchStatus")));
 		
+		if (params.get("userId") != null &&  params.get("userId").trim().length() > 0 ) {
+			msgParams.setIssueId(params.get("userId"));
+		}
+		
 		String filter = params.get("cSearchFilter");
 		msgParams.setAckType(-1);
 		if ("receiver".equals(filter)) {
@@ -238,9 +242,7 @@ public class SystemServiceImpl implements SystemService {
 			msgParams.setMsgId(params.get("cSearchContent"));
 		} else if ("ack".equals(filter)) {
 			msgParams.setAckType(this.getInt(params.get("cSearchContent")));
-		} else if ("userId".equals(filter)) {
-			msgParams.setIssueId(params.get("cSearchContent"));
-		}
+		} 
 
 		
 		int cnt = messageMapper.getSvcMessageListCnt(msgParams);
@@ -289,6 +291,10 @@ public class SystemServiceImpl implements SystemService {
 		
 		// 예약 발송 예정만 처리?
 		//msgParams.setStatusArray(this.getStringArray(params.get("cSearchStatus")));
+		
+		if (params.get("userId") != null &&  params.get("userId").trim().length() > 0 ) {
+			msgParams.setIssueId(params.get("userId"));
+		}
 		
 		String filter = params.get("cSearchFilter");
 		logger.info("filter :::::::{}",filter);
