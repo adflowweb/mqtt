@@ -180,5 +180,20 @@ public class PushMessageController extends BaseController {
 	private boolean isValid(String receiver) {
 			return userValidator.validRequestValue(receiver);
 	}
+	
+	@RequestMapping(value = "/callback/{msgId}", method = RequestMethod.GET)
+	@ResponseBody
+	public Response<Result<String>> callback(@PathVariable("msgId") String msgId) {
+
+		logger.info("callback test msgId : {}",msgId);
+		
+		Result<String> result = new Result<String>();
+		result.setSuccess(true);
+		result.setData(msgId);
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		Response<Result<String>> res = new Response(result);
+		return res;
+
+	}
 
 }
