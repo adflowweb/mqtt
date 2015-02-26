@@ -37,7 +37,7 @@
 
 	<select id="select" parameterType="String"
 		resultType="kr.co.adflow.pms.domain.Message">
-		SELECT a.goup_id
+		SELECT a.group_id
 		, a.msg_id
 		, a.msg_type
 		, a.receiver
@@ -395,7 +395,7 @@
 	
 	<select id="getMessageResult" parameterType="kr.co.adflow.pms.domain.MsgIdsParams"
 		resultMap="MessageResult">
-		SELECT a.goup_id
+		SELECT a.group_id
 		, a.msg_id
 		, a.receiver
 		, a.status

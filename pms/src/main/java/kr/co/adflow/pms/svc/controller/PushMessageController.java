@@ -13,6 +13,7 @@ import kr.co.adflow.pms.domain.User;
 import kr.co.adflow.pms.domain.validator.UserValidator;
 import kr.co.adflow.pms.response.Response;
 import kr.co.adflow.pms.response.Result;
+import kr.co.adflow.pms.svc.request.CallbackReq;
 import kr.co.adflow.pms.svc.request.MessageIdsReq;
 import kr.co.adflow.pms.svc.request.MessageReq;
 import kr.co.adflow.pms.svc.service.PushMessageService;
@@ -179,6 +180,21 @@ public class PushMessageController extends BaseController {
 	
 	private boolean isValid(String receiver) {
 			return userValidator.validRequestValue(receiver);
+	}
+	
+	@RequestMapping(value = "/callback", method = RequestMethod.POST)
+	@ResponseBody
+	public Response<Result<String>> callbackPost(@RequestBody CallbackReq req) {
+
+		logger.info("callback test msgId : {}",req.getCallbackmsgid());
+		
+		Result<String> result = new Result<String>();
+		result.setSuccess(true);
+		result.setData(req.getCallbackmsgid());
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		Response<Result<String>> res = new Response(result);
+		return res;
+
 	}
 	
 	@RequestMapping(value = "/callback/{msgId}", method = RequestMethod.GET)
