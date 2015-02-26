@@ -238,6 +238,7 @@ public class PushMessageServiceImpl implements PushMessageService {
 		msg.setKeyMon(this.getKeyMon(msgId));
 		msg.setMsgId(msgId);
 		msg.setUpdateId(issueId);
+		msg.setStatus(PmsConfig.MESSAGE_STATUS_RESEVATION_CANCEL);
 		
 		return messageMapper.cancelMessage(msg);
 	}
