@@ -207,9 +207,10 @@ public class SvcServiceImpl implements SvcService {
 				}
 				//2. get max count by userId
 				//3. check max count
-				if (userMapper.getMsgCntLimit(issueId) < message.getReceivers().length) {
-			       throw new RuntimeException("send message count is message count limit over ");
-				}
+//				if (userMapper.getMsgCntLimit(issueId) < message.getReceivers().length) {
+//			       throw new RuntimeException("send message count is message count limit over ");
+//				}
+				//svcadm svc 갯수 제한 없음
 				
 
 				Message msg = new Message();
