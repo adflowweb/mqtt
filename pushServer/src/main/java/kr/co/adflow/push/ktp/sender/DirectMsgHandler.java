@@ -1,7 +1,7 @@
 /*
  * 
  */
-package kr.co.adflow.push.ktp.handler;
+package kr.co.adflow.push.ktp.sender;
 
 import javax.jms.BytesMessage;
 import javax.jms.JMSException;

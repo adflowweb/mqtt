@@ -87,4 +87,8 @@ public interface UserService {
 	int changePassword(User user) throws Exception;
 	
 	int updateUFMI(User user) throws Exception;
+
+	void expiredSessionList(int lastAccessLimit)  throws Exception;
+	
+	
 }
