@@ -70,12 +70,23 @@
 	</delete>
 	
 	<select id="getByUser" resultType="kr.co.adflow.push.domain.Token">
-		SELECT * FROM token WHERE userid =
-		#{userID}
+		SELECT tokenid, userid, issue, lastAccessTime 
+		FROM token 
+		WHERE userid = #{userID}
 	</select>
 	
 	<select id="getMultiByUser" resultType="kr.co.adflow.push.domain.Token">
-		SELECT * FROM token WHERE userid like CONCAT(#{userID}, '%')
+		SELECT tokenid, userid, issue, lastAccessTime 
+		FROM token 
+		WHERE userid like CONCAT(#{userID}, '%')
+	</select>
+	
+	<select id="expiredSessionList" resultType="kr.co.adflow.push.domain.Token">
+		SELECT tokenid, userid, issue, lastAccessTime
+		FROM push.token 
+		WHERE lastAccessTime  <![CDATA[<]]> SUBDATE(NOW(),INTERVAL #{lastAccessTime} DAY)
+		AND userid NOT IN ('PCBS')
+		ORDER BY lastAccessTime ASC
 	</select>
 
 </mapper>

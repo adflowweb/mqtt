@@ -5,6 +5,7 @@ package kr.co.adflow.push.service.impl;
 
 import javax.annotation.Resource;
 
+import kr.co.adflow.push.dao.TokenDao;
 import kr.co.adflow.push.dao.UserDao;
 import kr.co.adflow.push.domain.Token;
 import kr.co.adflow.push.domain.User;
@@ -35,6 +36,9 @@ public class UserServiceImpl implements UserService {
 	/** The token service. */
 	@Resource
 	private TokenService tokenService;
+	
+	@Resource
+	private TokenDao tokenDao;
 
 	/*
 	 * (non-Javadoc)
@@ -195,6 +199,22 @@ public class UserServiceImpl implements UserService {
 		
 		return result;
 
+	}
+
+	@Override
+	public void expiredSessionList(int lastAccessLimit) throws Exception {
+		
+		//1. expired Session list 조회
+		Token[] tokens = tokenDao.expiredSessionList(lastAccessLimit);
+		//2. delete user 호출
+		for (int i = 0; i < tokens.length; i++) {
+			logger.info("expiredSession UserID ::{}",tokens[i].getUserID());
+			this.delete(tokens[i].getUserID());
+		}
+		
+		
+		//
+		
 	}
 	
 }

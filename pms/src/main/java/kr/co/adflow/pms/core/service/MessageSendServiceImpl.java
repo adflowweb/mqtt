@@ -99,7 +99,7 @@ public class MessageSendServiceImpl implements MessageSendService {
 			}
 
 			if (isUserMessage
-					|| userMapper.getMsgCntLimit(msg.getIssueId()) < 1) {
+					&& userMapper.getMsgCntLimit(msg.getIssueId()) < 1) {
 				msg.setStatus(PmsConfig.MESSAGE_STATUS_COUNT_OVER);
 				messageMapper.updateStatus(msg);
 				continue;

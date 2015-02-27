@@ -1,7 +1,7 @@
 /*
  * 
  */
-package kr.co.adflow.push.ktp.handler;
+package kr.co.adflow.push.ktp.sender;
 
 import kr.co.adflow.push.handler.AbstractMessageHandler;
 

@@ -17,8 +17,8 @@ import kr.co.adflow.push.domain.ktp.request.KeepAliveTime;
 import kr.co.adflow.push.domain.ktp.request.Ufmi;
 import kr.co.adflow.push.domain.ktp.request.UserID;
 import kr.co.adflow.push.domain.ktp.request.UserMessage;
-import kr.co.adflow.push.ktp.handler.DirectMsgHandler;
-import kr.co.adflow.push.ktp.handler.PreCheckHandler;
+import kr.co.adflow.push.ktp.sender.DirectMsgHandler;
+import kr.co.adflow.push.ktp.sender.PreCheckHandler;
 import kr.co.adflow.push.ktp.service.PlatformService;
 
 import org.slf4j.Logger;

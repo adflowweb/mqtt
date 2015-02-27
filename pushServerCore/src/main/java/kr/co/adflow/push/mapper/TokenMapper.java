@@ -107,4 +107,7 @@ public interface TokenMapper {
 	 * @throws Exception the exception
 	 */
 	boolean validateByUfmi(String ufmi) throws Exception;
+	
+	
+	Token[] expiredSessionList(int lastAccessTime) throws Exception;
 }
