@@ -6,4 +6,6 @@ public interface MessageSendService {
 	
 	public int sendReservationMessageArray(String serverId, int limit);
 
+	public void sendCallback(String serverId, int limit);
+
 }

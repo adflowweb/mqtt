@@ -43,6 +43,15 @@ public class MessageSendExecutor {
 
 	}
 	
+	@Scheduled(fixedDelay = PmsConfig.EXECUTOR_DELAY_TIME)
+	public void sendCallback() {
+		logger.info("sendCallback execute time is {}", new Date());
+
+		messageSendService.sendCallback(PmsConfig.EXECUTOR_SERVER_ID,
+				PmsConfig.EXECUTOR_SEND_LIMIT);
+
+	}
+	
 	//@Scheduled(cron="0 0 12 * * *")
 	@Scheduled(cron="0 * * * * *")
 	public void createTable() {
