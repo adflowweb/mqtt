@@ -30,7 +30,7 @@ public class SvcInterceptor extends HandlerInterceptorAdapter {
 	public boolean preHandle(HttpServletRequest request,
 			HttpServletResponse response, Object handler) throws Exception {
 		
-		logger.info("SystemInterceptor.preHandle");
+		logger.info("SvcInterceptor.preHandle");
 
 		String token = request.getHeader(PmsConfig.HEADER_APPLICATION_TOKEN);
 
@@ -45,6 +45,8 @@ public class SvcInterceptor extends HandlerInterceptorAdapter {
 		
 		tokenKey.setApplicationKey(token);
 		tokenKey.setRole(PmsConfig.USER_ROLE_SERVICE);
+		
+		logger.info("SvcInterceptor.preHandle token {}",token);
 		//1 token 조회
 		Date expiredTime = interceptMapper.selectCashedApplicationToken(tokenKey);
 		

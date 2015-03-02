@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.validation.Valid;
 
 import kr.co.adflow.pms.adm.request.MessageReq;
+import kr.co.adflow.pms.adm.service.SvcAdmService;
 import kr.co.adflow.pms.adm.service.SvcService;
 import kr.co.adflow.pms.core.config.PmsConfig;
 import kr.co.adflow.pms.core.controller.BaseController;
@@ -44,7 +45,7 @@ public class DisptcherController extends BaseController {
 			.getLogger(DisptcherController.class);
 	
 	@Autowired
-	private SvcService svcService;
+	private SvcAdmService svcAdmService;
 	
 	@Autowired
 	private PushMessageService pushMessageService;
@@ -71,7 +72,7 @@ public class DisptcherController extends BaseController {
 			
 		}
 
-		List<Map<String,String>> resultList = svcService.sendMessage(appKey, msg);
+		List<Map<String,String>> resultList = svcAdmService.sendMessage(appKey, msg);
 
 		Result<List<Map<String,String>>> result = new Result<List<Map<String,String>>>();
 		result.setSuccess(true);

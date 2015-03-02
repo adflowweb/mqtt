@@ -32,5 +32,7 @@ public interface MessageMapper {
 	List<Message> getMessageResult(MsgIdsParams param);
 	
 	int cancelMessage(Message msg);
+	
+	int cancelReservationList(MsgIdsParams params);
 
 }

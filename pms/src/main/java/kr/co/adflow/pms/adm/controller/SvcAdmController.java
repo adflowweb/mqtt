@@ -19,8 +19,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import kr.co.adflow.pms.adm.request.AccountReq;
 import kr.co.adflow.pms.adm.request.PasswordReq;
+import kr.co.adflow.pms.adm.request.ReservationCancelReq;
 import kr.co.adflow.pms.adm.response.MessagesRes;
 import kr.co.adflow.pms.adm.service.AccountService;
+import kr.co.adflow.pms.adm.service.SvcAdmService;
 import kr.co.adflow.pms.adm.service.SvcService;
 import kr.co.adflow.pms.core.config.PmsConfig;
 import kr.co.adflow.pms.core.controller.BaseController;
@@ -39,6 +41,9 @@ public class SvcAdmController extends BaseController {
 	
 	@Autowired
 	private SvcService svcService;
+	
+	@Autowired
+	private SvcAdmService svcAdmService;
 	
 	@Autowired
 	private AccountService accountService;
@@ -171,7 +176,7 @@ public class SvcAdmController extends BaseController {
 			
 		}
 
-		List<Map<String,String>> resultList = svcService.sendMessage(appKey, msg);
+		List<Map<String,String>> resultList = svcAdmService.sendMessage(appKey, msg);
 
 		Result<List<Map<String,String>>> result = new Result<List<Map<String,String>>>();
 		result.setSuccess(true);
@@ -187,5 +192,23 @@ public class SvcAdmController extends BaseController {
 		return true; //admin message 는 check 안함
 		//return userValidator.validRequestValue(receiver);
 	}
+	
+	@RequestMapping(value = "/messages/cancel", method = RequestMethod.POST, consumes = PmsConfig.HEADER_CONTENT_TYPE, produces = PmsConfig.HEADER_CONTENT_TYPE)
+	@ResponseBody
+	public Response<Result<Integer>> cancelReservationList(
+			@RequestHeader(PmsConfig.HEADER_APPLICATION_TOKEN) String appKey
+			,@RequestBody ReservationCancelReq ids) throws Exception {
+		
+		Integer delCnt = svcService.cancelReservationList(appKey,ids);
+
+		Result<Integer> result = new Result<Integer>();
+		result.setSuccess(true);
+
+		result.setData(delCnt);
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		Response<Result<Integer>> res = new Response(result);
+		return res;
+	}
+
 
 }

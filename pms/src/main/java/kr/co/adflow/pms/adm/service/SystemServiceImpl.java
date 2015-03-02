@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import kr.co.adflow.pms.adm.controller.SystemController;
+import kr.co.adflow.pms.adm.request.ReservationCancelReq;
 import kr.co.adflow.pms.adm.request.UserReq;
 import kr.co.adflow.pms.adm.request.UserUpdateReq;
 import kr.co.adflow.pms.adm.response.MessagesRes;
@@ -19,6 +20,7 @@ import kr.co.adflow.pms.core.util.CheckUtil;
 import kr.co.adflow.pms.core.util.DateUtil;
 import kr.co.adflow.pms.core.util.KeyGenerator;
 import kr.co.adflow.pms.domain.Message;
+import kr.co.adflow.pms.domain.MsgIdsParams;
 import kr.co.adflow.pms.domain.MsgParams;
 import kr.co.adflow.pms.domain.ServerInfo;
 import kr.co.adflow.pms.domain.Token;
@@ -340,6 +342,30 @@ public class SystemServiceImpl implements SystemService {
 
 	private Date getDate(String string) {
 		return DateUtil.fromISODateString(string);
+	}
+	
+	@Override
+	public int cancelReservationList(String appKey, ReservationCancelReq reqIds) {
+		
+		String issueId = interceptMapper.selectCashedUserId(appKey);
+		
+		MsgIdsParams params = new MsgIdsParams();
+		
+		params.setKeyMon(this.getKeyMon(reqIds.getMsgIds()));
+		params.setMsgIds(reqIds.getMsgIds());
+		params.setIssueId(issueId);
+		params.setUpdateId(issueId);
+		
+		int cnt = messageMapper.cancelReservationList(params);
+		
+		return cnt;
+	}
+	
+	private String getKeyMon(String[] msgIds) {
+		if (msgIds.length < 1) {
+			throw new RuntimeException("msgId not found");
+		}
+		return msgIds[0].substring(0, 6);
 	}
 
 }

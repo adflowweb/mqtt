@@ -2,9 +2,14 @@ package kr.co.adflow.pms.core.config;
 
 public class PmsConfig {
 
-	public static final String EXECUTOR_SERVER_ID = "S12";
+	public static final String EXECUTOR_SERVER_ID = "S01";
 	public static final int EXECUTOR_DELAY_TIME = 10000;
 	public static final int EXECUTOR_SEND_LIMIT = 100;
+	
+	public static final String EXECUTOR_MESSAGE_CRON = "0,10,20,30,40,50 * * * * *";
+	public static final String EXECUTOR_RESERVATION_CRON = "3,13,23,33,43,53 * * * * *";
+	public static final String EXECUTOR_CALLBACK_CRON = "6,16,26,36,46,56 * * * * *";
+	public static final String EXECUTOR_CREATE_TABLE_CRON = "0 0 12 * * *";
 
 	public static final String HEADER_APPLICATION_TOKEN = "X-Application-Token";
 	public static final String HEADER_APPLICATION_KEY = "X-Application-Key";

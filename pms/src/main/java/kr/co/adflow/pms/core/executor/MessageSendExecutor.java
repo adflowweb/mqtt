@@ -25,7 +25,7 @@ public class MessageSendExecutor {
 	@Autowired
 	private TableMgtMapper tableMgtMapper;
 
-	@Scheduled(fixedDelay = PmsConfig.EXECUTOR_DELAY_TIME)
+	@Scheduled(cron=PmsConfig.EXECUTOR_MESSAGE_CRON)
 	public void sendMessageArray() {
 		logger.info("sendMessageArray execute time is {}", new Date());
 
@@ -34,7 +34,7 @@ public class MessageSendExecutor {
 
 	}
 	
-	@Scheduled(fixedDelay = PmsConfig.EXECUTOR_DELAY_TIME)
+	@Scheduled(cron=PmsConfig.EXECUTOR_RESERVATION_CRON)
 	public void sendReservationMessageArray() {
 		logger.info("sendReservationMessageArray execute time is {}", new Date());
 
@@ -43,7 +43,7 @@ public class MessageSendExecutor {
 
 	}
 	
-	@Scheduled(fixedDelay = PmsConfig.EXECUTOR_DELAY_TIME)
+	@Scheduled(cron=PmsConfig.EXECUTOR_CALLBACK_CRON)
 	public void sendCallback() {
 		logger.info("sendCallback execute time is {}", new Date());
 
@@ -53,10 +53,10 @@ public class MessageSendExecutor {
 	}
 	
 	//@Scheduled(cron="0 0 12 * * *")
-	@Scheduled(cron="0 * * * * *")
+	@Scheduled(cron=PmsConfig.EXECUTOR_CREATE_TABLE_CRON)
 	public void createTable() {
 		
-		String name = DateUtil.getYYYYMM(0);
+		String name = DateUtil.getYYYYMM(1);
 		
 		logger.info("createTable1");
 		

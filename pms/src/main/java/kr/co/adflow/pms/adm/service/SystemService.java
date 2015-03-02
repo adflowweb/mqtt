@@ -3,6 +3,7 @@ package kr.co.adflow.pms.adm.service;
 import java.util.List;
 import java.util.Map;
 
+import kr.co.adflow.pms.adm.request.ReservationCancelReq;
 import kr.co.adflow.pms.adm.request.UserReq;
 import kr.co.adflow.pms.adm.request.UserUpdateReq;
 import kr.co.adflow.pms.adm.response.MessagesRes;
@@ -26,5 +27,7 @@ public interface SystemService {
 	public MessagesRes getSysResevationMessageList(Map<String,String> params);
 
 	public ServerInfo getServerInfo();
+
+	public int cancelReservationList(String appKey, ReservationCancelReq ids);
 
 }

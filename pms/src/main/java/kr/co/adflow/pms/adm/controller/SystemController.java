@@ -7,6 +7,7 @@ import java.util.Map;
 
 import kr.co.adflow.pms.adm.request.AccountReq;
 import kr.co.adflow.pms.adm.request.PasswordReq;
+import kr.co.adflow.pms.adm.request.ReservationCancelReq;
 import kr.co.adflow.pms.adm.request.UserReq;
 import kr.co.adflow.pms.adm.request.UserUpdateReq;
 import kr.co.adflow.pms.adm.response.MessagesRes;
@@ -283,6 +284,23 @@ public class SystemController extends BaseController {
 		result.setData(systemService.getServerInfo());
 		Response res = new Response(result);
 		logger.debug("response=" + res);
+		return res;
+	}
+	
+	@RequestMapping(value = "/messages/cancel", method = RequestMethod.POST, consumes = PmsConfig.HEADER_CONTENT_TYPE, produces = PmsConfig.HEADER_CONTENT_TYPE)
+	@ResponseBody
+	public Response<Result<Integer>> cancelReservationList(
+			@RequestHeader(PmsConfig.HEADER_APPLICATION_TOKEN) String appKey
+			,@RequestBody ReservationCancelReq ids) throws Exception {
+		
+		Integer delCnt = systemService.cancelReservationList(appKey,ids);
+
+		Result<Integer> result = new Result<Integer>();
+		result.setSuccess(true);
+
+		result.setData(delCnt);
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		Response<Result<Integer>> res = new Response(result);
 		return res;
 	}
 	

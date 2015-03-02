@@ -428,5 +428,20 @@
 		WHERE msg_id = #{msgId}
 		AND status = 0
 	</update>
+	
+	<update id="cancelReservationList" parameterType="kr.co.adflow.pms.domain.MsgIdsParams">
+		UPDATE  pms.message${keyMon}
+		SET status = 2
+		,update_time = now()
+		,update_id = #{updateId}
+		WHERE status = 0
+		<if test="issueId != null and issueId != ''">
+		AND issue_id = #{issueId}
+		</if>
+        AND msg_id IN
+       <foreach item="id" index="index" collection="msgIds" open="(" separator="," close=")" >
+			#{id}
+	   </foreach>
+	</update>
 
 </mapper>	

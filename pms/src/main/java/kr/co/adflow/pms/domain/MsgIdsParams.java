@@ -4,6 +4,7 @@ public class MsgIdsParams {
 	
 	private String keyMon;
 	private String issueId;
+	private String updateId;
 	private String[] msgIds;
 	
 	public String getKeyMon() {
@@ -23,6 +24,12 @@ public class MsgIdsParams {
 	}
 	public void setMsgIds(String[] msgIds) {
 		this.msgIds = msgIds;
+	}
+	public String getUpdateId() {
+		return updateId;
+	}
+	public void setUpdateId(String updateId) {
+		this.updateId = updateId;
 	}
 
 }
