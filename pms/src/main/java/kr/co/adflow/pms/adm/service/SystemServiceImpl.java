@@ -15,6 +15,7 @@ import kr.co.adflow.pms.adm.request.UserReq;
 import kr.co.adflow.pms.adm.request.UserUpdateReq;
 import kr.co.adflow.pms.adm.response.MessagesRes;
 import kr.co.adflow.pms.core.config.PmsConfig;
+import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.dao.ServerDao;
 import kr.co.adflow.pms.core.util.CheckUtil;
 import kr.co.adflow.pms.core.util.DateUtil;
@@ -49,6 +50,9 @@ public class SystemServiceImpl implements SystemService {
 	@Autowired
 	private ServerDao serverDao;
 	
+	@Autowired
+	private CheckUtil checkUtil;
+	
 	@Override
 	public List<User> listAllUser() {
 		
@@ -56,9 +60,9 @@ public class SystemServiceImpl implements SystemService {
 		resultUsers = userMapper.listAll();
 		
 		for (User resultUser :resultUsers ) {
-			resultUser.setDefaultExpiry(CheckUtil.getMessageExpiry(resultUser.getDefaultExpiry()));
-			resultUser.setDefaultQos(CheckUtil.getMessageQos(resultUser.getDefaultQos()));
-			resultUser.setMsgSizeLimit(CheckUtil.getMessageSizeLimit(resultUser.getMsgSizeLimit()));
+			resultUser.setDefaultExpiry(checkUtil.getMessageExpiry(resultUser.getDefaultExpiry()));
+			resultUser.setDefaultQos(checkUtil.getMessageQos(resultUser.getDefaultQos()));
+			resultUser.setMsgSizeLimit(checkUtil.getMessageSizeLimit(resultUser.getMsgSizeLimit()));
 		}
 		
 		return resultUsers;
@@ -78,7 +82,7 @@ public class SystemServiceImpl implements SystemService {
 		paramUser.setIssueId(issueId);
 		
 		if (userReq.getIpFilters() == null || userReq.getIpFilters().trim().length() == 0) {
-			paramUser.setIpFilters(PmsConfig.INTERCEPTER_IP_FILTER);
+			paramUser.setIpFilters(StaticConfig.INTERCEPTER_IP_FILTER);
 		} else {
 			paramUser.setIpFilters(userReq.getIpFilters());
 		}
@@ -105,7 +109,7 @@ public class SystemServiceImpl implements SystemService {
 		paramUser.setStatus(-1);
 		Token token = new Token();
 		token.setUserId(userReq.getUserId());
-		token.setTokenType(PmsConfig.TOKEN_TYPE_APPLICATION);
+		token.setTokenType(StaticConfig.TOKEN_TYPE_APPLICATION);
 		token.setTokenId(this.getTokenId(userReq));
 
 		//
@@ -114,7 +118,7 @@ public class SystemServiceImpl implements SystemService {
 		
 		userMapper.insertUser(paramUser);
 		tokenMapper.insertToken(token);
-		paramUser.setStatus(PmsConfig.USER_STATUS_NORMAL);
+		paramUser.setStatus(StaticConfig.USER_STATUS_NORMAL);
 		userMapper.updateUserStatus(paramUser);
 		//
 		// userMapper udate
@@ -137,9 +141,9 @@ public class SystemServiceImpl implements SystemService {
 		User resultUser = null;
 		resultUser = userMapper.select(userId);
 		
-		resultUser.setDefaultExpiry(CheckUtil.getMessageExpiry(resultUser.getDefaultExpiry()));
-		resultUser.setDefaultQos(CheckUtil.getMessageQos(resultUser.getDefaultQos()));
-		resultUser.setMsgSizeLimit(CheckUtil.getMessageSizeLimit(resultUser.getMsgSizeLimit()));
+		resultUser.setDefaultExpiry(checkUtil.getMessageExpiry(resultUser.getDefaultExpiry()));
+		resultUser.setDefaultQos(checkUtil.getMessageQos(resultUser.getDefaultQos()));
+		resultUser.setMsgSizeLimit(checkUtil.getMessageSizeLimit(resultUser.getMsgSizeLimit()));
 		
 		return resultUser;
 
@@ -184,7 +188,7 @@ public class SystemServiceImpl implements SystemService {
 
 		
 		
-		paramUser.setStatus(PmsConfig.USER_STATUS_NORMAL);
+		paramUser.setStatus(StaticConfig.USER_STATUS_NORMAL);
 		paramUser.setIssueId(issueId);
 		
 		paramUser.setAction("updateUser");

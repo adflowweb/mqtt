@@ -6,11 +6,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import net.wimpi.telnetd.io.terminal.ansi;
 import kr.co.adflow.pms.adm.controller.CommonController;
 import kr.co.adflow.pms.adm.request.AuthReq;
 import kr.co.adflow.pms.adm.response.AuthRes;
 import kr.co.adflow.pms.core.config.PmsConfig;
+import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.util.DateUtil;
 import kr.co.adflow.pms.core.util.KeyGenerator;
 import kr.co.adflow.pms.domain.Token;
@@ -30,6 +30,10 @@ public class CommonServiceImpl implements CommonService {
 	@Autowired
 	private TokenMapper tokenMapper;
 	
+	@Autowired
+	private PmsConfig pmsConfig;
+
+	
 	@Override
 	public AuthRes authUser(AuthReq auth) {
 
@@ -48,11 +52,11 @@ public class CommonServiceImpl implements CommonService {
 		
 		Token paramToken = new Token();
 		paramToken.setUserId(user.getUserId());
-		paramToken.setTokenType(PmsConfig.TOKEN_TYPE_TOKEN);
+		paramToken.setTokenType(StaticConfig.TOKEN_TYPE_TOKEN);
 		// 3. 정상 사용자의 경우 token 해싱
 		paramToken.setTokenId(KeyGenerator.generateToken(auth.getUserId()));
 		// 4 , expired_time 현재로 부터 30분
-		paramToken.setExpiredTime(DateUtil.afterMinute(PmsConfig.HEADER_APPLICATION_TOKEN_EXPIRED, System.currentTimeMillis()));
+		paramToken.setExpiredTime(DateUtil.afterMinute(pmsConfig.HEADER_APPLICATION_TOKEN_EXPIRED, System.currentTimeMillis()));
 		// 5. token 테이블 저장
 		int cnt = tokenMapper.insertToken(paramToken);
 		if (cnt < 1) {

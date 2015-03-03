@@ -12,6 +12,7 @@
 
 	<!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
 	
+	<context:component-scan base-package="kr.co.adflow.pms"/>
 	<!-- Enables the Spring MVC @Controller programming model -->
 	<annotation-driven validator="validator" />
 
@@ -57,10 +58,19 @@
 		<beans:property name="suffix" value=".jsp" />
 	</beans:bean>
 	
-	<context:component-scan base-package="kr.co.adflow.pms" />
+	<!-- 
 	<task:annotation-driven executor="myExecutor" scheduler="myScheduler"/>
 	<task:executor id="myExecutor" pool-size="5"/>
-	<task:scheduler id="myScheduler" pool-size="5"/>
+	<task:scheduler id="myScheduler" pool-size="5"/>myScheduler
+	 -->
+	 
+	 <task:scheduled-tasks scheduler="myScheduler">
+    <task:scheduled ref="messageSendExecutor" method="sendMessageArray" fixed-delay="#{pms['executor.delay.time']}" />
+    <task:scheduled ref="messageSendExecutor" method="sendReservationMessageArray" fixed-delay="#{pms['executor.delay.time']}"/>
+    <task:scheduled ref="messageSendExecutor" method="sendCallback" fixed-delay="#{pms['executor.delay.time']}"/>
+    <task:scheduled ref="messageSendExecutor" method="createTable" cron="#{pms['executor.createtable.cron']}"/>
+	</task:scheduled-tasks>
 
+	<task:scheduler id="myScheduler" pool-size="10"/>
 
 </beans:beans>

@@ -22,7 +22,7 @@ import kr.co.adflow.pms.adm.request.ReservationCancelReq;
 import kr.co.adflow.pms.adm.response.MessagesRes;
 import kr.co.adflow.pms.adm.service.AccountService;
 import kr.co.adflow.pms.adm.service.SvcService;
-import kr.co.adflow.pms.core.config.PmsConfig;
+import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.controller.BaseController;
 import kr.co.adflow.pms.domain.User;
 import kr.co.adflow.pms.domain.validator.UserValidator;
@@ -52,7 +52,7 @@ public class SvcController extends BaseController {
 	
 	@RequestMapping(value = "/account", method = RequestMethod.GET)
 	@ResponseBody
-	public Response<Result<User>> getAccount(@RequestHeader(PmsConfig.HEADER_APPLICATION_TOKEN) String appKey) {
+	public Response<Result<User>> getAccount(@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey) {
 
 		
 	  User user = accountService.retrieveAccount(appKey);
@@ -70,7 +70,7 @@ public class SvcController extends BaseController {
 	@RequestMapping(value = "/account", method = RequestMethod.PUT)
 	@ResponseBody
 	public Response modifyAccount(@RequestBody AccountReq req
-			,@RequestHeader(PmsConfig.HEADER_APPLICATION_TOKEN) String appKey) {
+			,@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey) {
 
 		
 	  int resultCnt = accountService.modifyAccount(req, appKey);
@@ -92,7 +92,7 @@ public class SvcController extends BaseController {
 	@RequestMapping(value = "/account/sec", method = RequestMethod.PUT)
 	@ResponseBody
 	public Response modifyPassword(@RequestBody PasswordReq req
-			,@RequestHeader(PmsConfig.HEADER_APPLICATION_TOKEN) String appKey) {
+			,@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey) {
 
 		
 	  int resultCnt = accountService.modifyPassword(req, appKey);
@@ -114,7 +114,7 @@ public class SvcController extends BaseController {
 	@RequestMapping(value = "/messages", method = RequestMethod.GET)
 	@ResponseBody
 	public Response<Result<MessagesRes>> getMessageList(@RequestParam Map<String,String> params
-			,@RequestHeader(PmsConfig.HEADER_APPLICATION_TOKEN) String appKey) throws Exception {
+			,@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey) throws Exception {
 
 		String sEcho = (String) params.get("sEcho");
 		params.put("appKey", appKey);
@@ -136,7 +136,7 @@ public class SvcController extends BaseController {
 	@RequestMapping(value = "/messages/reservations", method = RequestMethod.GET)
 	@ResponseBody
 	public Response<Result<MessagesRes>> getResevationMessageList(@RequestParam Map<String,String> params
-			,@RequestHeader(PmsConfig.HEADER_APPLICATION_TOKEN) String appKey) throws Exception {
+			,@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey) throws Exception {
 
 		String sEcho = (String) params.get("sEcho");
 		params.put("appKey", appKey);
@@ -155,10 +155,10 @@ public class SvcController extends BaseController {
 
 	}
 	
-	@RequestMapping(value = "/messages", method = RequestMethod.POST, consumes = PmsConfig.HEADER_CONTENT_TYPE, produces = PmsConfig.HEADER_CONTENT_TYPE)
+	@RequestMapping(value = "/messages", method = RequestMethod.POST, consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
 	@ResponseBody
 	public Response<Result<List<Map<String,String>>>> sendMessage(
-			@RequestHeader(PmsConfig.HEADER_APPLICATION_TOKEN) String appKey,
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey,
 			@RequestBody MessageReq msg) throws Exception {
 		logger.debug("sendMessage");
 
@@ -191,10 +191,10 @@ public class SvcController extends BaseController {
 		return userValidator.validRequestValue(receiver);
 	}
 	
-	@RequestMapping(value = "/messages/cancel", method = RequestMethod.POST, consumes = PmsConfig.HEADER_CONTENT_TYPE, produces = PmsConfig.HEADER_CONTENT_TYPE)
+	@RequestMapping(value = "/messages/cancel", method = RequestMethod.POST, consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
 	@ResponseBody
 	public Response<Result<Integer>> cancelReservationList(
-			@RequestHeader(PmsConfig.HEADER_APPLICATION_TOKEN) String appKey
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey
 			,@RequestBody ReservationCancelReq ids) throws Exception {
 		
 		Integer delCnt = svcService.cancelReservationList(appKey,ids);

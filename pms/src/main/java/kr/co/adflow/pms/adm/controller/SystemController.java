@@ -13,7 +13,7 @@ import kr.co.adflow.pms.adm.request.UserUpdateReq;
 import kr.co.adflow.pms.adm.response.MessagesRes;
 import kr.co.adflow.pms.adm.service.AccountService;
 import kr.co.adflow.pms.adm.service.SystemService;
-import kr.co.adflow.pms.core.config.PmsConfig;
+import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.controller.BaseController;
 import kr.co.adflow.pms.domain.User;
 import kr.co.adflow.pms.response.Response;
@@ -47,7 +47,7 @@ public class SystemController extends BaseController {
 	
 	@RequestMapping(value = "/account", method = RequestMethod.GET)
 	@ResponseBody
-	public Response<Result<User>> getAccount(@RequestHeader(PmsConfig.HEADER_APPLICATION_TOKEN) String appKey) {
+	public Response<Result<User>> getAccount(@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey) {
 
 		
 	  User user = accountService.retrieveAccount(appKey);
@@ -65,7 +65,7 @@ public class SystemController extends BaseController {
 	@RequestMapping(value = "/account", method = RequestMethod.PUT)
 	@ResponseBody
 	public Response modifyAccount(@RequestBody AccountReq req
-			,@RequestHeader(PmsConfig.HEADER_APPLICATION_TOKEN) String appKey) {
+			,@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey) {
 
 		
 	  int resultCnt = accountService.modifyAccount(req, appKey);
@@ -87,7 +87,7 @@ public class SystemController extends BaseController {
 	@RequestMapping(value = "/account/sec", method = RequestMethod.PUT)
 	@ResponseBody
 	public Response modifyPassword(@RequestBody PasswordReq req
-			,@RequestHeader(PmsConfig.HEADER_APPLICATION_TOKEN) String appKey) {
+			,@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey) {
 
 		
 	  int resultCnt = accountService.modifyPassword(req, appKey);
@@ -122,11 +122,11 @@ public class SystemController extends BaseController {
 
 	}
 	
-	@RequestMapping(value = "/users", method = RequestMethod.POST, consumes = PmsConfig.HEADER_CONTENT_TYPE, produces = PmsConfig.HEADER_CONTENT_TYPE)
+	@RequestMapping(value = "/users", method = RequestMethod.POST, consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
 	@ResponseBody
 	public Response<Result<HashMap<String, String>>> createUser(
 			@RequestBody UserReq user
-			,@RequestHeader(PmsConfig.HEADER_APPLICATION_TOKEN) String appKey) {
+			,@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey) {
 
 		logger.debug("addUser");
 
@@ -160,12 +160,12 @@ public class SystemController extends BaseController {
 
 	}
 	
-	@RequestMapping(value = "/users/{userId}", method = RequestMethod.PUT, consumes = PmsConfig.HEADER_CONTENT_TYPE, produces = PmsConfig.HEADER_CONTENT_TYPE)
+	@RequestMapping(value = "/users/{userId}", method = RequestMethod.PUT, consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
 	@ResponseBody
 	public Response<Result<HashMap<String, Integer>>> updateUser(
 			@PathVariable("userId") String userId
 			,@RequestBody UserUpdateReq user
-			,@RequestHeader(PmsConfig.HEADER_APPLICATION_TOKEN) String appKey) {
+			,@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey) {
 
 		logger.debug("updateUser");
 
@@ -185,11 +185,11 @@ public class SystemController extends BaseController {
 
 	}
 	
-	@RequestMapping(value = "/users/{userId}", method = RequestMethod.DELETE, consumes = PmsConfig.HEADER_CONTENT_TYPE, produces = PmsConfig.HEADER_CONTENT_TYPE)
+	@RequestMapping(value = "/users/{userId}", method = RequestMethod.DELETE, consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
 	@ResponseBody
 	public Response<Result<HashMap<String, Integer>>> deleteUser(
 			@PathVariable("userId") String userId
-			,@RequestHeader(PmsConfig.HEADER_APPLICATION_TOKEN) String appKey) {
+			,@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey) {
 
 		int resultCnt = systemService.deleteUser(userId,appKey);
 
@@ -234,7 +234,7 @@ public class SystemController extends BaseController {
 	@RequestMapping(value = "/messages", method = RequestMethod.GET)
 	@ResponseBody
 	public Response<Result<MessagesRes>> getMessageList(@RequestParam Map<String,String> params
-			,@RequestHeader(PmsConfig.HEADER_APPLICATION_TOKEN) String appKey) throws Exception {
+			,@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey) throws Exception {
 
 		String sEcho = (String) params.get("sEcho");
 		params.put("appKey", appKey);
@@ -256,7 +256,7 @@ public class SystemController extends BaseController {
 	@RequestMapping(value = "/messages/reservations", method = RequestMethod.GET)
 	@ResponseBody
 	public Response<Result<MessagesRes>> getResevationMessageList(@RequestParam Map<String,String> params
-			,@RequestHeader(PmsConfig.HEADER_APPLICATION_TOKEN) String appKey) throws Exception {
+			,@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey) throws Exception {
 
 		String sEcho = (String) params.get("sEcho");
 		params.put("appKey", appKey);
@@ -287,10 +287,10 @@ public class SystemController extends BaseController {
 		return res;
 	}
 	
-	@RequestMapping(value = "/messages/cancel", method = RequestMethod.POST, consumes = PmsConfig.HEADER_CONTENT_TYPE, produces = PmsConfig.HEADER_CONTENT_TYPE)
+	@RequestMapping(value = "/messages/cancel", method = RequestMethod.POST, consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
 	@ResponseBody
 	public Response<Result<Integer>> cancelReservationList(
-			@RequestHeader(PmsConfig.HEADER_APPLICATION_TOKEN) String appKey
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey
 			,@RequestBody ReservationCancelReq ids) throws Exception {
 		
 		Integer delCnt = systemService.cancelReservationList(appKey,ids);

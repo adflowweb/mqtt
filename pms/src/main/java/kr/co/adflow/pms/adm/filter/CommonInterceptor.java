@@ -5,7 +5,7 @@ import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import kr.co.adflow.pms.core.config.PmsConfig;
+import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.util.DateUtil;
 import kr.co.adflow.pms.domain.AppKey;
 import kr.co.adflow.pms.domain.Token;
@@ -32,7 +32,7 @@ public class CommonInterceptor extends HandlerInterceptorAdapter {
 		
 		logger.info("CommonInterceptor.preHandle");
 
-		String token = request.getHeader(PmsConfig.HEADER_APPLICATION_TOKEN);
+		String token = request.getHeader(StaticConfig.HEADER_APPLICATION_TOKEN);
 
 		if (token == null || token.trim().length() == 0) {
 

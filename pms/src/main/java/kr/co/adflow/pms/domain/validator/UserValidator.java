@@ -3,6 +3,7 @@ package kr.co.adflow.pms.domain.validator;
 import org.springframework.stereotype.Component;
 
 import kr.co.adflow.pms.core.config.PmsConfig;
+import kr.co.adflow.pms.core.config.StaticConfig;
 
 @Component
 public class UserValidator {
@@ -52,19 +53,19 @@ public class UserValidator {
 		int resultType = 0;
 		
 		if (!this.checkRequestValue(requestVal)) {
-			return  PmsConfig.SERVICE_REQUEST_FORMAT_TYPE_ERROR;
+			return  StaticConfig.SERVICE_REQUEST_FORMAT_TYPE_ERROR;
 		}
 		
 		if (requestVal.substring(0, 3).equals("010")) {
-			return PmsConfig.SERVICE_REQUEST_FORMAT_TYPE_PHONE;
+			return StaticConfig.SERVICE_REQUEST_FORMAT_TYPE_PHONE;
 		}
 		
 		if (requestVal.substring(0, 2).equals("82")&&requestVal.substring(2, 3).equals("*")&&requestVal.substring(requestVal.length()-5, requestVal.length()-4).equals("*")) {
-			return PmsConfig.SERVICE_REQUEST_FORMAT_TYPE_UFMI1;
+			return StaticConfig.SERVICE_REQUEST_FORMAT_TYPE_UFMI1;
 		}
 		
 		if (!requestVal.substring(0, 2).equals("82")&&requestVal.substring(2, 3).equals("*")&&requestVal.substring(requestVal.length()-5, requestVal.length()-4).equals("*")) {
-			return PmsConfig.SERVICE_REQUEST_FORMAT_TYPE_UFMI2;
+			return StaticConfig.SERVICE_REQUEST_FORMAT_TYPE_UFMI2;
 		}
 		
 		return resultType;
@@ -99,12 +100,26 @@ public class UserValidator {
 	
 	public String getSubscribUfmi1(String val) {
 
-		return "mms/P1/" + val.replace('*', '/');
+		return "mms/P1/" + this.repStar(val);
 	}
 	
 	public String getSubscribUfmi2(String val) {
 		
-		return "mms/P2/" + val.replace('*', '/');
+		return "mms/P2/" + this.repStar(val);
+	}
+	
+	private String repStar(String val) {
+		
+		String[] temp = null;
+		String result = null;
+		
+		temp = val.split("\\*");
+		
+		//System.out.println("temp len"+ temp.length);
+		
+		result = temp[0] + "/" + temp[1] + "/p" + temp[2] ;
+		
+		return result;
 	}
 	
 	

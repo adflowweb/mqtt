@@ -1,0 +1,41 @@
+package kr.co.adflow.pms.core.config;
+
+public class StaticConfig {
+	
+	public static final String HEADER_APPLICATION_TOKEN = "X-Application-Token";
+	public static final String HEADER_APPLICATION_KEY = "X-Application-Key";
+	public static final String HEADER_CONTENT_TYPE = "application/json";
+	
+	public static final String INTERCEPTER_IP_FILTER = "0.0.0.0";
+	public static final String INTERCEPTER_IP_FILTER_DELIM = "/";
+
+	public static final int MESSAGE_STATUS_RECEIVER_NOT_FOUNT = -2;
+	public static final int MESSAGE_STATUS_COUNT_OVER = -1;
+	public static final int MESSAGE_STATUS_ABNORMAL = -99;
+	public static final int MESSAGE_STATUS_SENDING = 0;
+	public static final int MESSAGE_STATUS_SEND = 1;
+	public static final int MESSAGE_STATUS_RESEVATION_CANCEL = 2;
+	
+	public static final String USER_ROLE_SERVICE_ADMIN = "svcadm";
+	public static final String USER_ROLE_SERVICE = "svc";
+	public static final String USER_ROLE_INTERFACE = "inf";
+	public static final String USER_ROLE_SYSTEM = "sys";
+
+	public static final int USER_STATUS_NORMAL = 0;
+	public static final int USER_STATUS_ABNORMAL = -1;
+	public static final int USER_STATUS_BROCK = 2;
+
+	
+	public static final String TOKEN_TYPE_APPLICATION = "A";
+	public static final String TOKEN_TYPE_TOKEN = "T";
+	
+	public static final int SERVICE_REQUEST_FORMAT_TYPE_ERROR = -1;
+	public static final int SERVICE_REQUEST_FORMAT_TYPE_UFMI1 = 1;
+	public static final int SERVICE_REQUEST_FORMAT_TYPE_UFMI2 = 2;
+	public static final int SERVICE_REQUEST_FORMAT_TYPE_PHONE = 3;
+	
+	public static final String CONTROL_QUEUE_EXECUTOR_TYPE_MESSAGE = "message";
+	public static final String CONTROL_QUEUE_EXECUTOR_TYPE_RESERVATION = "reservation";
+	public static final String CONTROL_QUEUE_EXECUTOR_TYPE_CALLBACK = "callback";
+
+}

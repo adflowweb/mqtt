@@ -5,6 +5,7 @@ import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.config.PmsConfig;
 import kr.co.adflow.pms.core.util.DateUtil;
 import kr.co.adflow.pms.domain.AppKey;
@@ -27,12 +28,15 @@ public class SvcAdmInterceptor extends HandlerInterceptorAdapter {
 	@Autowired
 	private TokenMapper tokenMapper;
 	
+	@Autowired
+	private PmsConfig pmsConfig;
+	
 	public boolean preHandle(HttpServletRequest request,
 			HttpServletResponse response, Object handler) throws Exception {
 		
 		logger.info("SystemInterceptor.preHandle");
 
-		String token = request.getHeader(PmsConfig.HEADER_APPLICATION_TOKEN);
+		String token = request.getHeader(StaticConfig.HEADER_APPLICATION_TOKEN);
 
 		if (token == null || token.trim().length() == 0) {
 
@@ -44,7 +48,7 @@ public class SvcAdmInterceptor extends HandlerInterceptorAdapter {
 		AppKey tokenKey = new AppKey();
 		
 		tokenKey.setApplicationKey(token);
-		tokenKey.setRole(PmsConfig.USER_ROLE_SERVICE_ADMIN);
+		tokenKey.setRole(StaticConfig.USER_ROLE_SERVICE_ADMIN);
 		//1 token 조회
 		Date expiredTime = interceptMapper.selectCashedApplicationToken(tokenKey);
 		
@@ -65,7 +69,7 @@ public class SvcAdmInterceptor extends HandlerInterceptorAdapter {
 			//3 만료시간 연장
 			Token updateToken = new Token();
 			updateToken.setTokenId(token);
-			updateToken.setExpiredTime(DateUtil.afterMinute(PmsConfig.HEADER_APPLICATION_TOKEN_EXPIRED, System.currentTimeMillis()));
+			updateToken.setExpiredTime(DateUtil.afterMinute(pmsConfig.HEADER_APPLICATION_TOKEN_EXPIRED, System.currentTimeMillis()));
 			
 			tokenMapper.updateTokenExpiredTime(updateToken);
 		}

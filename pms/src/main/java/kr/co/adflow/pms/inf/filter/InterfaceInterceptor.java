@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import kr.co.adflow.pms.core.config.PmsConfig;
+import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.domain.AppKey;
 import kr.co.adflow.pms.domain.mapper.InterceptMapper;
 
@@ -25,7 +26,7 @@ public class InterfaceInterceptor extends HandlerInterceptorAdapter {
 	public boolean preHandle(HttpServletRequest request,
 			HttpServletResponse response, Object handler) throws Exception {
 
-		String applicationKey = request.getHeader(PmsConfig.HEADER_APPLICATION_KEY);
+		String applicationKey = request.getHeader(StaticConfig.HEADER_APPLICATION_KEY);
 
 		if (applicationKey == null || applicationKey.trim().length() == 0) {
 
@@ -75,7 +76,7 @@ public class InterfaceInterceptor extends HandlerInterceptorAdapter {
 	private boolean ipFiltering(String remoteIpAddress, String ipFilters) {
 		
 		logger.info("remoteIpAddress :: {}", remoteIpAddress);
-		if (ipFilters.indexOf(PmsConfig.INTERCEPTER_IP_FILTER_DELIM) == -1) {
+		if (ipFilters.indexOf(StaticConfig.INTERCEPTER_IP_FILTER_DELIM) == -1) {
 			if (remoteIpAddress.equals(ipFilters.trim())) {
 				return true;
 			} else {
@@ -83,7 +84,7 @@ public class InterfaceInterceptor extends HandlerInterceptorAdapter {
 			}
 			
 		} else {
-			String[] ipArray = ipFilters.split(PmsConfig.INTERCEPTER_IP_FILTER_DELIM);
+			String[] ipArray = ipFilters.split(StaticConfig.INTERCEPTER_IP_FILTER_DELIM);
 			for (int i = 0; i < ipArray.length; i++) {
 				
 				if (remoteIpAddress.equals(ipArray[i].trim())) {

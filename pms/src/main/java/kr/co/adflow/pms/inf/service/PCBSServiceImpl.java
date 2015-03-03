@@ -1,6 +1,7 @@
 package kr.co.adflow.pms.inf.service;
 
 import kr.co.adflow.pms.core.config.PmsConfig;
+import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.util.KeyGenerator;
 import kr.co.adflow.pms.domain.Token;
 import kr.co.adflow.pms.domain.User;
@@ -32,15 +33,15 @@ public class PCBSServiceImpl implements PCBSService {
 		User user = new User();
 		user.setUserId(userReq.getUserId());
 		user.setPassword(this.getPassword(userReq));
-		user.setRole(PmsConfig.USER_ROLE_SERVICE);
-		user.setIpFilters(PmsConfig.INTERCEPTER_IP_FILTER);
+		user.setRole(StaticConfig.USER_ROLE_SERVICE);
+		user.setIpFilters(StaticConfig.INTERCEPTER_IP_FILTER);
 		user.setMsgCntLimit(userReq.getMsgCntLimit());
 		user.setStatus(-1);
 		user.setIssueId(issueId);
 		
 		Token token = new Token();
 		token.setUserId(userReq.getUserId());
-		token.setTokenType(PmsConfig.TOKEN_TYPE_APPLICATION);
+		token.setTokenType(StaticConfig.TOKEN_TYPE_APPLICATION);
 		token.setTokenId(this.getTokenId(userReq));
 		token.setIssueId(issueId);
 
@@ -82,7 +83,7 @@ public class PCBSServiceImpl implements PCBSService {
 		param.setMsgCntLimit(userReq.getMsgCntLimit());
 		
 		
-		param.setStatus(PmsConfig.USER_STATUS_NORMAL);
+		param.setStatus(StaticConfig.USER_STATUS_NORMAL);
 		param.setIssueId(issueId);
 		
 		param.setAction("updateUser");

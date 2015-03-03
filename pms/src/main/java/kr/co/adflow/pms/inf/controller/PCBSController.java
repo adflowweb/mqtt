@@ -9,6 +9,7 @@ import java.util.List;
 
 
 import kr.co.adflow.pms.core.config.PmsConfig;
+import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.controller.BaseController;
 import kr.co.adflow.pms.core.util.KeyGenerator;
 import kr.co.adflow.pms.domain.User;
@@ -41,11 +42,11 @@ public class PCBSController extends BaseController {
 	private PCBSService pcbsService;
 
 
-	@RequestMapping(value = "/users", method = RequestMethod.POST, consumes = PmsConfig.HEADER_CONTENT_TYPE, produces = PmsConfig.HEADER_CONTENT_TYPE)
+	@RequestMapping(value = "/users", method = RequestMethod.POST, consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
 	@ResponseBody
 	public Response<Result<HashMap<String, String>>> addUser(
 			@RequestBody UserReq user
-			,@RequestHeader(PmsConfig.HEADER_APPLICATION_KEY) String appKey) throws Exception {
+			,@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String appKey) throws Exception {
 
 		logger.debug("addUser");
 
@@ -79,10 +80,10 @@ public class PCBSController extends BaseController {
 
 	}
 	
-	@RequestMapping(value = "/users/{userId}/sec", method = RequestMethod.PUT, consumes = PmsConfig.HEADER_CONTENT_TYPE, produces = PmsConfig.HEADER_CONTENT_TYPE)
+	@RequestMapping(value = "/users/{userId}/sec", method = RequestMethod.PUT, consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
 	@ResponseBody
 	public Response modifyPassword(@RequestBody PasswordReq req
-			,@RequestHeader(PmsConfig.HEADER_APPLICATION_KEY) String appKey) {
+			,@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String appKey) {
 
 		
 	  int resultCnt = pcbsService.modifyPassword(req, appKey);
@@ -101,12 +102,12 @@ public class PCBSController extends BaseController {
 
 	}
 	
-	@RequestMapping(value = "/users/{userId}/msgCntLimit", method = RequestMethod.PUT, consumes = PmsConfig.HEADER_CONTENT_TYPE, produces = PmsConfig.HEADER_CONTENT_TYPE)
+	@RequestMapping(value = "/users/{userId}/msgCntLimit", method = RequestMethod.PUT, consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
 	@ResponseBody
 	public Response<Result<HashMap<String, Integer>>> updateUser(
 			@PathVariable("userId") String userId
 			,@RequestBody UserUpdateReq user
-			,@RequestHeader(PmsConfig.HEADER_APPLICATION_KEY) String appKey) {
+			,@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String appKey) {
 
 		logger.debug("updateUser");
 
@@ -126,11 +127,11 @@ public class PCBSController extends BaseController {
 
 	}
 	
-	@RequestMapping(value = "/users/{userId}", method = RequestMethod.DELETE, consumes = PmsConfig.HEADER_CONTENT_TYPE, produces = PmsConfig.HEADER_CONTENT_TYPE)
+	@RequestMapping(value = "/users/{userId}", method = RequestMethod.DELETE, consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
 	@ResponseBody
 	public Response<Result<HashMap<String, Integer>>> deleteUser(
 			@PathVariable("userId") String userId
-			,@RequestHeader(PmsConfig.HEADER_APPLICATION_KEY) String appKey) {
+			,@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String appKey) {
 
 		int resultCnt = pcbsService.deleteUser(userId,appKey);
 

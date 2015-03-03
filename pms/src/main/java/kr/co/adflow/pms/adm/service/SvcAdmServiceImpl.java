@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import kr.co.adflow.pms.adm.request.MessageReq;
 import kr.co.adflow.pms.core.config.PmsConfig;
+import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.util.CheckUtil;
 import kr.co.adflow.pms.core.util.DateUtil;
 import kr.co.adflow.pms.core.util.KeyGenerator;
@@ -31,6 +32,12 @@ public class SvcAdmServiceImpl implements SvcAdmService {
 	
 	@Autowired
 	private MessageMapper messageMapper;
+	
+	@Autowired
+	private CheckUtil checkUtil;
+	
+	@Autowired
+	private PmsConfig pmsConfig;
 
 
 	@Override
@@ -56,10 +63,10 @@ public class SvcAdmServiceImpl implements SvcAdmService {
 				Message msg = new Message();
 				msg.setKeyMon(DateUtil.getYYYYMM());
 				
-				msg.setServerId(PmsConfig.EXECUTOR_SERVER_ID);
+				msg.setServerId(pmsConfig.EXECUTOR_SERVER_ID);
 				
 				if (message.getMsgType() == 0) {
-					msg.setMsgType(PmsConfig.MESSAGE_HEADER_TYPE_DEFAULT);
+					msg.setMsgType(pmsConfig.MESSAGE_HEADER_TYPE_DEFAULT);
 				} else {
 					msg.setMsgType(message.getMsgType());
 				}
@@ -80,7 +87,7 @@ public class SvcAdmServiceImpl implements SvcAdmService {
 				msg.setUpdateId(issueId);
 
 				if (message.getServiceId() == null || message.getServiceId().trim().length() == 0) {
-					msg.setServiceId(PmsConfig.MESSAGE_SERVICE_ID_DEFAULT);
+					msg.setServiceId(pmsConfig.MESSAGE_SERVICE_ID_DEFAULT);
 				} else {
 					msg.setServiceId(message.getServiceId());
 				}
@@ -132,7 +139,7 @@ public class SvcAdmServiceImpl implements SvcAdmService {
 						msg.setResendId(null);
 					}
 			
-					msg.setStatus(PmsConfig.MESSAGE_STATUS_SENDING);
+					msg.setStatus(StaticConfig.MESSAGE_STATUS_SENDING);
 					messageMapper.insertMessage(msg);
 					messageMapper.insertContent(msg);
 					msgMap.put("msgId", msg.getMsgId());
@@ -146,15 +153,15 @@ public class SvcAdmServiceImpl implements SvcAdmService {
 	}
 	
 	private int getMessageSizeLimit(String userId) {
-		return CheckUtil.getMessageSizeLimit(interceptMapper.getCashedMessageSizeLimit(userId));
+		return checkUtil.getMessageSizeLimit(interceptMapper.getCashedMessageSizeLimit(userId));
 	}
 	
 	private int getMessageExpiry(String userId) {
-		return CheckUtil.getMessageExpiry(interceptMapper.getCashedMessageExpiry(userId));
+		return checkUtil.getMessageExpiry(interceptMapper.getCashedMessageExpiry(userId));
 	}
 	
 	private int getMessageQos(String userId) {
-		return CheckUtil.getMessageQos(interceptMapper.getCashedMessageQos(userId));
+		return checkUtil.getMessageQos(interceptMapper.getCashedMessageQos(userId));
 	}
 
 	

@@ -10,10 +10,11 @@ import kr.co.adflow.pms.domain.mapper.TableMgtMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("messageSendExecutor")
 public class MessageSendExecutor {
 
 	private static final Logger logger = LoggerFactory
@@ -24,36 +25,40 @@ public class MessageSendExecutor {
 	
 	@Autowired
 	private TableMgtMapper tableMgtMapper;
+	
+	@Autowired
+	private PmsConfig pmsConfig;
 
-	@Scheduled(cron=PmsConfig.EXECUTOR_MESSAGE_CRON)
+
+	//@Scheduled(cron = "#{pms['executor.message.cron']}")
 	public void sendMessageArray() {
 		logger.info("sendMessageArray execute time is {}", new Date());
 
-		messageSendService.sendMessageArray(PmsConfig.EXECUTOR_SERVER_ID,
-				PmsConfig.EXECUTOR_SEND_LIMIT);
+		messageSendService.sendMessageArray(pmsConfig.EXECUTOR_SERVER_ID,
+				pmsConfig.EXECUTOR_SEND_LIMIT);
 
 	}
 	
-	@Scheduled(cron=PmsConfig.EXECUTOR_RESERVATION_CRON)
+	//@Scheduled(cron=PmsConfig.EXECUTOR_RESERVATION_CRON)
 	public void sendReservationMessageArray() {
 		logger.info("sendReservationMessageArray execute time is {}", new Date());
 
-		messageSendService.sendReservationMessageArray(PmsConfig.EXECUTOR_SERVER_ID,
-				PmsConfig.EXECUTOR_SEND_LIMIT);
+		messageSendService.sendReservationMessageArray(pmsConfig.EXECUTOR_SERVER_ID,
+				pmsConfig.EXECUTOR_SEND_LIMIT);
 
 	}
 	
-	@Scheduled(cron=PmsConfig.EXECUTOR_CALLBACK_CRON)
+	//@Scheduled(cron=PmsConfig.EXECUTOR_CALLBACK_CRON)
 	public void sendCallback() {
 		logger.info("sendCallback execute time is {}", new Date());
 
-		messageSendService.sendCallback(PmsConfig.EXECUTOR_SERVER_ID,
-				PmsConfig.EXECUTOR_SEND_LIMIT);
+		messageSendService.sendCallback(pmsConfig.EXECUTOR_SERVER_ID,
+				pmsConfig.EXECUTOR_SEND_LIMIT);
 
 	}
 	
 	//@Scheduled(cron="0 0 12 * * *")
-	@Scheduled(cron=PmsConfig.EXECUTOR_CREATE_TABLE_CRON)
+	//@Scheduled(cron=PmsConfig.EXECUTOR_CREATE_TABLE_CRON)
 	public void createTable() {
 		
 		String name = DateUtil.getYYYYMM(1);

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import kr.co.adflow.pms.core.config.PmsConfig;
+import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.handler.DirectMsgHandler;
 import kr.co.adflow.pms.core.util.DateUtil;
 import kr.co.adflow.pms.core.util.KeyGenerator;
@@ -95,7 +96,7 @@ public class MessageSendServiceImpl implements MessageSendService {
 				// msg.getReceiverTopic(); 처리
 				isUserMessage = true;
 				if (!this.validReceiverUserId(msg.getReceiver())) {
-					msg.setStatus(PmsConfig.MESSAGE_STATUS_RECEIVER_NOT_FOUNT);
+					msg.setStatus(StaticConfig.MESSAGE_STATUS_RECEIVER_NOT_FOUNT);
 					messageMapper.updateStatus(msg);
 					ctlQMapper.deleteQ(msg.getMsgId());
 					continue;
@@ -112,7 +113,7 @@ public class MessageSendServiceImpl implements MessageSendService {
 
 			if (isUserMessage
 					&& userMapper.getMsgCntLimit(msg.getIssueId()) < 1) {
-				msg.setStatus(PmsConfig.MESSAGE_STATUS_COUNT_OVER);
+				msg.setStatus(StaticConfig.MESSAGE_STATUS_COUNT_OVER);
 				messageMapper.updateStatus(msg);
 				continue;
 			}
@@ -144,7 +145,7 @@ public class MessageSendServiceImpl implements MessageSendService {
 			}
 			msg.setMsgId(msgId);
 			// msg.getReceiverTopic();
-			msg.setStatus(PmsConfig.MESSAGE_STATUS_SEND);
+			msg.setStatus(StaticConfig.MESSAGE_STATUS_SEND);
 
 			int resultCnt = messageMapper.updateStatus(msg);
 			ctlQMapper.deleteQ(msg.getMsgId());
@@ -166,7 +167,7 @@ public class MessageSendServiceImpl implements MessageSendService {
 	private String getMessageTableName(String serverId) {
 		CtlQ result = null;
 		CtlQ paramCtlQ = new CtlQ();
-		paramCtlQ.setExeType(PmsConfig.CONTROL_QUEUE_EXECUTOR_TYPE_MESSAGE);
+		paramCtlQ.setExeType(StaticConfig.CONTROL_QUEUE_EXECUTOR_TYPE_MESSAGE);
 		paramCtlQ.setServerId(serverId);
 		result = ctlQMapper.fetchQ(paramCtlQ);
 
@@ -183,13 +184,13 @@ public class MessageSendServiceImpl implements MessageSendService {
 
 		int type = userValidator.getRequestType(receiver);
 
-		if (PmsConfig.SERVICE_REQUEST_FORMAT_TYPE_PHONE == type) {
+		if (StaticConfig.SERVICE_REQUEST_FORMAT_TYPE_PHONE == type) {
 			result = validationMapper.validPhoneNo(userValidator
 					.getRegstPhoneNo(receiver));
 		}
 
-		if (PmsConfig.SERVICE_REQUEST_FORMAT_TYPE_UFMI1 == type
-				|| PmsConfig.SERVICE_REQUEST_FORMAT_TYPE_UFMI2 == type) {
+		if (StaticConfig.SERVICE_REQUEST_FORMAT_TYPE_UFMI1 == type
+				|| StaticConfig.SERVICE_REQUEST_FORMAT_TYPE_UFMI2 == type) {
 			result = validationMapper.validUfmiNo(userValidator
 					.getRegstUfmiNo(receiver));
 		}
@@ -202,10 +203,10 @@ public class MessageSendServiceImpl implements MessageSendService {
 		CtlQ ctlQ = new CtlQ();
 
 		if (msg.isReservation()) {
-			ctlQ.setExeType(PmsConfig.CONTROL_QUEUE_EXECUTOR_TYPE_RESERVATION);
+			ctlQ.setExeType(StaticConfig.CONTROL_QUEUE_EXECUTOR_TYPE_RESERVATION);
 			ctlQ.setIssueTime(msg.getReservationTime());
 		} else {
-			ctlQ.setExeType(PmsConfig.CONTROL_QUEUE_EXECUTOR_TYPE_MESSAGE);
+			ctlQ.setExeType(StaticConfig.CONTROL_QUEUE_EXECUTOR_TYPE_MESSAGE);
 			ctlQ.setIssueTime(new Date());
 		}
 
@@ -241,15 +242,15 @@ public class MessageSendServiceImpl implements MessageSendService {
 
 		int type = userValidator.getRequestType(receiver);
 
-		if (PmsConfig.SERVICE_REQUEST_FORMAT_TYPE_PHONE == type) {
+		if (StaticConfig.SERVICE_REQUEST_FORMAT_TYPE_PHONE == type) {
 			result = userValidator.getSubscribPhoneNo(receiver);
 		}
 
-		if (PmsConfig.SERVICE_REQUEST_FORMAT_TYPE_UFMI1 == type) {
+		if (StaticConfig.SERVICE_REQUEST_FORMAT_TYPE_UFMI1 == type) {
 			result = userValidator.getSubscribUfmi1(receiver);
 		}
 
-		if (PmsConfig.SERVICE_REQUEST_FORMAT_TYPE_UFMI2 == type) {
+		if (StaticConfig.SERVICE_REQUEST_FORMAT_TYPE_UFMI2 == type) {
 			result = userValidator.getSubscribUfmi2(receiver);
 		}
 
@@ -259,7 +260,7 @@ public class MessageSendServiceImpl implements MessageSendService {
 	private String getReservationTableName(String serverId) {
 		CtlQ result = null;
 		CtlQ paramCtlQ = new CtlQ();
-		paramCtlQ.setExeType(PmsConfig.CONTROL_QUEUE_EXECUTOR_TYPE_RESERVATION);
+		paramCtlQ.setExeType(StaticConfig.CONTROL_QUEUE_EXECUTOR_TYPE_RESERVATION);
 		paramCtlQ.setServerId(serverId);
 		result = ctlQMapper.fetchQ(paramCtlQ);
 
@@ -273,7 +274,7 @@ public class MessageSendServiceImpl implements MessageSendService {
 	private String getCallbackTableName(String serverId) {
 		CtlQ result = null;
 		CtlQ paramCtlQ = new CtlQ();
-		paramCtlQ.setExeType(PmsConfig.CONTROL_QUEUE_EXECUTOR_TYPE_CALLBACK);
+		paramCtlQ.setExeType(StaticConfig.CONTROL_QUEUE_EXECUTOR_TYPE_CALLBACK);
 		paramCtlQ.setServerId(serverId);
 		result = ctlQMapper.fetchQ(paramCtlQ);
 
@@ -327,7 +328,7 @@ public class MessageSendServiceImpl implements MessageSendService {
 
 			if (isUserMessage
 					&& userMapper.getMsgCntLimit(msg.getIssueId()) < 1) {
-				msg.setStatus(PmsConfig.MESSAGE_STATUS_COUNT_OVER);
+				msg.setStatus(StaticConfig.MESSAGE_STATUS_COUNT_OVER);
 				messageMapper.updateStatus(msg);
 				continue;
 			}
@@ -335,7 +336,7 @@ public class MessageSendServiceImpl implements MessageSendService {
 			jmsTemplate.execute(msg.getReceiverTopic(), new DirectMsgHandler(
 					msg));
 
-			msg.setStatus(PmsConfig.MESSAGE_STATUS_SEND);
+			msg.setStatus(StaticConfig.MESSAGE_STATUS_SEND);
 
 			int resultCnt = messageMapper.updateStatus(msg);
 			ctlQMapper.deleteQ(msg.getMsgId());
@@ -406,7 +407,7 @@ public class MessageSendServiceImpl implements MessageSendService {
 		
 		HttpHeaders headers = new HttpHeaders();
 		//headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
-		headers.set(PmsConfig.HEADER_APPLICATION_KEY, ack.getApplicationKey());
+		headers.set(StaticConfig.HEADER_APPLICATION_KEY, ack.getApplicationKey());
 		
 		CallbackReq req = new CallbackReq();
 		req.setCallbackmsgid(ack.getMsgId());

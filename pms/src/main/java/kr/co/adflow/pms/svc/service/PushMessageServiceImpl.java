@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import kr.co.adflow.pms.core.config.PmsConfig;
+import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.util.CheckUtil;
 import kr.co.adflow.pms.core.util.DateUtil;
 import kr.co.adflow.pms.core.util.KeyGenerator;
@@ -51,6 +52,12 @@ public class PushMessageServiceImpl implements PushMessageService {
 	@Autowired
 	private CtlQMapper ctlQMapper;
 
+	@Autowired
+	private CheckUtil checkUtil;
+	
+	@Autowired
+	private PmsConfig pmsConfig;
+
 	
 	@Override
 	public List<Map<String,String>> sendMessage(String appKey, MessageReq message) {
@@ -75,15 +82,15 @@ public class PushMessageServiceImpl implements PushMessageService {
 		Message msg = new Message();
 		msg.setKeyMon(DateUtil.getYYYYMM());
 		
-		msg.setServerId(PmsConfig.EXECUTOR_SERVER_ID);
-		msg.setMsgType(PmsConfig.MESSAGE_HEADER_TYPE_DEFAULT);
+		msg.setServerId(pmsConfig.EXECUTOR_SERVER_ID);
+		msg.setMsgType(pmsConfig.MESSAGE_HEADER_TYPE_DEFAULT);
 		msg.setExpiry(this.getMessageExpiry(issueId));
 		msg.setQos(this.getMessageQos(issueId));
 		msg.setIssueId(issueId);
 		msg.setUpdateId(issueId);
 
-		msg.setServiceId(PmsConfig.MESSAGE_SERVICE_ID_DEFAULT);
-		msg.setAck(PmsConfig.MESSAGE_ACK_DEFAULT);
+		msg.setServiceId(pmsConfig.MESSAGE_SERVICE_ID_DEFAULT);
+		msg.setAck(pmsConfig.MESSAGE_ACK_DEFAULT);
 		msg.setContentType(message.getContentType());
 		msg.setContent(message.getContent());
 		
@@ -128,7 +135,7 @@ public class PushMessageServiceImpl implements PushMessageService {
 				msg.setResendId(null);
 			}
 			
-			msg.setStatus(PmsConfig.MESSAGE_STATUS_SENDING);
+			msg.setStatus(StaticConfig.MESSAGE_STATUS_SENDING);
 			messageMapper.insertMessage(msg);
 			messageMapper.insertContent(msg);
 			
@@ -147,10 +154,10 @@ public class PushMessageServiceImpl implements PushMessageService {
 		CtlQ ctlQ = new CtlQ();
 		
 		if (msg.isReservation()) {
-			ctlQ.setExeType(PmsConfig.CONTROL_QUEUE_EXECUTOR_TYPE_RESERVATION);
+			ctlQ.setExeType(StaticConfig.CONTROL_QUEUE_EXECUTOR_TYPE_RESERVATION);
 			ctlQ.setIssueTime(msg.getReservationTime());
 		} else {
-			ctlQ.setExeType(PmsConfig.CONTROL_QUEUE_EXECUTOR_TYPE_MESSAGE);
+			ctlQ.setExeType(StaticConfig.CONTROL_QUEUE_EXECUTOR_TYPE_MESSAGE);
 			ctlQ.setIssueTime(new Date());
 		}
 		
@@ -238,7 +245,7 @@ public class PushMessageServiceImpl implements PushMessageService {
 		msg.setKeyMon(this.getKeyMon(msgId));
 		msg.setMsgId(msgId);
 		msg.setUpdateId(issueId);
-		msg.setStatus(PmsConfig.MESSAGE_STATUS_RESEVATION_CANCEL);
+		msg.setStatus(StaticConfig.MESSAGE_STATUS_RESEVATION_CANCEL);
 		
 		return messageMapper.cancelMessage(msg);
 	}
@@ -249,15 +256,15 @@ public class PushMessageServiceImpl implements PushMessageService {
 	}
 	
 	private int getMessageSizeLimit(String userId) {
-		return CheckUtil.getMessageSizeLimit(interceptMapper.getCashedMessageSizeLimit(userId));
+		return checkUtil.getMessageSizeLimit(interceptMapper.getCashedMessageSizeLimit(userId));
 	}
 	
 	private int getMessageExpiry(String userId) {
-		return CheckUtil.getMessageExpiry(interceptMapper.getCashedMessageExpiry(userId));
+		return checkUtil.getMessageExpiry(interceptMapper.getCashedMessageExpiry(userId));
 	}
 	
 	private int getMessageQos(String userId) {
-		return CheckUtil.getMessageQos(interceptMapper.getCashedMessageQos(userId));
+		return checkUtil.getMessageQos(interceptMapper.getCashedMessageQos(userId));
 	}
 
 }

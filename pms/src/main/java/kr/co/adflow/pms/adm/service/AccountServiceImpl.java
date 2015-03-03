@@ -20,6 +20,9 @@ public class AccountServiceImpl implements AccountService {
 	
 	@Autowired
 	private InterceptMapper interceptMapper;
+	
+	@Autowired
+	private CheckUtil checkUtil;
 
 	@Override
 	public User retrieveAccount(String appKey) {
@@ -27,9 +30,9 @@ public class AccountServiceImpl implements AccountService {
 		String userId = interceptMapper.selectCashedUserId(appKey);
 		resultUser = userMapper.select(userId);
 		
-		resultUser.setDefaultExpiry(CheckUtil.getMessageExpiry(resultUser.getDefaultExpiry()));
-		resultUser.setDefaultQos(CheckUtil.getMessageQos(resultUser.getDefaultQos()));
-		resultUser.setMsgSizeLimit(CheckUtil.getMessageSizeLimit(resultUser.getMsgSizeLimit()));
+		resultUser.setDefaultExpiry(checkUtil.getMessageExpiry(resultUser.getDefaultExpiry()));
+		resultUser.setDefaultQos(checkUtil.getMessageQos(resultUser.getDefaultQos()));
+		resultUser.setMsgSizeLimit(checkUtil.getMessageSizeLimit(resultUser.getMsgSizeLimit()));
 		
 		return resultUser;
 	}

@@ -6,8 +6,10 @@ import javax.jms.BytesMessage;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
+import javax.xml.ws.BindingType;
 
 import kr.co.adflow.pms.core.config.PmsConfig;
+import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.domain.Ack;
 import kr.co.adflow.pms.domain.CtlQ;
 import kr.co.adflow.pms.domain.mapper.AckMapper;
@@ -17,7 +19,10 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
+//@Component("ackMessageDrivenBean")
 public class AckMessageDrivenBean implements MessageListener {
 
 	private static final Logger logger = LoggerFactory
@@ -28,6 +33,13 @@ public class AckMessageDrivenBean implements MessageListener {
 	
 	@Autowired
 	private CtlQMapper ctlQMapper;
+	
+	//@Autowired
+	//private PmsConfig pmsConfig;
+	
+	@Value("#{pms['executor.server.id']}")
+	private String EXECUTOR_SERVER_ID;
+
 
 	public void onMessage(Message message) {
 
@@ -53,11 +65,12 @@ public class AckMessageDrivenBean implements MessageListener {
 	private CtlQ getCtlQ(Ack ack) {
 		CtlQ ctlQ = new CtlQ();
 		
-		ctlQ.setExeType(PmsConfig.CONTROL_QUEUE_EXECUTOR_TYPE_CALLBACK);
+		ctlQ.setExeType(StaticConfig.CONTROL_QUEUE_EXECUTOR_TYPE_CALLBACK);
 		ctlQ.setTableName(ack.getKeyMon());
 		ctlQ.setMsgId(ack.getMsgId());
 		ctlQ.setIssueTime(new Date());
-		ctlQ.setServerId(PmsConfig.EXECUTOR_SERVER_ID);
+		ctlQ.setServerId(EXECUTOR_SERVER_ID);
+		//ctlQ.setServerId("S01");
 		
 		return ctlQ;
 	}
@@ -73,7 +86,8 @@ public class AckMessageDrivenBean implements MessageListener {
 		ack.setAckType(msgObject.getString("ackType"));
 		ack.setTokenId(msgObject.getString("token"));
 		ack.setAckTime(new Date(msgObject.getLong("ackTime")));
-		ack.setServerId(PmsConfig.EXECUTOR_SERVER_ID);
+		ack.setServerId(EXECUTOR_SERVER_ID);
+		//ack.setServerId("S01");
 
 		return ack;
 

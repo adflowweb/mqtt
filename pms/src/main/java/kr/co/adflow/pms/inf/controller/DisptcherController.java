@@ -13,6 +13,7 @@ import kr.co.adflow.pms.adm.request.MessageReq;
 import kr.co.adflow.pms.adm.service.SvcAdmService;
 import kr.co.adflow.pms.adm.service.SvcService;
 import kr.co.adflow.pms.core.config.PmsConfig;
+import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.controller.BaseController;
 import kr.co.adflow.pms.core.util.KeyGenerator;
 import kr.co.adflow.pms.domain.MessageResult;
@@ -52,10 +53,10 @@ public class DisptcherController extends BaseController {
 
 
 
-	@RequestMapping(value = "/messages", method = RequestMethod.POST, consumes = PmsConfig.HEADER_CONTENT_TYPE, produces = PmsConfig.HEADER_CONTENT_TYPE)
+	@RequestMapping(value = "/messages", method = RequestMethod.POST, consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
 	@ResponseBody
 	public Response<Result<List<Map<String,String>>>> sendMessage(
-			@RequestHeader(PmsConfig.HEADER_APPLICATION_KEY) String appKey,
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String appKey,
 			@RequestBody @Valid MessageReq msg) throws Exception {
 		logger.info("SvcAdmController.sendMessage");
 
@@ -84,10 +85,10 @@ public class DisptcherController extends BaseController {
 
 	}
 	
-	@RequestMapping(value = "/messages/result", method = RequestMethod.POST, consumes = PmsConfig.HEADER_CONTENT_TYPE, produces = PmsConfig.HEADER_CONTENT_TYPE)
+	@RequestMapping(value = "/messages/result", method = RequestMethod.POST, consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
 	@ResponseBody
 	public Response<Result<List<MessageResult>>> getMessageResult(
-			@RequestHeader(PmsConfig.HEADER_APPLICATION_KEY) String appKey
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String appKey
 			,@RequestBody MessageIdsReq msgIds) throws Exception {
 		
 		//1. msgId 의 앞의5자 YYYYMM 이 같아야 함
@@ -104,10 +105,10 @@ public class DisptcherController extends BaseController {
 		return res;
 	}
 	
-	@RequestMapping(value = "/messages/{msgId}", method = RequestMethod.DELETE, consumes = PmsConfig.HEADER_CONTENT_TYPE, produces = PmsConfig.HEADER_CONTENT_TYPE)
+	@RequestMapping(value = "/messages/{msgId}", method = RequestMethod.DELETE, consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
 	@ResponseBody
 	public Response<Result<Integer>> cancelReservationMessage(
-			@RequestHeader(PmsConfig.HEADER_APPLICATION_KEY) String appKey
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String appKey
 			,@PathVariable("msgId") String msgId) throws Exception {
 		
 		Integer delCnt = pushMessageService.cancelMessage(appKey,msgId);
