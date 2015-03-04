@@ -9,7 +9,7 @@
 	
 	
 	<!-- <util:properties id="code" location="file:${user.home}/config_#{systemProperties['env']}.properties" /> -->
-	
+	<util:properties id="pcs" location="classpath:config.properties"/>
 
 	<!-- Root Context: defines shared resources visible to all other web components -->
 
@@ -49,18 +49,18 @@
 	
 <!-- jmsConnectionFactory -->
 	<bean id="jmsFactory" class="com.ibm.mq.jms.MQTopicConnectionFactory">
-		<property name="hostName" value="14.63.217.141" />
-		<property name="port" value="1414" />
-		<property name="queueManager" value="MQTT" />
+		<property name="hostName" value="#{pcs['mq.jms.host']}" />
+		<property name="port" value="#{pcs['mq.jms.port']}" />
+		<property name="queueManager" value="#{pcs['mq.jms.queue.manager']}" />
 		<property name="transportType" value="1" />
-		<property name="channel" value="ADFlowJMS" />
+		<property name="channel" value="#{pcs['mq.jms.channel']}" />
 	</bean>
 
 	<bean id="userCredentialsConnectionFactory"
 		class="org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter">
 		<property name="targetConnectionFactory" ref="jmsFactory" />
-		<property name="username" value="adflow" />
-		<property name="password" value="!ADFlow@" />
+		<property name="username" value="#{pcs['mq.jms.id']}" />
+		<property name="password" value="#{pcs['mq.jms.password']}" />
 	</bean>
 
 	<!-- springConnectionFactory -->

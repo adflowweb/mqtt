@@ -453,7 +453,20 @@
 				<db.table.user>emp</db.table.user>
 				<db.table.department>department</db.table.department>
 				<db.sql.getUsersByName>CONCAT('%', #{name}, '%')</db.sql.getUsersByName>
-
+				
+				<!-- mq pcf info -->
+				<mq.pcf.id>adflow</mq.pcf.id>
+				<mq.pcf.password>!ADFlow@</mq.pcf.password>
+				<mq.pcf.port>1414</mq.pcf.port>
+				<mq.pcf.channel>ADFlowPCF</mq.pcf.channel>
+				<mq.pcf.host>14.63.217.141</mq.pcf.host>
+				<!-- mq jms info -->
+				<mq.jms.id>adflow</mq.jms.id>
+				<mq.jms.password>!ADFlow@</mq.jms.password>
+				<mq.jms.port>1414</mq.jms.port>
+				<mq.jms.queue.manager>MQTT</mq.jms.queue.manager>
+				<mq.jms.channel>ADFlowJMS</mq.jms.channel>
+				<mq.jms.host>14.63.217.141</mq.jms.host>
 			</properties>
 		</profile>
 		<profile>
@@ -541,6 +554,20 @@
 				<db.table.user>TB_OCRM_GW_STF_INFO</db.table.user>
 				<db.table.department>TB_OCRM_GW_DEPTMT_INFO</db.table.department>
 				<db.sql.getUsersByName>'%'||#{name}||'%'</db.sql.getUsersByName>
+
+				<!-- mq pcf info -->
+				<mq.pcf.id>adflow</mq.pcf.id>
+				<mq.pcf.password>!ADFlow@</mq.pcf.password>
+				<mq.pcf.port>1414</mq.pcf.port>
+				<mq.pcf.channel>ADFlowPCF</mq.pcf.channel>
+				<mq.pcf.host>14.63.217.141</mq.pcf.host>
+				<!-- mq jms info -->
+				<mq.jms.id>adflow</mq.jms.id>
+				<mq.jms.password>!ADFlow@</mq.jms.password>
+				<mq.jms.port>1414</mq.jms.port>
+				<mq.jms.queue.manager>MQTT</mq.jms.queue.manager>
+				<mq.jms.channel>ADFlowJMS</mq.jms.channel>
+				<mq.jms.host>14.63.217.141</mq.jms.host>
 
 			</properties>
 		</profile>
@@ -630,6 +657,20 @@
 				<db.table.user>TB_OCRM_GW_STF_INFO</db.table.user>
 				<db.table.department>TB_OCRM_GW_DEPTMT_INFO</db.table.department>
 				<db.sql.getUsersByName>'%'||#{name}||'%'</db.sql.getUsersByName>
+
+				<!-- mq pcf info -->
+				<mq.pcf.id>adflow</mq.pcf.id>
+				<mq.pcf.password>!ADFlow@</mq.pcf.password>
+				<mq.pcf.port>1414</mq.pcf.port>
+				<mq.pcf.channel>ADFlowPCF</mq.pcf.channel>
+				<mq.pcf.host>14.63.217.141</mq.pcf.host>
+				<!-- mq jms info -->
+				<mq.jms.id>adflow</mq.jms.id>
+				<mq.jms.password>!ADFlow@</mq.jms.password>
+				<mq.jms.port>1414</mq.jms.port>
+				<mq.jms.queue.manager>MQTT</mq.jms.queue.manager>
+				<mq.jms.channel>ADFlowJMS</mq.jms.channel>
+				<mq.jms.host>14.63.217.141</mq.jms.host>
 
 			</properties>
 		</profile>
