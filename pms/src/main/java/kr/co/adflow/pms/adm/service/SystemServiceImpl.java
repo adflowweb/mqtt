@@ -1,6 +1,7 @@
 package kr.co.adflow.pms.adm.service;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,6 +29,7 @@ import kr.co.adflow.pms.domain.Token;
 import kr.co.adflow.pms.domain.User;
 import kr.co.adflow.pms.domain.mapper.InterceptMapper;
 import kr.co.adflow.pms.domain.mapper.MessageMapper;
+import kr.co.adflow.pms.domain.mapper.SummaryMapper;
 import kr.co.adflow.pms.domain.mapper.TokenMapper;
 import kr.co.adflow.pms.domain.mapper.UserMapper;
 
@@ -52,6 +54,9 @@ public class SystemServiceImpl implements SystemService {
 	
 	@Autowired
 	private CheckUtil checkUtil;
+	
+	@Autowired
+	private SummaryMapper summaryMapper;
 	
 	@Override
 	public List<User> listAllUser() {
@@ -370,6 +375,19 @@ public class SystemServiceImpl implements SystemService {
 			throw new RuntimeException("msgId not found");
 		}
 		return msgIds[0].substring(0, 6);
+	}
+
+	@Override
+	public List<Map<String,String>> getMonthSummary(String appKey, String keyMon) {
+		
+		//String issueId = interceptMapper.selectCashedUserId(appKey);
+		
+		Map<String,String> params = new HashMap<String,String>();
+		
+		params.put("issueId", null);
+		params.put("keyMon", keyMon);
+
+		return summaryMapper.getMonthSummary(params);
 	}
 
 }

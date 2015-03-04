@@ -1,52 +1,25 @@
 package kr.co.adflow.pms.adm.service;
 
-import java.util.ArrayList;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import kr.co.adflow.pms.adm.controller.SystemController;
-import kr.co.adflow.pms.adm.request.MessageReq;
 import kr.co.adflow.pms.adm.request.ReservationCancelReq;
 import kr.co.adflow.pms.adm.response.MessagesRes;
-import kr.co.adflow.pms.core.config.PmsConfig;
-import kr.co.adflow.pms.core.util.CheckUtil;
 import kr.co.adflow.pms.core.util.DateUtil;
-import kr.co.adflow.pms.core.util.KeyGenerator;
 import kr.co.adflow.pms.domain.Message;
 import kr.co.adflow.pms.domain.MsgIdsParams;
 import kr.co.adflow.pms.domain.MsgParams;
 import kr.co.adflow.pms.domain.mapper.InterceptMapper;
 import kr.co.adflow.pms.domain.mapper.MessageMapper;
+import kr.co.adflow.pms.domain.mapper.SummaryMapper;
 import kr.co.adflow.pms.domain.mapper.UserMapper;
 import kr.co.adflow.pms.domain.mapper.ValidationMapper;
 import kr.co.adflow.pms.domain.validator.UserValidator;
@@ -71,6 +44,9 @@ public class SvcServiceImpl implements SvcService {
 	
 	@Autowired
 	private UserMapper userMapper;
+	
+	@Autowired
+	private SummaryMapper summaryMapper;
 
 	@Override
 	public MessagesRes getSvcMessageList(Map<String, String> params) {
@@ -208,6 +184,21 @@ public class SvcServiceImpl implements SvcService {
 			throw new RuntimeException("msgId not found");
 		}
 		return msgIds[0].substring(0, 6);
+	}
+
+	@Override
+	public List<Map<String, String>> getMonthSummary(String appKey,
+			String keyMon) {
+
+		
+		String issueId = interceptMapper.selectCashedUserId(appKey);
+		
+		Map<String,String> params = new HashMap<String,String>();
+		
+		params.put("issueId", issueId);
+		params.put("keyMon", keyMon);
+
+		return summaryMapper.getMonthSummary(params);
 	}
 	
 

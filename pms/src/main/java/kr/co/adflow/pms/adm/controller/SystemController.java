@@ -305,4 +305,21 @@ public class SystemController extends BaseController {
 	}
 	
 	
+	@RequestMapping(value = "/messages/summary/{month}", method = RequestMethod.GET)
+	@ResponseBody
+	public Response<Result<List<Map<String,String>>>> getMonthSummary(@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey,@PathVariable("month") String keyMon) {
+
+		
+	  List<Map<String,String>> resultList = systemService.getMonthSummary(appKey,keyMon);
+		
+		Result<List<Map<String,String>>> result = new Result<List<Map<String,String>>>();
+		result.setSuccess(true);
+		result.setData(resultList);
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		Response<Result<List<Map<String,String>>>> res = new Response(result);
+		return res;
+
+	}
+	
+	
 }

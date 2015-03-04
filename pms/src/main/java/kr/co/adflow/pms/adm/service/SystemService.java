@@ -29,5 +29,7 @@ public interface SystemService {
 	public ServerInfo getServerInfo();
 
 	public int cancelReservationList(String appKey, ReservationCancelReq ids);
+	
+	public List<Map<String,String>> getMonthSummary(String appKey, String keyMon);
 
 }
