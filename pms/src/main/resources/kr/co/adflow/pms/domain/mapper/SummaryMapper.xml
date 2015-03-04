@@ -7,7 +7,7 @@
 
 	<resultMap id="summaryResult" type="java.util.Map">
 		<result property="userId" column="user_id" />
-		<result property="status" column="status" />
+		<result property="status" column="status" javaType="int"/>
 		<result property="isReservation" column="is_reservation" />
 		<result property="msgCnt" column="msg_cnt" />
 		<result property="pmaAckCnt" column="pma_ack_cnt" />

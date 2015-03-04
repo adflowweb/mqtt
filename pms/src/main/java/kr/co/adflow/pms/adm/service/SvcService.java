@@ -15,6 +15,6 @@ public interface SvcService {
 	
 	public int cancelReservationList(String appKey, ReservationCancelReq reqIds);
 
-	public List<Map<String, String>> getMonthSummary(String appKey,String keyMon);
+	public List<Map<String, Object>> getMonthSummary(String appKey,String keyMon);
 
 }

@@ -304,19 +304,37 @@ public class SystemController extends BaseController {
 		return res;
 	}
 	
-	
 	@RequestMapping(value = "/messages/summary/{month}", method = RequestMethod.GET)
 	@ResponseBody
-	public Response<Result<List<Map<String,String>>>> getMonthSummary(@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey,@PathVariable("month") String keyMon) {
+	public Response<Result<List<Map<String,Object>>>> getMonthSummary(@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey
+			,@PathVariable("month") String keyMon) {
 
 		
-	  List<Map<String,String>> resultList = systemService.getMonthSummary(appKey,keyMon);
+	  List<Map<String,Object>> resultList = systemService.getMonthSummary(appKey,keyMon,null);
 		
-		Result<List<Map<String,String>>> result = new Result<List<Map<String,String>>>();
+		Result<List<Map<String,Object>>> result = new Result<List<Map<String,Object>>>();
 		result.setSuccess(true);
 		result.setData(resultList);
 		@SuppressWarnings({ "unchecked", "rawtypes" })
-		Response<Result<List<Map<String,String>>>> res = new Response(result);
+		Response<Result<List<Map<String,Object>>>> res = new Response(result);
+		return res;
+
+	}
+	
+	@RequestMapping(value = "/messages/summary/{month}/{userId}", method = RequestMethod.GET)
+	@ResponseBody
+	public Response<Result<List<Map<String,Object>>>> getMonthSummary(@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey
+			,@PathVariable("month") String keyMon
+			,@PathVariable("userId") String issueId) {
+
+		
+	  List<Map<String,Object>> resultList = systemService.getMonthSummary(appKey,keyMon,issueId);
+		
+		Result<List<Map<String,Object>>> result = new Result<List<Map<String,Object>>>();
+		result.setSuccess(true);
+		result.setData(resultList);
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		Response<Result<List<Map<String,Object>>>> res = new Response(result);
 		return res;
 
 	}

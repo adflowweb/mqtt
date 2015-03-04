@@ -6,6 +6,6 @@ import java.util.Map;
 
 public interface SummaryMapper {
 
-	List<Map<String,String>> getMonthSummary(Map<String,String> params);
+	List<Map<String,Object>> getMonthSummary(Map<String,String> params);
 
 }

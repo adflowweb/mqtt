@@ -30,6 +30,6 @@ public interface SystemService {
 
 	public int cancelReservationList(String appKey, ReservationCancelReq ids);
 	
-	public List<Map<String,String>> getMonthSummary(String appKey, String keyMon);
+	public List<Map<String,Object>> getMonthSummary(String appKey, String keyMon,String issueId);
 
 }

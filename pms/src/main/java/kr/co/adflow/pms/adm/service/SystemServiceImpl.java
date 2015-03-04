@@ -378,13 +378,13 @@ public class SystemServiceImpl implements SystemService {
 	}
 
 	@Override
-	public List<Map<String,String>> getMonthSummary(String appKey, String keyMon) {
+	public List<Map<String,Object>> getMonthSummary(String appKey, String keyMon,String issueId) {
 		
 		//String issueId = interceptMapper.selectCashedUserId(appKey);
 		
 		Map<String,String> params = new HashMap<String,String>();
 		
-		params.put("issueId", null);
+		params.put("issueId", issueId);
 		params.put("keyMon", keyMon);
 
 		return summaryMapper.getMonthSummary(params);

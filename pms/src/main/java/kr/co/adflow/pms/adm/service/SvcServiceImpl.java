@@ -187,7 +187,7 @@ public class SvcServiceImpl implements SvcService {
 	}
 
 	@Override
-	public List<Map<String, String>> getMonthSummary(String appKey,
+	public List<Map<String, Object>> getMonthSummary(String appKey,
 			String keyMon) {
 
 		
