@@ -9,8 +9,6 @@ import java.lang.management.MemoryUsage;
 import java.net.InetAddress;
 import java.util.ArrayList;
 
-import javax.annotation.Resource;
-
 import kr.co.adflow.pms.domain.CPU;
 import kr.co.adflow.pms.domain.Disk;
 import kr.co.adflow.pms.domain.Heap;
@@ -29,6 +27,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class ServerDaoImpl.
+ */
 @Service
 public class ServerDaoImpl implements ServerDao {
 
@@ -47,8 +49,8 @@ public class ServerDaoImpl implements ServerDao {
 	@Override
 	public ServerInfo get() throws Exception {
 		logger.debug("get시작()");
-//		ServerInfo res = new ServerInfo(mqttService.isConnected(),
-//				mqttService.getErrorMsg());
+		// ServerInfo res = new ServerInfo(mqttService.isConnected(),
+		// mqttService.getErrorMsg());
 		ServerInfo res = new ServerInfo();
 
 		// 서버정보 가져오기
@@ -176,9 +178,9 @@ public class ServerDaoImpl implements ServerDao {
 		res.setDisk(disk);
 
 		// get tps
-//		double tps = mqttService.getTps();
-//		res.setTps(tps);
-//		logger.debug("tps=" + tps);
+		// double tps = mqttService.getTps();
+		// res.setTps(tps);
+		// logger.debug("tps=" + tps);
 
 		logger.debug("canonicalHostName="
 				+ InetAddress.getLocalHost().getCanonicalHostName());
@@ -192,8 +194,9 @@ public class ServerDaoImpl implements ServerDao {
 
 	/**
 	 * Log cpu info.
-	 *
-	 * @param cpu the cpu
+	 * 
+	 * @param cpu
+	 *            the cpu
 	 */
 	private void logCPUInfo(CpuPerc cpu) {
 		logger.debug("UserTime=" + CpuPerc.format(cpu.getUser()));
@@ -211,8 +214,9 @@ public class ServerDaoImpl implements ServerDao {
 
 	/**
 	 * Make disk info.
-	 *
-	 * @param fs the fs
+	 * 
+	 * @param fs
+	 *            the fs
 	 * @return the disk
 	 */
 	public Disk makeDiskInfo(FileSystem fs) {
@@ -274,15 +278,18 @@ public class ServerDaoImpl implements ServerDao {
 
 	/**
 	 * Format size.
-	 *
-	 * @param size the size
+	 * 
+	 * @param size
+	 *            the size
 	 * @return the string
 	 */
 	private String formatSize(long size) {
 		return Sigar.formatSize(size * 1024);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see kr.co.adflow.push.dao.ServerDao#post()
 	 */
 	@Override
@@ -290,7 +297,9 @@ public class ServerDaoImpl implements ServerDao {
 		// return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see kr.co.adflow.push.dao.ServerDao#put()
 	 */
 	@Override
@@ -298,7 +307,9 @@ public class ServerDaoImpl implements ServerDao {
 		// return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see kr.co.adflow.push.dao.ServerDao#delete()
 	 */
 	@Override

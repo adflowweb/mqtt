@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package kr.co.adflow.pms.core.handler;
 
 import java.util.Date;
@@ -6,9 +9,7 @@ import javax.jms.BytesMessage;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
-import javax.xml.ws.BindingType;
 
-import kr.co.adflow.pms.core.config.PmsConfig;
 import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.domain.Ack;
 import kr.co.adflow.pms.domain.CtlQ;
@@ -20,27 +21,36 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
+// TODO: Auto-generated Javadoc
 //@Component("ackMessageDrivenBean")
+/**
+ * The Class AckMessageDrivenBean.
+ */
 public class AckMessageDrivenBean implements MessageListener {
 
+	/** The Constant logger. */
 	private static final Logger logger = LoggerFactory
 			.getLogger(AckMessageDrivenBean.class);
 
+	/** The ack mapper. */
 	@Autowired
 	private AckMapper ackMapper;
-	
+
+	/** The ctl q mapper. */
 	@Autowired
 	private CtlQMapper ctlQMapper;
-	
-	//@Autowired
-	//private PmsConfig pmsConfig;
-	
+
+	// @Autowired
+	// private PmsConfig pmsConfig;
+
+	/** The executor server id. */
 	@Value("#{pms['executor.server.id']}")
 	private String EXECUTOR_SERVER_ID;
 
-
+	/* (non-Javadoc)
+	 * @see javax.jms.MessageListener#onMessage(javax.jms.Message)
+	 */
 	public void onMessage(Message message) {
 
 		logger.info("Message Driven Bean: New Message");
@@ -54,48 +64,66 @@ public class AckMessageDrivenBean implements MessageListener {
 		}
 		Ack ack = this.getAck(body);
 		int cnt = ackMapper.insertAck(ack);
-		//callback
+		// callback
 		if (ack.getAckType().equals("app")) {
 			ctlQMapper.insertQ(this.getCtlQ(ack));
 		}
 		logger.info("ack result : {}", cnt);
 
 	}
-	
+
+	/**
+	 * Gets the ctl q.
+	 *
+	 * @param ack the ack
+	 * @return the ctl q
+	 */
 	private CtlQ getCtlQ(Ack ack) {
 		CtlQ ctlQ = new CtlQ();
-		
+
 		ctlQ.setExeType(StaticConfig.CONTROL_QUEUE_EXECUTOR_TYPE_CALLBACK);
 		ctlQ.setTableName(ack.getKeyMon());
 		ctlQ.setMsgId(ack.getMsgId());
 		ctlQ.setIssueTime(new Date());
 		ctlQ.setServerId(EXECUTOR_SERVER_ID);
-		//ctlQ.setServerId("S01");
-		
+		// ctlQ.setServerId("S01");
+
 		return ctlQ;
 	}
 
+	/**
+	 * Gets the ack.
+	 *
+	 * @param body the body
+	 * @return the ack
+	 */
 	private Ack getAck(byte[] body) {
 		Ack ack = new Ack();
 
 		String text = new String(body);
 		JSONObject msgObject = new JSONObject(text);
-		
+
 		ack.setKeyMon(this.getKeyMon(msgObject.getString("msgId")));
 		ack.setMsgId(msgObject.getString("msgId"));
 		ack.setAckType(msgObject.getString("ackType"));
 		ack.setTokenId(msgObject.getString("token"));
 		ack.setAckTime(new Date(msgObject.getLong("ackTime")));
 		ack.setServerId(EXECUTOR_SERVER_ID);
-		//ack.setServerId("S01");
+		// ack.setServerId("S01");
 
 		return ack;
 
 	}
 
+	/**
+	 * Gets the key mon.
+	 *
+	 * @param string the string
+	 * @return the key mon
+	 */
 	private String getKeyMon(String string) {
 		String result = string.substring(0, 6);
-		logger.debug("getKeyMon is {}",result);
+		logger.debug("getKeyMon is {}", result);
 		return result;
 	}
 

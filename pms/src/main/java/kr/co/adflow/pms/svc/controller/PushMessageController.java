@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package kr.co.adflow.pms.svc.controller;
 
 import java.util.List;
@@ -6,7 +9,6 @@ import java.util.Map;
 import javax.validation.Valid;
 
 import kr.co.adflow.pms.adm.service.AccountService;
-import kr.co.adflow.pms.core.config.PmsConfig;
 import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.controller.BaseController;
 import kr.co.adflow.pms.domain.MessageResult;
@@ -31,25 +33,41 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class PushMessageController.
+ */
 @Controller
 @RequestMapping(value = "/svc")
 public class PushMessageController extends BaseController {
 
+	/** The Constant logger. */
 	private static final Logger logger = LoggerFactory
 			.getLogger(PushMessageController.class);
 
+	/** The push message service. */
 	@Autowired
 	private PushMessageService pushMessageService;
-	
+
+	/** The account service. */
 	@Autowired
 	private AccountService accountService;
-	
+
+	/** The user validator. */
 	@Autowired
 	private UserValidator userValidator;
 
+	/**
+	 * Send message.
+	 *
+	 * @param appKey the app key
+	 * @param msg the msg
+	 * @return the response
+	 * @throws Exception the exception
+	 */
 	@RequestMapping(value = "/messages", method = RequestMethod.POST, consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
 	@ResponseBody
-	public Response<Result<List<Map<String,String>>>> sendMessage(
+	public Response<Result<List<Map<String, String>>>> sendMessage(
 			@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String appKey,
 			@RequestBody @Valid MessageReq msg) throws Exception {
 		logger.debug("sendMessage");
@@ -61,40 +79,52 @@ public class PushMessageController extends BaseController {
 			String[] receivers = msg.getReceivers();
 			for (int i = 0; i < receivers.length; i++) {
 				if (!isValid(receivers[i])) {
-					throw new RuntimeException("getReceivers not valid" + receivers[i]);
+					throw new RuntimeException("getReceivers not valid"
+							+ receivers[i]);
 				}
 			}
-			
+
 		}
-		
-		if (msg.getReservationTime() != null && msg.getReservationTime().getTime() < System.currentTimeMillis()) {
+
+		if (msg.getReservationTime() != null
+				&& msg.getReservationTime().getTime() < System
+						.currentTimeMillis()) {
 			throw new RuntimeException("ReservationTime is the past time");
 		}
 
-		List<Map<String,String>> resultList = pushMessageService.sendMessage(appKey, msg);
+		List<Map<String, String>> resultList = pushMessageService.sendMessage(
+				appKey, msg);
 
-		Result<List<Map<String,String>>> result = new Result<List<Map<String,String>>>();
+		Result<List<Map<String, String>>> result = new Result<List<Map<String, String>>>();
 		result.setSuccess(true);
 
 		result.setData(resultList);
 		@SuppressWarnings({ "unchecked", "rawtypes" })
-		Response<Result<List<Map<String,String>>>> res = new Response(result);
+		Response<Result<List<Map<String, String>>>> res = new Response(result);
 		return res;
 
 	}
-	
+
+	/**
+	 * Gets the msg cnt limit.
+	 *
+	 * @param appKey the app key
+	 * @return the msg cnt limit
+	 * @throws Exception the exception
+	 */
 	@RequestMapping(value = "/messages/msgCntLimit", method = RequestMethod.GET, consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
 	@ResponseBody
 	public Response<Result<Integer>> getMsgCntLimit(
-			@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String appKey) throws Exception {
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String appKey)
+			throws Exception {
 		logger.debug("getMsgCntLimit");
-		
+
 		User user = accountService.retrieveAccount(appKey);
-		
+
 		if (user == null) {
 			throw new RuntimeException("not found");
-		} 
-		
+		}
+
 		Result<Integer> result = new Result<Integer>();
 		result.setSuccess(true);
 
@@ -103,19 +133,26 @@ public class PushMessageController extends BaseController {
 		Response<Result<Integer>> res = new Response(result);
 		return res;
 	}
-	
-	
+
+	/**
+	 * Gets the message result.
+	 *
+	 * @param appKey the app key
+	 * @param msgIds the msg ids
+	 * @return the message result
+	 * @throws Exception the exception
+	 */
 	@RequestMapping(value = "/messages/result", method = RequestMethod.POST, consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
 	@ResponseBody
 	public Response<Result<List<MessageResult>>> getMessageResult(
-			@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String appKey
-			,@RequestBody MessageIdsReq msgIds) throws Exception {
-		
-		//1. msgId 의 앞의5자 YYYYMM 이 같아야 함
-		
-		
-		List<MessageResult> list = pushMessageService.getMessageResult(msgIds, appKey);
-		
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String appKey,
+			@RequestBody MessageIdsReq msgIds) throws Exception {
+
+		// 1. msgId 의 앞의5자 YYYYMM 이 같아야 함
+
+		List<MessageResult> list = pushMessageService.getMessageResult(msgIds,
+				appKey);
+
 		Result<List<MessageResult>> result = new Result<List<MessageResult>>();
 		result.setSuccess(true);
 
@@ -124,14 +161,22 @@ public class PushMessageController extends BaseController {
 		Response<Result<List<MessageResult>>> res = new Response(result);
 		return res;
 	}
-	
+
+	/**
+	 * Cancel reservation message.
+	 *
+	 * @param appKey the app key
+	 * @param msgId the msg id
+	 * @return the response
+	 * @throws Exception the exception
+	 */
 	@RequestMapping(value = "/messages/{msgId}", method = RequestMethod.DELETE, consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
 	@ResponseBody
 	public Response<Result<Integer>> cancelReservationMessage(
-			@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String appKey
-			,@PathVariable("msgId") String msgId) throws Exception {
-		
-		Integer delCnt = pushMessageService.cancelMessage(appKey,msgId);
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String appKey,
+			@PathVariable("msgId") String msgId) throws Exception {
+
+		Integer delCnt = pushMessageService.cancelMessage(appKey, msgId);
 
 		Result<Integer> result = new Result<Integer>();
 		result.setSuccess(true);
@@ -141,17 +186,23 @@ public class PushMessageController extends BaseController {
 		Response<Result<Integer>> res = new Response(result);
 		return res;
 	}
-	
-	
-	@RequestMapping(value = "/validation", method = RequestMethod.GET,params = "phoneNo", consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
+
+	/**
+	 * Valid phone no.
+	 *
+	 * @param phoneNo the phone no
+	 * @return the response
+	 * @throws Exception the exception
+	 */
+	@RequestMapping(value = "/validation", method = RequestMethod.GET, params = "phoneNo", consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
 	@ResponseBody
 	public Response<Result<Boolean>> validPhoneNo(
 			@RequestParam("phoneNo") String phoneNo) throws Exception {
-		
-		logger.info("validPhoneNo :{}",phoneNo);
-		
+
+		logger.info("validPhoneNo :{}", phoneNo);
+
 		Boolean isValid = pushMessageService.validPhoneNo(phoneNo);
-		
+
 		Result<Boolean> result = new Result<Boolean>();
 		result.setSuccess(true);
 
@@ -160,16 +211,23 @@ public class PushMessageController extends BaseController {
 		Response<Result<Boolean>> res = new Response(result);
 		return res;
 	}
-	
+
+	/**
+	 * Valid ufmi no.
+	 *
+	 * @param ufmiNo the ufmi no
+	 * @return the response
+	 * @throws Exception the exception
+	 */
 	@RequestMapping(value = "/validation", method = RequestMethod.GET, params = "ufmiNo", consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
 	@ResponseBody
 	public Response<Result<Boolean>> validUfmiNo(
 			@RequestParam("ufmiNo") String ufmiNo) throws Exception {
-		
-		logger.info("validUfmiNo :{}",ufmiNo);
-		
+
+		logger.info("validUfmiNo :{}", ufmiNo);
+
 		Boolean isValid = pushMessageService.validUfmiNo(ufmiNo);
-		
+
 		Result<Boolean> result = new Result<Boolean>();
 		result.setSuccess(true);
 
@@ -178,17 +236,29 @@ public class PushMessageController extends BaseController {
 		Response<Result<Boolean>> res = new Response(result);
 		return res;
 	}
-	
+
+	/**
+	 * Checks if is valid.
+	 *
+	 * @param receiver the receiver
+	 * @return true, if is valid
+	 */
 	private boolean isValid(String receiver) {
-			return userValidator.validRequestValue(receiver);
+		return userValidator.validRequestValue(receiver);
 	}
-	
+
+	/**
+	 * Callback post.
+	 *
+	 * @param req the req
+	 * @return the response
+	 */
 	@RequestMapping(value = "/callback", method = RequestMethod.POST)
 	@ResponseBody
 	public Response<Result<String>> callbackPost(@RequestBody CallbackReq req) {
 
-		logger.info("callback test msgId : {}",req.getCallbackmsgid());
-		
+		logger.info("callback test msgId : {}", req.getCallbackmsgid());
+
 		Result<String> result = new Result<String>();
 		result.setSuccess(true);
 		result.setData(req.getCallbackmsgid());
@@ -197,13 +267,19 @@ public class PushMessageController extends BaseController {
 		return res;
 
 	}
-	
+
+	/**
+	 * Callback.
+	 *
+	 * @param msgId the msg id
+	 * @return the response
+	 */
 	@RequestMapping(value = "/callback/{msgId}", method = RequestMethod.GET)
 	@ResponseBody
 	public Response<Result<String>> callback(@PathVariable("msgId") String msgId) {
 
-		logger.info("callback test msgId : {}",msgId);
-		
+		logger.info("callback test msgId : {}", msgId);
+
 		Result<String> result = new Result<String>();
 		result.setSuccess(true);
 		result.setData(msgId);

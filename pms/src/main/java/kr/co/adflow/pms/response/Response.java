@@ -3,6 +3,12 @@
  */
 package kr.co.adflow.pms.response;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class Response.
+ *
+ * @param <T> the generic type
+ */
 public class Response<T> {
 
 	/** The result. */

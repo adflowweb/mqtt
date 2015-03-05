@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package kr.co.adflow.pms.adm.filter;
 
 import java.util.Date;
@@ -18,23 +21,34 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class SystemInterceptor.
+ */
 public class SystemInterceptor extends HandlerInterceptorAdapter {
-	
+
+	/** The Constant logger. */
 	private static final Logger logger = LoggerFactory
 			.getLogger(SystemInterceptor.class);
 
+	/** The intercept mapper. */
 	@Autowired
 	private InterceptMapper interceptMapper;
+	
+	/** The token mapper. */
 	@Autowired
 	private TokenMapper tokenMapper;
-	
+
+	/** The pms config. */
 	@Autowired
 	private PmsConfig pmsConfig;
 
-	
+	/* (non-Javadoc)
+	 * @see org.springframework.web.servlet.handler.HandlerInterceptorAdapter#preHandle(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.lang.Object)
+	 */
 	public boolean preHandle(HttpServletRequest request,
 			HttpServletResponse response, Object handler) throws Exception {
-		
+
 		logger.info("SystemInterceptor.preHandle");
 
 		String token = request.getHeader(StaticConfig.HEADER_APPLICATION_TOKEN);
@@ -45,38 +59,38 @@ public class SystemInterceptor extends HandlerInterceptorAdapter {
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 			return false;
 		}
-		
+
 		AppKey tokenKey = new AppKey();
-		
+
 		tokenKey.setApplicationKey(token);
 		tokenKey.setRole(StaticConfig.USER_ROLE_SYSTEM);
-		//1 token 조회
-		Date expiredTime = interceptMapper.selectCashedApplicationToken(tokenKey);
-		
+		// 1 token 조회
+		Date expiredTime = interceptMapper
+				.selectCashedApplicationToken(tokenKey);
+
 		if (expiredTime == null) {
 			logger.error("sesson expired");
 			response.sendError(401);
 			return false;
 		}
-		//2 만료시간 비교
-		
+		// 2 만료시간 비교
+
 		long diffTime = expiredTime.getTime() - System.currentTimeMillis();
-		
+
 		long checkTime = 1000 * 60 * 20;
-		
-		
-		
+
 		if (diffTime < checkTime) {
-			//3 만료시간 연장
+			// 3 만료시간 연장
 			Token updateToken = new Token();
 			updateToken.setTokenId(token);
-			updateToken.setExpiredTime(DateUtil.afterMinute(pmsConfig.HEADER_APPLICATION_TOKEN_EXPIRED, System.currentTimeMillis()));
-			
+			updateToken.setExpiredTime(DateUtil.afterMinute(
+					pmsConfig.HEADER_APPLICATION_TOKEN_EXPIRED,
+					System.currentTimeMillis()));
+
 			tokenMapper.updateTokenExpiredTime(updateToken);
 		}
-		
-			return true;
 
+		return true;
 
 	}
 

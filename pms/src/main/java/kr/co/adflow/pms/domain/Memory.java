@@ -6,7 +6,7 @@ package kr.co.adflow.pms.domain;
 // TODO: Auto-generated Javadoc
 /**
  * The Class Memory.
- *
+ * 
  * @author nadir93
  * @date 2014. 6. 2.
  */
@@ -33,13 +33,19 @@ public class Memory {
 
 	/**
 	 * Instantiates a new memory.
-	 *
-	 * @param actualFree the actual free
-	 * @param actualUsed the actual used
-	 * @param free the free
-	 * @param ram the ram
-	 * @param total the total
-	 * @param used the used
+	 * 
+	 * @param actualFree
+	 *            the actual free
+	 * @param actualUsed
+	 *            the actual used
+	 * @param free
+	 *            the free
+	 * @param ram
+	 *            the ram
+	 * @param total
+	 *            the total
+	 * @param used
+	 *            the used
 	 */
 	public Memory(long actualFree, long actualUsed, long free, long ram,
 			long total, long used) {
@@ -54,7 +60,7 @@ public class Memory {
 
 	/**
 	 * Gets the actual free.
-	 *
+	 * 
 	 * @return the actual free
 	 */
 	public long getActualFree() {
@@ -63,8 +69,9 @@ public class Memory {
 
 	/**
 	 * Sets the actual free.
-	 *
-	 * @param actualFree the new actual free
+	 * 
+	 * @param actualFree
+	 *            the new actual free
 	 */
 	public void setActualFree(long actualFree) {
 		ActualFree = actualFree;
@@ -72,7 +79,7 @@ public class Memory {
 
 	/**
 	 * Gets the actual used.
-	 *
+	 * 
 	 * @return the actual used
 	 */
 	public long getActualUsed() {
@@ -81,8 +88,9 @@ public class Memory {
 
 	/**
 	 * Sets the actual used.
-	 *
-	 * @param actualUsed the new actual used
+	 * 
+	 * @param actualUsed
+	 *            the new actual used
 	 */
 	public void setActualUsed(long actualUsed) {
 		ActualUsed = actualUsed;
@@ -90,7 +98,7 @@ public class Memory {
 
 	/**
 	 * Gets the free.
-	 *
+	 * 
 	 * @return the free
 	 */
 	public long getFree() {
@@ -99,8 +107,9 @@ public class Memory {
 
 	/**
 	 * Sets the free.
-	 *
-	 * @param free the new free
+	 * 
+	 * @param free
+	 *            the new free
 	 */
 	public void setFree(long free) {
 		Free = free;
@@ -108,7 +117,7 @@ public class Memory {
 
 	/**
 	 * Gets the ram.
-	 *
+	 * 
 	 * @return the ram
 	 */
 	public long getRam() {
@@ -117,8 +126,9 @@ public class Memory {
 
 	/**
 	 * Sets the ram.
-	 *
-	 * @param ram the new ram
+	 * 
+	 * @param ram
+	 *            the new ram
 	 */
 	public void setRam(long ram) {
 		Ram = ram;
@@ -126,7 +136,7 @@ public class Memory {
 
 	/**
 	 * Gets the total.
-	 *
+	 * 
 	 * @return the total
 	 */
 	public long getTotal() {
@@ -135,8 +145,9 @@ public class Memory {
 
 	/**
 	 * Sets the total.
-	 *
-	 * @param total the new total
+	 * 
+	 * @param total
+	 *            the new total
 	 */
 	public void setTotal(long total) {
 		Total = total;
@@ -144,7 +155,7 @@ public class Memory {
 
 	/**
 	 * Gets the used.
-	 *
+	 * 
 	 * @return the used
 	 */
 	public long getUsed() {
@@ -153,14 +164,17 @@ public class Memory {
 
 	/**
 	 * Sets the used.
-	 *
-	 * @param used the new used
+	 * 
+	 * @param used
+	 *            the new used
 	 */
 	public void setUsed(long used) {
 		Used = used;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

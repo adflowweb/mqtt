@@ -10,7 +10,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 // TODO: Auto-generated Javadoc
 /**
  * The Class ServerInfo.
- *
+ * 
  * @author nadir93
  * @date 2014. 4. 14.
  */
@@ -19,28 +19,28 @@ public class ServerInfo {
 
 	/** The cpu. */
 	private CPU cpu;
-	
+
 	/** The memory. */
 	private Memory memory;
-	
+
 	/** The heap. */
 	private Heap heap;
-	
+
 	/** The disk. */
 	private Disk[] disk;
-	
+
 	/** The tps. */
 	private double tps;
-	
+
 	/** The host name. */
 	private String hostName;
-	
+
 	/** The ip address. */
 	private String ipAddress;
 
 	/** The available. */
 	private boolean available;
-	
+
 	/** The message. */
 	private String message;
 
@@ -52,9 +52,11 @@ public class ServerInfo {
 
 	/**
 	 * Instantiates a new server info.
-	 *
-	 * @param available the available
-	 * @param message the message
+	 * 
+	 * @param available
+	 *            the available
+	 * @param message
+	 *            the message
 	 */
 	public ServerInfo(boolean available, String message) {
 		this.available = available;
@@ -63,7 +65,7 @@ public class ServerInfo {
 
 	/**
 	 * Gets the cpu.
-	 *
+	 * 
 	 * @return the cpu
 	 */
 	public CPU getCpu() {
@@ -72,8 +74,9 @@ public class ServerInfo {
 
 	/**
 	 * Sets the cpu.
-	 *
-	 * @param cpu the new cpu
+	 * 
+	 * @param cpu
+	 *            the new cpu
 	 */
 	public void setCpu(CPU cpu) {
 		this.cpu = cpu;
@@ -81,7 +84,7 @@ public class ServerInfo {
 
 	/**
 	 * Gets the memory.
-	 *
+	 * 
 	 * @return the memory
 	 */
 	public Memory getMemory() {
@@ -90,8 +93,9 @@ public class ServerInfo {
 
 	/**
 	 * Sets the memory.
-	 *
-	 * @param memory the new memory
+	 * 
+	 * @param memory
+	 *            the new memory
 	 */
 	public void setMemory(Memory memory) {
 		this.memory = memory;
@@ -99,7 +103,7 @@ public class ServerInfo {
 
 	/**
 	 * Gets the heap.
-	 *
+	 * 
 	 * @return the heap
 	 */
 	public Heap getHeap() {
@@ -108,8 +112,9 @@ public class ServerInfo {
 
 	/**
 	 * Sets the heap.
-	 *
-	 * @param heap the new heap
+	 * 
+	 * @param heap
+	 *            the new heap
 	 */
 	public void setHeap(Heap heap) {
 		this.heap = heap;
@@ -117,7 +122,7 @@ public class ServerInfo {
 
 	/**
 	 * Gets the host name.
-	 *
+	 * 
 	 * @return the host name
 	 */
 	public String getHostName() {
@@ -126,8 +131,9 @@ public class ServerInfo {
 
 	/**
 	 * Sets the host name.
-	 *
-	 * @param hostName the new host name
+	 * 
+	 * @param hostName
+	 *            the new host name
 	 */
 	public void setHostName(String hostName) {
 		this.hostName = hostName;
@@ -135,7 +141,7 @@ public class ServerInfo {
 
 	/**
 	 * Gets the ip address.
-	 *
+	 * 
 	 * @return the ip address
 	 */
 	public String getIpAddress() {
@@ -144,8 +150,9 @@ public class ServerInfo {
 
 	/**
 	 * Sets the ip address.
-	 *
-	 * @param ipAddress the new ip address
+	 * 
+	 * @param ipAddress
+	 *            the new ip address
 	 */
 	public void setIpAddress(String ipAddress) {
 		this.ipAddress = ipAddress;
@@ -153,7 +160,7 @@ public class ServerInfo {
 
 	/**
 	 * Checks if is available.
-	 *
+	 * 
 	 * @return true, if is available
 	 */
 	public boolean isAvailable() {
@@ -162,8 +169,9 @@ public class ServerInfo {
 
 	/**
 	 * Sets the available.
-	 *
-	 * @param available the new available
+	 * 
+	 * @param available
+	 *            the new available
 	 */
 	public void setAvailable(boolean available) {
 		this.available = available;
@@ -171,7 +179,7 @@ public class ServerInfo {
 
 	/**
 	 * Gets the message.
-	 *
+	 * 
 	 * @return the message
 	 */
 	public String getMessage() {
@@ -180,8 +188,9 @@ public class ServerInfo {
 
 	/**
 	 * Sets the message.
-	 *
-	 * @param message the new message
+	 * 
+	 * @param message
+	 *            the new message
 	 */
 	public void setMessage(String message) {
 		this.message = message;
@@ -189,7 +198,7 @@ public class ServerInfo {
 
 	/**
 	 * Gets the disk.
-	 *
+	 * 
 	 * @return the disk
 	 */
 	public Disk[] getDisk() {
@@ -198,8 +207,9 @@ public class ServerInfo {
 
 	/**
 	 * Sets the disk.
-	 *
-	 * @param disk the new disk
+	 * 
+	 * @param disk
+	 *            the new disk
 	 */
 	public void setDisk(Disk[] disk) {
 		this.disk = disk;
@@ -207,7 +217,7 @@ public class ServerInfo {
 
 	/**
 	 * Gets the tps.
-	 *
+	 * 
 	 * @return the tps
 	 */
 	public double getTps() {
@@ -216,14 +226,17 @@ public class ServerInfo {
 
 	/**
 	 * Sets the tps.
-	 *
-	 * @param tps the new tps
+	 * 
+	 * @param tps
+	 *            the new tps
 	 */
 	public void setTps(double tps) {
 		this.tps = tps;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

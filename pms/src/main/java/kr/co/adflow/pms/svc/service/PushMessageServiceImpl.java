@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package kr.co.adflow.pms.svc.service;
 
 import java.util.ArrayList;
@@ -11,7 +14,6 @@ import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.util.CheckUtil;
 import kr.co.adflow.pms.core.util.DateUtil;
 import kr.co.adflow.pms.core.util.KeyGenerator;
-import kr.co.adflow.pms.domain.Ack;
 import kr.co.adflow.pms.domain.CtlQ;
 import kr.co.adflow.pms.domain.Message;
 import kr.co.adflow.pms.domain.MessageResult;
@@ -30,58 +32,78 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class PushMessageServiceImpl.
+ */
 @Service
 public class PushMessageServiceImpl implements PushMessageService {
 
+	/** The Constant logger. */
 	private static final Logger logger = LoggerFactory
 			.getLogger(PushMessageServiceImpl.class);
 
+	/** The message mapper. */
 	@Autowired
 	private MessageMapper messageMapper;
+	
+	/** The user mapper. */
 	@Autowired
 	private UserMapper userMapper;
+	
+	/** The intercept mapper. */
 	@Autowired
 	private InterceptMapper interceptMapper;
-	
+
+	/** The validation mapper. */
 	@Autowired
 	private ValidationMapper validationMapper;
-	
+
+	/** The user validator. */
 	@Autowired
 	private UserValidator userValidator;
-	
+
+	/** The ctl q mapper. */
 	@Autowired
 	private CtlQMapper ctlQMapper;
 
+	/** The check util. */
 	@Autowired
 	private CheckUtil checkUtil;
-	
+
+	/** The pms config. */
 	@Autowired
 	private PmsConfig pmsConfig;
 
-	
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.pms.svc.service.PushMessageService#sendMessage(java.lang.String, kr.co.adflow.pms.svc.request.MessageReq)
+	 */
 	@Override
-	public List<Map<String,String>> sendMessage(String appKey, MessageReq message) {
+	public List<Map<String, String>> sendMessage(String appKey,
+			MessageReq message) {
 
-		//String[] msgIdArray = null;
-		
-		List<Map<String,String>> resultList = null;
+		// String[] msgIdArray = null;
 
-		//1. get userId by appKey 
+		List<Map<String, String>> resultList = null;
+
+		// 1. get userId by appKey
 		String issueId = interceptMapper.selectCashedUserId(appKey);
-		
-		if (message.getContent().getBytes().length > this.getMessageSizeLimit(issueId)) {
-			throw new RuntimeException(" message body size limit over :" + this.getMessageSizeLimit(issueId));
+
+		if (message.getContent().getBytes().length > this
+				.getMessageSizeLimit(issueId)) {
+			throw new RuntimeException(" message body size limit over :"
+					+ this.getMessageSizeLimit(issueId));
 		}
-		//2. get max count by userId
-		//3. check max count
+		// 2. get max count by userId
+		// 3. check max count
 		if (userMapper.getMsgCntLimit(issueId) < message.getReceivers().length) {
-	       throw new RuntimeException("send message count is message count limit over ");
+			throw new RuntimeException(
+					"send message count is message count limit over ");
 		}
-		
 
 		Message msg = new Message();
 		msg.setKeyMon(DateUtil.getYYYYMM());
-		
+
 		msg.setServerId(pmsConfig.EXECUTOR_SERVER_ID);
 		msg.setMsgType(pmsConfig.MESSAGE_HEADER_TYPE_DEFAULT);
 		msg.setExpiry(this.getMessageExpiry(issueId));
@@ -93,66 +115,71 @@ public class PushMessageServiceImpl implements PushMessageService {
 		msg.setAck(pmsConfig.MESSAGE_ACK_DEFAULT);
 		msg.setContentType(message.getContentType());
 		msg.setContent(message.getContent());
-		
+
 		if (message.getReservationTime() != null) {
 			msg.setReservationTime(message.getReservationTime());
 			msg.setReservation(true);
 		}
-		
+
 		msg.setResendMaxCount(message.getResendMaxCount());
 		msg.setResendInterval(message.getResendInterval());
 
 		String[] receivers = message.getReceivers();
 
-		//msgIdArray = new String[receivers.length];
-		
-		
-		
+		// msgIdArray = new String[receivers.length];
+
 		for (int i = 0; i < receivers.length; i++) {
 			if (!userValidator.validRequestValue(receivers[i])) {
-				throw new RuntimeException("receivers formatting error count : " + i);
+				throw new RuntimeException(
+						"receivers formatting error count : " + i);
 			}
 		}
-		
-		resultList = new ArrayList<Map<String,String>>(receivers.length);
-		
+
+		resultList = new ArrayList<Map<String, String>>(receivers.length);
+
 		String groupId = null;
-		Map<String,String> msgMap = null;
+		Map<String, String> msgMap = null;
 		for (int i = 0; i < receivers.length; i++) {
 
-			msgMap = new HashMap<String,String>();
+			msgMap = new HashMap<String, String>();
 			msg.setReceiver(receivers[i]);
 			msg.setMsgId(this.getMsgId());
-			//MEMO 여러 건일때 0 번째 msgId 를 대표로 groupId에 추가
+			// MEMO 여러 건일때 0 번째 msgId 를 대표로 groupId에 추가
 			if (i == 0) {
 				groupId = msg.getMsgId();
 			}
 			msg.setGroupId(groupId);
-			//MEMO resend msg 인 경우 resendId 에 msgId 추가
+			// MEMO resend msg 인 경우 resendId 에 msgId 추가
 			if (msg.getResendCount() > 0) {
 				msg.setResendId(msg.getMsgId());
 			} else {
 				msg.setResendId(null);
 			}
-			
+
 			msg.setStatus(StaticConfig.MESSAGE_STATUS_SENDING);
 			messageMapper.insertMessage(msg);
 			messageMapper.insertContent(msg);
-			
+
 			ctlQMapper.insertQ(this.getCtlQ(msg));
 			msgMap.put("msgId", msg.getMsgId());
 			msgMap.put("receiver", msg.getReceiver());
-			
+
 			resultList.add(msgMap);
 			logger.info("message id :: {}", msg.getMsgId());
 		}
 
 		return resultList;
 	}
-	
+
+	/**
+	 * Gets the ctl q.
+	 *
+	 * @param msg the msg
+	 * @return the ctl q
+	 */
 	private CtlQ getCtlQ(Message msg) {
 		CtlQ ctlQ = new CtlQ();
-		
+
 		if (msg.isReservation()) {
 			ctlQ.setExeType(StaticConfig.CONTROL_QUEUE_EXECUTOR_TYPE_RESERVATION);
 			ctlQ.setIssueTime(msg.getReservationTime());
@@ -160,42 +187,50 @@ public class PushMessageServiceImpl implements PushMessageService {
 			ctlQ.setExeType(StaticConfig.CONTROL_QUEUE_EXECUTOR_TYPE_MESSAGE);
 			ctlQ.setIssueTime(new Date());
 		}
-		
+
 		ctlQ.setTableName(msg.getKeyMon());
 		ctlQ.setMsgId(msg.getMsgId());
 		ctlQ.setServerId(msg.getServerId());
-		
+
 		return ctlQ;
 	}
 
+	/**
+	 * Gets the msg id.
+	 *
+	 * @return the msg id
+	 */
 	private String getMsgId() {
 		return KeyGenerator.generateMsgId();
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.pms.svc.service.PushMessageService#getMessageResult(kr.co.adflow.pms.svc.request.MessageIdsReq, java.lang.String)
+	 */
 	@Override
 	public List<MessageResult> getMessageResult(MessageIdsReq msgIds,
 			String appKey) {
-		
+
 		List<MessageResult> resultList = null;
-		
+
 		String issueId = interceptMapper.selectCashedUserId(appKey);
-		
+
 		MsgIdsParams param = new MsgIdsParams();
-		
+
 		param.setKeyMon(this.getKeyMon(msgIds.getMsgIds()));
 		param.setIssueId(issueId);
 		param.setMsgIds(msgIds.getMsgIds());
-		
+
 		List<Message> list = messageMapper.getMessageResult(param);
-		
+
 		resultList = new ArrayList<MessageResult>();
 		MessageResult messageResult = null;
-		for (Message msg: list) {
+		for (Message msg : list) {
 			messageResult = new MessageResult();
-			
+
 			messageResult.setMsgId(msg.getMsgId());
 			messageResult.setReceiver(msg.getReceiver());
-			//messageResult.setResendCount(msg.getResendCount());
+			// messageResult.setResendCount(msg.getResendCount());
 			messageResult.setReservation(msg.isReservation());
 			messageResult.setReservationTime(msg.getReservationTime());
 			messageResult.setStatus(msg.getStatus());
@@ -204,13 +239,19 @@ public class PushMessageServiceImpl implements PushMessageService {
 			messageResult.setPmaAckTime(msg.getPmaAckTime());
 			messageResult.setAppAckType(msg.getAppAckType());
 			messageResult.setAppAckTime(msg.getAppAckTime());
-			
+
 			resultList.add(messageResult);
 		}
-		
+
 		return resultList;
 	}
 
+	/**
+	 * Gets the key mon.
+	 *
+	 * @param msgIds the msg ids
+	 * @return the key mon
+	 */
 	private String getKeyMon(String[] msgIds) {
 		if (msgIds.length < 1) {
 			throw new RuntimeException("msgId not found");
@@ -218,53 +259,101 @@ public class PushMessageServiceImpl implements PushMessageService {
 		return msgIds[0].substring(0, 6);
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.pms.svc.service.PushMessageService#validPhoneNo(java.lang.String)
+	 */
 	@Override
 	public Boolean validPhoneNo(String phoneNo) {
 		return validationMapper.validPhoneNo(this.getPushUserId(phoneNo));
 	}
 
+	/**
+	 * Gets the push user id.
+	 *
+	 * @param phoneNo the phone no
+	 * @return the push user id
+	 */
 	private String getPushUserId(String phoneNo) {
 		return userValidator.getRegstPhoneNo(phoneNo);
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.pms.svc.service.PushMessageService#validUfmiNo(java.lang.String)
+	 */
 	@Override
 	public Boolean validUfmiNo(String ufmiNo) {
 		return validationMapper.validUfmiNo(this.getPushUfmi(ufmiNo));
 	}
 
+	/**
+	 * Gets the push ufmi.
+	 *
+	 * @param ufmiNo the ufmi no
+	 * @return the push ufmi
+	 */
 	private String getPushUfmi(String ufmiNo) {
 		return userValidator.getRegstUfmiNo(ufmiNo);
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.pms.svc.service.PushMessageService#cancelMessage(java.lang.String, java.lang.String)
+	 */
 	@Override
 	public Integer cancelMessage(String appKey, String msgId) {
-		
+
 		String issueId = interceptMapper.selectCashedUserId(appKey);
-		
+
 		Message msg = new Message();
 		msg.setKeyMon(this.getKeyMon(msgId));
 		msg.setMsgId(msgId);
 		msg.setUpdateId(issueId);
 		msg.setStatus(StaticConfig.MESSAGE_STATUS_RESEVATION_CANCEL);
-		
+
 		return messageMapper.cancelMessage(msg);
 	}
 
+	/**
+	 * Gets the key mon.
+	 *
+	 * @param msgId the msg id
+	 * @return the key mon
+	 */
 	private String getKeyMon(String msgId) {
 		// TODO Auto-generated method stub
 		return msgId.substring(0, 6);
 	}
-	
+
+	/**
+	 * Gets the message size limit.
+	 *
+	 * @param userId the user id
+	 * @return the message size limit
+	 */
 	private int getMessageSizeLimit(String userId) {
-		return checkUtil.getMessageSizeLimit(interceptMapper.getCashedMessageSizeLimit(userId));
+		return checkUtil.getMessageSizeLimit(interceptMapper
+				.getCashedMessageSizeLimit(userId));
 	}
-	
+
+	/**
+	 * Gets the message expiry.
+	 *
+	 * @param userId the user id
+	 * @return the message expiry
+	 */
 	private int getMessageExpiry(String userId) {
-		return checkUtil.getMessageExpiry(interceptMapper.getCashedMessageExpiry(userId));
+		return checkUtil.getMessageExpiry(interceptMapper
+				.getCashedMessageExpiry(userId));
 	}
-	
+
+	/**
+	 * Gets the message qos.
+	 *
+	 * @param userId the user id
+	 * @return the message qos
+	 */
 	private int getMessageQos(String userId) {
-		return checkUtil.getMessageQos(interceptMapper.getCashedMessageQos(userId));
+		return checkUtil.getMessageQos(interceptMapper
+				.getCashedMessageQos(userId));
 	}
 
 }

@@ -7,6 +7,12 @@ import java.util.List;
 
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class Result.
+ *
+ * @param <T> the generic type
+ */
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class Result<T> {
 

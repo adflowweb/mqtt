@@ -1,15 +1,12 @@
+/*
+ * 
+ */
 package kr.co.adflow.pms.adm.service;
-
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import kr.co.adflow.pms.adm.request.ReservationCancelReq;
 import kr.co.adflow.pms.adm.response.MessagesRes;
@@ -24,54 +21,75 @@ import kr.co.adflow.pms.domain.mapper.UserMapper;
 import kr.co.adflow.pms.domain.mapper.ValidationMapper;
 import kr.co.adflow.pms.domain.validator.UserValidator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+// TODO: Auto-generated Javadoc
+/**
+ * The Class SvcServiceImpl.
+ */
 @Service
 public class SvcServiceImpl implements SvcService {
 
+	/** The Constant logger. */
 	private static final Logger logger = LoggerFactory
 			.getLogger(SvcServiceImpl.class);
-	
+
+	/** The message mapper. */
 	@Autowired
 	private MessageMapper messageMapper;
-	
+
+	/** The intercept mapper. */
 	@Autowired
 	private InterceptMapper interceptMapper;
-	
+
+	/** The validation mapper. */
 	@Autowired
 	private ValidationMapper validationMapper;
-	
+
+	/** The user validator. */
 	@Autowired
 	private UserValidator userValidator;
-	
+
+	/** The user mapper. */
 	@Autowired
 	private UserMapper userMapper;
-	
+
+	/** The summary mapper. */
 	@Autowired
 	private SummaryMapper summaryMapper;
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.pms.adm.service.SvcService#getSvcMessageList(java.util.Map)
+	 */
 	@Override
 	public MessagesRes getSvcMessageList(Map<String, String> params) {
-		
+
 		MessagesRes res = null;
-		
-		String issueId = interceptMapper.selectCashedUserId((String)params.get("appKey"));
-		
+
+		String issueId = interceptMapper.selectCashedUserId((String) params
+				.get("appKey"));
+
 		if (params.get("cSearchDate") == null) {
-			//error
+			// error
 			throw new RuntimeException("");
-		} 
-		
+		}
+
 		MsgParams msgParams = new MsgParams();
-		
+
 		msgParams.setKeyMon(params.get("cSearchDate"));
 		msgParams.setIssueId(issueId);
 		msgParams.setiDisplayStart(this.getInt(params.get("iDisplayStart")));
 		msgParams.setiDisplayLength(this.getInt(params.get("iDisplayLength")));
-		
+
 		msgParams.setDateStart(this.getDate(params.get("cSearchDateStart")));
 		msgParams.setDateEnd(this.getDate(params.get("cSearchDateEnd")));
-		
-		msgParams.setStatusArray(this.getStringArray(params.get("cSearchStatus")));
-		
+
+		msgParams.setStatusArray(this.getStringArray(params
+				.get("cSearchStatus")));
+
 		String filter = params.get("cSearchFilter");
 		msgParams.setAckType(-1);
 		if ("receiver".equals(filter)) {
@@ -81,63 +99,85 @@ public class SvcServiceImpl implements SvcService {
 		} else if ("ack".equals(filter)) {
 			msgParams.setAckType(this.getInt(params.get("cSearchContent")));
 		}
-				
+
 		int cnt = messageMapper.getSvcMessageListCnt(msgParams);
-		logger.info("cnt :::::::{}",cnt);
-		
+		logger.info("cnt :::::::{}", cnt);
+
 		List<Message> list = messageMapper.getSvcMessageList(msgParams);
-		logger.info("list size :::::::{}",list.size());
-		
+		logger.info("list size :::::::{}", list.size());
+
 		res = new MessagesRes();
 		res.setRecordsFiltered(cnt);
 		res.setRecordsTotal(cnt);
 		res.setData(list);
-		
+
 		return res;
 	}
 
+	/**
+	 * Gets the string array.
+	 *
+	 * @param string the string
+	 * @return the string array
+	 */
 	private String[] getStringArray(String string) {
 		if ("ALL".equals(string)) {
 			return null;
-		} 
+		}
 		return string.split(",");
 	}
 
+	/**
+	 * Gets the date.
+	 *
+	 * @param string the string
+	 * @return the date
+	 */
 	private Date getDate(String string) {
 		return DateUtil.fromISODateString(string);
 	}
 
+	/**
+	 * Gets the int.
+	 *
+	 * @param string the string
+	 * @return the int
+	 */
 	private int getInt(String string) {
 		System.out.println(string);
 		return Integer.parseInt(string);
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.pms.adm.service.SvcService#getSvcResevationMessageList(java.util.Map)
+	 */
 	@Override
 	public MessagesRes getSvcResevationMessageList(Map<String, String> params) {
-		
+
 		MessagesRes res = null;
-		
-		String issueId = interceptMapper.selectCashedUserId(params.get("appKey"));
-		
+
+		String issueId = interceptMapper.selectCashedUserId(params
+				.get("appKey"));
+
 		if (params.get("cSearchDate") == null) {
-			//error
+			// error
 			throw new RuntimeException("");
-		} 
-		
+		}
+
 		MsgParams msgParams = new MsgParams();
-		
+
 		msgParams.setKeyMon(params.get("cSearchDate"));
 		msgParams.setIssueId(issueId);
-		
+
 		msgParams.setiDisplayStart(this.getInt(params.get("iDisplayStart")));
 		msgParams.setiDisplayLength(this.getInt(params.get("iDisplayLength")));
 
 		msgParams.setDateStart(this.getDate(params.get("cSearchDateStart")));
 		msgParams.setDateEnd(this.getDate(params.get("cSearchDateEnd")));
-		
+
 		// 예약 발송 예정만 처리?
-		//msgParams.setStatusArray(this.getStringArray(params.get("cSearchStatus")));
-		
+		// msgParams.setStatusArray(this.getStringArray(params.get("cSearchStatus")));
+
 		String filter = params.get("cSearchFilter");
 		msgParams.setAckType(-1);
 		if ("receiver".equals(filter)) {
@@ -147,38 +187,48 @@ public class SvcServiceImpl implements SvcService {
 		} else if ("ack".equals(filter)) {
 			msgParams.setAckType(this.getInt(params.get("cSearchContent")));
 		}
-		
+
 		int cnt = messageMapper.getSvcResevationMessageListCnt(msgParams);
-		logger.info("cnt :::::::{}",cnt);
-		
-		List<Message> list = messageMapper.getSvcResevationMessageList(msgParams);
-		logger.info("list size :::::::{}",list.size());
-		
+		logger.info("cnt :::::::{}", cnt);
+
+		List<Message> list = messageMapper
+				.getSvcResevationMessageList(msgParams);
+		logger.info("list size :::::::{}", list.size());
+
 		res = new MessagesRes();
 		res.setRecordsFiltered(cnt);
 		res.setRecordsTotal(cnt);
 		res.setData(list);
-		
+
 		return res;
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.pms.adm.service.SvcService#cancelReservationList(java.lang.String, kr.co.adflow.pms.adm.request.ReservationCancelReq)
+	 */
 	@Override
 	public int cancelReservationList(String appKey, ReservationCancelReq reqIds) {
-		
+
 		String issueId = interceptMapper.selectCashedUserId(appKey);
-		
+
 		MsgIdsParams params = new MsgIdsParams();
-		
+
 		params.setKeyMon(this.getKeyMon(reqIds.getMsgIds()));
 		params.setMsgIds(reqIds.getMsgIds());
 		params.setIssueId(null);
 		params.setUpdateId(issueId);
-		
+
 		int cnt = messageMapper.cancelReservationList(params);
-		
+
 		return cnt;
 	}
-	
+
+	/**
+	 * Gets the key mon.
+	 *
+	 * @param msgIds the msg ids
+	 * @return the key mon
+	 */
 	private String getKeyMon(String[] msgIds) {
 		if (msgIds.length < 1) {
 			throw new RuntimeException("msgId not found");
@@ -186,21 +236,21 @@ public class SvcServiceImpl implements SvcService {
 		return msgIds[0].substring(0, 6);
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.pms.adm.service.SvcService#getMonthSummary(java.lang.String, java.lang.String)
+	 */
 	@Override
 	public List<Map<String, Object>> getMonthSummary(String appKey,
 			String keyMon) {
 
-		
 		String issueId = interceptMapper.selectCashedUserId(appKey);
-		
-		Map<String,String> params = new HashMap<String,String>();
-		
+
+		Map<String, String> params = new HashMap<String, String>();
+
 		params.put("issueId", issueId);
 		params.put("keyMon", keyMon);
 
 		return summaryMapper.getMonthSummary(params);
 	}
-	
-
 
 }

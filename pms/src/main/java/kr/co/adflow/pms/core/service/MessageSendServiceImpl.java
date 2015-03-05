@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package kr.co.adflow.pms.core.service;
 
 import java.util.Date;
@@ -5,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import kr.co.adflow.pms.core.config.PmsConfig;
 import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.handler.DirectMsgHandler;
 import kr.co.adflow.pms.core.util.DateUtil;
@@ -32,40 +34,56 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class MessageSendServiceImpl.
+ */
 @Service
 public class MessageSendServiceImpl implements MessageSendService {
 
+	/** The Constant logger. */
 	private static final Logger logger = LoggerFactory
 			.getLogger(MessageSendServiceImpl.class);
 
+	/** The message mapper. */
 	@Autowired
 	private MessageMapper messageMapper;
-	
+
+	/** The user mapper. */
 	@Autowired
 	private UserMapper userMapper;
 
+	/** The push message service. */
 	@Autowired
 	private PushMessageService pushMessageService;
 
+	/** The jms template. */
 	@Autowired
 	private JmsTemplate jmsTemplate;
 
+	/** The validation mapper. */
 	@Autowired
 	private ValidationMapper validationMapper;
 
+	/** The user validator. */
 	@Autowired
 	private UserValidator userValidator;
 
+	/** The ctl q mapper. */
 	@Autowired
 	private CtlQMapper ctlQMapper;
-	
+
+	/** The ack mapper. */
 	@Autowired
 	private AckMapper ackMapper;
-	
+
+	/** The rest template. */
 	@Autowired
 	RestTemplate restTemplate;
 
-
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.pms.core.service.MessageSendService#sendMessageArray(java.lang.String, int)
+	 */
 	@Override
 	public int sendMessageArray(String serverId, int limit) {
 
@@ -91,7 +109,7 @@ public class MessageSendServiceImpl implements MessageSendService {
 
 			boolean isUserMessage = true;
 			if (msg.getReceiverTopic() == null
-					|| msg.getReceiverTopic().trim().length() == 0) { 
+					|| msg.getReceiverTopic().trim().length() == 0) {
 				// admin 이 보낸 메시지는 topic 있는지 확인 안함
 				// msg.getReceiverTopic(); 처리
 				isUserMessage = true;
@@ -164,6 +182,12 @@ public class MessageSendServiceImpl implements MessageSendService {
 		return updateCnt;
 	}
 
+	/**
+	 * Gets the message table name.
+	 *
+	 * @param serverId the server id
+	 * @return the message table name
+	 */
 	private String getMessageTableName(String serverId) {
 		CtlQ result = null;
 		CtlQ paramCtlQ = new CtlQ();
@@ -178,6 +202,12 @@ public class MessageSendServiceImpl implements MessageSendService {
 		}
 	}
 
+	/**
+	 * Valid receiver user id.
+	 *
+	 * @param receiver the receiver
+	 * @return true, if successful
+	 */
 	private boolean validReceiverUserId(String receiver) {
 
 		boolean result = false;
@@ -199,6 +229,12 @@ public class MessageSendServiceImpl implements MessageSendService {
 
 	}
 
+	/**
+	 * Gets the ctl q.
+	 *
+	 * @param msg the msg
+	 * @return the ctl q
+	 */
 	private CtlQ getCtlQ(Message msg) {
 		CtlQ ctlQ = new CtlQ();
 
@@ -217,25 +253,42 @@ public class MessageSendServiceImpl implements MessageSendService {
 		return ctlQ;
 	}
 
-	private boolean isPhoneNo(String receiver) {
-		if ("010".equals(receiver.substring(0, 3))) {
-			return true;
-		} else {
-			return false;
-		}
+//	private boolean isPhoneNo(String receiver) {
+//		if ("010".equals(receiver.substring(0, 3))) {
+//			return true;
+//		} else {
+//			return false;
+//		}
+//
+//	}
 
-	}
-
-	private String getKeyMon(String string) {
+	/**
+ * Gets the key mon.
+ *
+ * @param string the string
+ * @return the key mon
+ */
+private String getKeyMon(String string) {
 		String result = string.substring(0, 6);
 		logger.debug("getKeyMon is {}", result);
 		return result;
 	}
 
+	/**
+	 * Gets the msg id.
+	 *
+	 * @return the msg id
+	 */
 	private String getMsgId() {
 		return KeyGenerator.generateMsgId();
 	}
 
+	/**
+	 * Gets the receiver topic.
+	 *
+	 * @param receiver the receiver
+	 * @return the receiver topic
+	 */
 	private String getReceiverTopic(String receiver) {
 
 		String result = null;
@@ -257,10 +310,17 @@ public class MessageSendServiceImpl implements MessageSendService {
 		return result;
 	}
 
+	/**
+	 * Gets the reservation table name.
+	 *
+	 * @param serverId the server id
+	 * @return the reservation table name
+	 */
 	private String getReservationTableName(String serverId) {
 		CtlQ result = null;
 		CtlQ paramCtlQ = new CtlQ();
-		paramCtlQ.setExeType(StaticConfig.CONTROL_QUEUE_EXECUTOR_TYPE_RESERVATION);
+		paramCtlQ
+				.setExeType(StaticConfig.CONTROL_QUEUE_EXECUTOR_TYPE_RESERVATION);
 		paramCtlQ.setServerId(serverId);
 		result = ctlQMapper.fetchQ(paramCtlQ);
 
@@ -270,7 +330,13 @@ public class MessageSendServiceImpl implements MessageSendService {
 			return result.getTableName();
 		}
 	}
-	
+
+	/**
+	 * Gets the callback table name.
+	 *
+	 * @param serverId the server id
+	 * @return the callback table name
+	 */
 	private String getCallbackTableName(String serverId) {
 		CtlQ result = null;
 		CtlQ paramCtlQ = new CtlQ();
@@ -285,6 +351,9 @@ public class MessageSendServiceImpl implements MessageSendService {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.pms.core.service.MessageSendService#sendReservationMessageArray(java.lang.String, int)
+	 */
 	@Override
 	public int sendReservationMessageArray(String serverId, int limit) {
 		HashMap<String, Object> param = new HashMap<String, Object>();
@@ -355,6 +424,9 @@ public class MessageSendServiceImpl implements MessageSendService {
 		return updateCnt;
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.pms.core.service.MessageSendService#sendCallback(java.lang.String, int)
+	 */
 	@Override
 	public void sendCallback(String serverId, int limit) {
 		// TODO Auto-generated method stub
@@ -364,51 +436,63 @@ public class MessageSendServiceImpl implements MessageSendService {
 		param.put("limit", limit);
 
 		List<AckCallback> list = ackMapper.getCallbackList(param);
-		//1. ack 조회
+		// 1. ack 조회
 		for (AckCallback ack : list) {
-			//2. callback
-			if (ack.getCallbackUrl() != null && ack.getCallbackUrl().trim().length() > 0) {
-				//3. RestTemplate
-				logger.info("ack.getCallbackUrl() {}",ack.getCallbackUrl());
-				logger.info("ack.getCallbackMethod() {}",ack.getCallbackMethod());
+			// 2. callback
+			if (ack.getCallbackUrl() != null
+					&& ack.getCallbackUrl().trim().length() > 0) {
+				// 3. RestTemplate
+				logger.info("ack.getCallbackUrl() {}", ack.getCallbackUrl());
+				logger.info("ack.getCallbackMethod() {}",
+						ack.getCallbackMethod());
 				if (ack.getCallbackMethod().equals("POST")) {
 					try {
-						Map resultMap = restTemplate.postForObject(ack.getCallbackUrl(), this.getRequest(ack), Map.class);
-						logger.info("{}",resultMap);
+						Map resultMap = restTemplate.postForObject(
+								ack.getCallbackUrl(), this.getRequest(ack),
+								Map.class);
+						logger.info("{}", resultMap);
 						ack.setCallbackStatus(1);
 						ack.setCallbackCount(1);
-					} catch(Exception e) {
+					} catch (Exception e) {
 						e.printStackTrace();
 						// error
 						ack.setCallbackStatus(-1);
 						ack.setCallbackCount(1);
-	
+
 					}
 				}
-				
+
 			} else {
 				ack.setCallbackStatus(1);
 				ack.setCallbackCount(0);
 			}
-			
-			logger.info("updateAckCallback before {}",ack.getMsgId());
-			//4. ack update
+
+			logger.info("updateAckCallback before {}", ack.getMsgId());
+			// 4. ack update
 			ackMapper.updateAckCallback(this.getParams(ack));
-			logger.info("updateAckCallback after {}",ack.getMsgId());
-			//5. ctl_q 삭제
+			logger.info("updateAckCallback after {}", ack.getMsgId());
+			// 5. ctl_q 삭제
 			ctlQMapper.deleteQ(ack.getMsgId());
-			logger.info("deleteQ end {}",ack.getMsgId());
-			
+			logger.info("deleteQ end {}", ack.getMsgId());
+
 		}
-		
+
 	}
 
+	/**
+	 * Gets the request.
+	 *
+	 * @param ack the ack
+	 * @return the request
+	 */
 	private Object getRequest(AckCallback ack) {
-		
+
 		HttpHeaders headers = new HttpHeaders();
-		//headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
-		headers.set(StaticConfig.HEADER_APPLICATION_KEY, ack.getApplicationKey());
-		
+		// headers.setContentType(new MediaType("application", "json",
+		// Charset.forName("UTF-8")));
+		headers.set(StaticConfig.HEADER_APPLICATION_KEY,
+				ack.getApplicationKey());
+
 		CallbackReq req = new CallbackReq();
 		req.setCallbackmsgid(ack.getMsgId());
 		req.setAckresult("true");
@@ -417,6 +501,12 @@ public class MessageSendServiceImpl implements MessageSendService {
 		return entity;
 	}
 
+	/**
+	 * Gets the params.
+	 *
+	 * @param ack the ack
+	 * @return the params
+	 */
 	private Map<String, Object> getParams(AckCallback ack) {
 		Map<String, Object> params = new HashMap<String, Object>();
 
@@ -426,7 +516,7 @@ public class MessageSendServiceImpl implements MessageSendService {
 		params.put("issueId", ack.getIssueId());
 		params.put("msgId", ack.getMsgId());
 		params.put("tokenId", ack.getTokenId());
-		
+
 		return params;
 	}
 

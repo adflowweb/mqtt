@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package kr.co.adflow.pms.core.controller;
 
 import java.util.ArrayList;
@@ -7,11 +10,16 @@ import kr.co.adflow.pms.response.Response;
 import kr.co.adflow.pms.response.Result;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
+
+// TODO: Auto-generated Javadoc
+/**
+ * The Class BaseController.
+ */
 @Controller
 public class BaseController {
 
@@ -27,16 +35,17 @@ public class BaseController {
 	public Response<Result<List<String>>> handleAllException(final Exception e) {
 
 		String errorMessage = null;
-		//org.springframework.web.bind.MethodArgumentNotValidException
-		
+		// org.springframework.web.bind.MethodArgumentNotValidException
+
 		if (e instanceof MethodArgumentNotValidException) {
 			MethodArgumentNotValidException me = (MethodArgumentNotValidException) e;
 			BindingResult br = me.getBindingResult();
-			
+
 			errorMessage = br.getFieldError().getField();
-			  for(ObjectError error : br.getAllErrors()) {
-				  errorMessage += " : " +error.getCode() + " : " + error.getDefaultMessage();
-			  }
+			for (ObjectError error : br.getAllErrors()) {
+				errorMessage += " : " + error.getCode() + " : "
+						+ error.getDefaultMessage();
+			}
 		} else {
 			errorMessage = e.getMessage();
 		}
