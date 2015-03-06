@@ -568,9 +568,9 @@ public class PushServiceImpl extends Service implements PushService {
 //                pushHandler.stop();
             else if (intent.getAction().equals(
                     "kr.co.adflow.push.service.KEEPALIVE")) {
-                Log.d(TAG, "keepalive체크를시작합니다.");
+                Log.d(TAG, "keepAlive체크를시작합니다.");
                 pushHandler.keepAlive();
-                Log.d(TAG, "keepalive체크를종료합니다.");
+                Log.d(TAG, "keepAlive체크를종료합니다.");
             }
             // else if (intent.getAction().equals("kr.co.adflow.action.login"))
             // {
