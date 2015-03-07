@@ -113,11 +113,58 @@ public class PushDBHelper extends SQLiteOpenHelper {
         Log.d(TAG, "onUpgrade종료()");
     }
 
+    public synchronized void testQuery() throws Exception {
+        Log.d(TAG, "testQuery시작()");
+
+        // 1. get reference to writable DB
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        try {
+            // 2. build query
+            Cursor cursor = db.query(TABLE_MESSAGE, // a. table
+                    MESSAGE_COLUMNS, // b. column names
+                    " datetime(receivedate) > datetime('2009-04-07  12:37:32') ", // c. selections
+                    null, // d. selections args
+                    null, // e. group by
+                    null, // f. having
+                    null, // g. order by
+                    null); // h. limit
+            // 3. if we got results get the first one
+            if (cursor != null)
+                cursor.moveToFirst();
+
+            int count = cursor.getCount();
+            Log.d(TAG, "레코드갯수=" + count);
+
+            if (count == 0) {
+                Log.d(TAG, "testQuery종료()");
+                return;
+            }
+
+            int i = 0;
+            while (cursor.isAfterLast() == false) {
+                // 4. build req object
+                Log.d(TAG, "msgid=" + cursor.getString(0));
+                Log.d(TAG, "serviceid=" + cursor.getString(1));
+                Log.d(TAG, "topic=" + cursor.getString(2));
+                Log.d(TAG, "receivedate=" + cursor.getString(6));
+                Log.d(TAG, "token=" + cursor.getString(7));
+                i++;
+                cursor.moveToNext();
+            }
+
+            // log
+            Log.d(TAG, "testQuery종료()");
+        } finally {
+            db.close();
+        }
+    }
+
     /**
      * @return
      * @throws Exception
      */
-    public Job[] getJobList() throws Exception {
+    public synchronized Job[] getJobList() throws Exception {
         Log.d(TAG, "getJobList시작()");
         // 1. get reference to readable DB
         SQLiteDatabase db = this.getReadableDatabase();
@@ -131,7 +178,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
                     null, // e. group by
                     null, // f. having
                     null, // g. order by
-                    null); // h. limit
+                    "600"); // h. limit
             // 3. if we got results get the first one
             if (cursor != null)
                 cursor.moveToFirst();
@@ -349,6 +396,27 @@ public class PushDBHelper extends SQLiteOpenHelper {
             Log.d(TAG, "getMessage종료(msg=" + msg + ")");
             // 5. return user
             return msg;
+        } finally {
+            db.close();
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
+    public synchronized void deleteMessage(String msgid)
+            throws Exception {
+        Log.d(TAG, "deleteMessage시작(msgid=" + msgid + ")");
+        // 1. get reference to writable DB
+        SQLiteDatabase db = this.getWritableDatabase();
+        try {
+            // 2. delete
+            db.delete(TABLE_MESSAGE, // table name
+                    " msgid = ? ", // selections
+                    new String[]{msgid}); // selections
+            // args
+            // log
+            Log.d(TAG, "deleteMessage종료()");
         } finally {
             db.close();
         }
