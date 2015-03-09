@@ -133,6 +133,7 @@ public class MessageSendServiceImpl implements MessageSendService {
 					&& userMapper.getMsgCntLimit(msg.getIssueId()) < 1) {
 				msg.setStatus(StaticConfig.MESSAGE_STATUS_COUNT_OVER);
 				messageMapper.updateStatus(msg);
+				ctlQMapper.deleteQ(msg.getMsgId());
 				continue;
 			}
 
@@ -399,6 +400,7 @@ private String getKeyMon(String string) {
 					&& userMapper.getMsgCntLimit(msg.getIssueId()) < 1) {
 				msg.setStatus(StaticConfig.MESSAGE_STATUS_COUNT_OVER);
 				messageMapper.updateStatus(msg);
+				ctlQMapper.deleteQ(msg.getMsgId());
 				continue;
 			}
 
