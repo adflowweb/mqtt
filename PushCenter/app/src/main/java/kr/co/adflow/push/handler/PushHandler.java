@@ -165,6 +165,8 @@ public class PushHandler implements MqttCallback {
             try {
                 IMqttToken token = mqttClient.disconnect();
                 token.waitForCompletion();
+                //dbworker thread 종료
+                dbworker.discard();
             } catch (MqttException e) {
                 Log.e(TAG, "에러발생", e);
             }
@@ -244,9 +246,22 @@ public class PushHandler implements MqttCallback {
      *
      */
     class DBWorker extends Thread {
+
+        private boolean running = true;
+
+        public void discard() {
+            Log.d(TAG, "discard시작()");
+            running = false;
+            synchronized (this) {
+                Log.d(TAG, "dbworker를깨웁니다.");
+                this.notify();
+            }
+            Log.d(TAG, "discard종료()");
+        }
+
         @Override
         public void run() {
-            while (true) {
+            while (running) {
                 try {
                     Log.d(TAG, "dbworker작업시작");
                     if (mqttClient != null && mqttClient.isConnected()) {
@@ -305,7 +320,7 @@ public class PushHandler implements MqttCallback {
                     }
                 }
             }
-
+            Log.d(TAG, "dbworker쓰레드가종료됩니다.");
         }
     }
 
