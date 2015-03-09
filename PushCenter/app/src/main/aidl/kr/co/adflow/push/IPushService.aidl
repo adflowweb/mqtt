@@ -12,7 +12,8 @@ interface IPushService {
         String ack(String msgID, String tokenID);
         String existPMAByUFMI(String ufmi);
         String existPMAByUserID(String userID);
-        String sendMsg(String sender, String receiver, int qos, String contentType, String content, int expiry);
+        String sendMsg(String sender, String receiver, String contentType, String content);
+        String sendMsgWithOpts(String sender, String receiver, int qos, String contentType, String content, int expiry);
         String updateUFMI(String ufmi);
 
 }

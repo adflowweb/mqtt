@@ -58,9 +58,58 @@ public class PushServiceImpl extends Service implements PushService {
 
     //AIDL 구현체
     IPushService.Stub binder = new IPushService.Stub() {
+
         @Override
-        public String sendMsg(String sender, String receiver, int qos, String contentType, String content, int expiry) throws RemoteException {
-            Log.d(TAG, "sendMsg시작(sender=" + sender + ", receiver=" + receiver + ", qos="
+        public String sendMsg(String sender, String receiver, String contentType, String content) throws RemoteException {
+            Log.d(TAG, "sendMsg시작(sender=" + sender + ", receiver=" + receiver + ", contentType=" + contentType + ", content=" + content + ")");
+            long start = System.currentTimeMillis();
+            JSONObject returnData = new JSONObject();
+            JSONObject result = new JSONObject();
+
+            try {
+                if (sender == null || sender.equals("") || receiver == null || receiver.equals("")) {
+                    Log.e(TAG, "데이터가적절하지않습니다.");
+                    throw new Exception("데이터가적절하지않습니다.");
+                }
+
+                //{"msgId":2209,"sender":"mms/P1/82/50/p2000","receiver":"mms/P1/82/50/p2014","content":"7YWM7Iqk7Yq4IOuplOyLnOyngA==",
+                // "contentType":"application/base64", "msgType":106,"serviceId":"kr.co.ktpowertel.push.userMessage"}
+
+                JSONObject sendData = new JSONObject();
+                sendData.put("msgId", "");
+                sendData.put("sender", sender);
+                sendData.put("receiver", receiver);
+                sendData.put("content", content);
+                sendData.put("contentType", contentType);
+                sendData.put("msgType", 106);
+                sendData.put("serviceId", "kr.co.ktpowertel.push.userMessage");
+                PushServiceImpl.getInstance().publish(receiver,
+                        sendData.toString().getBytes(), 2 /* qos */);
+                result.put("success", true);
+                returnData.put("result", result);
+                long stop = System.currentTimeMillis();
+                Log.d(TAG, "걸린시간=" + (stop - start) + "ms");
+                Log.d(TAG, "sendMsg종료");
+                return returnData.toString();
+            } catch (Exception e) {
+                Log.e(TAG, "sendMsg중에러발생", e);
+                try {
+                    result.put("success", false);
+                    result.put("error", e.toString());
+                    returnData.put("result", result);
+                } catch (JSONException ex) {
+                    ex.printStackTrace();
+                }
+                long stop = System.currentTimeMillis();
+                Log.d(TAG, "걸린시간=" + (stop - start) + "ms");
+                //return "{\"result\":{\"success\":false, \"error\":\"" + e + "\"}}";
+                return returnData.toString();
+            }
+        }
+
+        @Override
+        public String sendMsgWithOpts(String sender, String receiver, int qos, String contentType, String content, int expiry) throws RemoteException {
+            Log.d(TAG, "sendMsgWithOpts시작(sender=" + sender + ", receiver=" + receiver + ", qos="
                     + qos + ", contentType=" + contentType + ", content=" + content + ", expiry=" + expiry + ")");
 
             long start = System.currentTimeMillis();
@@ -68,12 +117,12 @@ public class PushServiceImpl extends Service implements PushService {
             JSONObject res = new JSONObject();
             try {
                 String result = PushServiceImpl.getInstance().sendMsg(sender, receiver, qos, contentType, content, expiry);
-                Log.d(TAG, "sendMsg종료(result=" + result + ")");
+                Log.d(TAG, "sendMsgWithOpts종료(result=" + result + ")");
                 long stop = System.currentTimeMillis();
                 Log.d(TAG, "걸린시간=" + (stop - start) + "ms");
                 return result;
             } catch (Exception e) {
-                Log.e(TAG, "sendMsg처리중에러발생", e);
+                Log.e(TAG, "sendMsgWithOpts처리중에러발생", e);
 
                 try {
                     res.put("success", false);
@@ -180,6 +229,7 @@ public class PushServiceImpl extends Service implements PushService {
                 return returnData.toString();
             }
         }
+
 
 //        @Override
 //        public String connect(String userID, String deviceID, String ufmi) throws RemoteException {
