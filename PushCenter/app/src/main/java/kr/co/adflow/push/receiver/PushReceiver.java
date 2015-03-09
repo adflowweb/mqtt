@@ -64,6 +64,8 @@ public class PushReceiver extends BroadcastReceiver {
 //				// testCodeEnd
 
                 PushPreference preference = new PushPreference(context);
+                //부팅후 첫커넥션 표시
+                preference.put(PushPreference.FIRSTCONNECTION, true);
                 String oldPhoneNum = preference.getValue(PushPreference.PHONENUM, "");
                 Log.d(TAG, "저장된전화번호=" + oldPhoneNum);
 

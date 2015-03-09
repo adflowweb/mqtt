@@ -18,6 +18,7 @@ public class PushPreference {
     public static final String CLEANSESSION = "cleanSession";
     public static final String MSGID = "msgID";
     public static final String PHONENUM = "phoneNumber";
+    public static final String FIRSTCONNECTION = "firstConnection";
 
     private final String PREF_NAME = "kr.co.adflow.push";
 

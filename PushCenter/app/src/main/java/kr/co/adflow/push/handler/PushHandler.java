@@ -116,9 +116,6 @@ public class PushHandler implements MqttCallback {
     private String phoneModel = android.os.Build.MODEL;
     private String currentToken = null;
     public static final String CONN_STATUS_ACTION = "kr.co.ktpowertel.push.connStatus";
-
-    private static boolean firstConnection = true;
-
     private static DBWorker dbworker;
 
     /**
@@ -623,11 +620,13 @@ public class PushHandler implements MqttCallback {
         Log.d(TAG, "세션이연결되었습니다.");
 
         //sendBroadcast
+        boolean firstConn = preference.getValue(PushPreference.FIRSTCONNECTION,
+                false);
         try {
-            if (firstConnection) {
+            if (firstConn) {
                 //부팅후 최초 연결시
                 sendBroadcast(FIRST_MQTT_CONNECTED_MESSAGE, FIRST_MQTT_CONNECTED);
-                firstConnection = !firstConnection;
+                preference.put(PushPreference.FIRSTCONNECTION, false);
             } else {
                 sendBroadcast(MQTT_CONNECTED_MESSAGE, MQTT_CONNECTED);
             }
