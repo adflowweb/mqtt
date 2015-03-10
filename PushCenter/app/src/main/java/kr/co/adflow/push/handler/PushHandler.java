@@ -924,9 +924,9 @@ public class PushHandler implements MqttCallback {
     }
 
 
-    public String sendMsg(String sender, String receiver, int qos, String contentType, String
+    public String sendMsgWithOpts(String sender, String receiver, int qos, String contentType, String
             content, int expiry) throws Exception {
-        Log.d(TAG, "sendMsg시작(sender=" + sender + ", receiver=" + receiver + ", qos="
+        Log.d(TAG, "sendMsgWithOpts시작(sender=" + sender + ", receiver=" + receiver + ", qos="
                 + qos + ", contentType=" + contentType + ", content=" + content + ", expiry=" + expiry + ")");
 
         HttpClient httpClient = getHttpClient();
@@ -959,7 +959,7 @@ public class PushHandler implements MqttCallback {
         }
 
         String responseStr = EntityUtils.toString(response.getEntity());
-        Log.d(TAG, "sendMsg종료(value=" + responseStr + ")");
+        Log.d(TAG, "sendMsgWithOpts종료(value=" + responseStr + ")");
         return responseStr;
     }
 

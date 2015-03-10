@@ -19,6 +19,7 @@ import java.io.PrintWriter;
 
 import kr.co.adflow.push.IPushService;
 import kr.co.adflow.push.PushPreference;
+import kr.co.adflow.push.exception.MsgSizeLimitException;
 import kr.co.adflow.push.handler.PushHandler;
 import kr.co.adflow.push.receiver.PushReceiver;
 import kr.co.adflow.push.service.PushService;
@@ -76,20 +77,42 @@ public class PushServiceImpl extends Service implements PushService {
                 // "contentType":"application/base64", "msgType":106,"serviceId":"kr.co.ktpowertel.push.userMessage"}
 
                 JSONObject sendData = new JSONObject();
-                sendData.put("msgId", "");
+                sendData.put("msgId", System.currentTimeMillis());
                 sendData.put("sender", sender);
                 sendData.put("receiver", receiver);
                 sendData.put("content", content);
                 sendData.put("contentType", contentType);
                 sendData.put("msgType", 106);
                 sendData.put("serviceId", "kr.co.ktpowertel.push.userMessage");
+
+                String sendMsg = sendData.toString();
+                Log.d(TAG, "메시지크기=" + sendMsg.length());
+                if (sendMsg.length() > 500000) {
+                    Log.e(TAG, "데이터가적절하지않습니다.");
+                    throw new MsgSizeLimitException();
+                }
+
                 PushServiceImpl.getInstance().publish(receiver,
-                        sendData.toString().getBytes(), 2 /* qos */);
+                        sendMsg.getBytes(), 2 /* qos */);
                 result.put("success", true);
                 returnData.put("result", result);
                 long stop = System.currentTimeMillis();
                 Log.d(TAG, "걸린시간=" + (stop - start) + "ms");
                 Log.d(TAG, "sendMsg종료");
+                return returnData.toString();
+            } catch (MsgSizeLimitException e) {
+                Log.e(TAG, "sendMsg중에러발생", e);
+                try {
+                    result.put("success", false);
+                    result.put("error", e.errorMsg);
+                    result.put("errorCode", e.errorCode);
+                    returnData.put("result", result);
+                } catch (JSONException ex) {
+                    ex.printStackTrace();
+                }
+                long stop = System.currentTimeMillis();
+                Log.d(TAG, "걸린시간=" + (stop - start) + "ms");
+                //return "{\"result\":{\"success\":false, \"error\":\"" + e + "\"}}";
                 return returnData.toString();
             } catch (Exception e) {
                 Log.e(TAG, "sendMsg중에러발생", e);
@@ -116,7 +139,7 @@ public class PushServiceImpl extends Service implements PushService {
             JSONObject returnData = new JSONObject();
             JSONObject res = new JSONObject();
             try {
-                String result = PushServiceImpl.getInstance().sendMsg(sender, receiver, qos, contentType, content, expiry);
+                String result = PushServiceImpl.getInstance().sendMsgWithOpts(sender, receiver, qos, contentType, content, expiry);
                 Log.d(TAG, "sendMsgWithOpts종료(result=" + result + ")");
                 long stop = System.currentTimeMillis();
                 Log.d(TAG, "걸린시간=" + (stop - start) + "ms");
@@ -848,11 +871,11 @@ public class PushServiceImpl extends Service implements PushService {
         return ret;
     }
 
-    public String sendMsg(String sender, String receiver, int qos, String contentType, String content, int expiry) throws Exception {
-        Log.d(TAG, "sendMsg시작(sender=" + sender + ", receiver=" + receiver + ", qos="
+    public String sendMsgWithOpts(String sender, String receiver, int qos, String contentType, String content, int expiry) throws Exception {
+        Log.d(TAG, "sendMsgWithOpts시작(sender=" + sender + ", receiver=" + receiver + ", qos="
                 + qos + ", contentType=" + contentType + ", content=" + content + ", expiry=" + expiry + ")");
-        String ret = pushHandler.sendMsg(sender, receiver, qos, contentType, content, expiry);
-        Log.d(TAG, "sendMsg종료(return=" + ret + ")");
+        String ret = pushHandler.sendMsgWithOpts(sender, receiver, qos, contentType, content, expiry);
+        Log.d(TAG, "sendMsgWithOpts종료(return=" + ret + ")");
         return ret;
     }
 
