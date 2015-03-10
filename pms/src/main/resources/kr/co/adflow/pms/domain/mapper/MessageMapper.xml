@@ -175,7 +175,6 @@
 			#{status}
 	  	 </foreach>
 	   </if>
-		ORDER BY a.issue_time DESC,a.update_time DESC
 	</select>
 	
 	<select id="getSvcMessageList" parameterType="kr.co.adflow.pms.domain.MsgParams"
@@ -240,7 +239,7 @@
 			#{status}
 	  	 </foreach>
 	   </if>
-		ORDER BY a.issue_time DESC,a.update_time DESC
+		ORDER BY a.update_time DESC, a.issue_time DESC
 		limit #{iDisplayStart} , #{iDisplayLength}
 	</select>
 	
@@ -268,7 +267,6 @@
 		<if test="msgId != null and msgId != ''">
 		AND a.msg_id = #{msgId}
 		</if>
-		ORDER BY a.issue_time DESC,a.update_time DESC
 	</select>
 	
 	<select id="getSvcResevationMessageList" parameterType="kr.co.adflow.pms.domain.MsgParams"
@@ -316,7 +314,7 @@
 		<if test="msgId != null and msgId != ''">
 		AND a.msg_id = #{msgId}
 		</if>
-		ORDER BY issue_time DESC,update_time DESC
+		ORDER BY reservation_time DESC,update_time DESC
 		limit #{iDisplayStart} , #{iDisplayLength}
 	</select>
 

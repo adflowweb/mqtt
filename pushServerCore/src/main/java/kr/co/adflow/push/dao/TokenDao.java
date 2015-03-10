@@ -109,4 +109,6 @@ public interface TokenDao {
 	
 	Token[] expiredSessionList(int lastAccessTime) throws Exception;
 
+	Token[] getMultiByUfmi(String ufmi) throws Exception;
+
 }

@@ -215,5 +215,12 @@ abstract public class AbstractTokenServiceImpl implements TokenService {
 		return tokens;
 	}
 	// update : 140902 <kicho> - end
+	
+	public Token[] getMultiByUfmi(String ufmi) throws Exception {
+		
+		Token[] tokens = tokenDao.getMultiByUfmi(ufmi);
+		
+		return tokens;
+	}
 
 }

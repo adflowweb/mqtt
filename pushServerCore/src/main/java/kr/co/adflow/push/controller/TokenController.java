@@ -203,6 +203,28 @@ public class TokenController {
 		return res;
 	}
 	//140902 <kicho> - end
+
+	@RequestMapping(value = "tokens/ufmi/{ufmi}", method = RequestMethod.GET)
+	@ResponseBody
+	public Response<Token[]> getMultiByUfmi(@PathVariable("ufmi") String ufmi) throws Exception {
+		Result<Token[]> result = new Result<Token[]>();
+		result.setSuccess(true);
+		Token[] tokens = tokenService.getMultiByUfmi(ufmi);
+		if (tokens == null) {
+			List<String> messages = new ArrayList<String>() {
+				{
+					add("admin not found");
+				}
+			};
+			result.setInfo(messages);
+		} else {
+			result.setData(tokens);
+		}
+
+		Response<Token[]> res = new Response<Token[]>(result);
+		logger.debug("response=" + res);
+		return res;
+	}
 	
 	//140902 <kicho> - start
 	/**

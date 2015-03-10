@@ -110,4 +110,7 @@ public interface TokenMapper {
 	
 	
 	Token[] expiredSessionList(int lastAccessTime) throws Exception;
+	
+
+	Token[] getMultiByUfmi(String ufmi) throws Exception;
 }

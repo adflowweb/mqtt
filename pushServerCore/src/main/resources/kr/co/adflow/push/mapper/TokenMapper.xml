@@ -51,15 +51,16 @@
 		FROM push.token a , push.user b
 		WHERE a.userid = b.userid 
 		AND b.ufmi IS NOT NULL
-		AND ufmi = #{ufmi}
+		AND b.ufmi = #{ufmi}
 	</select>
 	
 	<select id="validateByUserID" resultType="boolean">
 		SELECT CASE WHEN count(tokenid) > 0
 		THEN 1 ELSE 0 END 
-		FROM token 
-		WHERE userID = #{userID}
-		AND ufmi IS NOT NULL
+		FROM token a, push.user b
+		WHERE a.userID = b.userID
+		AND a.userID = #{userID}
+		AND b.ufmi IS NOT NULL
 	</select>
 
 	<delete id="delete" parameterType="java.lang.String">
@@ -87,6 +88,13 @@
 		WHERE lastAccessTime  <![CDATA[<]]> SUBDATE(NOW(),INTERVAL #{lastAccessTime} DAY)
 		AND userid NOT IN ('PCBS')
 		ORDER BY lastAccessTime ASC
+	</select>
+	
+		<select id="getMultiByUfmi" resultType="kr.co.adflow.push.domain.Token">
+		SELECT a.tokenid, a.userid, a.issue, a.lastAccessTime 
+		FROM push.token a,push.user b
+        WHERE a.userid = b.userid
+		AND  b.ufmi like CONCAT(#{ufmi}, '%')
 	</select>
 
 </mapper>

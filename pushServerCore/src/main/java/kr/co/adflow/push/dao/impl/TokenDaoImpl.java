@@ -176,4 +176,10 @@ public class TokenDaoImpl implements TokenDao {
 		TokenMapper tokenMapper = sqlSession.getMapper(TokenMapper.class);
 		return tokenMapper.expiredSessionList(lastAccessTime);
 	}
+
+	@Override
+	public Token[] getMultiByUfmi(String ufmi) throws Exception {
+		TokenMapper tokenMapper = sqlSession.getMapper(TokenMapper.class);
+		return tokenMapper.getMultiByUfmi(ufmi);
+	}
 }
