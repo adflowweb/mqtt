@@ -47,7 +47,8 @@ public interface SvcService {
 	 * @param keyMon the key mon
 	 * @return the month summary
 	 */
-	public List<Map<String, Object>> getMonthSummary(String appKey,
+	public List<Map<String, Object>> getMonthSummary(Map<String, String> params,
+			String appKey,
 			String keyMon);
 
 }

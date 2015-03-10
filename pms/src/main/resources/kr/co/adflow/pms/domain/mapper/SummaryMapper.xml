@@ -14,7 +14,7 @@
 		<result property="appAckCnt" column="app_ack_cnt" />
 	</resultMap>
 
-	<select id="getMonthSummary" parameterType="Map" resultMap="summaryResult">
+	<select id="getMonthSummary" parameterType="kr.co.adflow.pms.domain.MsgParams" resultMap="summaryResult">
 		SELECT a.issue_id AS user_id
 		, a.status
 		, a.is_reservation
@@ -25,6 +25,12 @@
 		pms.message${keyMon} a LEFT OUTER JOIN pms.ack${keyMon} b ON a.msg_id = b.msg_id AND b.ack_type = 'pma',
         pms.message${keyMon} c LEFT OUTER JOIN pms.ack${keyMon} d ON c.msg_id = d.msg_id AND d.ack_type = 'app'		
 		WHERE a.msg_id = c.msg_id
+		<if test="dateStart != null ">
+		AND a.reservation_time <![CDATA[>]]>  #{dateStart}
+		</if>
+		<if test="dateEnd != null ">
+		AND a.reservation_time <![CDATA[<]]> #{dateEnd}
+		</if>	
 		<if test="issueId != null and issueId != ''">
 		AND a.issue_id = #{issueId}
 		</if>

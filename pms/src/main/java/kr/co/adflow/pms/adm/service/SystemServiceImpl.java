@@ -482,17 +482,19 @@ public class SystemServiceImpl implements SystemService {
 	 * @see kr.co.adflow.pms.adm.service.SystemService#getMonthSummary(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public List<Map<String, Object>> getMonthSummary(String appKey,
-			String keyMon, String issueId) {
+	public List<Map<String, Object>> getMonthSummary(Map<String, String> params,
+			String appKey,
+			String keyMon, 
+			String issueId) {
+		
+		MsgParams msgParams = new MsgParams();
+		msgParams.setIssueId(issueId);
+		msgParams.setKeyMon(keyMon);
+		msgParams.setDateStart(this.getDate(params.get("cSearchDateStart")));
+		msgParams.setDateEnd(this.getDate(params.get("cSearchDateEnd")));
 
-		// String issueId = interceptMapper.selectCashedUserId(appKey);
 
-		Map<String, String> params = new HashMap<String, String>();
-
-		params.put("issueId", issueId);
-		params.put("keyMon", keyMon);
-
-		return summaryMapper.getMonthSummary(params);
+		return summaryMapper.getMonthSummary(msgParams);
 	}
 
 }

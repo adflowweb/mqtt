@@ -101,7 +101,9 @@ public interface SystemService {
 	 * @param issueId the issue id
 	 * @return the month summary
 	 */
-	public List<Map<String, Object>> getMonthSummary(String appKey,
-			String keyMon, String issueId);
+	public List<Map<String, Object>> getMonthSummary(Map<String, String> params, 
+			String appKey,
+			String keyMon, 
+			String issueId);
 
 }

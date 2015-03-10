@@ -240,17 +240,20 @@ public class SvcServiceImpl implements SvcService {
 	 * @see kr.co.adflow.pms.adm.service.SvcService#getMonthSummary(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public List<Map<String, Object>> getMonthSummary(String appKey,
+	public List<Map<String, Object>> getMonthSummary(Map<String, String> params,
+			String appKey,
 			String keyMon) {
 
 		String issueId = interceptMapper.selectCashedUserId(appKey);
 
-		Map<String, String> params = new HashMap<String, String>();
+		MsgParams msgParams = new MsgParams();
+		msgParams.setIssueId(issueId);
+		msgParams.setKeyMon(keyMon);
+		msgParams.setDateStart(this.getDate(params.get("cSearchDateStart")));
+		msgParams.setDateEnd(this.getDate(params.get("cSearchDateEnd")));
 
-		params.put("issueId", issueId);
-		params.put("keyMon", keyMon);
 
-		return summaryMapper.getMonthSummary(params);
+		return summaryMapper.getMonthSummary(msgParams);
 	}
 
 }
