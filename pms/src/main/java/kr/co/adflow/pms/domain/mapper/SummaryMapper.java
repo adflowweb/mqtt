@@ -19,5 +19,7 @@ public interface SummaryMapper {
 	 * @return the month summary
 	 */
 	List<Map<String, Object>> getMonthSummary(Map<String, String> params);
+	
+	double getTPS(String keyMon);
 
 }

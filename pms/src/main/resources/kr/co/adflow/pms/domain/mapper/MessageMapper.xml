@@ -143,8 +143,10 @@
 		SELECT COUNT(*)
 		FROM
         pms.message${keyMon} a left outer join pms.ack${keyMon} b on a.msg_id = b.msg_id and b.ack_type = 'pma',
-        pms.message${keyMon} c left outer join pms.ack${keyMon} d on c.msg_id = d.msg_id and d.ack_type = 'app'		
+        pms.message${keyMon} c left outer join pms.ack${keyMon} d on c.msg_id = d.msg_id and d.ack_type = 'app',
+        pms.content${keyMon} e		
 		WHERE a.msg_id = c.msg_id
+		AND a.msg_id = e.msg_id
 		<if test="dateStart != null ">
 		AND a.update_time <![CDATA[>]]>  #{dateStart}
 		</if>
@@ -205,10 +207,14 @@
         ,b.ack_time as pma_ack_time
         ,d.ack_type as app_ack_type
         ,d.ack_time as app_ack_time		
+		, e.content_type
+		, e.content
 		FROM
         pms.message${keyMon} a left outer join pms.ack${keyMon} b on a.msg_id = b.msg_id and b.ack_type = 'pma',
-        pms.message${keyMon} c left outer join pms.ack${keyMon} d on c.msg_id = d.msg_id and d.ack_type = 'app'		
+        pms.message${keyMon} c left outer join pms.ack${keyMon} d on c.msg_id = d.msg_id and d.ack_type = 'app',
+        pms.content${keyMon} e			
 		WHERE a.msg_id = c.msg_id
+		AND a.msg_id = e.msg_id
 		<if test="dateStart != null ">
 		AND a.update_time <![CDATA[>]]>  #{dateStart}
 		</if>
@@ -248,8 +254,10 @@
 		SELECT COUNT(*)
 		FROM
         pms.message${keyMon} a left outer join pms.ack${keyMon} b on a.msg_id = b.msg_id and b.ack_type = 'pma',
-        pms.message${keyMon} c left outer join pms.ack${keyMon} d on c.msg_id = d.msg_id and d.ack_type = 'app'		
+        pms.message${keyMon} c left outer join pms.ack${keyMon} d on c.msg_id = d.msg_id and d.ack_type = 'app',
+        pms.content${keyMon} e			
 		WHERE a.msg_id = c.msg_id
+		AND a.msg_id = e.msg_id
 		AND a.status = 0
 		AND  a.is_reservation IS TRUE
 		<if test="dateStart != null ">
@@ -293,10 +301,14 @@
 		, a.issue_id
 		, a.update_time
 		, a.update_id
+		, e.content_type
+		, e.content
 		FROM
         pms.message${keyMon} a left outer join pms.ack${keyMon} b on a.msg_id = b.msg_id and b.ack_type = 'pma',
-        pms.message${keyMon} c left outer join pms.ack${keyMon} d on c.msg_id = d.msg_id and d.ack_type = 'app'		
+        pms.message${keyMon} c left outer join pms.ack${keyMon} d on c.msg_id = d.msg_id and d.ack_type = 'app',
+        pms.content${keyMon} e			
 		WHERE a.msg_id = c.msg_id
+		AND a.msg_id = e.msg_id
 		AND a.status = 0
 		AND a.is_reservation IS TRUE
 		<if test="dateStart != null ">
@@ -314,7 +326,7 @@
 		<if test="msgId != null and msgId != ''">
 		AND a.msg_id = #{msgId}
 		</if>
-		ORDER BY reservation_time DESC,update_time DESC
+		ORDER BY reservation_time ASC,update_time DESC
 		limit #{iDisplayStart} , #{iDisplayLength}
 	</select>
 
@@ -415,7 +427,7 @@
        <foreach item="id" index="index" collection="msgIds" open="(" separator="," close=")" >
 			#{id}
 	   </foreach>
-		ORDER BY a.issue_time DESC,a.update_time DESC
+		ORDER BY a.update_time DESC,a.issue_time DESC
 	</select>
 	
 	<update id="cancelMessage" parameterType="kr.co.adflow.pms.domain.Message">

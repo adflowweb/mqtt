@@ -401,10 +401,25 @@ public class SystemServiceImpl implements SystemService {
 	public ServerInfo getServerInfo() {
 		// TODO Auto-generated method stub
 		try {
-			return serverDao.get();
+			
+			ServerInfo info = serverDao.get();
+			
+			info.setTps(this.getTPS(-1));
+			
+			return info;
 		} catch (Exception e) {
 			throw new RuntimeException("getServerInfo error");
 		}
+	}
+
+	private double getTPS(int preMonth) {
+		double result = 0.0;
+		
+		for (int j = preMonth; j <= 0; j++) {
+			result += summaryMapper.getTPS(DateUtil.getYYYYMM(j));
+		}
+		
+		return result;
 	}
 
 	/**

@@ -32,4 +32,10 @@
         ORDER BY user_id, status, is_reservation
 	</select>
 	
+	<select id="getTPS" parameterType="String" resultType="double">
+		SELECT COUNT(msg_id) / 10 AS TPS
+		FROM pms.message${value}
+		WHERE update_time > DATE_SUB(NOW(),INTERVAL 10 SECOND)
+	</select>
+	
 </mapper>	
