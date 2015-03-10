@@ -33,6 +33,8 @@ public class Token {
 	
 	/** The role. */
 	private Role[] role;
+	
+	private String ufmi;
 
 	/**
 	 * Instantiates a new token.
@@ -121,6 +123,14 @@ public class Token {
 		return "Token [tokenID=" + tokenID + ", userID=" + userID
 				+ ", issue=" + issue + ", role="
 				+ Arrays.toString(role) + "]";
+	}
+
+	public String getUfmi() {
+		return ufmi;
+	}
+
+	public void setUfmi(String ufmi) {
+		this.ufmi = ufmi;
 	}
 
 }
