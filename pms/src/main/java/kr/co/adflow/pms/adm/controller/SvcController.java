@@ -286,10 +286,11 @@ public class SvcController extends BaseController {
 	@RequestMapping(value = "/messages/summary/{month}", method = RequestMethod.GET)
 	@ResponseBody
 	public Response<Result<List<Map<String, Object>>>> getMonthSummary(
+			@RequestParam Map<String, String> params,
 			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey,
 			@PathVariable("month") String keyMon) {
 
-		List<Map<String, Object>> resultList = svcService.getMonthSummary(
+		List<Map<String, Object>> resultList = svcService.getMonthSummary(params,
 				appKey, keyMon);
 
 		Result<List<Map<String, Object>>> result = new Result<List<Map<String, Object>>>();

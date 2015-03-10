@@ -411,10 +411,11 @@ public class SystemController extends BaseController {
 	@RequestMapping(value = "/messages/summary/{month}", method = RequestMethod.GET)
 	@ResponseBody
 	public Response<Result<List<Map<String, Object>>>> getMonthSummary(
+			@RequestParam Map<String, String> params,
 			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey,
 			@PathVariable("month") String keyMon) {
 
-		List<Map<String, Object>> resultList = systemService.getMonthSummary(
+		List<Map<String, Object>> resultList = systemService.getMonthSummary(params,
 				appKey, keyMon, null);
 
 		Result<List<Map<String, Object>>> result = new Result<List<Map<String, Object>>>();
@@ -437,11 +438,12 @@ public class SystemController extends BaseController {
 	@RequestMapping(value = "/messages/summary/{month}/{userId}", method = RequestMethod.GET)
 	@ResponseBody
 	public Response<Result<List<Map<String, Object>>>> getMonthSummary(
+			@RequestParam Map<String, String> params,
 			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey,
 			@PathVariable("month") String keyMon,
 			@PathVariable("userId") String issueId) {
 
-		List<Map<String, Object>> resultList = systemService.getMonthSummary(
+		List<Map<String, Object>> resultList = systemService.getMonthSummary(params,
 				appKey, keyMon, issueId);
 
 		Result<List<Map<String, Object>>> result = new Result<List<Map<String, Object>>>();
