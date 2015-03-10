@@ -77,7 +77,7 @@
 	</select>
 	
 	<select id="getMultiByUser" resultType="kr.co.adflow.push.domain.Token">
-		SELECT tokenid, userid, issue, lastAccessTime , b.ufmi
+		SELECT tokenid, userid, issue, lastAccessTime
 		FROM token 
 		WHERE userid like CONCAT(#{userID}, '%')
 	</select>
