@@ -43,7 +43,7 @@ public class MessageSendExecutor {
 	 * Send message array.
 	 */
 	public void sendMessageArray() {
-		logger.info("sendMessageArray execute time is {}", new Date());
+		//logger.info("sendMessageArray execute time is {}", new Date());
 
 		messageSendService.sendMessageArray(pmsConfig.EXECUTOR_SERVER_ID,
 				pmsConfig.EXECUTOR_SEND_LIMIT);
@@ -55,8 +55,8 @@ public class MessageSendExecutor {
 	 * Send reservation message array.
 	 */
 	public void sendReservationMessageArray() {
-		logger.info("sendReservationMessageArray execute time is {}",
-				new Date());
+		//logger.info("sendReservationMessageArray execute time is {}",
+		//		new Date());
 
 		messageSendService.sendReservationMessageArray(
 				pmsConfig.EXECUTOR_SERVER_ID, pmsConfig.EXECUTOR_SEND_LIMIT);
@@ -68,7 +68,7 @@ public class MessageSendExecutor {
 	 * Send callback.
 	 */
 	public void sendCallback() {
-		logger.info("sendCallback execute time is {}", new Date());
+		//logger.info("sendCallback execute time is {}", new Date());
 
 		messageSendService.sendCallback(pmsConfig.EXECUTOR_SERVER_ID,
 				pmsConfig.EXECUTOR_SEND_LIMIT);
@@ -84,7 +84,7 @@ public class MessageSendExecutor {
 
 		String name = DateUtil.getYYYYMM(1);
 
-		logger.info("createTable1");
+		//logger.info("createTable1");
 
 		try {
 			tableMgtMapper.selectMessage(name);

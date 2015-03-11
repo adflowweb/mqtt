@@ -26,10 +26,10 @@
         pms.message${keyMon} c LEFT OUTER JOIN pms.ack${keyMon} d ON c.msg_id = d.msg_id AND d.ack_type = 'app'		
 		WHERE a.msg_id = c.msg_id
 		<if test="dateStart != null ">
-		AND a.reservation_time <![CDATA[>]]>  #{dateStart}
+		AND a.update_time <![CDATA[>]]>  #{dateStart}
 		</if>
 		<if test="dateEnd != null ">
-		AND a.reservation_time <![CDATA[<]]> #{dateEnd}
+		AND a.update_time <![CDATA[<]]> #{dateEnd}
 		</if>	
 		<if test="issueId != null and issueId != ''">
 		AND a.issue_id = #{issueId}

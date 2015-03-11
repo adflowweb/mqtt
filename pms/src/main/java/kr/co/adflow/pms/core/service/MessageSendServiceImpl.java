@@ -96,6 +96,7 @@ public class MessageSendServiceImpl implements MessageSendService {
 
 		List<Message> list = messageMapper.selectList(param);
 
+		if (list.size() > 0)
 		logger.info("list cnt :: {}", list.size());
 
 		int updateCnt = 0;
@@ -143,24 +144,8 @@ public class MessageSendServiceImpl implements MessageSendService {
 			// 재전송 로직 추가
 			String msgId = msg.getMsgId();
 			if (msg.getResendMaxCount() > 0) {
-
-				long reservationTime = System.currentTimeMillis();
-				int resendCnt = 2;
-				for (int i = 0; i < msg.getResendMaxCount(); i++) {
-					int intervalM = msg.getResendInterval();
-					msg.setReservation(true);
-					long interval = intervalM * 1000 * 60;
-					reservationTime = reservationTime + interval;
-					msg.setReservationTime(new Date(reservationTime));
-					msg.setMsgId(this.getMsgId());
-					msg.setResendCount(resendCnt++);
-					msg.setResendId(msgId);
-					messageMapper.insertMessage(msg);
-					messageMapper.insertContent(msg);
-
-					ctlQMapper.insertQ(this.getCtlQ(msg));
-
-				}
+				
+				this.reservationResend(msg,msgId);
 			}
 			msg.setMsgId(msgId);
 			// msg.getReceiverTopic();
@@ -178,9 +163,36 @@ public class MessageSendServiceImpl implements MessageSendService {
 			}
 			updateCnt++;
 		}
-
+		if (updateCnt > 0)
 		logger.info("sendMessageArray is cnt {}", updateCnt);
 		return updateCnt;
+	}
+
+	private void reservationResend(Message msg,String msgId) {
+
+		long reservationTime = 0L;
+		if (msg.getReservationTime() == null) {
+			reservationTime = System.currentTimeMillis();
+		} else {
+			reservationTime = msg.getReservationTime().getTime();	
+		}
+		int resendCnt = 2;
+		for (int i = 0; i < msg.getResendMaxCount(); i++) {
+			int intervalM = msg.getResendInterval();
+			msg.setReservation(true);
+			long interval = intervalM * 1000 * 60;
+			reservationTime = reservationTime + interval;
+			msg.setReservationTime(new Date(reservationTime));
+			msg.setMsgId(this.getMsgId());
+			msg.setResendCount(resendCnt++);
+			msg.setResendId(msgId);
+			messageMapper.insertMessage(msg);
+			messageMapper.insertContent(msg);
+
+			ctlQMapper.insertQ(this.getCtlQ(msg));
+
+		}
+		
 	}
 
 	/**
@@ -406,7 +418,19 @@ private String getKeyMon(String string) {
 
 			jmsTemplate.execute(msg.getReceiverTopic(), new DirectMsgHandler(
 					msg));
+			
+			// 재전송 로직 추가
+			String msgId = msg.getMsgId();
+			logger.info("msg.getMsgId() {}", msg.getMsgId());
+			logger.info("msg.getResendMaxCount() {}", msg.getResendMaxCount());
+			logger.info("msg.getResendCount() {}", msg.getResendCount());
+			if (msg.getResendMaxCount() > 0 && msg.getResendCount() == 0) {
 
+				this.reservationResend(msg,msgId);
+			}
+
+
+			msg.setMsgId(msgId);
 			msg.setStatus(StaticConfig.MESSAGE_STATUS_SEND);
 
 			int resultCnt = messageMapper.updateStatus(msg);
@@ -422,6 +446,7 @@ private String getKeyMon(String string) {
 			updateCnt++;
 		}
 
+		if (updateCnt > 0)
 		logger.info("sendMessageArray is cnt {}", updateCnt);
 		return updateCnt;
 	}
