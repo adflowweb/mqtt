@@ -1,7 +1,7 @@
 /*
  * 
  */
-package kr.co.adflow.pms.domain.mapper;
+package kr.co.adflow.pms.domain.push.mapper;
 
 // TODO: Auto-generated Javadoc
 /**

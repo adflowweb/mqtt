@@ -34,7 +34,8 @@
 		  issue_id VARCHAR(100),
 		  update_time datetime DEFAULT NULL,
 		  update_id VARCHAR(100),
-		  PRIMARY KEY (msg_id)
+		  PRIMARY KEY (msg_id),
+		  INDEX mindex${value} (server_id,status,issue_time )
 		) ENGINE=InnoDB AUTO_INCREMENT=395 DEFAULT CHARSET=utf8
 	</update>
 	
@@ -48,8 +49,7 @@
 		   msg_id varchar(50) NOT NULL ,
 		  content mediumtext,
 		  content_type varchar(50) DEFAULT NULL,
-		  PRIMARY KEY (msg_id),
-		  FOREIGN KEY (msg_id) REFERENCES pms.message${value} (msg_id) ON DELETE CASCADE ON UPDATE CASCADE
+		  PRIMARY KEY (msg_id)
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8
 	</update>
 	
@@ -59,19 +59,18 @@
 	</select>
 	
 	<update id="createAck" parameterType="String">
-	CREATE TABLE pms.ack${value} (
-	  msg_id varchar(50) NOT NULL ,
-	  ack_type varchar(10) NOT NULL ,
-	  token_id varchar(100) DEFAULT NULL,
-	  ack_time datetime DEFAULT NULL,
-	  issue_time datetime DEFAULT NULL,
-	  issue_id VARCHAR(100),
-	  server_id varchar(10) DEFAULT NULL,
-	  callback_status tinyint(1)  DEFAULT 0,
-	  callback_count tinyint(1)  DEFAULT 0,
-	  PRIMARY KEY (msg_id,ack_type,token_id),
-	  FOREIGN KEY (msg_id) references pms.message${value} (msg_id) ON DELETE CASCADE ON UPDATE CASCADE
-	) ENGINE=InnoDB DEFAULT CHARSET=utf8
+		CREATE TABLE pms.ack${value} (
+		  msg_id varchar(50) NOT NULL ,
+		  ack_type varchar(10) NOT NULL ,
+		  token_id varchar(100) DEFAULT NULL,
+		  ack_time datetime DEFAULT NULL,
+		  issue_time datetime DEFAULT NULL,
+		  issue_id VARCHAR(100),
+		  server_id varchar(10) DEFAULT NULL,
+		  callback_status tinyint(1)  DEFAULT 0,
+		  callback_count tinyint(1)  DEFAULT 0,
+		  PRIMARY KEY (msg_id,ack_type,token_id)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8
 	</update>		
 
 </mapper>	

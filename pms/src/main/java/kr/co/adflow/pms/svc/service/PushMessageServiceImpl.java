@@ -22,7 +22,7 @@ import kr.co.adflow.pms.domain.mapper.CtlQMapper;
 import kr.co.adflow.pms.domain.mapper.InterceptMapper;
 import kr.co.adflow.pms.domain.mapper.MessageMapper;
 import kr.co.adflow.pms.domain.mapper.UserMapper;
-import kr.co.adflow.pms.domain.mapper.ValidationMapper;
+import kr.co.adflow.pms.domain.push.mapper.ValidationMapper;
 import kr.co.adflow.pms.domain.validator.UserValidator;
 import kr.co.adflow.pms.svc.request.MessageIdsReq;
 import kr.co.adflow.pms.svc.request.MessageReq;

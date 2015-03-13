@@ -18,7 +18,7 @@ import kr.co.adflow.pms.domain.mapper.InterceptMapper;
 import kr.co.adflow.pms.domain.mapper.MessageMapper;
 import kr.co.adflow.pms.domain.mapper.SummaryMapper;
 import kr.co.adflow.pms.domain.mapper.UserMapper;
-import kr.co.adflow.pms.domain.mapper.ValidationMapper;
+import kr.co.adflow.pms.domain.push.mapper.ValidationMapper;
 import kr.co.adflow.pms.domain.validator.UserValidator;
 
 import org.slf4j.Logger;

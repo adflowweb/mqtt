@@ -20,37 +20,65 @@
 	
 	<util:properties id="pms" location="file:${user.home}/pms/config.properties" /> 
 
-	<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean"
+<!-- ds Pms -->
+	<bean id="dataSourcePms" class="org.springframework.jndi.JndiObjectFactoryBean"
 		scope="singleton">
+		<property name="jndiName">
+			<value>java:comp/env/jdbc/pms</value>
+		</property>
+		<property name="resourceRef" value="true" />
+	</bean>
+
+	<bean id="transactionManagerPms"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSourcePms" />
+	</bean>
+	
+		<bean id="sqlSessionFactoryPms" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSourcePms" />
+		<property name="typeAliasesPackage" value="kr.co.adflow.pms.domain.mapper" />
+		<property name="mapperLocations"
+			value="classpath:kr/co/adflow/pms/domain/mapper/*.xml" />
+	</bean>
+
+	<bean id="dsScannerPms" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="kr.co.adflow.pms.domain.mapper" />
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactoryPms" />
+	</bean>
+	
+	<bean id="sqlSessionPms" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg name="sqlSessionFactory" ref="sqlSessionFactoryPms" />
+	</bean>
+	
+	<!-- ds Push -->
+	<bean id="dataSourcePush" class="org.springframework.jndi.JndiObjectFactoryBean" scope="singleton">
 		<property name="jndiName">
 			<value>java:comp/env/jdbc/push</value>
 		</property>
 		<property name="resourceRef" value="true" />
 	</bean>
 
-	<!-- 트랜잭션 -->
-	<bean id="transactionManager"
+	<bean id="transactionManagerPush"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-		<property name="dataSource" ref="dataSource" />
-	</bean>
-
-	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-		<property name="basePackage" value="kr.co.adflow.pms.domain.mapper" />
-	</bean>
-
-
-	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-		<property name="dataSource" ref="dataSource" />
-		<property name="typeAliasesPackage" value="kr.co.adflow.pms.domain.mapper" />
-		<property name="mapperLocations"
-			value="classpath:kr/co/adflow/pms/domain/mapper/*.xml" />
+		<property name="dataSource" ref="dataSourcePush" />
 	</bean>
 	
-
-
-	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
-		<constructor-arg name="sqlSessionFactory" ref="sqlSessionFactory" />
+		<bean id="sqlSessionFactoryPush" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSourcePush" />
+		<property name="typeAliasesPackage" value="kr.co.adflow.pms.domain.push.mapper" />
+		<property name="mapperLocations"
+			value="classpath:kr/co/adflow/pms/domain/push/mapper/*.xml" />
 	</bean>
+
+	<bean id="dsScannerPush" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="kr.co.adflow.pms.domain.push.mapper" />
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactoryPush" />
+	</bean>
+	
+	<bean id="sqlSessionPush" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg name="sqlSessionFactory" ref="sqlSessionFactoryPush" />
+	</bean>
+
 
 	<!-- jmsConnectionFactory -->
 	<bean id="tJmsFactory" class="com.ibm.mq.jms.MQTopicConnectionFactory">

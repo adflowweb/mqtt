@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
      "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="kr.co.adflow.pms.domain.mapper.ValidationMapper">
+<mapper namespace="kr.co.adflow.pms.domain.push.mapper.ValidationMapper">
 
 	<select id="validPhoneNo" parameterType="String" resultType="boolean">
 		SELECT CASE WHEN count(*) > 0 

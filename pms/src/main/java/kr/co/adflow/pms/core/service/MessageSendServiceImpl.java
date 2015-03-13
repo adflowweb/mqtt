@@ -20,7 +20,7 @@ import kr.co.adflow.pms.domain.mapper.AckMapper;
 import kr.co.adflow.pms.domain.mapper.CtlQMapper;
 import kr.co.adflow.pms.domain.mapper.MessageMapper;
 import kr.co.adflow.pms.domain.mapper.UserMapper;
-import kr.co.adflow.pms.domain.mapper.ValidationMapper;
+import kr.co.adflow.pms.domain.push.mapper.ValidationMapper;
 import kr.co.adflow.pms.domain.validator.UserValidator;
 import kr.co.adflow.pms.svc.request.CallbackReq;
 import kr.co.adflow.pms.svc.service.PushMessageService;

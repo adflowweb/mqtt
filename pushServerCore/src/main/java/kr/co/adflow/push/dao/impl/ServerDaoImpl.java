@@ -59,9 +59,10 @@ public class ServerDaoImpl implements ServerDao {
 	@Override
 	public ServerInfo get() throws Exception {
 		logger.debug("get시작()");
-		ServerInfo res = new ServerInfo(mqttService.isConnected(),
-				mqttService.getErrorMsg());
+//		ServerInfo res = new ServerInfo(mqttService.isConnected(),
+//				mqttService.getErrorMsg());
 
+		ServerInfo res = new ServerInfo();
 		// 서버정보 가져오기
 		// CpuInfo[] infos = sigar.getCpuInfoList();
 		// CpuPerc[] cpus = sigar.getCpuPercList();
