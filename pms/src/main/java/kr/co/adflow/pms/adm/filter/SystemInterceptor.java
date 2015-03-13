@@ -49,7 +49,7 @@ public class SystemInterceptor extends HandlerInterceptorAdapter {
 	public boolean preHandle(HttpServletRequest request,
 			HttpServletResponse response, Object handler) throws Exception {
 
-		logger.info("SystemInterceptor.preHandle");
+		//logger.info("SystemInterceptor.preHandle");
 
 		String token = request.getHeader(StaticConfig.HEADER_APPLICATION_TOKEN);
 

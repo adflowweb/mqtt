@@ -56,7 +56,7 @@ public class SeviceInterceptor extends HandlerInterceptorAdapter {
 		String ipFilters = interceptMapper.selectCashedApplicationKey(this
 				.getAppKey(applicationKey));
 
-		logger.info("ipFilters {}", ipFilters);
+		//logger.info("ipFilters {}", ipFilters);
 
 		if (ipFilters == null || ipFilters.trim().length() == 0) {
 
@@ -66,7 +66,7 @@ public class SeviceInterceptor extends HandlerInterceptorAdapter {
 		}
 
 		String remoteIpAddress = this.getRemoteIpAddress(request);
-		logger.info("remoteIpAddress :: {}", remoteIpAddress);
+		//logger.info("remoteIpAddress :: {}", remoteIpAddress);
 
 		if ("0.0.0.0".equals(ipFilters)) {
 			response.sendError(401);
@@ -95,7 +95,7 @@ public class SeviceInterceptor extends HandlerInterceptorAdapter {
 	 */
 	private boolean ipFiltering(String remoteIpAddress, String ipFilters) {
 
-		logger.info("remoteIpAddress :: {}", remoteIpAddress);
+		//logger.info("remoteIpAddress :: {}", remoteIpAddress);
 		if (ipFilters.indexOf(StaticConfig.INTERCEPTER_IP_FILTER_DELIM) == -1) {
 			if (remoteIpAddress.equals(ipFilters.trim())) {
 				return true;
@@ -125,7 +125,14 @@ public class SeviceInterceptor extends HandlerInterceptorAdapter {
 	 */
 	private String getRemoteIpAddress(HttpServletRequest request) {
 		// TODO 필요시 x-forward-for 로직 추가
-		return request.getRemoteAddr().trim();
+		//logger.info("remoteAddr :: {}",request.getRemoteAddr().trim());
+		//logger.info("remoteAddr-x :: {}",request.getHeader("X-Forwarded-For"));
+		
+		if (request.getHeader("X-Forwarded-For") == null) {
+			return request.getRemoteAddr().trim();
+		} else {
+			return request.getHeader("X-Forwarded-For").trim();
+		}
 	}
 
 	/**

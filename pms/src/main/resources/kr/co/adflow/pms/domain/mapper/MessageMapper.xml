@@ -133,7 +133,7 @@
 		AND a.status = 0
 		AND a.is_reservation IS TRUE
 		AND a.server_id = #{serverId}
-		AND a.reservation_time <![CDATA[<]]> DATE_ADD(NOW(), INTERVAL 1 MINUTE)
+		AND a.reservation_time <![CDATA[<]]> DATE_ADD(NOW(), INTERVAL 30 SECOND)
 		ORDER BY a.reservation_time ASC, a.issue_time ASC
 		limit #{limit}
 	</select>

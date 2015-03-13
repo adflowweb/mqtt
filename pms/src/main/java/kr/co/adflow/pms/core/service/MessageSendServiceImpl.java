@@ -96,17 +96,13 @@ public class MessageSendServiceImpl implements MessageSendService {
 
 		List<Message> list = messageMapper.selectList(param);
 
-		if (list.size() > 0)
-		logger.info("list cnt :: {}", list.size());
+		
+		//logger.info("list cnt :: {}", list.size());
 
 		int updateCnt = 0;
 		for (Message msg : list) {
 
 			msg.setKeyMon(this.getKeyMon(msg.getMsgId()));
-
-			logger.info("msg.getMsgId() {}", msg.getMsgId());
-			logger.info("msg.getReceiverTopic() {}", msg.getReceiverTopic());
-			logger.info("msg.getReceiver() {}", msg.getReceiver());
 
 			boolean isUserMessage = true;
 			if (msg.getReceiverTopic() == null
@@ -153,7 +149,7 @@ public class MessageSendServiceImpl implements MessageSendService {
 
 			int resultCnt = messageMapper.updateStatus(msg);
 			ctlQMapper.deleteQ(msg.getMsgId());
-			logger.info("update count is {}", resultCnt);
+			//logger.info("update count is {}", resultCnt);
 			// message_cnt - result_count
 			User user = new User();
 			user.setUserId(msg.getIssueId());
@@ -164,7 +160,7 @@ public class MessageSendServiceImpl implements MessageSendService {
 			updateCnt++;
 		}
 		if (updateCnt > 0)
-		logger.info("sendMessageArray is cnt {}", updateCnt);
+		logger.info("sendMessageArray {} is cnt {}", serverId,updateCnt);
 		return updateCnt;
 	}
 
@@ -176,7 +172,7 @@ public class MessageSendServiceImpl implements MessageSendService {
 		} else {
 			reservationTime = msg.getReservationTime().getTime();	
 		}
-		int resendCnt = 2;
+		int resendCnt = 1;
 		for (int i = 0; i < msg.getResendMaxCount(); i++) {
 			int intervalM = msg.getResendInterval();
 			msg.setReservation(true);
@@ -404,8 +400,7 @@ private String getKeyMon(String string) {
 			} else {
 				isUserMessage = false;
 				// msg.getReceiverTopic() 이미 있음
-				logger.info("Message Receiver topic name :",
-						msg.getReceiverTopic());
+				logger.info("Message Receiver topic name :",msg.getReceiverTopic());
 			}
 
 			if (isUserMessage
@@ -421,9 +416,6 @@ private String getKeyMon(String string) {
 			
 			// 재전송 로직 추가
 			String msgId = msg.getMsgId();
-			logger.info("msg.getMsgId() {}", msg.getMsgId());
-			logger.info("msg.getResendMaxCount() {}", msg.getResendMaxCount());
-			logger.info("msg.getResendCount() {}", msg.getResendCount());
 			if (msg.getResendMaxCount() > 0 && msg.getResendCount() == 0) {
 
 				this.reservationResend(msg,msgId);
@@ -435,6 +427,8 @@ private String getKeyMon(String string) {
 
 			int resultCnt = messageMapper.updateStatus(msg);
 			ctlQMapper.deleteQ(msg.getMsgId());
+			
+			if (resultCnt>0)
 			logger.info("update count is {}", resultCnt);
 			// message_cnt - result_count
 			User user = new User();

@@ -45,7 +45,7 @@ public class MessageSendExecutor {
 	public void sendMessageArray() {
 		//logger.info("sendMessageArray execute time is {}", new Date());
 
-		messageSendService.sendMessageArray(pmsConfig.EXECUTOR_SERVER_ID,
+		messageSendService.sendMessageArray(pmsConfig.EXECUTOR_SERVER_ID1,
 				pmsConfig.EXECUTOR_SEND_LIMIT);
 
 	}
@@ -59,9 +59,123 @@ public class MessageSendExecutor {
 		//		new Date());
 
 		messageSendService.sendReservationMessageArray(
-				pmsConfig.EXECUTOR_SERVER_ID, pmsConfig.EXECUTOR_SEND_LIMIT);
+				pmsConfig.EXECUTOR_SERVER_ID1, pmsConfig.EXECUTOR_SEND_LIMIT);
 
 	}
+	
+	
+	/**
+	 * Send message array.
+	 */
+	public void sendMessageArray2() {
+		//logger.info("sendMessageArray execute time is {}", new Date());
+
+		messageSendService.sendMessageArray(pmsConfig.EXECUTOR_SERVER_ID2,
+				pmsConfig.EXECUTOR_SEND_LIMIT);
+
+	}
+
+	/**
+	 * Send reservation message array.
+	 */
+	public void sendReservationMessageArray2() {
+		//logger.info("sendReservationMessageArray execute time is {}",
+		//		new Date());
+
+		messageSendService.sendReservationMessageArray(
+				pmsConfig.EXECUTOR_SERVER_ID2, pmsConfig.EXECUTOR_SEND_LIMIT);
+
+	}
+	
+	/**
+	 * Send message array.
+	 */
+	public void sendMessageArray3() {
+		//logger.info("sendMessageArray execute time is {}", new Date());
+
+		messageSendService.sendMessageArray(pmsConfig.EXECUTOR_SERVER_ID3,
+				pmsConfig.EXECUTOR_SEND_LIMIT);
+
+	}
+
+	/**
+	 * Send reservation message array.
+	 */
+	public void sendReservationMessageArray3() {
+		//logger.info("sendReservationMessageArray execute time is {}",
+		//		new Date());
+
+		messageSendService.sendReservationMessageArray(
+				pmsConfig.EXECUTOR_SERVER_ID3, pmsConfig.EXECUTOR_SEND_LIMIT);
+
+	}
+	
+	/**
+	 * Send message array.
+	 */
+	public void sendMessageArray4() {
+		//logger.info("sendMessageArray execute time is {}", new Date());
+
+		messageSendService.sendMessageArray(pmsConfig.EXECUTOR_SERVER_ID4,
+				pmsConfig.EXECUTOR_SEND_LIMIT);
+
+	}
+
+	/**
+	 * Send reservation message array.
+	 */
+	public void sendReservationMessageArray4() {
+		//logger.info("sendReservationMessageArray execute time is {}",
+		//		new Date());
+
+		messageSendService.sendReservationMessageArray(
+				pmsConfig.EXECUTOR_SERVER_ID4, pmsConfig.EXECUTOR_SEND_LIMIT);
+
+	}
+
+	/**
+	 * Send message array.
+	 */
+	public void sendMessageArray5() {
+		//logger.info("sendMessageArray execute time is {}", new Date());
+
+		messageSendService.sendMessageArray(pmsConfig.EXECUTOR_SERVER_ID5,
+				pmsConfig.EXECUTOR_SEND_LIMIT);
+
+	}
+
+	/**
+	 * Send reservation message array.
+	 */
+	public void sendReservationMessageArray5() {
+		//logger.info("sendReservationMessageArray execute time is {}",
+		//		new Date());
+
+		messageSendService.sendReservationMessageArray(
+				pmsConfig.EXECUTOR_SERVER_ID5, pmsConfig.EXECUTOR_SEND_LIMIT);
+
+	}
+	
+	public void sendMessageArray6() {
+		//logger.info("sendMessageArray execute time is {}", new Date());
+
+		messageSendService.sendMessageArray(pmsConfig.EXECUTOR_SERVER_ID6,
+				pmsConfig.EXECUTOR_SEND_LIMIT);
+
+	}
+
+	/**
+	 * Send reservation message array.
+	 */
+	public void sendReservationMessageArray6() {
+		//logger.info("sendReservationMessageArray execute time is {}",
+		//		new Date());
+
+		messageSendService.sendReservationMessageArray(
+				pmsConfig.EXECUTOR_SERVER_ID6, pmsConfig.EXECUTOR_SEND_LIMIT);
+
+	}
+	
 
 	// @Scheduled(cron=PmsConfig.EXECUTOR_CALLBACK_CRON)
 	/**
@@ -70,7 +184,7 @@ public class MessageSendExecutor {
 	public void sendCallback() {
 		//logger.info("sendCallback execute time is {}", new Date());
 
-		messageSendService.sendCallback(pmsConfig.EXECUTOR_SERVER_ID,
+		messageSendService.sendCallback(pmsConfig.EXECUTOR_SERVER_ID1,
 				pmsConfig.EXECUTOR_SEND_LIMIT);
 
 	}

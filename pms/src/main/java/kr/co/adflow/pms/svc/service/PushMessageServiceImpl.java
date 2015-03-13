@@ -104,7 +104,7 @@ public class PushMessageServiceImpl implements PushMessageService {
 		Message msg = new Message();
 		msg.setKeyMon(DateUtil.getYYYYMM());
 
-		msg.setServerId(pmsConfig.EXECUTOR_SERVER_ID);
+		msg.setServerId(this.getServerId());
 		msg.setMsgType(pmsConfig.MESSAGE_HEADER_TYPE_DEFAULT);
 		msg.setExpiry(this.getMessageExpiry(issueId));
 		msg.setQos(this.getMessageQos(issueId));
@@ -165,10 +165,36 @@ public class PushMessageServiceImpl implements PushMessageService {
 			msgMap.put("receiver", msg.getReceiver());
 
 			resultList.add(msgMap);
-			logger.info("message id :: {}", msg.getMsgId());
+			//logger.info("message id :: {}", msg.getMsgId());
 		}
 
 		return resultList;
+	}
+
+	private String getServerId() {
+		// pmsConfig.EXECUTOR_SERVER_ID
+		
+		String result = null;
+		
+		long mod = System.nanoTime() % 3;
+		if (mod == 0) {
+			result = pmsConfig.EXECUTOR_SERVER_ID1;
+		} else if (mod == 1) {
+			result = pmsConfig.EXECUTOR_SERVER_ID2;			
+		} else if (mod == 2) {
+			result = pmsConfig.EXECUTOR_SERVER_ID3;			
+		} 
+		
+//		else if (mod == 3) {
+//			result = pmsConfig.EXECUTOR_SERVER_ID4;			
+//		} else if (mod == 4) {
+//			result = pmsConfig.EXECUTOR_SERVER_ID5;			
+//		} else {
+//			result = pmsConfig.EXECUTOR_SERVER_ID6;
+//		}
+		
+		
+		return result;
 	}
 
 	/**

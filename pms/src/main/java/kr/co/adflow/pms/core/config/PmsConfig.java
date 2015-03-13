@@ -14,9 +14,25 @@ import org.springframework.stereotype.Component;
 public class PmsConfig {
 
 	/** The executor server id. */
-	@Value("#{pms['executor.server.id']}")
-	public String EXECUTOR_SERVER_ID; // = "S01";
+	@Value("#{pms['executor.server.id1']}")
+	public String EXECUTOR_SERVER_ID1; // = "S01";
+	
+	/** The executor server id. */
+	@Value("#{pms['executor.server.id2']}")
+	public String EXECUTOR_SERVER_ID2;
 
+	@Value("#{pms['executor.server.id3']}")
+	public String EXECUTOR_SERVER_ID3;
+
+	@Value("#{pms['executor.server.id4']}")
+	public String EXECUTOR_SERVER_ID4;
+
+	@Value("#{pms['executor.server.id5']}")
+	public String EXECUTOR_SERVER_ID5;
+
+	@Value("#{pms['executor.server.id6']}")
+	public String EXECUTOR_SERVER_ID6;
+	
 	/** The executor delay time. */
 	@Value("#{pms['executor.delay.time']}")
 	public int EXECUTOR_DELAY_TIME;// = 10000;

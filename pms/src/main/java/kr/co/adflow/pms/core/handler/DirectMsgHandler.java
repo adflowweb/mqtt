@@ -94,7 +94,7 @@ public class DirectMsgHandler implements ProducerCallback<Object> {
 			}
 
 			json = msgObject.toString();
-			logger.info("json::{}", json);
+			//logger.info("json::{}", json);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
