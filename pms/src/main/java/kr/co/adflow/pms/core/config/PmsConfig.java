@@ -69,6 +69,10 @@ public class PmsConfig {
 	@Value("#{pms['message.ack.default']}")
 	public boolean MESSAGE_ACK_DEFAULT;// = true;
 
+	
+	@Value("#{pms['message.csv.limit.default']}")
+	public int MESSAGE_CSV_LIMIT_DEFAULT;// = 100000
+	
 	// public static final String EXECUTOR_MESSAGE_CRON =
 	// "0,10,20,30,40,50 * * * * *";
 	// public static final String EXECUTOR_RESERVATION_CRON =

@@ -3,10 +3,13 @@
  */
 package kr.co.adflow.pms.adm.controller;
 
+import java.io.BufferedWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
 
 import kr.co.adflow.pms.adm.request.AccountReq;
 import kr.co.adflow.pms.adm.request.PasswordReq;
@@ -16,8 +19,10 @@ import kr.co.adflow.pms.adm.request.UserUpdateReq;
 import kr.co.adflow.pms.adm.response.MessagesRes;
 import kr.co.adflow.pms.adm.service.AccountService;
 import kr.co.adflow.pms.adm.service.SystemService;
+import kr.co.adflow.pms.core.config.PmsConfig;
 import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.controller.BaseController;
+import kr.co.adflow.pms.domain.Message;
 import kr.co.adflow.pms.domain.ServerInfo;
 import kr.co.adflow.pms.domain.User;
 import kr.co.adflow.pms.response.Response;
@@ -55,6 +60,9 @@ public class SystemController extends BaseController {
 	/** The account service. */
 	@Autowired
 	private AccountService accountService;
+	
+	@Autowired
+	private PmsConfig pmsConfig;
 
 	/**
 	 * Gets the account.
@@ -324,6 +332,102 @@ public class SystemController extends BaseController {
 		Response<Result<MessagesRes>> res = new Response(result);
 		return res;
 
+	}
+	
+	/**
+	 * Gets the message list.
+	 *
+	 * @param params the params
+	 * @param appKey the app key
+	 * @return the message list
+	 * @throws Exception the exception
+	 */
+	@RequestMapping(value = "/messages/csv", method = RequestMethod.GET)
+	@ResponseBody
+	public void getMessageCSV(
+			@RequestParam Map<String, String> params,
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey,
+			HttpServletResponse response)
+			throws Exception {
+		
+		BufferedWriter writer = new BufferedWriter(response.getWriter());
+		
+		try {
+        String csvFileName = "messages.csv";
+        
+        response.setContentType("text/csv");
+ 
+        // creates mock data
+        String headerKey = "Content-Disposition";
+        String headerValue = String.format("attachment; filename=\"%s\"",
+                csvFileName);
+        response.setHeader(headerKey, headerValue);
+ 
+		String sEcho = (String) params.get("sEcho");
+		params.put("appKey", appKey);
+
+		//download cnt limit
+		params.put("iDisplayStart", "0");
+		params.put("iDisplayLength", pmsConfig.MESSAGE_CSV_LIMIT_DEFAULT+"");
+		MessagesRes messagesRes = systemService.getSysMessageList(params);
+		
+
+		messagesRes.setsEcho(sEcho);
+		
+		logger.info("messagesRes size {}",messagesRes.getData().size());
+		
+		writer.write(this.getCSVHeader());
+		int len = messagesRes.getData().size();
+		for (int i = 0; i < len; i++) {
+			writer.write(this.getCSVData(messagesRes.getData().get(i)));
+			
+		}
+		
+		writer.flush();
+		
+		} catch(Exception e) {
+			throw e;
+		} finally {
+			if (writer != null) {
+				writer.close();
+			}
+		}
+
+	}
+
+	private String getCSVHeader() {
+		StringBuffer result = new StringBuffer();
+		result.append("updateTime").append(",")
+		.append("issueId").append(",")
+		.append("receiver").append(",")
+		.append("status").append(",")
+		.append("appAckType").append(",")
+		.append("appAckTime").append(",")
+		.append("pmaAckType").append(",")
+		.append("pmaAckTime").append(",")
+		.append("resendCount").append(",")
+		.append("resendInterval").append(",")
+		.append("msgId").append("\n");
+
+		return result.toString();
+	}
+
+	private String getCSVData(Message msg) {
+		
+		StringBuffer result = new StringBuffer();
+		result.append(msg.getUpdateTime()).append(",")
+		.append(msg.getIssueId()).append(",")
+		.append(msg.getReceiver()).append(",")
+		.append(msg.getStatus()).append(",")
+		.append(msg.getAppAckType()).append(",")
+		.append(msg.getAppAckTime()).append(",")
+		.append(msg.getPmaAckType()).append(",")
+		.append(msg.getPmaAckTime()).append(",")
+		.append(msg.getResendCount()).append(",")
+		.append(msg.getResendInterval()).append(",")
+		.append(msg.getMsgId()).append("\n");
+		
+		return result.toString();
 	}
 
 	/**
