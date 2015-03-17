@@ -6,7 +6,7 @@
 </head>
 <body>
 <h1>
-	Hello world!  
+	KTP PUSH MESSAGE DELIVERY SERVER.  
 </h1>
 
 <P>  The time on the server is ${serverTime}. </P>

@@ -248,7 +248,7 @@ public class PushMessageController extends BaseController {
 	}
 
 	/**
-	 * Callback post.
+	 * Callback post. for TEST
 	 *
 	 * @param req the req
 	 * @return the response
@@ -269,7 +269,7 @@ public class PushMessageController extends BaseController {
 	}
 
 	/**
-	 * Callback.
+	 * Callback.for TEST
 	 *
 	 * @param msgId the msg id
 	 * @return the response

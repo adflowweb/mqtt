@@ -3,9 +3,12 @@
  */
 package kr.co.adflow.pms.adm.controller;
 
+import java.io.BufferedWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
 
 import kr.co.adflow.pms.adm.request.AccountReq;
 import kr.co.adflow.pms.adm.request.PasswordReq;
@@ -15,6 +18,7 @@ import kr.co.adflow.pms.adm.service.AccountService;
 import kr.co.adflow.pms.adm.service.SvcService;
 import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.controller.BaseController;
+import kr.co.adflow.pms.domain.Message;
 import kr.co.adflow.pms.domain.User;
 import kr.co.adflow.pms.domain.validator.UserValidator;
 import kr.co.adflow.pms.response.Response;
@@ -166,7 +170,91 @@ public class SvcController extends BaseController {
 		return res;
 
 	}
+	
+	
+	@RequestMapping(value = "/messages/csv", method = RequestMethod.GET)
+	@ResponseBody
+	public void getMessageCSV(
+			@RequestParam Map<String, String> params,
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey,
+			HttpServletResponse response)
+			throws Exception {
+		
+		BufferedWriter writer = new BufferedWriter(response.getWriter());
+		
+		try {
+        String csvFileName = "messages.csv";
+        
+        response.setContentType("text/csv");
+ 
+        // creates mock data
+        String headerKey = "Content-Disposition";
+        String headerValue = String.format("attachment; filename=\"%s\"",
+                csvFileName);
+        response.setHeader(headerKey, headerValue);
 
+		String sEcho = (String) params.get("sEcho");
+		params.put("appKey", appKey);
+
+		MessagesRes messagesRes = svcService.getSvcMessageList(params);
+
+		messagesRes.setsEcho(sEcho);
+		
+		writer.write(this.getCSVHeader());
+		int len = messagesRes.getData().size();
+		for (int i = 0; i < len; i++) {
+			writer.write(this.getCSVData(messagesRes.getData().get(i)));
+			
+		}
+		
+		writer.flush();
+		
+		} catch(Exception e) {
+			throw e;
+		} finally {
+			if (writer != null) {
+				writer.close();
+			}
+		}
+
+
+	}
+
+	private String getCSVHeader() {
+		StringBuffer result = new StringBuffer();
+		result.append("updateTime").append(",")
+		.append("issueId").append(",")
+		.append("receiver").append(",")
+		.append("status").append(",")
+		.append("appAckType").append(",")
+		.append("appAckTime").append(",")
+		.append("pmaAckType").append(",")
+		.append("pmaAckTime").append(",")
+		.append("resendCount").append(",")
+		.append("resendInterval").append(",")
+		.append("msgId").append("\n");
+
+		return result.toString();
+	}
+
+	private String getCSVData(Message msg) {
+		
+		StringBuffer result = new StringBuffer();
+		result.append(msg.getUpdateTime()).append(",")
+		.append(msg.getIssueId()).append(",")
+		.append(msg.getReceiver()).append(",")
+		.append(msg.getStatus()).append(",")
+		.append(msg.getAppAckType()).append(",")
+		.append(msg.getAppAckTime()).append(",")
+		.append(msg.getPmaAckType()).append(",")
+		.append(msg.getPmaAckTime()).append(",")
+		.append(msg.getResendCount()).append(",")
+		.append(msg.getResendInterval()).append(",")
+		.append(msg.getMsgId()).append("\n");
+		
+		return result.toString();
+	}
+	
 	/**
 	 * Gets the resevation message list.
 	 *
