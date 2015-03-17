@@ -19,6 +19,7 @@ import kr.co.adflow.pms.adm.response.MessagesRes;
 import kr.co.adflow.pms.adm.service.AccountService;
 import kr.co.adflow.pms.adm.service.SvcAdmService;
 import kr.co.adflow.pms.adm.service.SvcService;
+import kr.co.adflow.pms.core.config.PmsConfig;
 import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.controller.BaseController;
 import kr.co.adflow.pms.domain.Message;
@@ -66,6 +67,10 @@ public class SvcAdmController extends BaseController {
 	/** The user validator. */
 	@Autowired
 	private UserValidator userValidator;
+	
+	@Autowired
+	private PmsConfig pmsConfig;
+
 
 	/**
 	 * Gets the account.
@@ -332,6 +337,9 @@ public class SvcAdmController extends BaseController {
 		String sEcho = (String) params.get("sEcho");
 		params.put("appKey", appKey);
 
+		//download cnt limit
+		params.put("iDisplayStart", "0");
+		params.put("iDisplayLength", pmsConfig.MESSAGE_CSV_LIMIT_DEFAULT+"");
 		MessagesRes messagesRes = svcService.getSvcMessageList(params);
 
 		messagesRes.setsEcho(sEcho);
