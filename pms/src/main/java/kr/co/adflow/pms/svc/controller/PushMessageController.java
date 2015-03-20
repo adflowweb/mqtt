@@ -255,15 +255,15 @@ public class PushMessageController extends BaseController {
 	 */
 	@RequestMapping(value = "/callback", method = RequestMethod.POST)
 	@ResponseBody
-	public Response<Result<String>> callbackPost(@RequestBody CallbackReq req) {
+	public Response<Result<CallbackReq>> callbackPost(@RequestBody CallbackReq req) {
 
 		logger.info("callback test msgId : {}", req.getCallbackmsgid());
 
-		Result<String> result = new Result<String>();
+		Result<CallbackReq> result = new Result<CallbackReq>();
 		result.setSuccess(true);
-		result.setData(req.getCallbackmsgid());
+		result.setData(req);
 		@SuppressWarnings({ "unchecked", "rawtypes" })
-		Response<Result<String>> res = new Response(result);
+		Response<Result<CallbackReq>> res = new Response(result);
 		return res;
 
 	}

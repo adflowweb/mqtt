@@ -631,7 +631,7 @@
 				<apns.production>false</apns.production>
 
 				<!-- 헬스체크여부 -->
-				<health.enable>false</health.enable>
+				<health.enable>true</health.enable>
 
 				<!-- healthCheck interval (second) -->
 				<health.check.interval>10</health.check.interval>

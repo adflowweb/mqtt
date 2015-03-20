@@ -464,14 +464,14 @@ private String getKeyMon(String string) {
 					&& ack.getCallbackUrl().trim().length() > 0) {
 				// 3. RestTemplate
 				logger.info("ack.getCallbackUrl() {}", ack.getCallbackUrl());
-				logger.info("ack.getCallbackMethod() {}",
-						ack.getCallbackMethod());
+				logger.info("ack.getAckType() {}",	ack.getAckType());
+				logger.info("ack.getApplicationKey() {}",	ack.getApplicationKey());
 				if (ack.getCallbackMethod().equals("POST")) {
 					try {
-						Map resultMap = restTemplate.postForObject(
+						String result = restTemplate.postForObject(
 								ack.getCallbackUrl(), this.getRequest(ack),
-								Map.class);
-						logger.info("{}", resultMap);
+								String.class);
+						logger.info("{}", result);
 						ack.setCallbackStatus(1);
 						ack.setCallbackCount(1);
 					} catch (Exception e) {
@@ -516,7 +516,9 @@ private String getKeyMon(String string) {
 
 		CallbackReq req = new CallbackReq();
 		req.setCallbackmsgid(ack.getMsgId());
-		req.setAckresult("true");
+		req.setAcktype(ack.getAckType());
+		req.setAcktime(DateUtil.getDate(ack.getAckTime()));
+		req.setAckresult(true);
 		HttpEntity entity = new HttpEntity(req, headers);
 
 		return entity;
@@ -534,6 +536,7 @@ private String getKeyMon(String string) {
 		params.put("keyMon", this.getKeyMon(ack.getMsgId()));
 		params.put("callbackStatus", ack.getCallbackStatus());
 		params.put("callbackCount", ack.getCallbackCount());
+		params.put("ackType", ack.getAckType());
 		params.put("issueId", ack.getIssueId());
 		params.put("msgId", ack.getMsgId());
 		params.put("tokenId", ack.getTokenId());

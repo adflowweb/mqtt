@@ -12,8 +12,13 @@ public class CallbackReq {
 	/** The callbackmsgid. */
 	private String callbackmsgid;
 	
+	
+	private String acktype;
+	
+	private String acktime;
+	
 	/** The ackresult. */
-	private String ackresult;
+	private boolean ackresult;
 
 	/**
 	 * Gets the callbackmsgid.
@@ -33,22 +38,30 @@ public class CallbackReq {
 		this.callbackmsgid = callbackmsgid;
 	}
 
-	/**
-	 * Gets the ackresult.
-	 *
-	 * @return the ackresult
-	 */
-	public String getAckresult() {
+	public boolean isAckresult() {
 		return ackresult;
 	}
 
-	/**
-	 * Sets the ackresult.
-	 *
-	 * @param ackresult the new ackresult
-	 */
-	public void setAckresult(String ackresult) {
+	public void setAckresult(boolean ackresult) {
 		this.ackresult = ackresult;
 	}
+
+	public String getAcktype() {
+		return acktype;
+	}
+
+	public void setAcktype(String acktype) {
+		this.acktype = acktype;
+	}
+
+	public String getAcktime() {
+		return acktime;
+	}
+
+	public void setAcktime(String acktime) {
+		this.acktime = acktime;
+	}
+
+
 
 }
