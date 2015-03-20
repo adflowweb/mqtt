@@ -99,7 +99,7 @@ public class DirectMsgHandler implements ProducerCallback<Object> {
 			e.printStackTrace();
 		}
 
-		byte[] byteArr = new byte[1024];
+		byte[] byteArr = null;//new byte[1024];
 
 		byteArr = json.getBytes();
 		bytesMessage.writeBytes(byteArr);

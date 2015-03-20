@@ -91,7 +91,7 @@ public class ServerDaoImpl implements ServerDao {
 			cpuInfo.setSoftIrq(cpu.getSoftIrq());
 			cpuInfo.setStolen(cpu.getStolen());
 		}
-		logger.debug("cpuInfo=" + cpuInfo);
+		logger.debug("cpuInfo= {}", cpuInfo);
 		res.setCpu(cpuInfo);
 
 		// System.out.println("**************************************");
@@ -129,7 +129,7 @@ public class ServerDaoImpl implements ServerDao {
 				mem.getActualUsed() / 1024 / 1024, mem.getFree() / 1024 / 1024,
 				mem.getRam(), mem.getTotal() / 1024 / 1024,
 				mem.getUsed() / 1024 / 1024);
-		logger.debug("memory=" + memory);
+		logger.debug("memory= {}", memory);
 		res.setMemory(memory);
 
 		// Retrieve memory managed bean from management factory.
@@ -159,7 +159,7 @@ public class ServerDaoImpl implements ServerDao {
 				nonHeap.getUsed() / 1024 / 1024,
 				nonHeap.getCommitted() / 1024 / 1024,
 				nonHeap.getMax() / 1024 / 1024);
-		logger.debug("heapInfo=" + heapInfo);
+		logger.debug("heapInfo= {}", heapInfo);
 		res.setHeap(heapInfo);
 
 		// get disk info
@@ -172,7 +172,7 @@ public class ServerDaoImpl implements ServerDao {
 		Disk[] disk = new Disk[sys.size()];
 		for (int i = 0; i < sys.size(); i++) {
 			disk[i] = makeDiskInfo((FileSystem) sys.get(i));
-			logger.debug("disk[" + i + "]=" + disk[i]);
+			logger.debug("disk[ {} ]= {}",i, disk[i]);
 		}
 
 		res.setDisk(disk);
@@ -182,8 +182,7 @@ public class ServerDaoImpl implements ServerDao {
 		// res.setTps(tps);
 		// logger.debug("tps=" + tps);
 
-		logger.debug("canonicalHostName="
-				+ InetAddress.getLocalHost().getCanonicalHostName());
+		logger.debug("canonicalHostName= {}",InetAddress.getLocalHost().getCanonicalHostName());
 
 		res.setHostName(InetAddress.getLocalHost().getHostName());
 		res.setIpAddress(InetAddress.getLocalHost().getHostAddress());

@@ -59,7 +59,6 @@
 		FROM pms.ack${keyMon} a, pms.message${keyMon} b, user c, token d
 		WHERE a.msg_id = b.msg_id 
 		AND b.issue_id = c.user_id
-		AND a.ack_type = 'app'
 		AND a.callback_status = 0
 		AND a.server_id = #{serverId}
 		AND c.user_id = d.user_id
