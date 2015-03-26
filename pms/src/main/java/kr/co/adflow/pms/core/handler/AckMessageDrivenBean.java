@@ -45,7 +45,7 @@ public class AckMessageDrivenBean implements MessageListener {
 	// private PmsConfig pmsConfig;
 
 	/** The executor server id. */
-	@Value("#{pms['executor.server.id']}")
+	@Value("#{pms['executor.server.id1']}")
 	private String EXECUTOR_SERVER_ID;
 
 	/* (non-Javadoc)
@@ -65,9 +65,9 @@ public class AckMessageDrivenBean implements MessageListener {
 		Ack ack = this.getAck(body);
 		int cnt = ackMapper.insertAck(ack);
 		// callback
-		if (ack.getAckType().equals("app")) {
+		//if (ack.getAckType().equals("app")) {
 			ctlQMapper.insertQ(this.getCtlQ(ack));
-		}
+		//}
 		logger.info("ack result : {}", cnt);
 
 	}

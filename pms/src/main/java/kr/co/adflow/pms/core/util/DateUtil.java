@@ -27,6 +27,8 @@ public class DateUtil {
 	public static void main(String[] agrs) {
 		System.out.println(fromISODateString("2015-02-07T14:48:00.000Z")
 				.getTime());
+		
+		System.out.println(getDate(new Date()));
 	}
 
 	/**
@@ -80,6 +82,15 @@ public class DateUtil {
 	private static String getDate(Date date, String pattern) {
 
 		SimpleDateFormat fmt = new SimpleDateFormat(pattern);
+
+		return fmt.format(date);
+
+	}
+	
+	
+	public static String getDate(Date date) {
+
+		SimpleDateFormat fmt = new SimpleDateFormat(FORMAT_DATE_ISO);
 
 		return fmt.format(date);
 

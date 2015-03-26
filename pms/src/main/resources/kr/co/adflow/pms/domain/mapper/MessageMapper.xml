@@ -33,6 +33,7 @@
 		<result property="pmaAckTime" column="pma_ack_time" />
 		<result property="appAckType" column="app_ack_type" />
 		<result property="appAckTime" column="app_ack_time" />
+		<result property="issueName" column="issue_name" />
 	</resultMap>
 
 	<select id="select" parameterType="String"
@@ -61,10 +62,11 @@
 		, a.update_id
 		, b.content_type
 		, b.content
-		FROM pms.message${keyMon} a, pms.content${keyMon} b
+		, c.user_name AS issue_name
+		FROM pms.message${keyMon} a, pms.content${keyMon} b, pms.user c
 		WHERE a.msg_id = b.msg_id
-		and
-		a.msg_id = #{msgId}
+		AND a.issue_id = c.user_id
+		AND a.msg_id = #{msgId}
 	</select>
 
 	<select id="selectList" parameterType="Map"
@@ -93,8 +95,10 @@
 		, a.update_id
 		, b.content_type
 		, b.content
-		FROM pms.message${keyMon} a, pms.content${keyMon} b
+		, c.user_name AS issue_name
+		FROM pms.message${keyMon} a, pms.content${keyMon} b, pms.user c
 		WHERE a.msg_id = b.msg_id
+		AND a.issue_id = c.user_id
 		AND a.status = 0
 		AND a.is_reservation IS FALSE
 		AND a.server_id = #{serverId}
@@ -128,8 +132,10 @@
 		, a.update_id
 		, b.content_type
 		, b.content
-		FROM pms.message${keyMon} a, pms.content${keyMon} b
+		, c.user_name AS issue_name
+		FROM pms.message${keyMon} a, pms.content${keyMon} b, pms.user c
 		WHERE a.msg_id = b.msg_id
+		AND a.issue_id = c.user_id
 		AND a.status = 0
 		AND a.is_reservation IS TRUE
 		AND a.server_id = #{serverId}

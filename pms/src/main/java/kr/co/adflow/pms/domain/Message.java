@@ -74,6 +74,8 @@ public class Message {
 	/** The issue id. */
 	private String issueId;
 	
+	private String issueName;
+	
 	/** The update time. */
 	private Date updateTime;
 	
@@ -618,6 +620,14 @@ public class Message {
 	 */
 	public void setGroupId(String groupId) {
 		this.groupId = groupId;
+	}
+
+	public String getIssueName() {
+		return issueName;
+	}
+
+	public void setIssueName(String issueName) {
+		this.issueName = issueName;
 	}
 
 }

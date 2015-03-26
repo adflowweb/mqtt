@@ -611,20 +611,20 @@
 				<mq.server.ssl>true</mq.server.ssl>
 
 				<!-- ibm mq 서버주소 -->
-				<mq.server.url>ssl://adflow.net:8883</mq.server.url>
+				<mq.server.url>tcp://14.63.216.249:1883</mq.server.url>
 
 				<!-- SMS 서버주소 -->
-				<sms.server.url>130.80.101.48</sms.server.url>
+				<sms.server.url>127.0.0.1</sms.server.url>
 
 				<!-- SMS 서버포트 -->
 				<sms.server.port>3000</sms.server.port>
 
 				<!-- LDAP 서버주소 -->
 				<!-- <ldap.server.url>130.10.0.32</ldap.server.url> -->
-				<ldap.server.enable>true</ldap.server.enable>
-				<ldap.server.url>adpusan.co.kr</ldap.server.url>
+				<ldap.server.enable>false</ldap.server.enable>
+				<ldap.server.url>130.10.0.32</ldap.server.url>
 
-				<apns.key.file>d:/temp/bsbankpush/keyfile/cho_push.p12</apns.key.file>
+				<apns.key.file>/Users/nadir93/tmp/cho_push.p12</apns.key.file>
 
 				<apns.key.password>test1234</apns.key.password>
 
@@ -643,7 +643,7 @@
 				<message.process.interval>15</message.process.interval>
 
 				<!--SMS process enable/disable -->
-				<sms.enable>true</sms.enable>
+				<sms.enable>false</sms.enable>
 
 				<!-- SMS processing interval (second) -->
 				<sms.process.interval>30</sms.process.interval>
@@ -691,14 +691,14 @@
 				<mq.pcf.password>!ADFlow@</mq.pcf.password>
 				<mq.pcf.port>1414</mq.pcf.port>
 				<mq.pcf.channel>ADFlowPCF</mq.pcf.channel>
-				<mq.pcf.host>14.63.217.141</mq.pcf.host>
+				<mq.pcf.host>14.63.216.249</mq.pcf.host>
 				<!-- mq jms info -->
 				<mq.jms.id>adflow</mq.jms.id>
 				<mq.jms.password>!ADFlow@</mq.jms.password>
 				<mq.jms.port>1414</mq.jms.port>
 				<mq.jms.queue.manager>MQTT</mq.jms.queue.manager>
 				<mq.jms.channel>ADFlowJMS</mq.jms.channel>
-				<mq.jms.host>14.63.217.141</mq.jms.host>
+				<mq.jms.host>14.63.216.249</mq.jms.host>
 
 			</properties>
 		</profile>

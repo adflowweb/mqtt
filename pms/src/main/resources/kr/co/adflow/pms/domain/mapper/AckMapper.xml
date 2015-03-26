@@ -59,7 +59,6 @@
 		FROM pms.ack${keyMon} a, pms.message${keyMon} b, user c, token d
 		WHERE a.msg_id = b.msg_id 
 		AND b.issue_id = c.user_id
-		AND a.ack_type = 'app'
 		AND a.callback_status = 0
 		AND a.server_id = #{serverId}
 		AND c.user_id = d.user_id
@@ -74,7 +73,7 @@
 		,callback_count = callback_count <![CDATA[+]]> #{callbackCount}
 		,issue_id = #{issueId}
 		WHERE msg_id = #{msgId}
-		AND ack_type = 'app'
+		AND ack_type = #{ackType}
 		AND token_id = #{tokenId}
 	</update>	
 </mapper>	

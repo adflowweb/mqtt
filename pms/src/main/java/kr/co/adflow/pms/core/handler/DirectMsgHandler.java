@@ -63,7 +63,8 @@ public class DirectMsgHandler implements ProducerCallback<Object> {
 
 			msgObject.put("msgType", msg.getMsgType());
 			msgObject.put("msgId", msg.getMsgId());
-			msgObject.put("sender", msg.getIssueId());
+			//msgObject.put("sender", msg.getIssueId());
+			msgObject.put("sender", msg.getIssueName());
 			msgObject.put("receiver", msg.getReceiver());
 			if (msg.isAck()) {
 				msgObject.put("ack", 1);
@@ -99,7 +100,7 @@ public class DirectMsgHandler implements ProducerCallback<Object> {
 			e.printStackTrace();
 		}
 
-		byte[] byteArr = new byte[1024];
+		byte[] byteArr = null;//new byte[1024];
 
 		byteArr = json.getBytes();
 		bytesMessage.writeBytes(byteArr);

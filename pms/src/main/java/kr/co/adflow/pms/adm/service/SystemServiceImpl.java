@@ -408,6 +408,7 @@ public class SystemServiceImpl implements SystemService {
 			
 			return info;
 		} catch (Exception e) {
+			logger.error("getServerInfo", e);
 			throw new RuntimeException("getServerInfo error");
 		}
 	}
