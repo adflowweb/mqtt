@@ -502,8 +502,7 @@ public class PushHandler implements MqttCallback {
                 ackJson.put("token", currentToken);
                 ackJson.put("ackType", "pma");
                 ackJson.put("ackTime", System.currentTimeMillis());
-                int ackJob = pushdb.addJob(Job.ACK, ACK_TOPIC, ackJson.toString());
-                Log.i(TAG, "ack작업이추가되었습니다.jobID=" + ackJob);
+                addJob(ackJson);
             }
 
             switch (msgType) {
@@ -539,6 +538,13 @@ public class PushHandler implements MqttCallback {
             Log.e(TAG, "메시지처리중예외상황발생", e);
         }
         Log.d(TAG, "messageArrived종료()");
+    }
+
+    public void addJob(JSONObject ackJson) throws Exception {
+        Log.d(TAG, "addJob시작(ackJson=" + ackJson + ")");
+        int ackJob = pushdb.addJob(Job.ACK, ACK_TOPIC, ackJson.toString());
+        Log.i(TAG, "ack작업이추가되었습니다.jobID=" + ackJob);
+        Log.d(TAG, "addJob종료()");
     }
 
     /**
