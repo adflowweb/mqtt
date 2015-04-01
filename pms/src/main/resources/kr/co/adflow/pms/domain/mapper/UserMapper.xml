@@ -109,6 +109,7 @@
 		FROM pms.user a, pms.token b
 		WHERE
         a.user_id = b.user_id
+        AND b.token_type = 'A'
 		<!-- kicho : appkey add [end] - 20150401 -->
 		
 		
