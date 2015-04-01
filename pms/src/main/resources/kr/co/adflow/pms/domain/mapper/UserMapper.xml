@@ -86,21 +86,33 @@
 
 	<select id="listAll" parameterType="String" resultMap="UserResult">
 		SELECT
-		user_id
-		, role
-		, user_name
-		, ip_filters
-		, status
-		,message_count_limit
-		,default_expiry
-		,default_qos
-		,message_size_limit		
-		,callback_url		
-		,callback_method		
-		,callback_count_limit		
-		, issue_time
-		, issue_id
+		a.user_id
+		, a.role
+		, a.user_name
+		, a.ip_filters
+		, a.status
+		, a.message_count_limit
+		, a.default_expiry
+		, a.default_qos
+		, a.message_size_limit		
+		, a.callback_url		
+		, a.callback_method		
+		, a.callback_count_limit		
+		, a.issue_time
+		, a.issue_id
+		
+		<!-- kicho change - 20150401 
 		FROM pms.user
+		-->
+		<!-- kicho : application_token add [start] - 20150401 -->
+		, b.token_id as application_token
+		FROM pms.user a, pms.token b
+		WHERE
+        a.user_id = b.user_id
+		<!-- kicho : appkey add [end] - 20150401 -->
+		
+		
+		
 	</select>
 
 	<resultMap id="AuthResult" type="kr.co.adflow.pms.domain.User">
