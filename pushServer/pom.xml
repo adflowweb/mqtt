@@ -608,7 +608,7 @@
 				<topic>/push/poll,/push/ack,/push/group,/push/badge</topic>
 
 				<!-- ibm mq 서버주소 -->
-				<mq.server.ssl>true</mq.server.ssl>
+				<mq.server.ssl>false</mq.server.ssl>
 
 				<!-- ibm mq 서버주소 -->
 				<mq.server.url>tcp://14.63.216.249:1883</mq.server.url>
