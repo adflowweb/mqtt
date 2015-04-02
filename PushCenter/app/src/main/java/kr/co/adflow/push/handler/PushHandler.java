@@ -275,6 +275,12 @@ public class PushHandler implements MqttCallback {
                                     case 0: // PUBLISH
                                         break;
                                     case 1:  // SUBSCRIBE
+                                        Log.d(TAG, "SUBSCRIBE작업시작");
+                                        String topic = jobs[i].getTopic();
+                                        Log.d(TAG, "topic=" + topic);
+                                        subscribe(topic, 2/* qos 2 */);
+                                        pushdb.deteletJob(jobs[i].getId());
+                                        Log.i(TAG, "SUBSCRIBE작업이수행되었습니다.jobID=" + jobs[i].getId());
                                         break;
                                     case 2: // UNSUBSCRIBE
                                         break;
@@ -502,7 +508,7 @@ public class PushHandler implements MqttCallback {
                 ackJson.put("token", currentToken);
                 ackJson.put("ackType", "pma");
                 ackJson.put("ackTime", System.currentTimeMillis());
-                addJob(ackJson);
+                addAckJob(ackJson);
             }
 
             switch (msgType) {
@@ -540,11 +546,22 @@ public class PushHandler implements MqttCallback {
         Log.d(TAG, "messageArrived종료()");
     }
 
-    public void addJob(JSONObject ackJson) throws Exception {
-        Log.d(TAG, "addJob시작(ackJson=" + ackJson + ")");
+    /**
+     * @param ackJson
+     * @throws Exception
+     */
+    public void addAckJob(JSONObject ackJson) throws Exception {
+        Log.d(TAG, "addAckJob시작(ackJson=" + ackJson + ")");
         int ackJob = pushdb.addJob(Job.ACK, ACK_TOPIC, ackJson.toString());
         Log.i(TAG, "ack작업이추가되었습니다.jobID=" + ackJob);
-        Log.d(TAG, "addJob종료()");
+        Log.d(TAG, "addAckJob종료()");
+    }
+
+    public void addSubscribeJob(String topic) throws Exception {
+        Log.d(TAG, "addSubscribeJob시작(topic=" + topic + ")");
+        int job = pushdb.addJob(Job.SUBSCRIBE, topic, null);
+        Log.i(TAG, "subscribe작업이추가되었습니다.jobID=" + job);
+        Log.d(TAG, "addSubscribeJob종료()");
     }
 
     /**
@@ -648,10 +665,22 @@ public class PushHandler implements MqttCallback {
                 //부팅후 최초 연결시
                 sendBroadcast(FIRST_MQTT_CONNECTED_MESSAGE, FIRST_MQTT_CONNECTED);
                 preference.put(PushPreference.FIRSTCONNECTION, false);
+                //부팅후 최초 연결시 subscribe mms/82XXX
+                String phonenum = preference.getValue(PushPreference.PHONENUM, null);
+                Log.d(TAG, "phonenum=" + phonenum);
+                if (phonenum != null) {
+                    // '+' 제거
+                    phonenum = phonenum.replace("+", "");
+                    String subscribeTopic = "mms/" + phonenum;
+                    Log.d(TAG, "서브스크라이브토픽=" + subscribeTopic);
+                    addSubscribeJob(subscribeTopic);
+                } else {
+                    // 전화번호가 이상합니다.
+                    throw new Exception("전화번호가 오류로 해당토픽을 구독할 수 없습니다.");
+                }
             } else {
                 sendBroadcast(MQTT_CONNECTED_MESSAGE, MQTT_CONNECTED);
             }
-
         } catch (Exception e) {
             Log.e(TAG, "예외상황발생", e);
         }

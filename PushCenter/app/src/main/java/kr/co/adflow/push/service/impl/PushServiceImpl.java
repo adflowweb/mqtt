@@ -513,7 +513,7 @@ public class PushServiceImpl extends Service implements PushService {
         ack.put("token", tokenID);
         ack.put("ackType", "app");
         ack.put("ackTime", System.currentTimeMillis());
-        pushHandler.addJob(ack);
+        pushHandler.addAckJob(ack);
         //publish(PushHandler.ACK_TOPIC, ack.toString().getBytes(), 2); // qos 2 로 전송
         Log.d(TAG, "ack종료()");
     }
