@@ -83,14 +83,27 @@
 	</select>
 	
 	<select id="expiredSessionList" resultType="kr.co.adflow.push.domain.Token">
+	
+	<!-- kicho : role change [start] - 20150410 
 		SELECT tokenid, userid, issue, lastAccessTime
 		FROM push.token 
 		WHERE lastAccessTime  <![CDATA[<]]> SUBDATE(NOW(),INTERVAL #{lastAccessTime} DAY)
 		AND userid NOT IN ('PCBS')
 		ORDER BY lastAccessTime ASC
+	-->	
+	
+	<!-- kicho : role change [start] - 20150410 -->	
+		SELECT a.tokenid, a.userid, a.issue, a.lastAccessTime
+		FROM push.token a, push.user b
+		WHERE a.userid = b.userid 
+		AND a.lastAccessTime  <![CDATA[<]]> SUBDATE(NOW(),INTERVAL #{lastAccessTime} DAY)
+		AND b.role IS NULL
+		ORDER BY a.lastAccessTime ASC
+	<!-- kicho : role change [end] - 20150410 -->		
+		
 	</select>
 	
-		<select id="getMultiByUfmi" resultType="kr.co.adflow.push.domain.Token">
+	<select id="getMultiByUfmi" resultType="kr.co.adflow.push.domain.Token">
 		SELECT a.tokenid, a.userid, a.issue, a.lastAccessTime , b.ufmi
 		FROM push.token a,push.user b
         WHERE a.userid = b.userid

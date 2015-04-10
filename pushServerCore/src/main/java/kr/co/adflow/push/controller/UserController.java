@@ -200,21 +200,55 @@ public class UserController {
 	@ResponseBody
 	public Response<Token> auth(@RequestBody User user,
 			HttpServletRequest request) throws Exception {
+
+//== kicho(20150410) : user "" or null check add - start01
+//		logger.debug("유저=" + user);
+//		Token token = userService.auth(user);
+//		Result<Token> result = new Result<Token>();
+//		result.setSuccess(true);
+//		if (token == null) {
+//			List<String> messages = new ArrayList<String>() {
+//				{
+//					add("user not found or invalid password");
+//				}
+//			};
+//			result.setErrors(messages);
+//		} else {
+////			token.setRole(roleService.getByUser(user.getUserID()));
+//			result.setData(token);
+//		}
+//== kicho(20150410) : user "" or null check add - end01		
+		
+		//== kicho(20150410) : user "" or null check add - start02
+		
 		logger.debug("유저=" + user);
-		Token token = userService.auth(user);
 		Result<Token> result = new Result<Token>();
 		result.setSuccess(true);
-		if (token == null) {
+		
+		if (user.getUserID() == null || user.getUserID().trim().length() == 0) {
 			List<String> messages = new ArrayList<String>() {
 				{
-					add("user not found or invalid password");
+					add("user null or space ");
 				}
 			};
 			result.setErrors(messages);
 		} else {
-//			token.setRole(roleService.getByUser(user.getUserID()));
-			result.setData(token);
+		
+
+			Token token = userService.auth(user);
+
+			if (token == null) {
+				List<String> messages = new ArrayList<String>() {
+					{
+						add("user not found");
+					}
+				};
+				result.setErrors(messages);
+			} else {
+				result.setData(token);
+			}
 		}
+		//== kicho(20150410) : user "" or null check add - end02
 
 		Response<Token> res = new Response<Token>(result);
 		logger.debug("response=" + res);
