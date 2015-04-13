@@ -18,54 +18,77 @@ import org.springframework.jms.core.ProducerCallback;
  * The Class PreCheckHandler.
  */
 public class PreCheckHandler implements ProducerCallback<Object> {
-	
-	//final static private int TIME_TO_LIVE = 3000;
-	
+
+	// final static private int TIME_TO_LIVE = 3000;
+
 	/** The Constant PRECHECK_MESSAGE. */
 	final static private String PRECHECK_MESSAGE = "{\"msgType\":103}";
-	
-	
+
 	/** The time to live. */
 	private int TIME_TO_LIVE;
-	
+
 	/**
 	 * Instantiates a new pre check handler.
-	 *
-	 * @param timeout the timeout
+	 * 
+	 * @param timeout
+	 *            the timeout
 	 */
 	public PreCheckHandler(int timeout) {
 		TIME_TO_LIVE = timeout;
 	}
-	
+
 	/** The Constant logger. */
 	private static final Logger logger = LoggerFactory
 			.getLogger(PreCheckHandler.class);
 
-	/* (non-Javadoc)
-	 * @see org.springframework.jms.core.ProducerCallback#doInJms(javax.jms.Session, javax.jms.MessageProducer)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.springframework.jms.core.ProducerCallback#doInJms(javax.jms.Session,
+	 * javax.jms.MessageProducer)
 	 */
 	@Override
-	public Object doInJms(Session session, MessageProducer producer) throws JMSException {
+	public Object doInJms(Session session, MessageProducer producer)
+			throws JMSException {
+		byte[] byteArr = null;
+		try {
+			logger.info("TIME_TO_LIVE==============================={}",
+					TIME_TO_LIVE);
+			producer.setPriority(6);
+			producer.setTimeToLive(TIME_TO_LIVE);
+			producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
 
-		
-		logger.info("TIME_TO_LIVE==============================={}",TIME_TO_LIVE);
-		producer.setPriority(6);
-		producer.setTimeToLive(TIME_TO_LIVE);
-		producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
-		
-		
-		BytesMessage bytesMessage = session.createBytesMessage();
-		//String testMessage = "{type:103}";
-		String testMessage = PRECHECK_MESSAGE;
-		byte[] byteArr = new byte[1024];
-		byteArr = testMessage.getBytes();
-		bytesMessage.writeBytes(byteArr);
-		
-		logger.info("testMessage=" + testMessage);
+			BytesMessage bytesMessage = session.createBytesMessage();
+			String testMessage = PRECHECK_MESSAGE;
 
-		producer.send(bytesMessage);
-		producer.close();
-		
+			byteArr = testMessage.getBytes();
+			bytesMessage.writeBytes(byteArr);
+
+			logger.info("testMessage=" + testMessage);
+
+			producer.send(bytesMessage);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (producer != null) {
+				try {
+					producer.close();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
+			}
+			if (session != null) {
+				try {
+					session.close();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
+			}
+		}
 		return byteArr;
 	}
 
