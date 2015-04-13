@@ -78,10 +78,12 @@ public class PushMessageController extends BaseController {
 		} else {
 			String[] receivers = msg.getReceivers();
 			for (int i = 0; i < receivers.length; i++) {
+				
 				if (!isValid(receivers[i])) {
-					throw new RuntimeException("getReceivers not valid"
+					throw new RuntimeException("Receiver format is invalid : "
 							+ receivers[i]);
 				}
+
 			}
 
 		}

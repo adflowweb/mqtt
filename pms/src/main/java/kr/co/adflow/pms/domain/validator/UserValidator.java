@@ -96,19 +96,49 @@ public class UserValidator {
 			return StaticConfig.SERVICE_REQUEST_FORMAT_TYPE_PHONE;
 		}
 
-		if (requestVal.substring(0, 2).equals("82")
-				&& requestVal.substring(2, 3).equals("*")
-				&& requestVal.substring(requestVal.length() - 5,
-						requestVal.length() - 4).equals("*")) {
+		//kicho(20150410) -P1 규칙 : 82 * 1~6자리 * 1 ~6자리, P2 규칙: 00 ~ 41 * 1~4자리 * 1~4자리 - [01-start]		
+//		if (requestVal.substring(0, 2).equals("82")
+//				&& requestVal.substring(2, 3).equals("*")
+//				&& requestVal.substring(requestVal.length() - 5,
+//						requestVal.length() - 4).equals("*")) {
+//			return StaticConfig.SERVICE_REQUEST_FORMAT_TYPE_UFMI1;
+//		}
+//		
+//		if (!requestVal.substring(0, 2).equals("82")
+//				&& requestVal.substring(2, 3).equals("*")
+//				&& requestVal.substring(requestVal.length() - 5,
+//						requestVal.length() - 4).equals("*")) {
+//			return StaticConfig.SERVICE_REQUEST_FORMAT_TYPE_UFMI2;
+//		}
+		//kicho(20150410) -P1 규칙 : 82 * 1~6자리 * 1 ~6자리, P2 규칙: 00 ~ 41 * 1~4자리 * 1~4자리 - [01-end]
+		
+		//kicho(20150410) -P1 규칙 : 82 * 1~6자리 * 1 ~6자리, P2 규칙: 00 ~ 41 * 1~4자리 * 1~4자리 - [02-start]
+		int firstT = requestVal.indexOf('*');
+		int lastT = requestVal.lastIndexOf('*');
+		int lengT = requestVal.length();
+		
+//		System.out.println("firstT :"+ firstT + ", lastT :"+lastT + ", len :"+ lengT);
+		//P1 check		
+		if(requestVal.substring(0, 2).equals("82") 
+				&& firstT + 1 < lastT  
+				&& lastT - firstT < 8  
+				&& lastT+1 < lengT 
+				&& lengT - lastT < 8) {
 			return StaticConfig.SERVICE_REQUEST_FORMAT_TYPE_UFMI1;
 		}
-
-		if (!requestVal.substring(0, 2).equals("82")
-				&& requestVal.substring(2, 3).equals("*")
-				&& requestVal.substring(requestVal.length() - 5,
-						requestVal.length() - 4).equals("*")) {
+		
+		//P2 check		
+		if(!requestVal.substring(0, 2).equals("82") 
+				&& firstT + 1 < lastT  
+				&& lastT - firstT < 6  
+				&& lastT+1 < lengT 
+				&& lengT - lastT < 6) {
 			return StaticConfig.SERVICE_REQUEST_FORMAT_TYPE_UFMI2;
 		}
+		
+		
+		
+		//kicho(20150410) -P1 규칙 : 82 * 1~6자리 * 1 ~6자리, P2 규칙: 00 ~ 41 * 1~4자리 * 1~4자리 - [02-end]
 
 		return resultType;
 	}
@@ -214,7 +244,8 @@ public class UserValidator {
 	 */
 	private boolean checkRequestValue(String val) {
 
-		if (val == null || val.trim().length() < 10 || val.trim().length() > 12) {
+		//kicho(20150413) -Receiver length 6 ~ 16 chage 
+		if (val == null || val.trim().length() < 6 || val.trim().length() > 16) {
 			return false;
 		} else {
 			return true;
