@@ -83,10 +83,10 @@ public class DirectMsgHandler implements ProducerCallback<Object> {
 			bytesMessage.writeBytes(byteArr);
 
 			producer.send(bytesMessage);
+			
+			
 
 		} catch (JSONException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			if (producer != null) {

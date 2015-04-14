@@ -69,8 +69,7 @@ public class PreCheckHandler implements ProducerCallback<Object> {
 
 			producer.send(bytesMessage);
 
-		} catch (Exception e) {
-			e.printStackTrace();
+
 		} finally {
 			if (producer != null) {
 				try {
