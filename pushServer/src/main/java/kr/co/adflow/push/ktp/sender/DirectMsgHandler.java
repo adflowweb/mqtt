@@ -97,15 +97,6 @@ public class DirectMsgHandler implements ProducerCallback<Object> {
 				}
 
 			}
-			if (session != null) {
-				try {
-					session.close();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-
-			}
-
 		}
 		return byteArr;
 	}
