@@ -6,6 +6,7 @@ package kr.co.adflow.push.ktp.service.impl;
 import java.util.Date;
 
 import javax.annotation.Resource;
+import javax.jms.ConnectionFactory;
 import javax.jms.DeliveryMode;
 
 import kr.co.adflow.push.dao.MessageDao;
@@ -24,7 +25,9 @@ import kr.co.adflow.push.ktp.service.PlatformService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.connection.CachingConnectionFactory;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 // TODO: Auto-generated Javadoc
@@ -97,6 +100,16 @@ public class PlatformServiceImpl implements PlatformService {
 		return cnt;	
 		
 	}
+	
+	@Scheduled(fixedDelay = 3600000)
+	 // 1시마다수행
+	 public void doSomething() {
+	 ConnectionFactory cf = jmsTemplate.getConnectionFactory();
+	 System.out.println("connectionFactory=" + cf);
+	 CachingConnectionFactory ccf = (CachingConnectionFactory) cf;
+	 ccf.resetConnection();
+	 System.out.println("connectionFactoryResetted");
+	 }
 
 	/*
 	 * (non-Javadoc)

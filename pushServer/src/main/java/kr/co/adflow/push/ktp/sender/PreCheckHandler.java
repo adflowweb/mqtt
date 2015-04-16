@@ -71,14 +71,14 @@ public class PreCheckHandler implements ProducerCallback<Object> {
 
 
 		} finally {
-			if (producer != null) {
-				try {
-					producer.close();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-
-			}
+//			if (producer != null) {
+//				try {
+//					producer.close();
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//
+//			}
 
 		}
 		return byteArr;

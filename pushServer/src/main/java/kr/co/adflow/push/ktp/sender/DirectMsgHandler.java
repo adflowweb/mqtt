@@ -89,14 +89,14 @@ public class DirectMsgHandler implements ProducerCallback<Object> {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		} finally {
-			if (producer != null) {
-				try {
-					producer.close();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-
-			}
+//			if (producer != null) {
+//				try {
+//					producer.close();
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//
+//			}
 		}
 		return byteArr;
 	}
