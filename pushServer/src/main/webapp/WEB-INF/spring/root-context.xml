@@ -67,7 +67,7 @@
 	<bean id="springConnectionFactory"
 		class="org.springframework.jms.connection.CachingConnectionFactory">
 		<property name="targetConnectionFactory" ref="userCredentialsConnectionFactory" />
-		<property name="sessionCacheSize" value="50" />
+		<property name="sessionCacheSize" value="5" />
 
 	</bean>
 
