@@ -6,6 +6,7 @@ package kr.co.adflow.pms.domain.mapper;
 import java.util.List;
 import java.util.Map;
 
+import kr.co.adflow.pms.domain.CDR;
 import kr.co.adflow.pms.domain.Message;
 import kr.co.adflow.pms.domain.MsgIdsParams;
 import kr.co.adflow.pms.domain.MsgParams;
@@ -63,6 +64,14 @@ public interface MessageMapper {
 	 * @return the list
 	 */
 	List<Message> selectReservationList(Map<String, Object> params);
+	
+	/**
+	 * Select reservation list.
+	 *
+	 * @param params the params
+	 * @return the message type
+	 */
+	int selectMessageType(Map<String, Object> params);
 
 	/**
 	 * Gets the svc message list.
@@ -119,5 +128,8 @@ public interface MessageMapper {
 	 * @return the int
 	 */
 	int cancelReservationList(MsgIdsParams params);
+	
+	
+	List<CDR> getCDRList2(Map<String, Object> params);
 
 }

@@ -44,7 +44,11 @@
     <interceptor>
         <mapping path="/inf/**" />
         <beans:bean class="kr.co.adflow.pms.inf.filter.InterfaceInterceptor"/> 
-    </interceptor>           
+    </interceptor>   
+    <interceptor>
+        <mapping path="/users/**" />
+        <beans:bean class="kr.co.adflow.pms.users.filter.UserInterceptor"/> 
+    </interceptor>         
 </interceptors>
 
 <beans:bean id="restTemplate" class="org.springframework.web.client.RestTemplate"/>
@@ -68,6 +72,7 @@
     <task:scheduled ref="messageSendExecutor" method="sendReservationMessageArray3" fixed-delay="#{pms['executor.delay.time3']}"/>
     <task:scheduled ref="messageSendExecutor" method="sendCallback" fixed-delay="#{pms['executor.delay.time']}"/>
     <task:scheduled ref="tableCreateExecutor" method="createTable" cron="#{pms['executor.createtable.cron']}"/>
+	<task:scheduled ref="cDRCreateExecutor" method="createCDR" cron="#{pms['executor.createCDR.cron']}"/>
 	</task:scheduled-tasks>
 
 	<task:scheduler id="myScheduler" pool-size="10"/>

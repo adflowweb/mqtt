@@ -66,7 +66,7 @@ public class Message {
 	private int qos;
 	
 	/** The retained. */
-	private String retained;
+	private int retained;
 	
 	/** The issue time. */
 	private Date issueTime;
@@ -99,6 +99,15 @@ public class Message {
 	
 	/** The content. */
 	private String content;
+	
+	/** The mediaType. */
+	private int mediaType;
+	
+	/** The sendTerminalType. */
+	private int sendTerminalType;
+	
+	/** The msgSize. */
+	private int msgSize;
 
 	/**
 	 * Gets the msg id.
@@ -303,7 +312,7 @@ public class Message {
 	 *
 	 * @return the retained
 	 */
-	public String getRetained() {
+	public int getRetained() {
 		return retained;
 	}
 
@@ -312,7 +321,7 @@ public class Message {
 	 *
 	 * @param retained the new retained
 	 */
-	public void setRetained(String retained) {
+	public void setRetained(int retained) {
 		this.retained = retained;
 	}
 
@@ -622,12 +631,76 @@ public class Message {
 		this.groupId = groupId;
 	}
 
+	/**
+	 * Sets the getIssueName.
+	 *
+	 * @return the group
+	 */
 	public String getIssueName() {
 		return issueName;
 	}
 
+	/**
+	 * Sets the getIssueName.
+	 *
+	 * @param getIssueName the new getIssueName
+	 */
 	public void setIssueName(String issueName) {
 		this.issueName = issueName;
+	}
+	
+	/**
+	 * Sets the mediaType.
+	 *
+	 * @return the mediaType
+	 */
+	public int getMediaType() {
+		return mediaType;
+	}
+
+	/**
+	 * Sets the mediaType.
+	 *
+	 * @param mediaType the new mediaType
+	 */
+	public void setMediaType(int mediaType) {
+		this.mediaType = mediaType;
+	}
+
+	/**
+	 * Sets the sendTerminalType.
+	 *
+	 * @return the sendTerminalType
+	 */
+	public int getSendTerminalType() {
+		return sendTerminalType;
+	}
+
+	/**
+	 * Sets the sendTerminalType.
+	 *
+	 * @param sendTerminalType the new sendTerminalType
+	 */
+	public void setSendTerminalType(int sendTerminalType) {
+		this.sendTerminalType = sendTerminalType;
+	}
+
+	/**
+	 * Sets the msgSize.
+	 *
+	 * @return the msgSize
+	 */
+	public int getMsgSize() {
+		return msgSize;
+	}
+
+	/**
+	 * Sets the msgSize.
+	 *
+	 * @param msgSize the new msgSize
+	 */
+	public void setMsgSize(int msgSize) {
+		this.msgSize = msgSize;
 	}
 
 }

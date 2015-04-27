@@ -134,6 +134,9 @@ public class SvcAdmServiceImpl implements SvcAdmService {
 		// i);
 		// }
 		// }
+		
+		// User Message false = 0
+		msg.setRetained(0);
 
 		resultList = new ArrayList<Map<String, String>>(receivers.length);
 

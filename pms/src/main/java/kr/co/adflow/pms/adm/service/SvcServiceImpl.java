@@ -78,6 +78,9 @@ public class SvcServiceImpl implements SvcService {
 		}
 
 		MsgParams msgParams = new MsgParams();
+		
+		//관제 메세지 only msg_type : 10
+		msgParams.setMsgType(10);
 
 		msgParams.setKeyMon(params.get("cSearchDate"));
 		msgParams.setIssueId(issueId);
@@ -165,6 +168,9 @@ public class SvcServiceImpl implements SvcService {
 		}
 
 		MsgParams msgParams = new MsgParams();
+		
+		//관제 메세지 only msg_type : 10
+		msgParams.setMsgType(10);
 
 		msgParams.setKeyMon(params.get("cSearchDate"));
 		msgParams.setIssueId(issueId);
@@ -247,6 +253,9 @@ public class SvcServiceImpl implements SvcService {
 		String issueId = interceptMapper.selectCashedUserId(appKey);
 
 		MsgParams msgParams = new MsgParams();
+		//관제 메세지 only msg_type : 10
+		msgParams.setMsgType(10);
+		
 		msgParams.setIssueId(issueId);
 		msgParams.setKeyMon(keyMon);
 		msgParams.setDateStart(this.getDate(params.get("cSearchDateStart")));

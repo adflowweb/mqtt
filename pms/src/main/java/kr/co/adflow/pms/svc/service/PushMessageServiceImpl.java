@@ -115,7 +115,7 @@ public class PushMessageServiceImpl implements PushMessageService {
 		msg.setAck(pmsConfig.MESSAGE_ACK_DEFAULT);
 		msg.setContentType(message.getContentType());
 		msg.setContent(message.getContent());
-
+		
 		if (message.getReservationTime() != null) {
 			msg.setReservationTime(message.getReservationTime());
 			msg.setReservation(true);
@@ -123,6 +123,14 @@ public class PushMessageServiceImpl implements PushMessageService {
 
 		msg.setResendMaxCount(message.getResendMaxCount());
 		msg.setResendInterval(message.getResendInterval());
+		
+		// TMS:0, MMS:1
+		msg.setMediaType(0);
+		
+		//WEB:0, P-Talk1.0:1, P-Talk2.0:2
+		msg.setSendTerminalType(0);
+		
+		msg.setMsgSize(0);
 
 		String[] receivers = message.getReceivers();
 

@@ -24,5 +24,13 @@ public interface ValidationMapper {
 	 * @return true, if successful
 	 */
 	boolean validUfmiNo(String ufmiNo);
+	
+	/**
+	 * Valid Token.
+	 *
+	 * @param Token(PUSH)
+	 * @return true, if successful
+	 */
+	boolean checkToken(String token);
 
 }

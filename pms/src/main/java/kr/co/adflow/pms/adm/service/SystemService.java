@@ -105,5 +105,11 @@ public interface SystemService {
 			String appKey,
 			String keyMon, 
 			String issueId);
+	
+	/**
+	 * Test.
+	 *
+	 */
+	public String testRun();
 
 }

@@ -18,5 +18,12 @@
 		FROM push.user 
         WHERE ufmi = #{ufmiNo}
 	</select>
+	
+	<select id="checkToken" parameterType="String" resultType="boolean">
+		SELECT CASE WHEN count(*) > 0 
+		THEN TRUE ELSE FALSE END AS result
+		FROM push.token 
+		WHERE tokenid =	#{token}
+	</select>
 
 </mapper>	

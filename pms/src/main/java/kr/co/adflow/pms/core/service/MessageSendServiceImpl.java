@@ -24,6 +24,7 @@ import kr.co.adflow.pms.domain.push.mapper.ValidationMapper;
 import kr.co.adflow.pms.domain.validator.UserValidator;
 import kr.co.adflow.pms.svc.request.CallbackReq;
 import kr.co.adflow.pms.svc.service.PushMessageService;
+import kr.co.adflow.pms.core.handler.DirectMsgHandlerBySessionCallback;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -134,9 +135,11 @@ public class MessageSendServiceImpl implements MessageSendService {
 				continue;
 			}
 
-			jmsTemplate.execute(msg.getReceiverTopic(), new DirectMsgHandler(
-					msg));
-
+//			kicho-20150420:jms pool update [start]			
+//			jmsTemplate.execute(msg.getReceiverTopic(), new DirectMsgHandler(msg));
+			jmsTemplate.execute(new DirectMsgHandlerBySessionCallback(jmsTemplate,msg));
+//			kicho-20150420:jms pool update [end]	
+			
 			// 재전송 로직 추가
 			String msgId = msg.getMsgId();
 			if (msg.getResendMaxCount() > 0) {
@@ -411,8 +414,12 @@ private String getKeyMon(String string) {
 				continue;
 			}
 
-			jmsTemplate.execute(msg.getReceiverTopic(), new DirectMsgHandler(
-					msg));
+
+//			kicho-20150420:jms pool update [start]			
+//			jmsTemplate.execute(msg.getReceiverTopic(), new DirectMsgHandler(msg));
+			jmsTemplate.execute(new DirectMsgHandlerBySessionCallback(jmsTemplate,msg));
+//			kicho-20150420:jms pool update [end]	
+			
 			
 			// 재전송 로직 추가
 			String msgId = msg.getMsgId();

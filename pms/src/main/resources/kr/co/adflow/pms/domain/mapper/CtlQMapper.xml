@@ -40,7 +40,14 @@
 		, issue_id
 		, server_id
 		FROM pms.ctl_q
-		WHERE exe_type = #{exeType}
+		WHERE 
+		<if test="exeType == 'callback'">
+			exe_type IN ('callback_app','callback_pma') 
+		 	
+	    </if>
+	    <if test="exeType == 'message' or exeType == 'reservation'">
+	   	   exe_type = #{exeType}
+	    </if>
 		AND server_id = #{serverId} 
 		ORDER BY issue_time ASC
 		limit 1
