@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:state_pressed="true" android:drawable="@drawable/receive_pressed"/>
-    <item android:state_selected="true" android:drawable="@drawable/receive_focus"></item>
-    <item android:drawable="@drawable/receive"/>
-</selector>
-<!-- From: file:/Users/nadir93/git/mqtt/PMCClient/app/src/main/res/drawable/list_talk_receive.xml -->
