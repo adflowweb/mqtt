@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.adflow.pms.domain.mapper.CDRMapper">
+
+	<resultMap id="CDRResult" type="kr.co.adflow.pms.domain.CDR">
+		<result property="updateTime" column="update_time" />
+		<result property="pmaAckTime" column="ack_time" />
+		<result property="issueId" column="issue_id" />
+		<result property="receiverTopic" column="receiver_topic" />
+		<result property="mediaType" column="media_type" />
+		<result property="sendTerminalType" column="send_terminal_type" />
+		<result property="msgSize" column="msg_size" />
+		<result property="groupId" column="group_id" />
+		<result property="receiverUfmi" column="receiver_ufmi" />
+	</resultMap>
+	
+	
+
+	<select id="getCDRList" parameterType="kr.co.adflow.pms.domain.CDRParams" resultMap="CDRResult">
+		SELECT a.update_time
+		, a.msg_id
+		, d.ack_time
+		, a.issue_id
+		, a.receiver_topic
+		, a.media_type
+		, a.send_terminal_type
+		, a.msg_size
+		, a.group_id
+		, b.receiver_token_id
+		, b.receiver_ufmi
+
+		FROM 
+		pms.message201504 a LEFT OUTER JOIN pms.group_msg201504 b ON a.msg_id = b.msg_id LEFT OUTER JOIN pms.ack201504 d ON a.msg_id = d.msg_id and b.receiver_token_id = d.token_id AND d.ack_type = 'pma' 
+	    
+	    WHERE   a.msg_type = 106 
+		AND a.status = 1 
+		AND a.update_time <![CDATA[>=]]>  #{startDate}
+		AND a.update_time <![CDATA[<]]> #{endDate}
+		ORDER BY a.update_time 
+        limit #{startRow}, #{lengthRow}
+	</select>
+	
+	
+	<select id="getCDRList_backup" parameterType="kr.co.adflow.pms.domain.CDRParams" resultMap="CDRResult">
+		SELECT a.update_time
+		, b.ack_time as pma_ack_time
+		, a.issue_id
+		, a.receiver_topic
+		, a.media_type
+		, a.send_terminal_type
+		, a.msg_size
+		, a.group_id
+
+		FROM
+		pms.message${keyMon} a LEFT OUTER JOIN pms.ack${keyMon} b ON a.msg_id = b.msg_id AND b.ack_type = 'pma'	
+
+		WHERE 
+		a.status = 1
+		AND a.msg_type = 106
+		AND a.update_time <![CDATA[>=]]>  #{startDate}
+		AND a.update_time <![CDATA[<]]> #{endDate}
+        ORDER BY update_time
+        limit #{startRow}, #{lengthRow}
+	</select>
+	
+	
+	
+	
+	<select id="getCDRListCnt" parameterType="kr.co.adflow.pms.domain.CDRParams" resultType="Integer">
+		SELECT COUNT(*)
+		
+		FROM
+		pms.message${keyMon}
+
+		WHERE 
+		status = 1
+		AND msg_type = 106
+		AND update_time <![CDATA[>=]]>  #{startDate}
+		AND update_time <![CDATA[<]]> #{endDate}
+		ORDER BY update_time
+        limit #{startRow}, 10
+        
+	</select>
+	
+	<select id="getCDRListTotalCnt" parameterType="kr.co.adflow.pms.domain.CDRParams" resultType="Integer">
+		SELECT COUNT(*)
+		
+		FROM
+		pms.message201504 a LEFT OUTER JOIN pms.group_msg201504 b ON a.msg_id = b.msg_id LEFT OUTER JOIN pms.ack201504 d ON a.msg_id = d.msg_id and b.receiver_token_id = d.token_id AND d.ack_type = 'pma' 
+	    
+	    WHERE   a.msg_type = 106 
+		AND a.status = 1 
+		AND a.update_time <![CDATA[>=]]> #{startDate}
+		AND a.update_time <![CDATA[<]]> #{endDate}
+	</select>
+	
+	
+</mapper>	
