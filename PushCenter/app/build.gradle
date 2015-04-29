@@ -8,11 +8,51 @@ android {
         applicationId "kr.co.adflow.push"
         minSdkVersion 15
         targetSdkVersion 18
-        versionCode 1017
-        versionName "1.0.17"
+        versionCode 1018
+        versionName "1.0.18"
     }
     buildTypes {
+
+        debug {
+
+            buildConfigField "String", "JOB_LIMIT_COUNT", "\"600\""
+            buildConfigField "int", "ALARM_INTERVAL", "60"
+            buildConfigField "int", "DEFAULT_KEEP_ALIVE_TIME_OUT", "240"
+            buildConfigField "boolean", "CLEAN_SESSION", "false"
+            buildConfigField "int", "MQTT_CONNECTION_TIMEOUT", "10" // second
+            buildConfigField "int", "HTTP_CONNTCTION_TIMEOUT", "3000" // 3초
+            buildConfigField "int", "HTTP_SOCKET_TIMEOUT", "5000" // 5초
+            buildConfigField "boolean", "CLIENT_SESSION_DEBUG", "false"
+
+            buildConfigField "String", "AUTH_URL", "\"https://push4.ktp.co.kr:8080/v1/auth\""
+            buildConfigField "String", "MQTT_SERVER_URL", "\"tcp://push4.ktp.co.kr\""
+            buildConfigField "String", "PRECHECK_URL", "\"https://push4.ktp.co.kr:8080/v1/precheck\""
+            buildConfigField "String", "GET_SUBSCRIPTIONS_URL", "\"https://push4.ktp.co.kr:8080/v1/subscriptions/\""
+            buildConfigField "String", "EXISTPMABYUSERID_URL", "\"https://push4.ktp.co.kr:8080/v1/users/userID/validation\""
+            buildConfigField "String", "EXISTPMABYUFMI_URL", "\"https://push4.ktp.co.kr:8080/v1/users/ufmi/validation\""
+            buildConfigField "String", "MESSAGE_URI", "\"https://push4.ktp.co.kr:8081/v1/pms/users/message\""
+            buildConfigField "String", "UPDATEUFMI_URL", "\"https://push4.ktp.co.kr:8080/v1/users/ufmi\""
+        }
         release {
+
+            buildConfigField "String", "JOB_LIMIT_COUNT", "\"600\""
+            buildConfigField "int", "ALARM_INTERVAL", "60"
+            buildConfigField "int", "DEFAULT_KEEP_ALIVE_TIME_OUT", "240"
+            buildConfigField "boolean", "CLEAN_SESSION", "false"
+            buildConfigField "int", "MQTT_CONNECTION_TIMEOUT", "10" // second
+            buildConfigField "int", "HTTP_CONNTCTION_TIMEOUT", "3000" // 3초
+            buildConfigField "int", "HTTP_SOCKET_TIMEOUT", "5000" // 5초
+            buildConfigField "boolean", "CLIENT_SESSION_DEBUG", "false"
+
+            buildConfigField "String", "AUTH_URL", "\"https://push2.ktp.co.kr:8080/v1/auth\""
+            buildConfigField "String", "MQTT_SERVER_URL", "\"ssl://push1.ktp.co.kr\""
+            buildConfigField "String", "PRECHECK_URL", "\"https://push2.ktp.co.kr:8080/v1/precheck\""
+            buildConfigField "String", "GET_SUBSCRIPTIONS_URL", "\"https://push2.ktp.co.kr:8080/v1/subscriptions/\""
+            buildConfigField "String", "EXISTPMABYUSERID_URL", "\"https://push2.ktp.co.kr:8080/v1/users/userID/validation\""
+            buildConfigField "String", "EXISTPMABYUFMI_URL", "\"https://push2.ktp.co.kr:8080/v1/users/ufmi/validation\""
+            buildConfigField "String", "MESSAGE_URI", "\"https://push3.ktp.co.kr:8080/v1/pms/users/message\""
+            buildConfigField "String", "UPDATEUFMI_URL", "\"https://push2.ktp.co.kr:8080/v1/users/ufmi\""
+
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }

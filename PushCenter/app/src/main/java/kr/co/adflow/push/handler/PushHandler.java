@@ -45,6 +45,7 @@ import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
+import kr.co.adflow.push.BuildConfig;
 import kr.co.adflow.push.PingSender;
 import kr.co.adflow.push.PushPreference;
 import kr.co.adflow.push.db.Job;
@@ -77,17 +78,28 @@ public class PushHandler implements MqttCallback {
     // TAG for debug
     public static final String TAG = "PushHandler";
 
-    public static final int ALARM_INTERVAL = 60;
-    public static final int DEFAULT_KEEP_ALIVE_TIME_OUT = 240;
-    public static final boolean CLEAN_SESSION = false;
-    public static final String AUTH_URL = "https://14.63.217.141/v1/auth";
-    public static final String MQTT_SERVER_URL = "ssl://14.63.217.141";
-    public static final String PRECHECK_URL = "https://14.63.217.141/v1/precheck";
-    public static final String GET_SUBSCRIPTIONS_URL = "https://14.63.217.141/v1/subscriptions/";
-    public static final String EXISTPMABYUSERID_URL = "https://14.63.217.141/v1/users/userID/validation";
-    public static final String EXISTPMABYUFMI_URL = "https://14.63.217.141/v1/users/ufmi/validation";
-    public static final String MESSAGE_URI = "https://14.63.217.141/v1/users/message";
-    public static final String UPDATEUFMI_URL = "https://14.63.217.141/v1/users/ufmi";
+    public static final int ALARM_INTERVAL = BuildConfig.ALARM_INTERVAL;
+    //60;
+    public static final int DEFAULT_KEEP_ALIVE_TIME_OUT = BuildConfig.DEFAULT_KEEP_ALIVE_TIME_OUT;
+    //= 240;
+    public static final boolean CLEAN_SESSION = BuildConfig.CLEAN_SESSION;
+    //false;
+    public static final String AUTH_URL = BuildConfig.AUTH_URL;
+    //"https://push4.ktp.co.kr:8080/v1/auth";
+    public static final String MQTT_SERVER_URL = BuildConfig.MQTT_SERVER_URL;
+    //= "tcp://push4.ktp.co.kr";
+    public static final String PRECHECK_URL = BuildConfig.PRECHECK_URL;
+    //"https://push4.ktp.co.kr:8080/v1/precheck";
+    public static final String GET_SUBSCRIPTIONS_URL = BuildConfig.GET_SUBSCRIPTIONS_URL;
+    //"https://push4.ktp.co.kr:8080/v1/subscriptions/";
+    public static final String EXISTPMABYUSERID_URL = BuildConfig.EXISTPMABYUSERID_URL;
+    //"https://push4.ktp.co.kr:8080/v1/users/userID/validation";
+    public static final String EXISTPMABYUFMI_URL = BuildConfig.EXISTPMABYUFMI_URL;
+    //"https://push4.ktp.co.kr:8080/v1/users/ufmi/validation";
+    public static final String MESSAGE_URI = BuildConfig.MESSAGE_URI;
+    //"https://push4.ktp.co.kr:8081/v1/pms/users/message";
+    public static final String UPDATEUFMI_URL = BuildConfig.UPDATEUFMI_URL;
+    //"https://push4.ktp.co.kr:8080/v1/users/ufmi";
 
     public static final String ACK_TOPIC = "mms/ack";
     public static final int HTTP_PORT = 80;
@@ -100,12 +112,16 @@ public class PushHandler implements MqttCallback {
 
     //public static final int DEFAULT_KEEP_ALIVE_TIME_OUT = 60; //for test
     private static final String MQTT_PACKAGE = "org.eclipse.paho.client.mqttv3";
-    private static final int MQTT_CONNECTION_TIMEOUT = 10; // second
-    private static final int HTTP_CONNTCTION_TIMEOUT = 3000; // 3초
-    private static final int HTTP_SOCKET_TIMEOUT = 5000; // 5초
+    private static final int MQTT_CONNECTION_TIMEOUT = BuildConfig.MQTT_CONNECTION_TIMEOUT;
+    //10; // second
+    private static final int HTTP_CONNTCTION_TIMEOUT = BuildConfig.HTTP_CONNTCTION_TIMEOUT;
+    //3000; // 3초
+    private static final int HTTP_SOCKET_TIMEOUT = BuildConfig.HTTP_SOCKET_TIMEOUT;
+    //5000; // 5초
 
     // mqttClient 세션로그
-    private static final boolean CLIENT_SESSION_DEBUG = false; // default false
+    private static final boolean CLIENT_SESSION_DEBUG = BuildConfig.CLIENT_SESSION_DEBUG;
+    //false; // default false
 
     private static int CONN_LOST_COUNT;
 
@@ -984,7 +1000,8 @@ public class PushHandler implements MqttCallback {
         post.setHeader("Content-Type", "application/json;charset=UTF-8");
         post.setEntity(new StringEntity(data.toString(), "utf-8"));
         //set Header token
-        post.setHeader("X-ApiKey", currentToken);
+        //post.setHeader("X-ApiKey", currentToken);
+        post.setHeader("X-Application-Key", currentToken);
         //post.setEntity(new StringEntity(data.toString(), "utf-8"));
         HttpResponse response = httpClient.execute(post);
 

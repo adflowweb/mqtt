@@ -10,6 +10,8 @@ import android.util.Log;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import kr.co.adflow.push.BuildConfig;
+
 /**
  * Created by nadir93 on 15. 1. 23..
  */
@@ -178,7 +180,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
                     null, // e. group by
                     null, // f. having
                     null, // g. order by
-                    "600"); // h. limit
+                    BuildConfig.JOB_LIMIT_COUNT); // h. limit /* "600" */
             // 3. if we got results get the first one
             if (cursor != null)
                 cursor.moveToFirst();
