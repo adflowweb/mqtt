@@ -56,6 +56,19 @@
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8
 	</update>
 	
+	<select id="selectGroupMessage" parameterType="String" resultType="int">
+		SELECT COUNT(*)
+		FROM pms.group_msg${value}
+	</select>
+	
+	<update id="createGroupMessage" parameterType="String">
+		CREATE TABLE pms.group_msg${value} (
+		   msg_id varchar(50) NOT NULL, 
+		   receiver_token_id varchar(100) NOT NULL, 
+		   PRIMARY KEY (msg_id,receiver_token_id)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8
+	</update>
+	
 	<select id="selectAck" parameterType="String" resultType="int">
 		SELECT COUNT(*)
 		FROM pms.ack${value}

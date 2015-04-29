@@ -83,7 +83,11 @@ public class PmsConfig {
 	
 	/** The cdr.file.path. */
 	@Value("#{pms['cdr.file.path']}")
-	public String CDR_FILE_PATH;// = /home/ftp/;
+	public String CDR_FILE_PATH;// = /cdrData/;
+	
+	/** The cdr.targetfile.path. */
+	@Value("#{pms['cdr.targetfile.path']}")
+	public String CDR_TARGETFILE_PATH;// = /root/;
 	
 	/** The cdr.file.max.row. */
 	@Value("#{pms['cdr.file.max.row']}")

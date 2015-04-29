@@ -56,5 +56,22 @@ public interface TableMgtMapper {
 	 * @return the int
 	 */
 	int createAck(String name);
+	
+	
+	/**
+	 * Select createGroupMessage.
+	 *
+	 * @param name the name
+	 * @return the int
+	 */
+	int selectGroupMessage(String name);
+
+	/**
+	 * Creates the createGroupMessage.
+	 *
+	 * @param name the name
+	 * @return the int
+	 */
+	int createGroupMessage(String name);
 
 }

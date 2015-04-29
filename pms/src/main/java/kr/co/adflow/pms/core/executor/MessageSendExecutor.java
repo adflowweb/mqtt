@@ -223,6 +223,15 @@ public class MessageSendExecutor {
 			tableMgtMapper.createAck(name);
 			logger.info("createAck");
 		}
+		
+		logger.info("createTable4");
+		try {
+			tableMgtMapper.selectGroupMessage(name);
+			logger.info("selectGroupMessage");
+		} catch (Exception e) {
+			tableMgtMapper.createGroupMessage(name);
+			logger.info("createGroupMessage");
+		}
 
 	}
 

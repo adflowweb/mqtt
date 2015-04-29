@@ -20,6 +20,9 @@ public class MsgIdsParams {
 	
 	/** The msg ids. */
 	private String[] msgIds;
+	
+	
+	
 
 	/**
 	 * Gets the key mon.

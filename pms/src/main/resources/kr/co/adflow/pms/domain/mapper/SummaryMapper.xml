@@ -24,7 +24,7 @@
 		FROM
 		pms.message${keyMon} a LEFT OUTER JOIN pms.ack${keyMon} b ON a.msg_id = b.msg_id AND b.ack_type = 'pma',
         pms.message${keyMon} c LEFT OUTER JOIN pms.ack${keyMon} d ON c.msg_id = d.msg_id AND d.ack_type = 'app'		
-		WHERE a.msg_id = c.msg_id
+		WHERE
 		<if test="msgType != null and msgType != 0">
 		AND a.msg_type = #{msgType}
 		</if>

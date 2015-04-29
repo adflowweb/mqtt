@@ -108,6 +108,8 @@ public class Message {
 	
 	/** The msgSize. */
 	private int msgSize;
+	
+	
 
 	/**
 	 * Gets the msg id.

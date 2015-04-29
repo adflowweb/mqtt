@@ -43,7 +43,7 @@ public class MsgParams {
 	
 	/** The msg type. */
 	private int msgType;
-
+	
 
 
 	/**

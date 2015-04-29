@@ -445,6 +445,19 @@
 		)
 	</insert>
 	
+	<insert id="insertGroupMessage" parameterType="kr.co.adflow.pms.domain.GroupMessage">
+		INSERT INTO pms.group_msg${keyMon}
+		(msg_id
+		,receiver_token_id
+		,receiver_ufmi
+		)
+		values(
+		 #{msgId}
+		,#{receiverTokenId}
+		,#{receiverUfmi}
+		)
+	</insert>
+	
 	<select id="getMessageResult" parameterType="kr.co.adflow.pms.domain.MsgIdsParams"
 		resultMap="MessageResult">
 		SELECT a.group_id

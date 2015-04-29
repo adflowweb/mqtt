@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import kr.co.adflow.pms.domain.CDR;
+import kr.co.adflow.pms.domain.GroupMessage;
 import kr.co.adflow.pms.domain.Message;
 import kr.co.adflow.pms.domain.MsgIdsParams;
 import kr.co.adflow.pms.domain.MsgParams;
@@ -32,6 +33,14 @@ public interface MessageMapper {
 	 * @return the int
 	 */
 	int insertContent(Message msg);
+	
+	/**
+	 * Insert content.
+	 *
+	 * @param msg the msg
+	 * @return the int
+	 */
+	int insertGroupMessage(GroupMessage groupMessage);
 
 	/**
 	 * Select.
@@ -71,7 +80,7 @@ public interface MessageMapper {
 	 * @param params the params
 	 * @return the message type
 	 */
-	int selectMessageType(Map<String, Object> params);
+	Integer selectMessageType(Map<String, Object> params);
 
 	/**
 	 * Gets the svc message list.
