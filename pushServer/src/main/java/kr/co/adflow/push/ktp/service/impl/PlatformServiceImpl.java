@@ -6,6 +6,7 @@ package kr.co.adflow.push.ktp.service.impl;
 import java.util.Date;
 
 import javax.annotation.Resource;
+import javax.jms.ConnectionFactory;
 import javax.jms.DeliveryMode;
 
 import kr.co.adflow.push.dao.MessageDao;
@@ -18,13 +19,17 @@ import kr.co.adflow.push.domain.ktp.request.Ufmi;
 import kr.co.adflow.push.domain.ktp.request.UserID;
 import kr.co.adflow.push.domain.ktp.request.UserMessage;
 import kr.co.adflow.push.ktp.sender.DirectMsgHandler;
+import kr.co.adflow.push.ktp.sender.DirectMsgHandlerBySessionCallback;
 import kr.co.adflow.push.ktp.sender.PreCheckHandler;
+import kr.co.adflow.push.ktp.sender.PreCheckHandlerBySessionCallback;
 import kr.co.adflow.push.ktp.service.PlatformService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.connection.CachingConnectionFactory;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 // TODO: Auto-generated Javadoc
@@ -97,6 +102,16 @@ public class PlatformServiceImpl implements PlatformService {
 		return cnt;	
 		
 	}
+	
+//	@Scheduled(fixedDelay = 3600000)
+//	 // 1시마다수행
+//	 public void doSomething() {
+//	 ConnectionFactory cf = jmsTemplate.getConnectionFactory();
+//	 System.out.println("connectionFactory=" + cf);
+//	 CachingConnectionFactory ccf = (CachingConnectionFactory) cf;
+//	 ccf.resetConnection();
+//	 System.out.println("connectionFactoryResetted");
+//	 }
 
 	/*
 	 * (non-Javadoc)
@@ -105,9 +120,13 @@ public class PlatformServiceImpl implements PlatformService {
 	 * kr.co.adflow.push.ktp.service.PlatformService#sendPrecheck(java.lang.
 	 * String)
 	 */
-	public void sendPrecheck(String topicName) {
+	public void sendPrecheck(String topicName) {jmsTemplate.execute(new PreCheckHandlerBySessionCallback(jmsTemplate,
+			topicName, TIME_TO_LIVE));
 
-		jmsTemplate.execute(topicName, new PreCheckHandler(TIME_TO_LIVE));
+//		jmsTemplate.execute(topicName, new PreCheckHandler(TIME_TO_LIVE));
+		
+		jmsTemplate.execute(new PreCheckHandlerBySessionCallback(jmsTemplate,
+				topicName, TIME_TO_LIVE));
 
 	}
 
@@ -134,8 +153,9 @@ public class PlatformServiceImpl implements PlatformService {
 		try {
 			int cnt = this.postMessage(message);
 
-			jmsTemplate.execute(fwInfo.getReceiver(), new DirectMsgHandler(
-					message));
+//			jmsTemplate.execute(fwInfo.getReceiver(), new DirectMsgHandler(message));
+			
+			jmsTemplate.execute(new DirectMsgHandlerBySessionCallback(jmsTemplate,message));
 
 			message.setStatus(Message.STATUS_PUSH_SENT);
 			message.setIssue(new Date());
@@ -174,8 +194,8 @@ public class PlatformServiceImpl implements PlatformService {
 
 			int cnt = this.postMessage(message);
 			
-			jmsTemplate.execute(digInfo.getReceiver(), new DirectMsgHandler(
-					message));
+//			jmsTemplate.execute(digInfo.getReceiver(), new DirectMsgHandler(message));
+			jmsTemplate.execute(new DirectMsgHandlerBySessionCallback(jmsTemplate,message));
 
 			message.setStatus(Message.STATUS_PUSH_SENT);
 			message.setIssue(new Date());
@@ -203,9 +223,10 @@ public class PlatformServiceImpl implements PlatformService {
 		try {
 			int cnt = this.postMessage(message);
 
-			jmsTemplate.execute(message.getReceiver(), new DirectMsgHandler(
-					message));
-
+//			jmsTemplate.execute(message.getReceiver(), new DirectMsgHandler(message));
+			jmsTemplate.execute(new DirectMsgHandlerBySessionCallback(jmsTemplate,message));
+			
+			
 			message.setStatus(Message.STATUS_PUSH_SENT);
 			message.setIssue(new Date());
 			messageDao.putIssue(message);
@@ -241,8 +262,8 @@ public class PlatformServiceImpl implements PlatformService {
 		try {
 			int cnt = this.postMessage(message);
 
-			jmsTemplate.execute(keepAliveTime.getReceiver(),
-					new DirectMsgHandler(message));
+//			jmsTemplate.execute(keepAliveTime.getReceiver(),new DirectMsgHandler(message));
+			jmsTemplate.execute(new DirectMsgHandlerBySessionCallback(jmsTemplate,message));
 
 			message.setStatus(Message.STATUS_PUSH_SENT);
 			message.setIssue(new Date());
@@ -287,8 +308,8 @@ public class PlatformServiceImpl implements PlatformService {
 
 			int cnt = this.postMessage(message);
 
-			jmsTemplate.execute(message.getReceiver(), new DirectMsgHandler(
-					message));
+//			jmsTemplate.execute(message.getReceiver(), new DirectMsgHandler(message));
+			jmsTemplate.execute(new DirectMsgHandlerBySessionCallback(jmsTemplate,message));
 
 			message.setStatus(Message.STATUS_PUSH_SENT);
 			message.setIssue(new Date());

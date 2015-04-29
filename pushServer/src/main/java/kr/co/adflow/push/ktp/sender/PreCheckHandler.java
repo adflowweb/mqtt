@@ -69,25 +69,17 @@ public class PreCheckHandler implements ProducerCallback<Object> {
 
 			producer.send(bytesMessage);
 
-		} catch (Exception e) {
-			e.printStackTrace();
+
 		} finally {
-			if (producer != null) {
-				try {
-					producer.close();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+//			if (producer != null) {
+//				try {
+//					producer.close();
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//
+//			}
 
-			}
-			if (session != null) {
-				try {
-					session.close();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-
-			}
 		}
 		return byteArr;
 	}

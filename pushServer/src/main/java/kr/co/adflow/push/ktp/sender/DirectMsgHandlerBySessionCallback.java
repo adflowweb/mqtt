@@ -1,9 +1,7 @@
-/*
- * 
- */
 package kr.co.adflow.push.ktp.sender;
 
 import javax.jms.BytesMessage;
+import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
@@ -14,48 +12,38 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.jms.core.ProducerCallback;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.core.SessionCallback;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class DirectMsgHandler.
- */
-public class DirectMsgHandler implements ProducerCallback<Object> {
-
-	/** The msg. */
-	private Message msg;
-
-	/**
-	 * Instantiates a new direct msg handler.
-	 * 
-	 * @param message
-	 *            the message
-	 */
-	public DirectMsgHandler(Message message) {
-		msg = message;
-	}
+public class DirectMsgHandlerBySessionCallback implements
+		SessionCallback<String> {
 
 	/** The Constant logger. */
 	private static final Logger logger = LoggerFactory
-			.getLogger(DirectMsgHandler.class);
+			.getLogger(DirectMsgHandlerBySessionCallback.class);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.springframework.jms.core.ProducerCallback#doInJms(javax.jms.Session,
-	 * javax.jms.MessageProducer)
-	 */
+	private JmsTemplate jmsTemplate;
+	/** The msg. */
+	private Message msg;
+
+	public DirectMsgHandlerBySessionCallback(JmsTemplate jmsTemplate,
+			Message msg) {
+		this.jmsTemplate = jmsTemplate;
+		this.msg = msg;
+	}
+
 	@Override
-	public Object doInJms(Session session, MessageProducer producer)
-			throws JMSException {
-
-		producer.setTimeToLive(msg.getExpiry());
-		producer.setDeliveryMode(msg.getQos());
+	public String doInJms(Session session) throws JMSException {
+		MessageProducer producer = null;
 
 		String json = "";
 		byte[] byteArr = null;
 		try {
+			Destination destination = jmsTemplate.getDestinationResolver()
+					.resolveDestinationName(session, msg.getReceiver(), true);
+			producer = session.createProducer(destination);
+			logger.debug("producer=" + producer);
+
 			JSONObject msgObject = new JSONObject();
 			BytesMessage bytesMessage = session.createBytesMessage();
 
@@ -77,28 +65,23 @@ public class DirectMsgHandler implements ProducerCallback<Object> {
 			}
 
 			json = msgObject.toString();
-			logger.info("json::{}", json);
 
 			byteArr = json.getBytes();
 			bytesMessage.writeBytes(byteArr);
 
-			producer.send(bytesMessage);
-			
-			
-
+			producer.send(bytesMessage, msg.getQos(),
+					javax.jms.Message.DEFAULT_PRIORITY/* default */,
+					msg.getExpiry());
+			logger.debug("메시지가전송되었습니다.");
 		} catch (JSONException e) {
 			e.printStackTrace();
 		} finally {
-//			if (producer != null) {
-//				try {
-//					producer.close();
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//
-//			}
+			if (producer != null) {
+				producer.close();
+				logger.debug("메시지프로듀서가제거되었습니다.");
+			}
 		}
-		return byteArr;
+		return "";
 	}
 
 }

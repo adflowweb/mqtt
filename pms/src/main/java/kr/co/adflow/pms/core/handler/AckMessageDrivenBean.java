@@ -4,6 +4,8 @@
 package kr.co.adflow.pms.core.handler;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 import javax.jms.BytesMessage;
 import javax.jms.JMSException;
@@ -15,6 +17,7 @@ import kr.co.adflow.pms.domain.Ack;
 import kr.co.adflow.pms.domain.CtlQ;
 import kr.co.adflow.pms.domain.mapper.AckMapper;
 import kr.co.adflow.pms.domain.mapper.CtlQMapper;
+import kr.co.adflow.pms.domain.mapper.MessageMapper;
 
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -40,9 +43,11 @@ public class AckMessageDrivenBean implements MessageListener {
 	/** The ctl q mapper. */
 	@Autowired
 	private CtlQMapper ctlQMapper;
-
-	// @Autowired
-	// private PmsConfig pmsConfig;
+	
+	/** The message mapper. */
+	@Autowired
+	private MessageMapper messageMapper;
+	
 
 	/** The executor server id. */
 	@Value("#{pms['executor.server.id1']}")
@@ -64,10 +69,20 @@ public class AckMessageDrivenBean implements MessageListener {
 		}
 		Ack ack = this.getAck(body);
 		int cnt = ackMapper.insertAck(ack);
+		
+		// Mgs type check
+		HashMap<String, Object> param = new HashMap<String, Object>();
+
+		// param.put("keyMon", DateUtil.getYYYYMM());
+		param.put("keyMon", ack.getKeyMon());
+		param.put("msgId", ack.getMsgId());
+
+		Integer msgType = messageMapper.selectMessageType(param);
 		// callback
-		//if (ack.getAckType().equals("app")) {
+		//MESSAGE_HEADER_TYPE_DEFAULT
+		if (msgType != null && msgType == 10) {
 			ctlQMapper.insertQ(this.getCtlQ(ack));
-		//}
+		}
 		logger.info("ack result : {}", cnt);
 
 	}
@@ -81,7 +96,16 @@ public class AckMessageDrivenBean implements MessageListener {
 	private CtlQ getCtlQ(Ack ack) {
 		CtlQ ctlQ = new CtlQ();
 
-		ctlQ.setExeType(StaticConfig.CONTROL_QUEUE_EXECUTOR_TYPE_CALLBACK);
+		System.out.println("========== ack type: "+ack.getAckType());
+		if (ack.getAckType().equals("pma")) {
+			ctlQ.setExeType(StaticConfig.CONTROL_QUEUE_EXECUTOR_TYPE_CALLBACK_PMA);
+			System.out.println("========== setExeType1: "+ctlQ.getExeType());
+		} else {
+			ctlQ.setExeType(StaticConfig.CONTROL_QUEUE_EXECUTOR_TYPE_CALLBACK_APP);
+			System.out.println("========== setExeType2: "+ctlQ.getExeType());
+		}
+		System.out.println("========== setExeType3: "+ctlQ.getExeType());
+		
 		ctlQ.setTableName(ack.getKeyMon());
 		ctlQ.setMsgId(ack.getMsgId());
 		ctlQ.setIssueTime(new Date());

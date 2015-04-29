@@ -40,6 +40,11 @@ public class MsgParams {
 
 	/** The msg id. */
 	private String msgId;
+	
+	/** The msg type. */
+	private int msgType;
+	
+
 
 	/**
 	 * Gets the key mon.
@@ -219,6 +224,24 @@ public class MsgParams {
 	 */
 	public void setMsgId(String msgId) {
 		this.msgId = msgId;
+	}
+	
+	/**
+	 * Gets the msg type.
+	 *
+	 * @return the msg type
+	 */
+	public int getMsgType() {
+		return msgType;
+	}
+
+	/**
+	 * Sets the msg type.
+	 *
+	 * @param msgType the new msg type
+	 */
+	public void setMsgType(int msgType) {
+		this.msgType = msgType;
 	}
 
 }

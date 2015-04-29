@@ -25,6 +25,9 @@
 		<result property="retained" column="retained" />
 		<result property="contentType" column="content_type" />
 		<result property="content" column="content" />
+		<result property="msgSize" column="msg_size" />
+		<result property="mediaType" column="media_type" />
+		<result property="sendTerminalType" column="send_terminal_type" />
 		<result property="issueTime" column="issue_time" />
 		<result property="issueId" column="issue_id" />
 		<result property="updateTime" column="update_time" />
@@ -35,6 +38,7 @@
 		<result property="appAckTime" column="app_ack_time" />
 		<result property="issueName" column="issue_name" />
 	</resultMap>
+
 
 	<select id="select" parameterType="String"
 		resultType="kr.co.adflow.pms.domain.Message">
@@ -67,6 +71,7 @@
 		WHERE a.msg_id = b.msg_id
 		AND a.issue_id = c.user_id
 		AND a.msg_id = #{msgId}
+		AND a.msg_type=10
 	</select>
 
 	<select id="selectList" parameterType="Map"
@@ -102,6 +107,7 @@
 		AND a.status = 0
 		AND a.is_reservation IS FALSE
 		AND a.server_id = #{serverId}
+		AND a.msg_type=10
 		ORDER BY issue_time ASC
 		limit #{limit}
 	</select>
@@ -135,6 +141,7 @@
 		, c.user_name AS issue_name
 		FROM pms.message${keyMon} a, pms.content${keyMon} b, pms.user c
 		WHERE a.msg_id = b.msg_id
+		AND a.msg_type=10
 		AND a.issue_id = c.user_id
 		AND a.status = 0
 		AND a.is_reservation IS TRUE
@@ -143,6 +150,17 @@
 		ORDER BY a.reservation_time ASC, a.issue_time ASC
 		limit #{limit}
 	</select>
+	
+	
+	<select id="selectMessageType" parameterType="Map"
+		resultType="Integer">
+		SELECT 
+		msg_type
+		FROM pms.message${keyMon}
+		WHERE 
+		msg_id = #{msgId}
+	</select>
+	
 	
 	<select id="getSvcMessageListCnt" parameterType="kr.co.adflow.pms.domain.MsgParams"
 		resultType="Integer">
@@ -153,6 +171,9 @@
         pms.content${keyMon} e		
 		WHERE a.msg_id = c.msg_id
 		AND a.msg_id = e.msg_id
+		<if test="msgType != null and msgType != 0">
+		AND a.msg_type = #{msgType}
+		</if>
 		<if test="dateStart != null ">
 		AND a.update_time <![CDATA[>]]>  #{dateStart}
 		</if>
@@ -221,6 +242,9 @@
         pms.content${keyMon} e			
 		WHERE a.msg_id = c.msg_id
 		AND a.msg_id = e.msg_id
+		<if test="msgType != null and msgType != 0">
+		AND a.msg_type = #{msgType}
+		</if>
 		<if test="dateStart != null ">
 		AND a.update_time <![CDATA[>]]>  #{dateStart}
 		</if>
@@ -265,6 +289,9 @@
 		WHERE a.msg_id = c.msg_id
 		AND a.msg_id = e.msg_id
 		AND a.status = 0
+		<if test="msgType != null and msgType != 0">
+		AND a.msg_type = #{msgType}
+		</if>
 		AND  a.is_reservation IS TRUE
 		<if test="dateStart != null ">
 		AND a.reservation_time <![CDATA[>]]>  #{dateStart}
@@ -317,6 +344,9 @@
 		AND a.msg_id = e.msg_id
 		AND a.status = 0
 		AND a.is_reservation IS TRUE
+		<if test="msgType != null and msgType != 0">
+		AND a.msg_type = #{msgType}
+		</if>
 		<if test="dateStart != null ">
 		AND a.reservation_time <![CDATA[>]]>  #{dateStart}
 		</if>
@@ -366,6 +396,9 @@
 		,expiry
 		,qos
 		,retained
+		,send_terminal_type
+		,media_type
+		,msg_size
 		,issue_time
 		,issue_id
 		,update_time
@@ -390,6 +423,9 @@
 	    ,#{expiry}
 		,#{qos}
 		,#{retained}
+		,#{sendTerminalType}
+		,#{mediaType}
+		,#{msgSize}
 		,now()
 		,#{issueId}
 		,now()
@@ -406,6 +442,19 @@
 		 #{msgId}
 		,#{contentType}
 		,#{content}
+		)
+	</insert>
+	
+	<insert id="insertGroupMessage" parameterType="kr.co.adflow.pms.domain.GroupMessage">
+		INSERT INTO pms.group_msg${keyMon}
+		(msg_id
+		,receiver_token_id
+		,receiver_ufmi
+		)
+		values(
+		 #{msgId}
+		,#{receiverTokenId}
+		,#{receiverUfmi}
 		)
 	</insert>
 	
@@ -428,6 +477,9 @@
 		pms.message${keyMon} a left outer join pms.ack${keyMon} b on a.msg_id = b.msg_id and b.ack_type = 'pma',
         pms.message${keyMon} c left outer join pms.ack${keyMon} d on c.msg_id = d.msg_id and d.ack_type = 'app'		
 		WHERE a.msg_id = c.msg_id
+		<if test="msgType != null and msgType != 0">
+		AND a.msg_type = #{msgType}
+		</if>
 		AND a.issue_id = #{issueId}
         AND a.msg_id IN
        <foreach item="id" index="index" collection="msgIds" open="(" separator="," close=")" >
@@ -459,5 +511,6 @@
 			#{id}
 	   </foreach>
 	</update>
+	
 
 </mapper>	

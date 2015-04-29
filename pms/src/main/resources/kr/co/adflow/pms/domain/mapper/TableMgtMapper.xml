@@ -30,6 +30,9 @@
 		  expiry int(10) unsigned DEFAULT NULL,
 		  qos tinyint(1) unsigned DEFAULT NULL,
 		  retained tinyint(1) DEFAULT NULL,
+		  media_type tinyint(1)  DEFAULT NULL,
+		  send_terminal_type tinyint(1)  DEFAULT NULL,
+		  msg_size int(11) unsigned DEFAULT NULL,
 		  issue_time datetime DEFAULT NULL,
 		  issue_id VARCHAR(100),
 		  update_time datetime DEFAULT NULL,
@@ -50,6 +53,19 @@
 		  content mediumtext,
 		  content_type varchar(50) DEFAULT NULL,
 		  PRIMARY KEY (msg_id)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8
+	</update>
+	
+	<select id="selectGroupMessage" parameterType="String" resultType="int">
+		SELECT COUNT(*)
+		FROM pms.group_msg${value}
+	</select>
+	
+	<update id="createGroupMessage" parameterType="String">
+		CREATE TABLE pms.group_msg${value} (
+		   msg_id varchar(50) NOT NULL, 
+		   receiver_token_id varchar(100) NOT NULL, 
+		   PRIMARY KEY (msg_id,receiver_token_id)
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8
 	</update>
 	

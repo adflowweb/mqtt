@@ -53,6 +53,7 @@ public class MessageResult {
 	/** The app ack time. */
 	@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL, using = JsonDateSerializer.class)
 	private Date appAckTime;
+	
 
 	/**
 	 * Gets the msg id.

@@ -3,10 +3,12 @@
  */
 package kr.co.adflow.pms.core.util;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
+import java.util.logging.Logger;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -71,6 +73,47 @@ public class DateUtil {
 
 		return DateUtil.getDate(cal.getTime(), "YYYYMM");
 	}
+	
+	/**
+	 * Gets the yyyymmdd.
+	 *
+	 * @param day the day
+	 * @return the yyyymmdd
+	 */
+	public static String getYYYYMMDD(int day) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTimeInMillis(System.currentTimeMillis());
+		cal.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
+
+		cal.add(Calendar.DATE, day);
+
+		return DateUtil.getDate(cal.getTime(), "YYYYMMdd");
+	}
+	
+	
+	/**
+	 * Gets the yyyymmdd.
+	 *
+	 * @param day the day
+	 * @return the yyyymmdd
+	 */
+	public static String getYYYYMMDD(String strDate, int day) {
+
+		SimpleDateFormat transFormat = new SimpleDateFormat("yyyyMMdd");
+		Date date = null;
+		try {
+			date = transFormat.parse(strDate);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
+		cal.add(Calendar.DATE, day);
+		return DateUtil.getDate(cal.getTime(), "YYYYMMdd");
+	}
 
 	/**
 	 * Gets the date.
@@ -95,6 +138,17 @@ public class DateUtil {
 		return fmt.format(date);
 
 	}
+	
+	/**
+	 * Gets the yyyymmddhhmmss.
+	 *
+	 * @param date the date
+	 * @return the yyyymmddhhmmss
+	 */
+	public static String getDateTime(Date date) {
+		return DateUtil.getDate(date, "YYYYMMddHHmmss");
+	}
+	
 
 	/**
 	 * From iso date string.

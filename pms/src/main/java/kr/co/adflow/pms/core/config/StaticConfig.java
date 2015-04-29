@@ -89,5 +89,11 @@ public class StaticConfig {
 	
 	/** The Constant CONTROL_QUEUE_EXECUTOR_TYPE_CALLBACK. */
 	public static final String CONTROL_QUEUE_EXECUTOR_TYPE_CALLBACK = "callback";
-
+	
+	/** The Constant CONTROL_QUEUE_EXECUTOR_TYPE_CALLBACK_APP. */
+	public static final String CONTROL_QUEUE_EXECUTOR_TYPE_CALLBACK_APP = "callback_app";
+	
+	/** The Constant CONTROL_QUEUE_EXECUTOR_TYPE_CALLBACK_PMA. */
+	public static final String CONTROL_QUEUE_EXECUTOR_TYPE_CALLBACK_PMA = "callback_pma";
+	
 }

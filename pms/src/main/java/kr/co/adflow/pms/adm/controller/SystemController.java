@@ -22,6 +22,8 @@ import kr.co.adflow.pms.adm.service.SystemService;
 import kr.co.adflow.pms.core.config.PmsConfig;
 import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.controller.BaseController;
+import kr.co.adflow.pms.core.executor.CDRCreateExecutor;
+import kr.co.adflow.pms.core.handler.PCFConnectionManagerHandler;
 import kr.co.adflow.pms.domain.Message;
 import kr.co.adflow.pms.domain.ServerInfo;
 import kr.co.adflow.pms.domain.User;
@@ -63,6 +65,12 @@ public class SystemController extends BaseController {
 	
 	@Autowired
 	private PmsConfig pmsConfig;
+	
+	
+	@Autowired
+	private CDRCreateExecutor cDRCreateExecutor;
+	
+	
 
 	/**
 	 * Gets the account.
@@ -555,6 +563,61 @@ public class SystemController extends BaseController {
 		result.setData(resultList);
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		Response<Result<List<Map<String, Object>>>> res = new Response(result);
+		return res;
+
+	}
+	
+	
+	
+	
+	/**
+	 *  DDR file Create.
+	 *
+	 * @param appKey the app key
+	 * @param date the date
+	 * @return 
+	 */
+	@RequestMapping(value = "/cDRCreate", method = RequestMethod.GET, params = "date", consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
+	@ResponseBody
+	public Response<Result<Integer>> cDRCreate(@RequestParam("date") String date) throws Exception{
+
+		
+		Integer re = 0;
+		re = (Integer) cDRCreateExecutor.createCDR(date);
+
+		Result<Integer> result = new Result<Integer>();
+		result.setSuccess(true);
+
+		result.setData(re);
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		Response<Result<Integer>> res = new Response(result);
+		return res;
+
+	}
+	
+
+	
+	
+	
+	/**
+	 *  test.
+	 */
+	@RequestMapping(value = "/test", method = RequestMethod.GET)
+	@ResponseBody
+	public Response<Result<Integer>> getTest() {
+
+		
+		String re = "";
+//		re = systemService.testRun();
+//		PCFConnectionManagerHandler.PCFConnectionManager();
+		cDRCreateExecutor.createCDR();
+
+		Result<String> result = new Result<String>();
+		result.setSuccess(true);
+
+		result.setData(re);
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		Response<Result<Integer>> res = new Response(result);
 		return res;
 
 	}

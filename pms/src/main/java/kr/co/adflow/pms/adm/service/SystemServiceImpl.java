@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.io.*;
 
 import kr.co.adflow.pms.adm.request.ReservationCancelReq;
 import kr.co.adflow.pms.adm.request.UserReq;
@@ -17,6 +19,7 @@ import kr.co.adflow.pms.core.dao.ServerDao;
 import kr.co.adflow.pms.core.util.CheckUtil;
 import kr.co.adflow.pms.core.util.DateUtil;
 import kr.co.adflow.pms.core.util.KeyGenerator;
+import kr.co.adflow.pms.core.util.RecordFomatUtil;
 import kr.co.adflow.pms.domain.Message;
 import kr.co.adflow.pms.domain.MsgIdsParams;
 import kr.co.adflow.pms.domain.MsgParams;
@@ -276,6 +279,8 @@ public class SystemServiceImpl implements SystemService {
 		}
 
 		MsgParams msgParams = new MsgParams();
+		
+		msgParams.setMsgType(0);
 
 		msgParams.setKeyMon(params.get("cSearchDate"));
 
@@ -348,6 +353,8 @@ public class SystemServiceImpl implements SystemService {
 		}
 
 		MsgParams msgParams = new MsgParams();
+		
+		msgParams.setMsgType(0);
 
 		msgParams.setKeyMon(params.get("cSearchDate"));
 
@@ -489,6 +496,7 @@ public class SystemServiceImpl implements SystemService {
 			String issueId) {
 		
 		MsgParams msgParams = new MsgParams();
+		msgParams.setMsgType(0);
 		msgParams.setIssueId(issueId);
 		msgParams.setKeyMon(keyMon);
 		msgParams.setDateStart(this.getDate(params.get("cSearchDateStart")));
@@ -496,6 +504,29 @@ public class SystemServiceImpl implements SystemService {
 
 
 		return summaryMapper.getMonthSummary(msgParams);
+	}
+	
+	
+	/**
+	 * Gets the key Test.
+	 *
+	 * @param 
+	 * @return 
+	 */
+	public String testRun() {
+		String re = null;
+		
+		FileWriter write = null;
+		File file = null;
+		String fileNamePrefix = "EM";
+		String fileNameDate ="";
+		int fileNameSeq = 0;
+		
+		RecordFomatUtil rf = new RecordFomatUtil();
+
+		
+		
+		return re;
 	}
 
 }
