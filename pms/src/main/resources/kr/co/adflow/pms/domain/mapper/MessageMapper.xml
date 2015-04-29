@@ -161,6 +161,16 @@
 		msg_id = #{msgId}
 	</select>
 	
+	<select id="checkGroupMessage" parameterType="Map"
+		resultType="Integer">
+		SELECT 
+		COUNT(*)
+		FROM pms.group_msg${keyMon}
+		WHERE 
+		msg_id = #{msgId}
+		AND receiver_token_id = #{receiverTokenId}
+	</select>
+	
 	
 	<select id="getSvcMessageListCnt" parameterType="kr.co.adflow.pms.domain.MsgParams"
 		resultType="Integer">

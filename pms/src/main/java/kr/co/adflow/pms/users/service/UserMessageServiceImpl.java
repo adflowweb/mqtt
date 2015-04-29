@@ -139,7 +139,7 @@ public class UserMessageServiceImpl implements UserMessageService {
 		// message size
 		msg.setMsgSize(msg.getContent().length());
 		
-		logger.info(" ========= getMsgSize ::{}",msg.getMsgSize());
+//		logger.info(" ========= getMsgSize ::{}",msg.getMsgSize());
 		
 		// TMS:0, MMS:1
 		if (msg.getMsgSize() > 100) {
@@ -311,9 +311,12 @@ public class UserMessageServiceImpl implements UserMessageService {
 				ufmi = pushMapper.getUfmi(token);
 				groupMessage.setReceiverUfmi(ufmi);
 				
+//				logger.info("token ::{}  appkey ::{}", token, appKey);
 				if (ufmi != null && !token.equals(appKey)) {
 					list.add(groupMessage);
-				} 
+				} else {
+					logger.info("Group message self skip - token ::{}  appkey ::{}", token, appKey);
+				}
 				
 			}
 

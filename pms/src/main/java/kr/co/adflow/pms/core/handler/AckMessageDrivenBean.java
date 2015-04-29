@@ -68,7 +68,9 @@ public class AckMessageDrivenBean implements MessageListener {
 			e.printStackTrace();
 		}
 		Ack ack = this.getAck(body);
-		int cnt = ackMapper.insertAck(ack);
+		
+		
+		int cnt = 0;
 		
 		// Mgs type check
 		HashMap<String, Object> param = new HashMap<String, Object>();
@@ -77,11 +79,35 @@ public class AckMessageDrivenBean implements MessageListener {
 		param.put("keyMon", ack.getKeyMon());
 		param.put("msgId", ack.getMsgId());
 
+//		System.out.println("========== ack.getTokenId(): "+ack.getTokenId());
+		
 		Integer msgType = messageMapper.selectMessageType(param);
 		// callback
 		//MESSAGE_HEADER_TYPE_DEFAULT
+		//message type check
 		if (msgType != null && msgType == 10) {
+//			System.out.println("========== msgType: "+msgType);
+			// 관제 message
+			cnt = ackMapper.insertAck(ack);
 			ctlQMapper.insertQ(this.getCtlQ(ack));
+		} else{
+//			System.out.println("========== msgType2: "+msgType);
+			//user message
+			HashMap<String, Object> paramGroup = new HashMap<String, Object>();
+
+			// param.put("keyMon", DateUtil.getYYYYMM());
+			paramGroup.put("keyMon", ack.getKeyMon());
+			paramGroup.put("msgId", ack.getMsgId());
+			paramGroup.put("receiverTokenId", ack.getTokenId());
+			
+			Integer groupCheck = messageMapper.checkGroupMessage(paramGroup);
+			
+//			System.out.println("========== groupCheck: "+groupCheck);
+			if (groupCheck != null && groupCheck > 0) {
+//				System.out.println("========== groupCheck2: "+groupCheck);
+				cnt = ackMapper.insertAck(ack);
+			} 
+			
 		}
 		logger.info("ack result : {}", cnt);
 

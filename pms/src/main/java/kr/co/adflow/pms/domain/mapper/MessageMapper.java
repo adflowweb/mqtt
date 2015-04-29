@@ -75,12 +75,20 @@ public interface MessageMapper {
 	List<Message> selectReservationList(Map<String, Object> params);
 	
 	/**
-	 * Select reservation list.
+	 * Select selectMessage Type.
 	 *
 	 * @param params the params
-	 * @return the message type
+	 * @return the Integer
 	 */
 	Integer selectMessageType(Map<String, Object> params);
+	
+	/**
+	 * Select checkGroupMessage check.
+	 *
+	 * @param params the params
+	 * @return the Integer
+	 */
+	Integer checkGroupMessage(Map<String, Object> params);
 
 	/**
 	 * Gets the svc message list.
