@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent" >
+    
+    <RelativeLayout
+        android:id="@+id/relativeLayout_new_number"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent" 
+	    android:layout_marginTop="5.33dp"
+	    android:layout_marginBottom="5.33dp">
+	            
+	    <EditText
+	        android:id="@+id/editText_new_number"
+	        android:layout_width="fill_parent"
+      	    android:layout_height="wrap_content"
+      	    android:layout_centerVertical="true"
+      	    android:singleLine="true"
+	        android:windowSoftInputMode="stateAlwaysHidden"
+	        android:layout_toLeftOf="@+id/imageButton_new_contact"
+      	    android:hint="@string/new_msg_ptt"
+      	    android:inputType="phone"
+      	    android:textColor="@color/color_new_text"/>
+	           	
+	    <ImageButton
+	        android:id="@+id/imageButton_new_contact"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_centerVertical="true"
+	        android:layout_alignParentRight="true"
+	        android:src="@drawable/button_contact" />
+	            
+	</RelativeLayout>
+
+</RelativeLayout>
+<!-- From: file:/Users/nadir93/git/mqtt/PMCClient/app/src/main/res/layout/item_new_layout.xml -->

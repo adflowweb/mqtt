@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:state_pressed="true" android:drawable="@drawable/person_pressed_icon"/>
+    <item android:drawable="@drawable/person_normal_icon"/>
+</selector>
+<!-- From: file:/Users/nadir93/git/mqtt/PMCClient/app/src/main/res/drawable/button_contact.xml -->

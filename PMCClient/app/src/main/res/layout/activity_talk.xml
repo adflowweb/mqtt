@@ -1,0 +1,32 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="${relativePackage}.${activityClass}" >
+
+    <ListView
+        android:id="@+id/listView_talk"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:listSelector="@android:color/transparent"
+        android:divider="@android:color/transparent"
+        android:layout_above="@+id/start_bottom" >
+
+    </ListView>
+  
+    
+    <include layout="@layout/item_foot" />
+
+    <TextView
+        android:id="@+id/textView_notiNewMsg"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:layout_alignParentLeft="true"
+        android:visibility="gone"
+        android:ellipsize="end"
+        android:textSize="21.33dp"
+        android:background="@color/color_talk_background_notinew"
+        android:layout_above="@+id/start_bottom" />
+
+</RelativeLayout>
