@@ -100,13 +100,13 @@ public class AckMessageDrivenBean implements MessageListener {
 			paramGroup.put("msgId", ack.getMsgId());
 			paramGroup.put("receiverTokenId", ack.getTokenId());
 			
-			Integer groupCheck = messageMapper.checkGroupMessage(paramGroup);
+//			Integer groupCheck = messageMapper.checkGroupMessage(paramGroup);
 			
 //			System.out.println("========== groupCheck: "+groupCheck);
-			if (groupCheck != null && groupCheck > 0) {
+//			if (groupCheck != null && groupCheck > 0) {
 //				System.out.println("========== groupCheck2: "+groupCheck);
 				cnt = ackMapper.insertAck(ack);
-			} 
+//			} 
 			
 		}
 		logger.info("ack result : {}", cnt);

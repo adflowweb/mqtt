@@ -36,7 +36,7 @@ public class CDR {
 	private String groupId;
 	
 	/** The receiverUfmi */
-	private String receiverUfmi;
+	private String tokenId;
 
 	
 	/**
@@ -44,8 +44,8 @@ public class CDR {
 	 *
 	 * @return the receiverUfmi
 	 */
-	public String getReceiverUfmi() {
-		return receiverUfmi;
+	public String getTokenId() {
+		return tokenId;
 	}
 
 	/**
@@ -53,8 +53,8 @@ public class CDR {
 	 *
 	 * @param receiverUfmi the new receiver Ufmi
 	 */
-	public void setReceiverUfmi(String receiverUfmi) {
-		this.receiverUfmi = receiverUfmi;
+	public void setTokenId(String tokenId) {
+		this.tokenId = tokenId;
 	}
 
 	/**

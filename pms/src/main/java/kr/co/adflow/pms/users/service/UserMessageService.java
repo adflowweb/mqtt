@@ -18,7 +18,7 @@ public interface UserMessageService {
 	 * @param msg the msg
 	 * @return the list
 	 */
-	public int sendMessage(MessageReq msg, String appKey);
+	public int sendMessage(MessageReq msg, String appKey) throws Exception;
 	
 	
 	/**
@@ -28,6 +28,6 @@ public interface UserMessageService {
 	 * @param msg the msg
 	 * @return the list
 	 */
-	public int groupListCnt(String groupTopic);
+	public Integer groupListCnt(String groupTopic) throws Exception;
 
 }

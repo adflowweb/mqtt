@@ -19,6 +19,7 @@ import kr.co.adflow.pms.core.util.RecordFomatUtil;
 import kr.co.adflow.pms.domain.CDR;
 import kr.co.adflow.pms.domain.CDRParams;
 import kr.co.adflow.pms.domain.mapper.CDRMapper;
+import kr.co.adflow.pms.domain.push.mapper.PushMapper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +42,12 @@ public class CDRCreateExecutor {
 	/** The CDR mapper. */
 	@Autowired
 	private CDRMapper cDRMapper;
+	
+	
+	/** The Push Mapper. */
+	@Autowired
+	private PushMapper pushMapper;
+	
 	
 	/** The Pms Config. */
 	@Autowired
@@ -171,7 +178,7 @@ public class CDRCreateExecutor {
 					} else {
 						cDRCnt = cDRTotCnt - cDRPrintCnt;
 					}
-					this.headerPrint(fw, cDRCnt);
+					this.headerPrint(fw);
 					
 					//1000건씩 처리 
 					cDRParams.setLengthRow(cDRDbMaxRow);
@@ -183,7 +190,7 @@ public class CDRCreateExecutor {
 					}
 					
 					//Tail print
-					this.tailPrint(fw);
+					this.tailPrint(fw, cDRCnt);
 					
 					// Next Row Check
 					cDRPrintCnt = cDRPrintCnt + cDRCnt;
@@ -224,9 +231,9 @@ public class CDRCreateExecutor {
 				
 				logger.info("==   CDR NO DATA  ==");
 				//Header print
-				this.headerPrint(fw, cDRTotCnt);
+				this.headerPrint(fw);
 				//Tail print
-				this.tailPrint(fw);
+				this.tailPrint(fw, cDRTotCnt);
 			}
 			
 			logger.info("CDR file {} create Sucess", fileName.toString());
@@ -235,8 +242,8 @@ public class CDRCreateExecutor {
 			stop = System.currentTimeMillis();
 			System.out.println("CDR file create elapsedTime=" + (stop - start) + "ms");
 			
-			this.cDRCopyCommand(directory.getPath());
-//			this.cDRFileCopy(directory);
+//			this.cDRCopyCommand(directory.getPath());
+			this.cDRFileCopy(directory);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -255,48 +262,55 @@ public class CDRCreateExecutor {
 		return cDRTotCnt;
 	}
 	
-	// Header PRINT
-	public void headerPrint (FileWriter fw, int cDRSize) throws IOException {
-		String headerRecordType = "H";
-		String headerCDRCount;
-		String headerNull = RecordFomatUtil.stingFormat("", 69);
+	
+	/**
+	 * Creates the CDR file.
+	 */
+	
+	
+	// tail PRINT
+	public void tailPrint (FileWriter fw, int cDRSize) throws IOException {
+		String tailRecordType = "T";
+		String tailCDRCount;
+		String tailNull = RecordFomatUtil.stingFormat("", 69);
 		StringBuffer recordSb;
 
-		headerCDRCount = RecordFomatUtil.intFormat(cDRSize, 13);
+		tailCDRCount = RecordFomatUtil.intFormat(cDRSize, 13);
 		recordSb = new StringBuffer();
-		recordSb.append(headerRecordType);
-		recordSb.append(headerCDRCount);
-		recordSb.append(headerNull);
-		recordSb.append("\n");
+		recordSb.append(tailRecordType);
+		recordSb.append(tailCDRCount);
+		recordSb.append(tailNull);
+		
 		
 
-//		logger.info("CDR : [{}]:Header", recordSb.toString());
+//		logger.info("CDR : [{}]:tail", recordSb.toString());
 		try {
 			fw.write(recordSb.toString());
+			fw.close();
 		} catch (IOException e) {
-			logger.error("Header file write Error::");
+			logger.error("tail file write Error::");
 			throw e;
 		}
 		
 	}
 	
-	// Tail PRINT
-	public void tailPrint(FileWriter fw) throws IOException {
-		String tailRecordType = "T";
-		String tailNull = RecordFomatUtil.stingFormat("", 82);
+	// header PRINT
+	public void headerPrint(FileWriter fw) throws IOException {
+		String headerRecordType = "H";
+		String headerNull = RecordFomatUtil.stingFormat("", 82);
 		StringBuffer recordSb;
 
 		
 		recordSb = new StringBuffer();
-		recordSb.append(tailRecordType);
-		recordSb.append(tailNull);
+		recordSb.append(headerRecordType);
+		recordSb.append(headerNull);
+		recordSb.append("\n");
 		
 //		logger.info("CDR : [{}]:Tail", recordSb.toString());
 		try {
 			fw.write(recordSb.toString());
-			fw.close();
 		} catch (IOException e) {
-			logger.error("Tail file write Error::");
+			logger.error("header file write Error::");
 			throw e;
 		}
 		
@@ -316,6 +330,7 @@ public class CDRCreateExecutor {
 			String messageTopic2 = "";
 			String callerNo, calledNo;
 			String tempNo, pTalkVer;
+			 
 			int tempIndex;
 			for (CDR cDR : list) {
 				//stringBuffer clear
@@ -347,21 +362,31 @@ public class CDRCreateExecutor {
 				
 				
 				//Caller NO
+				System.out.println("========= cDR.getIssueId() " + cDR.getIssueId());
 				callerNo = RecordFomatUtil.topicToUfmiNo(cDR.getIssueId());
 				recordSb.append(RecordFomatUtil.stingFormat(callerNo, 13));
 				
 				//Called NO - Group Msg NO : ReceiverTopic, Group Msg Yes : ReceiverUfmi
-				if (cDR.getReceiverUfmi() != null && cDR.getReceiverUfmi().trim().length() > 0) {
-					calledNo = RecordFomatUtil.ufmiNo(cDR.getReceiverUfmi());
+				calledNo = pushMapper.getUfmi(cDR.getTokenId());
+				
+				if (calledNo != null && calledNo.trim().length() > 0) {
+					calledNo = RecordFomatUtil.ufmiNo(calledNo);
 				} else {
-					
-//					logger.info("=== getUpdateTime ==::{}",cDR.getUpdateTime());
-					calledNo = RecordFomatUtil.topicToUfmiNo(cDR.getReceiverTopic());
+					calledNo = "";
+				}
+				recordSb.append(RecordFomatUtil.stingFormat(calledNo, 13));
+				
+				if(cDR.getGroupId() == null && callerNo.equals(calledNo)){
+					continue;
 				}
 				
-				recordSb.append(RecordFomatUtil.stingFormat(calledNo, 13));
-				//RR Cause - MS_NORMAL
-				recordSb.append("00");
+				//RR Cause 
+				if (cDR.getPmaAckTime() == null) {
+					recordSb.append("01");
+				} else {
+					recordSb.append("00");
+				}
+				
 				//Message Type
 				recordSb.append(RecordFomatUtil.intFormat(cDR.getMediaType(), 2));
 				//Send Terminal Type
@@ -401,7 +426,7 @@ public class CDRCreateExecutor {
 				recordSb.append("\n");
 
 //				tempI++;
-//				logger.info("CDR : [{}]:{}", recordSb.toString(),tempI);
+//				logger.info("CDR : [{}]:{}", recordSb.toString());
 
 				fw.write(recordSb.toString());
 
@@ -415,6 +440,8 @@ public class CDRCreateExecutor {
 		}
 		
 	}
+	
+	
 	
 	public void cDRCopyCommand(String path) {
 		
@@ -458,86 +485,86 @@ public class CDRCreateExecutor {
 		
 	}
 	
-//	public void cDRFileCopy(File directory) {
-//		
-//		File[] fileList = directory.listFiles();
-//		
-//		String targetDir = pmsConfig.CDR_TARGETFILE_PATH;
-//		
-//		String fileName;
-//		
-//		File targetDirFile = new File(targetDir);
-//		
-//		File[] delFileList = targetDirFile.listFiles();
-//		
-//		
-//		//file copy
-//		for (int i = 0; i < delFileList.length; i++) {
-//			
-//			delFileList[i].delete();
-//		}
-//		
-//		
-//		//file copy
-//		for (int i = 0; i < fileList.length; i++) {
-//			
-//			fileName = fileList[i].getName();
-//			File fTarget = new File(targetDir+fileName);
-//			fileCopy(fileList[i], fTarget);
-//		}
-//		
-//		
-//	}
-//	
-//	
-//	public void fileCopy( File fOrg, File fTarget)
-//	 {
-//		FileInputStream fI = null;
-//		FileOutputStream fO = null;
-//		try {
-//			fI = new FileInputStream ( fOrg);
-//			  if ( !fTarget.isFile())
-//			  {
-//			   File fParent = new File ( fTarget.getParent());
-//			   if ( !fParent.exists())
-//			   {
-//			    fParent.mkdir();
-//			   }
-//			   fTarget.createNewFile();
-//			  }
-//
-//			  fO = new FileOutputStream ( fTarget);
-//			  byte[] bBuffer = new  byte[ 1024 * 8];
-//			  int nRead;
-//			  while ( (nRead = fI.read( bBuffer)) != -1)
-//			  {
-//				  fO.write( bBuffer, 0, nRead);
-//			  }
-//
-//			
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}finally{
-//			if(fI != null){
-//				try {
-//					fI.close();
-//				} catch (IOException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//			}
-//			
-//			if(fO != null){
-//				try {
-//					fO.close();
-//				} catch (IOException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//			}
-//		}
-//
-//	 }
+	public void cDRFileCopy(File directory) {
+		
+		File[] fileList = directory.listFiles();
+		
+		String targetDir = pmsConfig.CDR_TARGETFILE_PATH;
+		
+		String fileName;
+		
+		File targetDirFile = new File(targetDir);
+		
+		File[] delFileList = targetDirFile.listFiles();
+		
+		
+		//file copy
+		for (int i = 0; i < delFileList.length; i++) {
+			
+			delFileList[i].delete();
+		}
+		
+		
+		//file copy
+		for (int i = 0; i < fileList.length; i++) {
+			
+			fileName = fileList[i].getName();
+			File fTarget = new File(targetDir+fileName);
+			fileCopy(fileList[i], fTarget);
+		}
+		
+		
+	}
+	
+	
+	public void fileCopy( File fOrg, File fTarget)
+	 {
+		FileInputStream fI = null;
+		FileOutputStream fO = null;
+		try {
+			fI = new FileInputStream ( fOrg);
+			  if ( !fTarget.isFile())
+			  {
+			   File fParent = new File ( fTarget.getParent());
+			   if ( !fParent.exists())
+			   {
+			    fParent.mkdir();
+			   }
+			   fTarget.createNewFile();
+			  }
+
+			  fO = new FileOutputStream ( fTarget);
+			  byte[] bBuffer = new  byte[ 1024 * 8];
+			  int nRead;
+			  while ( (nRead = fI.read( bBuffer)) != -1)
+			  {
+				  fO.write( bBuffer, 0, nRead);
+			  }
+
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			if(fI != null){
+				try {
+					fI.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+			if(fO != null){
+				try {
+					fO.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+
+	 }
 
 	
 

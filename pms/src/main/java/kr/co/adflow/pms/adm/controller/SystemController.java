@@ -23,6 +23,7 @@ import kr.co.adflow.pms.core.config.PmsConfig;
 import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.controller.BaseController;
 import kr.co.adflow.pms.core.executor.CDRCreateExecutor;
+import kr.co.adflow.pms.core.executor.CDRCreateExecutor2;
 import kr.co.adflow.pms.core.handler.PCFConnectionManagerHandler;
 import kr.co.adflow.pms.domain.Message;
 import kr.co.adflow.pms.domain.ServerInfo;
@@ -69,6 +70,9 @@ public class SystemController extends BaseController {
 	
 	@Autowired
 	private CDRCreateExecutor cDRCreateExecutor;
+	
+	@Autowired
+	private CDRCreateExecutor2 cDRCreateExecutor2;
 	
 	
 
