@@ -8,8 +8,8 @@ android {
         applicationId "kr.co.adflow.push"
         minSdkVersion 15
         targetSdkVersion 18
-        versionCode 1018
-        versionName "1.0.18"
+        versionCode 1019
+        versionName "1.0.19"
     }
     buildTypes {
 
