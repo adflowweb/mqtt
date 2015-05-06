@@ -2,6 +2,8 @@ package kr.co.adflow.push.handler;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.StrictMode;
 import android.provider.Settings.Secure;
 import android.util.Log;
@@ -95,6 +97,7 @@ public class PushHandler implements MqttCallback {
     public static final String EXISTPMABYUSERID_URL = BuildConfig.EXISTPMABYUSERID_URL;
     //"https://push4.ktp.co.kr:8080/v1/users/userID/validation";
     public static final String EXISTPMABYUFMI_URL = BuildConfig.EXISTPMABYUFMI_URL;
+    public static final String GROUP_TOPIC_SUBSCRIBER_URL = BuildConfig.GROUP_TOPIC_SUBSCRIBER_URL;
     //"https://push4.ktp.co.kr:8080/v1/users/ufmi/validation";
     public static final String MESSAGE_URI = BuildConfig.MESSAGE_URI;
     //"https://push4.ktp.co.kr:8081/v1/pms/users/message";
@@ -199,6 +202,26 @@ public class PushHandler implements MqttCallback {
         Log.d(TAG, "mqttClient=" + mqttClient);
 
         try {
+
+            // 로밍체크
+            // testCode
+            ConnectivityManager connectivityManager;
+            connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+            Log.d(TAG, "networkInfo=" + networkInfo);
+            Log.d(TAG, "로밍=" + networkInfo.isRoaming());
+
+            //로밍사용자
+            if (networkInfo.isRoaming()) {
+                if (mqttClient != null) {
+                    //푸시핸들러종료
+                    stop();
+                }
+                return;
+            }
+            //testCodeEnd
+
+            //토큰가져오기
             String token = preference.getValue(PushPreference.TOKEN, null);
 
             Log.d(TAG, "token=" + token);
@@ -257,6 +280,7 @@ public class PushHandler implements MqttCallback {
         pushdb.testQuery();
         Log.d(TAG, "expireMsg종료()");
     }
+
 
     /**
      *
@@ -913,6 +937,69 @@ public class PushHandler implements MqttCallback {
         return new DefaultHttpClient(ccm, params);
     }
 
+    private HttpClient getHttpClient2() throws Exception {
+        Log.d(TAG, "getHttpClient시작()");
+        //setMode
+        setStrictMode();
+
+        KeyStore trustStore = KeyStore.getInstance(KeyStore
+                .getDefaultType());
+        trustStore.load(null, null);
+
+        SSLSocketFactory sf = new SFSSLSocketFactory(trustStore);
+        sf.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+
+        HttpParams params = new BasicHttpParams();
+        HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
+        HttpProtocolParams.setContentCharset(params, HTTP.UTF_8);
+
+        HttpConnectionParams.setConnectionTimeout(params, HTTP_CONNTCTION_TIMEOUT);
+        HttpConnectionParams.setSoTimeout(params, HTTP_SOCKET_TIMEOUT);
+
+        SchemeRegistry registry = new SchemeRegistry();
+        registry.register(new Scheme(HTTP_PROTOCOL, PlainSocketFactory
+                .getSocketFactory(), HTTP_PORT));
+        // 현재 https 인데 8080으로 서비스하고 있음
+        registry.register(new Scheme(HTTPS_PROTOCOL, sf, 8081));
+
+        ClientConnectionManager ccm = new ThreadSafeClientConnManager(
+                params, registry);
+        Log.d(TAG, "getHttpClient종료()");
+        return new DefaultHttpClient(ccm, params);
+    }
+
+
+    public String getGrpSubscribers(String topic) throws Exception {
+        Log.d(TAG, "getGrpSubscribers시작(topic=" + topic + ")");
+        HttpClient httpClient = getHttpClient();
+        //String token = preference.getValue(PushPreference.TOKEN, null);
+        Log.d(TAG, "currentToken=" + currentToken);
+        if (currentToken == null) {
+            throw new Exception("토큰이존재하지않습니다.");
+        }
+
+        HttpGet get = new HttpGet(GROUP_TOPIC_SUBSCRIBER_URL + topic);
+        //set Header token
+        get.setHeader("User-Agent", "My User Agent 1.0");
+        get.setHeader("X-Application-Key", currentToken);
+        get.setHeader("Content-Type", "application/json;charset=utf-8");
+
+        HttpResponse response = httpClient.execute(get);
+        if (response.getStatusLine().getStatusCode() != HTTP_RESPONSE_CODE_SUCCESS) {
+            throw new IOException("Unexpected code "
+                    + response.getStatusLine().getStatusCode());
+        }
+
+        String responseStr = EntityUtils.toString(response.getEntity());
+        Log.d(TAG, "getGrpSubscribers종료(value=" + responseStr + ")");
+        return responseStr;
+    }
+
+    /**
+     * @param userID
+     * @return
+     * @throws Exception
+     */
     public String existPMAByUserID(String userID) throws Exception {
         Log.d(TAG, "existPMAByUserID시작(userID=" + userID + ")");
         HttpClient httpClient = getHttpClient();
@@ -943,6 +1030,11 @@ public class PushHandler implements MqttCallback {
         return responseStr;
     }
 
+    /**
+     * @param ufmi
+     * @return
+     * @throws Exception
+     */
     public String existPMAByUFMI(String ufmi) throws Exception {
         Log.d(TAG, "existPMAByUFMI시작(ufmi=" + ufmi + ")");
         HttpClient httpClient = getHttpClient();

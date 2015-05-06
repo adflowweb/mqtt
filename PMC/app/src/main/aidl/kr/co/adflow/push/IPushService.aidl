@@ -15,5 +15,5 @@ interface IPushService {
         String sendMsg(String sender, String receiver, String contentType, String content);
         String sendMsgWithOpts(String sender, String receiver, int qos, String contentType, String content, int expiry);
         String updateUFMI(String ufmi);
-
+        String getGrpSubscribers(String topic);
 }

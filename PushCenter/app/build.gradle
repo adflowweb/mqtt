@@ -8,13 +8,12 @@ android {
         applicationId "kr.co.adflow.push"
         minSdkVersion 15
         targetSdkVersion 18
-        versionCode 1018
-        versionName "1.0.18"
+        versionCode 1019
+        versionName "1.0.19"
     }
     buildTypes {
 
         debug {
-
             buildConfigField "String", "JOB_LIMIT_COUNT", "\"600\""
             buildConfigField "int", "ALARM_INTERVAL", "60"
             buildConfigField "int", "DEFAULT_KEEP_ALIVE_TIME_OUT", "240"
@@ -32,9 +31,9 @@ android {
             buildConfigField "String", "EXISTPMABYUFMI_URL", "\"https://push4.ktp.co.kr:8080/v1/users/ufmi/validation\""
             buildConfigField "String", "MESSAGE_URI", "\"https://push4.ktp.co.kr:8081/v1/pms/users/message\""
             buildConfigField "String", "UPDATEUFMI_URL", "\"https://push4.ktp.co.kr:8080/v1/users/ufmi\""
+            buildConfigField "String", "GROUP_TOPIC_SUBSCRIBER_URL", "\"https://push4.ktp.co.kr:8081/v1/pms/users/groups/listCnt?groupTopic=\""
         }
         release {
-
             buildConfigField "String", "JOB_LIMIT_COUNT", "\"600\""
             buildConfigField "int", "ALARM_INTERVAL", "60"
             buildConfigField "int", "DEFAULT_KEEP_ALIVE_TIME_OUT", "240"
@@ -52,6 +51,7 @@ android {
             buildConfigField "String", "EXISTPMABYUFMI_URL", "\"https://push2.ktp.co.kr:8080/v1/users/ufmi/validation\""
             buildConfigField "String", "MESSAGE_URI", "\"https://push3.ktp.co.kr:8080/v1/pms/users/message\""
             buildConfigField "String", "UPDATEUFMI_URL", "\"https://push2.ktp.co.kr:8080/v1/users/ufmi\""
+            buildConfigField "String", "GROUP_TOPIC_SUBSCRIBER_URL", "\"https://push3.ktp.co.kr:8080/v1/pms/users/groups/listCnt?groupTopic=\""
 
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'

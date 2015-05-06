@@ -193,6 +193,43 @@ public class PushServiceImpl extends Service implements PushService {
             }
         }
 
+        /**
+         * 해당그룹사용자수를 가져온다.
+         *
+         * @param topic
+         * @return
+         * @throws RemoteException
+         */
+        @Override
+        public String getGrpSubscribers(String topic) throws RemoteException {
+            Log.d(TAG, "getGrpSubscribers(topic=" + topic + ")");
+            long start = System.currentTimeMillis();
+
+            JSONObject returnData = new JSONObject();
+            JSONObject res = new JSONObject();
+            try {
+                String result = PushServiceImpl.getInstance().getGrpSubscribers(topic);
+                Log.d(TAG, "getGrpSubscribers종료(result=" + result + ")");
+                long stop = System.currentTimeMillis();
+                Log.d(TAG, "걸린시간=" + (stop - start) + "ms");
+                return result;
+            } catch (Exception e) {
+                Log.e(TAG, "getGrpSubscribers중에러발생", e);
+
+                try {
+                    res.put("success", false);
+                    res.put("error", e.toString());
+                    returnData.put("result", res);
+                } catch (JSONException ex) {
+                    ex.printStackTrace();
+                }
+                //return "{\"result\":{\"success\":false, \"error\":\"" + e + "\"}}";
+                long stop = System.currentTimeMillis();
+                Log.d(TAG, "걸린시간=" + (stop - start) + "ms");
+                return returnData.toString();
+            }
+        }
+
         @Override
         public String existPMAByUFMI(String ufmi) throws RemoteException {
             Log.d(TAG, "existPMAByUFMI시작(ufmi=" + ufmi + ")");
@@ -505,7 +542,23 @@ public class PushServiceImpl extends Service implements PushService {
 //        }
     };
 
+    /**
+     * @param topic
+     * @return
+     * @throws Exception
+     */
+    private String getGrpSubscribers(String topic) throws Exception {
+        Log.d(TAG, "getGrpSubscribers시작(topic=" + topic + ")");
+        String result = pushHandler.getGrpSubscribers(topic);
+        Log.d(TAG, "getGrpSubscribers종료(result=" + result + ")");
+        return result;
+    }
 
+    /**
+     * @param msgID
+     * @param tokenID
+     * @throws Exception
+     */
     private void ack(String msgID, String tokenID) throws Exception {
         Log.d(TAG, "ack시작(msgID=" + msgID + ", tokenID=" + tokenID + ")");
         JSONObject ack = new JSONObject();
@@ -518,32 +571,55 @@ public class PushServiceImpl extends Service implements PushService {
         Log.d(TAG, "ack종료()");
     }
 
+    /**
+     * @param userID
+     * @return
+     * @throws Exception
+     */
     private String existPMAByUserID(String userID) throws Exception {
         Log.d(TAG, "existPMAByUserID시작(userID=" + userID + ")");
         String result = pushHandler.existPMAByUserID(userID);
-        Log.d(TAG, "existPMAByUserID종료()");
+        Log.d(TAG, "existPMAByUserID종료(result=" + result + ")");
         return result;
     }
 
+    /**
+     * @param ufmi
+     * @return
+     * @throws Exception
+     */
     private String existPMAByUFMI(String ufmi) throws Exception {
         Log.d(TAG, "existPMAByUFMI시작(ufmi=" + ufmi + ")");
         String result = pushHandler.existPMAByUFMI(ufmi);
-        Log.d(TAG, "existPMAByUFMI종료()");
+        Log.d(TAG, "existPMAByUFMI종료(result=" + result + ")");
         return result;
     }
 
+    /**
+     *
+     */
     @Override
     public void onCreate() {
         Log.d(TAG, "onCreate시작()");
         Log.d(TAG, "onCreate종료()");
     }
 
+    /**
+     * @param intent
+     * @param startId
+     */
     @Override
     public void onStart(Intent intent, int startId) {
         Log.d(TAG, "onStart시작(intent=" + intent + ",startId=" + startId + ")");
         Log.d(TAG, "onStart종료()");
     }
 
+    /**
+     * @param intent
+     * @param flags
+     * @param startId
+     * @return
+     */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand시작(intent=" + intent + ", flags=" + flags
@@ -762,11 +838,11 @@ public class PushServiceImpl extends Service implements PushService {
         Log.d(TAG, "setWakeLock종료(wakeLock=" + wakeLock + ")");
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see kr.co.adflow.push.service.PushService#publish(java.lang.String,
-     * byte[], int)
+    /**
+     * @param topic
+     * @param payload
+     * @param qos
+     * @throws Exception
      */
     @Override
     public void publish(String topic, byte[] payload, int qos) throws Exception {
@@ -782,11 +858,10 @@ public class PushServiceImpl extends Service implements PushService {
         Log.d(TAG, "publish종료()");
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see kr.co.adflow.push.service.PushService#subscribe(java.lang.String,
-     * int)
+    /**
+     * @param topic
+     * @param qos
+     * @throws Exception
      */
     @Override
     public void subscribe(String topic, int qos) throws Exception {
@@ -795,10 +870,9 @@ public class PushServiceImpl extends Service implements PushService {
         Log.d(TAG, "subscribe종료()");
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see kr.co.adflow.push.service.PushService#unsubscribe(java.lang.String)
+    /**
+     * @param topic
+     * @throws Exception
      */
     @Override
     public void unsubscribe(String topic) throws Exception {
@@ -807,10 +881,10 @@ public class PushServiceImpl extends Service implements PushService {
         Log.d(TAG, "unsubscribe종료()");
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see kr.co.adflow.push.service.PushService#preCheck(java.lang.String)
+    /**
+     * @param sender
+     * @param topic
+     * @throws Exception
      */
     @Override
     public void preCheck(String sender, String topic) throws Exception {
@@ -819,6 +893,10 @@ public class PushServiceImpl extends Service implements PushService {
         Log.d(TAG, "preCheck종료()");
     }
 
+    /**
+     * @return
+     * @throws Exception
+     */
     @Override
     public String getSubscriptions() throws Exception {
         Log.d(TAG, "getSubscriptions시작()");
