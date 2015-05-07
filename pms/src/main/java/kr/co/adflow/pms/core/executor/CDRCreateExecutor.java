@@ -37,22 +37,26 @@ public class CDRCreateExecutor {
 
 	/** The Constant logger. */
 	private static final Logger logger = LoggerFactory
-			.getLogger(CDRCreateExecutor.class);
+			.getLogger(CDRCreateExecutor2.class);
 
 	/** The CDR mapper. */
 	@Autowired
 	private CDRMapper cDRMapper;
 	
-	
 	/** The Push Mapper. */
 	@Autowired
 	private PushMapper pushMapper;
 	
-	
 	/** The Pms Config. */
 	@Autowired
 	private PmsConfig pmsConfig;
-
+	
+	private int fileNo;
+	private String fileDate;
+	private String filePath;
+	private int totalRow;
+	private FileWriter fw;
+	
 	
 	/**
 	 * Creates the CDR.
@@ -60,11 +64,15 @@ public class CDRCreateExecutor {
 	public void createCDR() {
 		
 		int startRow = 0;
+		this.fileNo = 0;
+		this.totalRow = 0;
 
 		//Today
 		String endDate = DateUtil.getYYYYMMDD(0);
 		//Yesterday
 		String startDate = DateUtil.getYYYYMMDD(-1);
+		
+		this.fileDate = startDate;
 		
 		
 		CDRParams cDRParams = new CDRParams();
@@ -82,15 +90,18 @@ public class CDRCreateExecutor {
 	/**
 	 * Creates the CDR.
 	 */
-	public int createCDR(String date) {
+	public int createCDR(String date) throws Exception {
 
 		
 		int startRow = 0;
+		this.fileNo = 0;
+		this.totalRow = 0;
 
 		//Today
 		String endDate =DateUtil.getYYYYMMDD(date, 1);
 		//Yesterday
 		String startDate = date;
+		this.fileDate = startDate;
 		
 		CDRParams cDRParams = new CDRParams();
 		
@@ -109,9 +120,9 @@ public class CDRCreateExecutor {
 	 */
 	public int createCDRFile(CDRParams cDRParams) {
 		
-
-//		logger.info("start ::{}", cDRParams.getStartDate());
-//		logger.info("end ::{}", cDRParams.getStartDate());
+		this.fw = null;
+		logger.info("start ::{}", cDRParams.getStartDate());
+		logger.info("end ::{}", cDRParams.getEndDate());
 		
 		
 		int cDRFileMaxRow = pmsConfig.CDR_FILE_MAX_ROW;
@@ -124,12 +135,7 @@ public class CDRCreateExecutor {
 		// CDR Count
 		int cDRCnt =0 ;
 		
-		FileWriter fw = null;
-		File file = null;
-		File directory = null;
 		
-		String fileNamePrefix = "EM";
-		StringBuffer fileName = null;
 		
 		boolean result = false;
 		
@@ -149,108 +155,48 @@ public class CDRCreateExecutor {
 				boolean cDRFileNext = true;
 				
 				
-				//30000 CDR Row => new file
-				cDRParams.setLengthRow(cDRFileMaxRow);
+//				//30000 CDR Row => new file
+//				cDRParams.setLengthRow(cDRFileMaxRow);
+//				
+//				//Header print
+//				if (cDRTotCnt - cDRPrintCnt > cDRFileMaxRow) {
+//					cDRCnt = cDRFileMaxRow;
+//				} else {
+//					cDRCnt = cDRTotCnt - cDRPrintCnt;
+//				}
+				this.headerPrint();
 				
-				for (int i = 0; cDRFileNext; i++) {
-					
-					// CDR file create
-					fileName = new StringBuffer();
-					fileName.append(fileNamePrefix);
-					fileName.append(cDRParams.getStartDate());
-					fileName.append(RecordFomatUtil.intFormat(i, 3));
-					fileName.append(".DAT");
-					
-					directory = new File(pmsConfig.CDR_FILE_PATH+cDRParams.getStartDate());
-					if (!directory.isDirectory()) {
-						directory.mkdir();
-						logger.info("{} directory mkdir Ok",directory.getName());
-					}
-					
-					file = new File(directory.getPath()+"/"+ fileName.toString());
-					
-					fw = new FileWriter(file);
-					
-					
-					//Header print
-					if (cDRTotCnt - cDRPrintCnt > cDRFileMaxRow) {
-						cDRCnt = cDRFileMaxRow;
-					} else {
-						cDRCnt = cDRTotCnt - cDRPrintCnt;
-					}
-					this.headerPrint(fw);
-					
-					//1000건씩 처리 
-					cDRParams.setLengthRow(cDRDbMaxRow);
-					for (int j = 0; j < cDRCnt; j = j + cDRParams.getLengthRow()) {
-		
-						cDRParams.setStartRow(j+cDRPrintCnt);
-						this.cDRPrint(fw, cDRParams);
-
-					}
-					
-					//Tail print
-					this.tailPrint(fw, cDRCnt);
-					
-					// Next Row Check
-					cDRPrintCnt = cDRPrintCnt + cDRCnt;
-					
-					if (cDRTotCnt > cDRPrintCnt) {
-						cDRParams.setStartRow(cDRPrintCnt);
-						
-						
-						
-						//file sequece가 999이면 다음  sequece은 0으로 순 
-						if (i == 999) {
-							i = 0;
-						}
-					}else {
-						cDRFileNext = false;
-					}
+				//1000건씩 처리 
+				cDRParams.setLengthRow(pmsConfig.CDR_DB_MAX_ROW);
+				for (int j = 0; j < cDRTotCnt; j = j + pmsConfig.CDR_DB_MAX_ROW) {
+	
+					cDRParams.setStartRow(j+cDRPrintCnt);
+					this.cDRPrint(cDRParams);
 
 				}
-				
+					
+				//Tail print
+				this.tailPrint();
 			} else {
-				
-				// CDR file create
-				fileName = new StringBuffer();
-				fileName.append(fileNamePrefix);
-				fileName.append(cDRParams.getStartDate());
-				fileName.append(RecordFomatUtil.intFormat(0, 3));
-				fileName.append(".DAT");
-				
-				directory = new File(pmsConfig.CDR_FILE_PATH+cDRParams.getStartDate());
-				if (!directory.isDirectory()) {
-					directory.mkdir();
-					logger.info("{} directory mkdir Ok",directory.getName());
-				}
-				
-				file = new File(directory.getPath()+"/"+ fileName.toString());
-				
-				fw = new FileWriter(file);
 				
 				logger.info("==   CDR NO DATA  ==");
 				//Header print
-				this.headerPrint(fw);
+				this.headerPrint();
 				//Tail print
-				this.tailPrint(fw, cDRTotCnt);
+				this.tailPrint();
 			}
-			
-			logger.info("CDR file {} create Sucess", fileName.toString());
-			
-			
 			stop = System.currentTimeMillis();
 			System.out.println("CDR file create elapsedTime=" + (stop - start) + "ms");
 			
-//			this.cDRCopyCommand(directory.getPath());
-			this.cDRFileCopy(directory);
+//			this.cDRCopyCommand();
+			this.cDRFileCopy();
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}finally {
 			try {
-				if(fw != null) {
-					fw.close();
+				if(this.fw != null) {
+					this.fw.close();
 				}
 			} catch (Exception e) {
 				logger.error("file write close Error ::", e);
@@ -263,39 +209,59 @@ public class CDRCreateExecutor {
 	}
 	
 	
-	/**
-	 * Creates the CDR file.
-	 */
-	
 	
 	// tail PRINT
-	public void tailPrint (FileWriter fw, int cDRSize) throws IOException {
+	public void tailPrint () throws IOException {
 		String tailRecordType = "T";
 		String tailCDRCount;
 		String tailNull = RecordFomatUtil.stingFormat("", 69);
 		StringBuffer recordSb;
 
-		tailCDRCount = RecordFomatUtil.intFormat(cDRSize, 13);
+		tailCDRCount = RecordFomatUtil.intFormat(this.totalRow, 13);
 		recordSb = new StringBuffer();
 		recordSb.append(tailRecordType);
 		recordSb.append(tailCDRCount);
 		recordSb.append(tailNull);
 		
-		
 
 //		logger.info("CDR : [{}]:tail", recordSb.toString());
 		try {
-			fw.write(recordSb.toString());
-			fw.close();
+			this.fw.write(recordSb.toString());
+			this.fw.close();
 		} catch (IOException e) {
-			logger.error("tail file write Error::");
+			logger.error("Tail file write Error::");
 			throw e;
 		}
 		
 	}
 	
 	// header PRINT
-	public void headerPrint(FileWriter fw) throws IOException {
+	public void headerPrint() throws IOException {
+		
+		File file = null;
+		File directory = null;
+		
+		String fileNamePrefix = "EM";
+		StringBuffer fileName = null;
+		
+		// CDR file create
+		fileName = new StringBuffer();
+		fileName.append(fileNamePrefix);
+		fileName.append(this.fileDate);
+		fileName.append(RecordFomatUtil.intFormat(this.fileNo, 3));
+		fileName.append(".DAT");
+		
+	
+		directory = new File(pmsConfig.CDR_FILE_PATH+this.fileDate);
+		if (!directory.isDirectory()) {
+			directory.mkdir();
+			logger.info("{} directory mkdir Ok",directory.getName());
+		}
+		
+		file = new File(directory.getPath()+"/"+ fileName.toString());
+		
+		this.fw = new FileWriter(file);
+		
 		String headerRecordType = "H";
 		String headerNull = RecordFomatUtil.stingFormat("", 82);
 		StringBuffer recordSb;
@@ -306,18 +272,25 @@ public class CDRCreateExecutor {
 		recordSb.append(headerNull);
 		recordSb.append("\n");
 		
-//		logger.info("CDR : [{}]:Tail", recordSb.toString());
+//		logger.info("CDR : [{}]:header", recordSb.toString());
 		try {
-			fw.write(recordSb.toString());
+			this.fw.write(recordSb.toString());
 		} catch (IOException e) {
-			logger.error("header file write Error::");
+			logger.error("Header file write Error::");
 			throw e;
+		}
+		
+		//file sequece가 999이면 다음  sequece은 0으로 순 
+		if (fileNo == 999) {
+			fileNo = 0;
+		}else {
+			fileNo++;
 		}
 		
 	}
 	
 	// CDR PRINT
-	public void cDRPrint(FileWriter fw, CDRParams cDRParams) throws IOException {
+	public void cDRPrint(CDRParams cDRParams) throws IOException {
 		
 		StringBuffer recordSb;
 		
@@ -330,20 +303,27 @@ public class CDRCreateExecutor {
 			String messageTopic2 = "";
 			String callerNo, calledNo;
 			String tempNo, pTalkVer;
-			 
+			String rRCause = "01";
 			int tempIndex;
+			boolean groupYes;
 			for (CDR cDR : list) {
 				//stringBuffer clear
 				recordSb = new StringBuffer();
+				
+				if (cDR.getGroupId() == null || cDR.getGroupId().indexOf("/") < 0) {
+					groupYes = false;
+				}else {
+					groupYes = true;
+				}
 				
 				//Record Type 
 				recordSb.append("C");
 				
 				//+ Transaction Type - group message check
-				if (cDR.getGroupId() == null) {
-					recordSb.append("PM");
-				}else {
+				if (groupYes) {
 					recordSb.append("GM");
+				}else {
+					recordSb.append("PM");
 				}
 				
 				//Time of Send Request
@@ -356,13 +336,14 @@ public class CDRCreateExecutor {
 				//Time of Received Request
 				if (cDR.getPmaAckTime() == null) {
 					recordSb.append(RecordFomatUtil.stingFormat("", 14));
+					rRCause = "01";
 				} else {
 					recordSb.append(RecordFomatUtil.stingFormat(DateUtil.getDateTime(cDR.getPmaAckTime()), 14));
+					rRCause = "00";
 				}
 				
 				
 				//Caller NO
-				System.out.println("========= cDR.getIssueId() " + cDR.getIssueId());
 				callerNo = RecordFomatUtil.topicToUfmiNo(cDR.getIssueId());
 				recordSb.append(RecordFomatUtil.stingFormat(callerNo, 13));
 				
@@ -374,19 +355,10 @@ public class CDRCreateExecutor {
 				} else {
 					calledNo = "";
 				}
+				
 				recordSb.append(RecordFomatUtil.stingFormat(calledNo, 13));
-				
-				if(cDR.getGroupId() == null && callerNo.equals(calledNo)){
-					continue;
-				}
-				
-				//RR Cause 
-				if (cDR.getPmaAckTime() == null) {
-					recordSb.append("01");
-				} else {
-					recordSb.append("00");
-				}
-				
+				//RR Cause
+				recordSb.append(rRCause);
 				//Message Type
 				recordSb.append(RecordFomatUtil.intFormat(cDR.getMediaType(), 2));
 				//Send Terminal Type
@@ -396,13 +368,11 @@ public class CDRCreateExecutor {
 				recordSb.append(RecordFomatUtil.intFormat(cDR.getMsgSize(), 11));
 
 
-				if (cDR.getGroupId() == null) {
-					//Message Topic 1
-					recordSb.append(RecordFomatUtil.stingFormat("", 6));
-					//Message Topic 2
-					recordSb.append(RecordFomatUtil.stingFormat("", 3));
-					
-				} else {
+				if (groupYes) {
+					// 그룹메세지에서 자신은 skip
+					if(callerNo.equals(calledNo)){
+						continue;
+					}
 					pTalkVer = cDR.getGroupId().substring(5, 6);
 					tempNo = cDR.getGroupId().substring(10, cDR.getGroupId().length());
 					tempIndex = tempNo.indexOf("/");
@@ -422,13 +392,28 @@ public class CDRCreateExecutor {
 					//Message Topic 2
 					recordSb.append(messageTopic2);
 
+				} else {
+					//Message Topic 1
+					recordSb.append(RecordFomatUtil.stingFormat("", 6));
+					//Message Topic 2
+					recordSb.append(RecordFomatUtil.stingFormat("", 3));
 				}
 				recordSb.append("\n");
 
 //				tempI++;
-//				logger.info("CDR : [{}]:{}", recordSb.toString());
+//				logger.info("CDR : [{}]:{}", recordSb.toString(),tempI);
 
-				fw.write(recordSb.toString());
+				if(totalRow >= pmsConfig.CDR_FILE_MAX_ROW){
+					this.tailPrint();
+					this.headerPrint();
+					this.fw.write(recordSb.toString());
+					totalRow = 1;
+					
+				}else {
+					this.fw.write(recordSb.toString());
+					totalRow++;
+				}
+				
 
 			}
 		} catch (IOException ioe) {
@@ -443,8 +428,9 @@ public class CDRCreateExecutor {
 	
 	
 	
-	public void cDRCopyCommand(String path) {
+	public void cDRCopyCommand() {
 		
+		String path = pmsConfig.CDR_FILE_PATH+this.fileDate;
 		logger.info("path ::{}", path);
 		
 		String targetDir = pmsConfig.CDR_TARGETFILE_PATH;
@@ -485,7 +471,9 @@ public class CDRCreateExecutor {
 		
 	}
 	
-	public void cDRFileCopy(File directory) {
+	public void cDRFileCopy() {
+		
+		File directory = new File(pmsConfig.CDR_FILE_PATH+this.fileDate);
 		
 		File[] fileList = directory.listFiles();
 		

@@ -97,25 +97,25 @@ public class PmsConfig {
 	@Value("#{pms['cdr.db.max.row']}")
 	public int CDR_DB_MAX_ROW;// = 1000;
 	
-	/** The mq.pcf.hostname. */
-	@Value("#{pms['mq.pcf.hostname']}")
-	public String MQ_PCF_HOSTNAME;// = "14.63.217.141;
-	
-	/** The mq.pcf.port. */
-	@Value("#{pms['mq.pcf.port']}")
-	public int MQ_PCF_PORT;// = 1414;
-	
-	/** The mq.pcf.channel. */
-	@Value("#{pms['mq.pcf.channel']}")
-	public String MQ_PCF_CHANNEL;// = "ADFlowPCF";
-	
-	/** The mq.pcf.userID. */
-	@Value("#{pms['mq.pcf.userID']}")
-	public String MQ_PCF_USERID;// = "adflow";
-	
-	/** The mq.pcf.password. */
-	@Value("#{pms['mq.pcf.password']}")
-	public String MQ_PCF_PASSWORD;// = "!ADFlow@";
+//	/** The mq.pcf.hostname. */
+//	@Value("#{pms['mq.pcf.hostname']}")
+//	public String MQ_PCF_HOSTNAME;// = "14.63.217.141;
+//	
+//	/** The mq.pcf.port. */
+//	@Value("#{pms['mq.pcf.port']}")
+//	public int MQ_PCF_PORT;// = 1414;
+//	
+//	/** The mq.pcf.channel. */
+//	@Value("#{pms['mq.pcf.channel']}")
+//	public String MQ_PCF_CHANNEL;// = "ADFlowPCF";
+//	
+//	/** The mq.pcf.userID. */
+//	@Value("#{pms['mq.pcf.userID']}")
+//	public String MQ_PCF_USERID;// = "adflow";
+//	
+//	/** The mq.pcf.password. */
+//	@Value("#{pms['mq.pcf.password']}")
+//	public String MQ_PCF_PASSWORD;// = "!ADFlow@";
 	
 	// public static final String EXECUTOR_MESSAGE_CRON =
 	// "0,10,20,30,40,50 * * * * *";

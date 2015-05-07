@@ -4,9 +4,13 @@
 package kr.co.adflow.pms.core.handler;
 
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Properties;
 
 import javax.resource.spi.ConnectionManager;
 import javax.servlet.ServletException;
@@ -31,30 +35,29 @@ import com.ibm.mq.pcf.PCFException;
 /**
  * The Class JsonDateSerializer.
  */
-//@Component
+
 public class PCFConnectionManagerHandler extends HttpServlet {
 	
-	/** The Pms Config. */
-	@Autowired
-	private PmsConfig pmsConfig;
-
-	
 	public void init() throws ServletException {
+		
 		try {
 			
-//			MQEnvironment.hostname = pmsConfig.MQ_PCF_HOSTNAME;
-//			MQEnvironment.port = pmsConfig.MQ_PCF_PORT;
-//			MQEnvironment.channel = pmsConfig.MQ_PCF_CHANNEL;
-//			MQEnvironment.userID = pmsConfig.MQ_PCF_USERID;
-//			MQEnvironment.password = pmsConfig.MQ_PCF_PASSWORD;
-			
-			
-			MQEnvironment.hostname = "14.63.216.249";
-//			MQEnvironment.hostname = "14.63.217.141";
-			MQEnvironment.port = 1414;
-			MQEnvironment.channel = "ADFlowPCF";
-			MQEnvironment.userID = "adflow";
-			MQEnvironment.password = "!ADFlow@";
+	        File file = new File(System.getProperty("user.home")+"/pms/config.properties");
+	        
+            BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
+
+	            
+	        Properties prop = new Properties();
+	            
+	        prop.load(bis);
+	         
+//	        System.out.println("mq.pcf.hostname ::"+ prop.getProperty("mq.pcf.hostname"));
+//			MQEnvironment.hostname = "14.63.216.249";
+			MQEnvironment.hostname = prop.getProperty("mq.pcf.hostname");
+			MQEnvironment.port = Integer.parseInt(prop.getProperty("mq.pcf.port"));
+			MQEnvironment.channel = prop.getProperty("mq.pcf.channel");
+			MQEnvironment.userID = prop.getProperty("mq.pcf.userID");
+			MQEnvironment.password = prop.getProperty("mq.pcf.password");
 			
 
 			// MQPoolToken token = MQEnvironment.addConnectionPoolToken();
