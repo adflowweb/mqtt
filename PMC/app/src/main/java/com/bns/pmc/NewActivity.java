@@ -45,7 +45,6 @@ import com.bns.pmc.util.JSonUtil;
 import com.bns.pmc.util.Log;
 import com.bns.pmc.util.PMCType;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -690,33 +689,33 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
 
         //메시지 수신자 확인
         int receiversCnt = 0;
+        boolean success = true;
         for (int i = 0; i < 10; i++) {
             if (TextUtils.isEmpty(m_listItemNew[i].strNumber) == false) {
                 if (CommonUtil.checkPttGroupNumFormat(m_listItemNew[i].strNumber)) {
-                    // Group Number인 경우
-                    String strReceiver = m_listItemNew[i].strNumber;
-                    Log.i(PMCType.TAG, "Receiver=" + strReceiver);
-                    String strGroup = strReceiver.substring(1);
-                    String strUFMI = m_configure.getUFMI();
-                    String strBunchID = m_configure.getBunchID();
-                    int nVersion = m_configure.getVersion();
-                    String topic = CommonUtil.conv_GroupToMMS(strGroup, strUFMI, strBunchID, nVersion);
-
-                    //그룹메시지사용자 수를 표시하고 사용자가 발신여부를 결정한다.
-                    //request
-                    IPushService binder = PMCService.m_Binder;
-                    String result = IPushUtil.getGrpSubscribers(binder, topic);
-
-                    Log.i(PMCType.TAG, "result=" + result);
-
-                    JSONObject jsonObj = null;
                     try {
+                        // Group Number인 경우
+                        String strReceiver = m_listItemNew[i].strNumber;
+                        Log.i(PMCType.TAG, "Receiver=" + strReceiver);
+                        String strGroup = strReceiver.substring(1);
+                        String strUFMI = m_configure.getUFMI();
+                        String strBunchID = m_configure.getBunchID();
+                        int nVersion = m_configure.getVersion();
+                        String topic = CommonUtil.conv_GroupToMMS(strGroup, strUFMI, strBunchID, nVersion);
+
+                        //그룹메시지사용자 수를 표시하고 사용자가 발신여부를 결정한다.
+                        //request
+                        IPushService binder = PMCService.m_Binder;
+                        String result = IPushUtil.getGrpSubscribers(binder, topic);
+                        Log.i(PMCType.TAG, "result=" + result);
+                        JSONObject jsonObj = null;
                         jsonObj = new JSONObject(result);
                         int subscribers = jsonObj.getJSONObject("result").getInt("data");
                         Log.i(PMCType.TAG, "subscribers=" + subscribers);
                         receiversCnt = receiversCnt + subscribers;
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                    } catch (Exception e) {
+                        success = false;
+                        Log.e(PMCType.TAG, e.getMessage());
                     }
                 } else {
                     //일반수신자카운팅
@@ -725,40 +724,49 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
             }
         }
 
-        if (receiversCnt > 1) {
-            //총메시지 건수 확인창 뛰우기
-            AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                    .setTitle("수신자확인")
-                    .setMessage("메시지수신자는\n총" + receiversCnt + "명 입니다.\n메시지를 보내시겠습니까?")
-                    .setCancelable(false)
-                    .setPositiveButton(R.string.accept,
-                            new Dialog.OnClickListener() {
+        if (success) {
+            if (receiversCnt > 1) {
+                //총메시지 건수 확인창 뛰우기
+                AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                        .setTitle("수신자확인")
+                        .setMessage("메시지수신자는\n총" + receiversCnt + "명 입니다.\n메시지를 보내시겠습니까?")
+                        .setCancelable(false)
+                        .setPositiveButton(R.string.accept,
+                                new Dialog.OnClickListener() {
 
-                                @Override
-                                public void onClick(
-                                        DialogInterface dialogInterface, int i) {
-                                    // Close dialog
-                                    dialogInterface.dismiss();
-                                    //발송
-                                    new asyncSendMsg().execute(m_listItemNew[0], m_listItemNew[1], m_listItemNew[2], m_listItemNew[3], m_listItemNew[4],
-                                            m_listItemNew[5], m_listItemNew[6], m_listItemNew[7], m_listItemNew[8], m_listItemNew[9]);
-                                }
-                            })
-                    .setNegativeButton(R.string.do_not_accect,
-                            new Dialog.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog,
-                                                    int which) {
-                                    // Close dialog
-                                    dialog.dismiss();
-                                }
-                            });
-            builder.create().show();
+                                    @Override
+                                    public void onClick(
+                                            DialogInterface dialogInterface, int i) {
+                                        // Close dialog
+                                        dialogInterface.dismiss();
+                                        //발송
+                                        new asyncSendMsg().execute(m_listItemNew[0], m_listItemNew[1], m_listItemNew[2], m_listItemNew[3], m_listItemNew[4],
+                                                m_listItemNew[5], m_listItemNew[6], m_listItemNew[7], m_listItemNew[8], m_listItemNew[9]);
+                                    }
+                                })
+                        .setNegativeButton(R.string.do_not_accect,
+                                new Dialog.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog,
+                                                        int which) {
+                                        // Close dialog
+                                        dialog.dismiss();
+                                    }
+                                });
+                builder.create().show();
+            } else {
+                //단일메시지 발송
+                new asyncSendMsg().execute(m_listItemNew[0], m_listItemNew[1], m_listItemNew[2], m_listItemNew[3], m_listItemNew[4],
+                        m_listItemNew[5], m_listItemNew[6], m_listItemNew[7], m_listItemNew[8], m_listItemNew[9]);
+            }
         } else {
+            //실패시
             //단일메시지 발송
             new asyncSendMsg().execute(m_listItemNew[0], m_listItemNew[1], m_listItemNew[2], m_listItemNew[3], m_listItemNew[4],
                     m_listItemNew[5], m_listItemNew[6], m_listItemNew[7], m_listItemNew[8], m_listItemNew[9]);
         }
+
+
         //modifiedEnd
     }
 
