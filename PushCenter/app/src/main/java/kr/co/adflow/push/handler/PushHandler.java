@@ -8,26 +8,8 @@ import android.os.StrictMode;
 import android.provider.Settings.Secure;
 import android.util.Log;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpVersion;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.conn.scheme.PlainSocketFactory;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.scheme.SchemeRegistry;
-import org.apache.http.conn.ssl.SSLSocketFactory;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
-import org.apache.http.params.HttpProtocolParams;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.util.EntityUtils;
+import com.github.kevinsawicki.http.HttpRequest;
+
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
@@ -40,7 +22,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.security.KeyStore;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
@@ -55,7 +36,6 @@ import kr.co.adflow.push.db.Message;
 import kr.co.adflow.push.db.PushDBHelper;
 import kr.co.adflow.push.service.impl.PushServiceImpl;
 import kr.co.adflow.ssl.ADFSSLSocketFactory;
-import kr.co.adflow.ssl.SFSSLSocketFactory;
 
 /**
  * @author nadir93
@@ -103,24 +83,24 @@ public class PushHandler implements MqttCallback {
     //"https://push4.ktp.co.kr:8081/v1/pms/users/message";
     public static final String UPDATEUFMI_URL = BuildConfig.UPDATEUFMI_URL;
     //"https://push4.ktp.co.kr:8080/v1/users/ufmi";
+    public static final int HTTP_RESPONSE_CODE_SUCCESS = 200;
 
-    public static final String ACK_TOPIC = "mms/ack";
     public static final int HTTP_PORT = 80;
     public static final int HTTPS_PORT = 8080;
     public static final String HTTP_PROTOCOL = "http";
     public static final String HTTPS_PROTOCOL = "https";
-    public static final int HTTP_RESPONSE_CODE_SUCCESS = 200;
+    private static final int HTTP_CONNTCTION_TIMEOUT = BuildConfig.HTTP_CONNTCTION_TIMEOUT;
+    //3000; // 3초
+    private static final int HTTP_SOCKET_TIMEOUT = BuildConfig.HTTP_SOCKET_TIMEOUT;
+    //5000; // 5초
 
+    public static final String ACK_TOPIC = "mms/ack";
     public static PushDBHelper pushdb;
 
     //public static final int DEFAULT_KEEP_ALIVE_TIME_OUT = 60; //for test
     private static final String MQTT_PACKAGE = "org.eclipse.paho.client.mqttv3";
     private static final int MQTT_CONNECTION_TIMEOUT = BuildConfig.MQTT_CONNECTION_TIMEOUT;
     //10; // second
-    private static final int HTTP_CONNTCTION_TIMEOUT = BuildConfig.HTTP_CONNTCTION_TIMEOUT;
-    //3000; // 3초
-    private static final int HTTP_SOCKET_TIMEOUT = BuildConfig.HTTP_SOCKET_TIMEOUT;
-    //5000; // 5초
 
     // mqttClient 세션로그
     private static final boolean CLIENT_SESSION_DEBUG = BuildConfig.CLIENT_SESSION_DEBUG;
@@ -817,33 +797,35 @@ public class PushHandler implements MqttCallback {
      */
     public void preCheck(String sender, String topic) throws Exception {
         Log.d(TAG, "preCheck시작(sender=" + sender + ", topic=" + topic + ")");
+
+        //setMode
+        setStrictMode();
+
+        Log.d(TAG, "currentToken=" + currentToken);
+        if (currentToken == null) {
+            throw new Exception("토큰이존재하지않습니다.");
+        }
+
         JSONObject data = new JSONObject();
         data.put("sender", sender);
         data.put("receiver", topic);
         Log.d(TAG, "data=" + data);
 
-        HttpClient httpClient = getHttpClient();
+        Log.d(TAG, "X-ApiKey=" + currentToken);
+        Log.d(TAG, "PRECHECK_URL=" + PRECHECK_URL);
+        HttpRequest request = HttpRequest.post(PRECHECK_URL)
+                .trustAllCerts() //Accept all certificates
+                .trustAllHosts() //Accept all hostnames
+                .header("X-ApiKey", currentToken)
+                .header("Content-Type", "application/json").send(data.toString());
 
-        HttpPost post = new HttpPost(PRECHECK_URL);
-        post.setHeader("Content-Type", "application/json");
-        //set Header token
-        //String token = preference.getValue(PushPreference.TOKEN, null);
-        Log.d(TAG, "currentToken=" + currentToken);
-        if (currentToken == null) {
-            throw new Exception("토큰이존재하지않습니다.");
-        }
-        post.setHeader("X-ApiKey", currentToken);
-        post.setEntity(new StringEntity(data.toString(), "utf-8"));
-        HttpResponse response = httpClient.execute(post);
-
-        if (response.getStatusLine().getStatusCode() != HTTP_RESPONSE_CODE_SUCCESS) {
+        Log.d(TAG, "responseCode=" + request.code());
+        if (!request.ok()) {
             throw new IOException("Unexpected code "
-                    + response.getStatusLine().getStatusCode());
+                    + request.code());
         }
 
-        //String responseStr = EntityUtils.toString(response.getEntity());
-        //Log.d(TAG, "preCheck종료(value=" + responseStr + ")");
-        //return responseStr;
+        Log.d(TAG, "preCheck종료()");
     }
 
     /**
@@ -857,142 +839,87 @@ public class PushHandler implements MqttCallback {
             throws Exception {
         Log.d(TAG, "auth시작(url=" + url + ", userID=" + userID + ", deviceID="
                 + deviceID + ")");
+
+        //setMode
+        setStrictMode();
+
         JSONObject data = new JSONObject();
         data.put("userID", userID);
         data.put("deviceID", deviceID);
 
-        HttpClient httpClient = getHttpClient();
+        Log.d(TAG, "RequestURL=" + url);
+        HttpRequest request = HttpRequest.post(url)
+                .trustAllCerts() //Accept all certificates
+                .trustAllHosts() //Accept all hostnames
+                .header("X-ApiKey", currentToken)
+                .header("Content-Type", "application/json;charset=utf-8").send(data.toString());
 
-        HttpPost post = new HttpPost(url);
-        post.setHeader("Content-Type", "application/json;charset=UTF-8");
-        post.setEntity(new StringEntity(data.toString(), "utf-8"));
-        HttpResponse response = httpClient.execute(post);
-
-        if (response.getStatusLine().getStatusCode() != HTTP_RESPONSE_CODE_SUCCESS) {
+        Log.d(TAG, "responseCode=" + request.code());
+        if (!request.ok()) {
             throw new IOException("Unexpected code "
-                    + response.getStatusLine().getStatusCode());
+                    + request.code());
         }
-
-        String responseStr = EntityUtils.toString(response.getEntity());
-        Log.d(TAG, "auth종료(value=" + responseStr + ")");
-        return responseStr;
+        String response = request.body();
+        Log.d(TAG, "auth종료(response=" + response + ")");
+        return response;
     }
 
     public String getSubscriptions() throws Exception {
         Log.d(TAG, "getSubscriptions시작()");
-        HttpClient httpClient = getHttpClient();
-        //String token = preference.getValue(PushPreference.TOKEN, null);
+
+        //setMode
+        setStrictMode();
+
         Log.d(TAG, "currentToken=" + currentToken);
         if (currentToken == null) {
             throw new Exception("토큰이존재하지않습니다.");
         }
-        HttpGet httpGet = new HttpGet(GET_SUBSCRIPTIONS_URL + currentToken);
-        httpGet.setHeader("Content-Type", "application/json");
-        //set Header token
-        httpGet.setHeader("X-ApiKey", currentToken);
-        //post.setEntity(new StringEntity(data.toString(), "utf-8"));
-        HttpResponse response = httpClient.execute(httpGet);
 
-        if (response.getStatusLine().getStatusCode() != HTTP_RESPONSE_CODE_SUCCESS) {
+        Log.d(TAG, "X-ApiKey=" + currentToken);
+        Log.d(TAG, "GET_SUBSCRIPTIONS_URL=" + GET_SUBSCRIPTIONS_URL + currentToken);
+        HttpRequest request = HttpRequest.get(GET_SUBSCRIPTIONS_URL + currentToken)
+                .trustAllCerts() //Accept all certificates
+                .trustAllHosts() //Accept all hostnames
+                .header("X-ApiKey", currentToken)
+                .header("Content-Type", "application/json;charset=utf-8");
+
+        Log.d(TAG, "responseCode=" + request.code());
+        if (!request.ok()) {
             throw new IOException("Unexpected code "
-                    + response.getStatusLine().getStatusCode());
+                    + request.code());
         }
-
-        String responseStr = EntityUtils.toString(response.getEntity());
-        Log.d(TAG, "getSubscriptions종료(value=" + responseStr + ")");
-        return responseStr;
+        String response = request.body();
+        Log.d(TAG, "getSubscriptions종료(response=" + response + ")");
+        return response;
     }
-
-    /**
-     * @return
-     */
-    private HttpClient getHttpClient() throws Exception {
-        Log.d(TAG, "getHttpClient시작()");
-        //setMode
-        setStrictMode();
-
-        KeyStore trustStore = KeyStore.getInstance(KeyStore
-                .getDefaultType());
-        trustStore.load(null, null);
-
-        SSLSocketFactory sf = new SFSSLSocketFactory(trustStore);
-        sf.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-
-        HttpParams params = new BasicHttpParams();
-        HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
-        HttpProtocolParams.setContentCharset(params, HTTP.UTF_8);
-
-        HttpConnectionParams.setConnectionTimeout(params, HTTP_CONNTCTION_TIMEOUT);
-        HttpConnectionParams.setSoTimeout(params, HTTP_SOCKET_TIMEOUT);
-
-        SchemeRegistry registry = new SchemeRegistry();
-        registry.register(new Scheme(HTTP_PROTOCOL, PlainSocketFactory
-                .getSocketFactory(), HTTP_PORT));
-        // 현재 https 인데 8080으로 서비스하고 있음
-        registry.register(new Scheme(HTTPS_PROTOCOL, sf, HTTPS_PORT));
-
-        ClientConnectionManager ccm = new ThreadSafeClientConnManager(
-                params, registry);
-        Log.d(TAG, "getHttpClient종료()");
-        return new DefaultHttpClient(ccm, params);
-    }
-
-    private HttpClient getHttpClient2() throws Exception {
-        Log.d(TAG, "getHttpClient시작()");
-        //setMode
-        setStrictMode();
-
-        KeyStore trustStore = KeyStore.getInstance(KeyStore
-                .getDefaultType());
-        trustStore.load(null, null);
-
-        SSLSocketFactory sf = new SFSSLSocketFactory(trustStore);
-        sf.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-
-        HttpParams params = new BasicHttpParams();
-        HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
-        HttpProtocolParams.setContentCharset(params, HTTP.UTF_8);
-
-        HttpConnectionParams.setConnectionTimeout(params, HTTP_CONNTCTION_TIMEOUT);
-        HttpConnectionParams.setSoTimeout(params, HTTP_SOCKET_TIMEOUT);
-
-        SchemeRegistry registry = new SchemeRegistry();
-        registry.register(new Scheme(HTTP_PROTOCOL, PlainSocketFactory
-                .getSocketFactory(), HTTP_PORT));
-        // 현재 https 인데 8080으로 서비스하고 있음
-        registry.register(new Scheme(HTTPS_PROTOCOL, sf, 8081));
-
-        ClientConnectionManager ccm = new ThreadSafeClientConnManager(
-                params, registry);
-        Log.d(TAG, "getHttpClient종료()");
-        return new DefaultHttpClient(ccm, params);
-    }
-
 
     public String getGrpSubscribers(String topic) throws Exception {
-        Log.d(TAG, "getGrpSubscribers시작(topic=" + topic + ")");
-        HttpClient httpClient = getHttpClient();
-        //String token = preference.getValue(PushPreference.TOKEN, null);
+        Log.d(TAG, "getGrpSubscribers시작(topic=" + topic + ", thread=" + Thread.currentThread() + ")");
+
+        //setMode
+        setStrictMode();
+
         Log.d(TAG, "currentToken=" + currentToken);
         if (currentToken == null) {
             throw new Exception("토큰이존재하지않습니다.");
         }
 
-        HttpGet get = new HttpGet(GROUP_TOPIC_SUBSCRIBER_URL + topic);
-        //set Header token
-        get.setHeader("User-Agent", "My User Agent 1.0");
-        get.setHeader("X-Application-Key", currentToken);
-        get.setHeader("Content-Type", "application/json;charset=utf-8");
+        Log.d(TAG, "X-Application-Key=" + currentToken);
+        Log.d(TAG, "GROUP_TOPIC_SUBSCRIBER_URL=" + GROUP_TOPIC_SUBSCRIBER_URL + topic);
+        HttpRequest request = HttpRequest.get(GROUP_TOPIC_SUBSCRIBER_URL + topic)
+                .trustAllCerts() //Accept all certificates
+                .trustAllHosts() //Accept all hostnames
+                .header("X-Application-Key", currentToken)
+                .header("Content-Type", "application/json;charset=utf-8");
 
-        HttpResponse response = httpClient.execute(get);
-        if (response.getStatusLine().getStatusCode() != HTTP_RESPONSE_CODE_SUCCESS) {
+        Log.d(TAG, "responseCode=" + request.code());
+        if (!request.ok()) {
             throw new IOException("Unexpected code "
-                    + response.getStatusLine().getStatusCode());
+                    + request.code());
         }
-
-        String responseStr = EntityUtils.toString(response.getEntity());
-        Log.d(TAG, "getGrpSubscribers종료(value=" + responseStr + ")");
-        return responseStr;
+        String response = request.body();
+        Log.d(TAG, "getGrpSubscribers종료(response=" + response + ")");
+        return response;
     }
 
     /**
@@ -1002,32 +929,36 @@ public class PushHandler implements MqttCallback {
      */
     public String existPMAByUserID(String userID) throws Exception {
         Log.d(TAG, "existPMAByUserID시작(userID=" + userID + ")");
-        HttpClient httpClient = getHttpClient();
-        //String token = preference.getValue(PushPreference.TOKEN, null);
+
+        //setMode
+        setStrictMode();
+
         Log.d(TAG, "currentToken=" + currentToken);
         if (currentToken == null) {
             throw new Exception("토큰이존재하지않습니다.");
         }
-        HttpPost post = new HttpPost(EXISTPMABYUSERID_URL);
+
         JSONObject data = new JSONObject();
         data.put("userID", userID);
         Log.d(TAG, "data=" + data);
 
-        post.setHeader("Content-Type", "application/json;charset=UTF-8");
-        post.setEntity(new StringEntity(data.toString(), "utf-8"));
-        //set Header token
-        post.setHeader("X-ApiKey", currentToken);
-        //post.setEntity(new StringEntity(data.toString(), "utf-8"));
-        HttpResponse response = httpClient.execute(post);
+        Log.d(TAG, "X-ApiKey=" + currentToken);
+        Log.d(TAG, "EXISTPMABYUSERID_URL=" + EXISTPMABYUSERID_URL);
+        HttpRequest request = HttpRequest.post(EXISTPMABYUSERID_URL)
+                .trustAllCerts() //Accept all certificates
+                .trustAllHosts() //Accept all hostnames
+                .header("X-ApiKey", currentToken)
+                .header("Content-Type", "application/json;charset=utf-8").send(data.toString());
 
-        if (response.getStatusLine().getStatusCode() != HTTP_RESPONSE_CODE_SUCCESS) {
+        Log.d(TAG, "responseCode=" + request.code());
+        if (!request.ok()) {
             throw new IOException("Unexpected code "
-                    + response.getStatusLine().getStatusCode());
+                    + request.code());
         }
+        String response = request.body();
 
-        String responseStr = EntityUtils.toString(response.getEntity());
-        Log.d(TAG, "existPMAByUserID종료(value=" + responseStr + ")");
-        return responseStr;
+        Log.d(TAG, "existPMAByUserID종료(response=" + response + ")");
+        return response;
     }
 
     /**
@@ -1037,42 +968,50 @@ public class PushHandler implements MqttCallback {
      */
     public String existPMAByUFMI(String ufmi) throws Exception {
         Log.d(TAG, "existPMAByUFMI시작(ufmi=" + ufmi + ")");
-        HttpClient httpClient = getHttpClient();
+
+        //setMode
+        setStrictMode();
+
+        Log.d(TAG, "currentToken=" + currentToken);
+        if (currentToken == null) {
+            throw new Exception("토큰이존재하지않습니다.");
+        }
 
         JSONObject data = new JSONObject();
         data.put("ufmi", ufmi);
         Log.d(TAG, "data=" + data);
 
-        //String token = preference.getValue(PushPreference.TOKEN, null);
-        Log.d(TAG, "currentToken=" + currentToken);
-        if (currentToken == null) {
-            throw new Exception("토큰이존재하지않습니다.");
-        }
-        HttpPost post = new HttpPost(EXISTPMABYUFMI_URL);
-        post.setHeader("Content-Type", "application/json;charset=UTF-8");
-        post.setEntity(new StringEntity(data.toString(), "utf-8"));
-        //set Header token
-        post.setHeader("X-ApiKey", currentToken);
-        //post.setEntity(new StringEntity(data.toString(), "utf-8"));
-        HttpResponse response = httpClient.execute(post);
+        Log.d(TAG, "X-ApiKey=" + currentToken);
+        Log.d(TAG, "EXISTPMABYUFMI_URL=" + EXISTPMABYUFMI_URL);
+        HttpRequest request = HttpRequest.post(EXISTPMABYUSERID_URL)
+                .trustAllCerts() //Accept all certificates
+                .trustAllHosts() //Accept all hostnames
+                .header("X-ApiKey", currentToken)
+                .header("Content-Type", "application/json;charset=utf-8").send(data.toString());
 
-        if (response.getStatusLine().getStatusCode() != HTTP_RESPONSE_CODE_SUCCESS) {
+        Log.d(TAG, "responseCode=" + request.code());
+        if (!request.ok()) {
             throw new IOException("Unexpected code "
-                    + response.getStatusLine().getStatusCode());
+                    + request.code());
         }
-
-        String responseStr = EntityUtils.toString(response.getEntity());
-        Log.d(TAG, "existPMAByUFMI종료(value=" + responseStr + ")");
-        return responseStr;
+        String response = request.body();
+        Log.d(TAG, "existPMAByUFMI종료(response=" + response + ")");
+        return response;
     }
 
 
     public String sendMsgWithOpts(String sender, String receiver, int qos, String contentType, String
             content, int expiry) throws Exception {
         Log.d(TAG, "sendMsgWithOpts시작(sender=" + sender + ", receiver=" + receiver + ", qos="
-                + qos + ", contentType=" + contentType + ", content=" + content + ", expiry=" + expiry + ")");
+                + qos + ", contentType=" + contentType + ", content=" + content + ", expiry=" + expiry + ", thread=" + Thread.currentThread() + ")");
 
-        HttpClient httpClient = getHttpClient();
+        //setMode
+        setStrictMode();
+
+        Log.d(TAG, "currentToken=" + currentToken);
+        if (currentToken == null) {
+            throw new Exception("토큰이존재하지않습니다.");
+        }
 
         JSONObject data = new JSONObject();
         data.put("sender", sender);
@@ -1083,59 +1022,56 @@ public class PushHandler implements MqttCallback {
         data.put("expiry", expiry);
         Log.d(TAG, "data=" + data);
 
-        //String token = preference.getValue(PushPreference.TOKEN, null);
-        Log.d(TAG, "currentToken=" + currentToken);
-        if (currentToken == null) {
-            throw new Exception("토큰이존재하지않습니다.");
-        }
-        HttpPost post = new HttpPost(MESSAGE_URI);
-        post.setHeader("Content-Type", "application/json;charset=UTF-8");
-        post.setEntity(new StringEntity(data.toString(), "utf-8"));
-        //set Header token
-        //post.setHeader("X-ApiKey", currentToken);
-        post.setHeader("X-Application-Key", currentToken);
-        //post.setEntity(new StringEntity(data.toString(), "utf-8"));
-        HttpResponse response = httpClient.execute(post);
+        Log.d(TAG, "X-Application-Key=" + currentToken);
+        Log.d(TAG, "USER_MESSAGE_URI=" + MESSAGE_URI);
+        HttpRequest request = HttpRequest.post(MESSAGE_URI)
+                .trustAllCerts() //Accept all certificates
+                .trustAllHosts() //Accept all hostnames
+                .header("X-Application-Key", currentToken)
+                .header("Content-Type", "application/json;charset=utf-8").send(data.toString());
 
-        if (response.getStatusLine().getStatusCode() != HTTP_RESPONSE_CODE_SUCCESS) {
+        Log.d(TAG, "responseCode=" + request.code());
+        if (!request.ok()) {
             throw new IOException("Unexpected code "
-                    + response.getStatusLine().getStatusCode());
+                    + request.code());
         }
-
-        String responseStr = EntityUtils.toString(response.getEntity());
-        Log.d(TAG, "sendMsgWithOpts종료(value=" + responseStr + ")");
-        return responseStr;
+        String response = request.body();
+        Log.d(TAG, "sendMsgWithOpts종료(response=" + response + ")");
+        return response;
     }
 
     public String updateUFMI(String phoneNum, String ufmi) throws Exception {
         Log.d(TAG, "updateUFMI시작(phoneNum=" + phoneNum + ", ufmi=" + ufmi + ")");
-        HttpClient httpClient = getHttpClient();
+
+        //setMode
+        setStrictMode();
+
+        Log.d(TAG, "currentToken=" + currentToken);
+        if (currentToken == null) {
+            throw new Exception("토큰이존재하지않습니다.");
+        }
+
         JSONObject data = new JSONObject();
         data.put("phoneNum", phoneNum);
         data.put("ufmi", ufmi);
         Log.d(TAG, "data=" + data);
 
-        //String token = preference.getValue(PushPreference.TOKEN, null);
-        Log.d(TAG, "currentToken=" + currentToken);
-        if (currentToken == null) {
-            throw new Exception("토큰이존재하지않습니다.");
-        }
-        HttpPut put = new HttpPut(UPDATEUFMI_URL);
-        put.setHeader("Content-Type", "application/json;charset=UTF-8");
-        put.setEntity(new StringEntity(data.toString(), "utf-8"));
-        //set Header token
-        put.setHeader("X-ApiKey", currentToken);
-        //post.setEntity(new StringEntity(data.toString(), "utf-8"));
-        HttpResponse response = httpClient.execute(put);
+        Log.d(TAG, "X-ApiKey=" + currentToken);
+        Log.d(TAG, "UPDATEUFMI_URL=" + UPDATEUFMI_URL);
+        HttpRequest request = HttpRequest.put(UPDATEUFMI_URL)
+                .trustAllCerts() //Accept all certificates
+                .trustAllHosts() //Accept all hostnames
+                .header("X-ApiKey", currentToken)
+                .header("Content-Type", "application/json;charset=utf-8").send(data.toString());
 
-        if (response.getStatusLine().getStatusCode() != HTTP_RESPONSE_CODE_SUCCESS) {
+        Log.d(TAG, "responseCode=" + request.code());
+        if (!request.ok()) {
             throw new IOException("Unexpected code "
-                    + response.getStatusLine().getStatusCode());
+                    + request.code());
         }
-
-        String responseStr = EntityUtils.toString(response.getEntity());
-        Log.d(TAG, "updateUFMI종료(value=" + responseStr + ")");
-        return responseStr;
+        String response = request.body();
+        Log.d(TAG, "updateUFMI종료(response=" + response + ")");
+        return response;
     }
 
     /**
@@ -1149,6 +1085,4 @@ public class PushHandler implements MqttCallback {
         }
         Log.d(TAG, "setStrictMode종료()");
     }
-
-
 }

@@ -8,8 +8,8 @@ android {
         applicationId "kr.co.adflow.push"
         minSdkVersion 15
         targetSdkVersion 18
-        versionCode 1019
-        versionName "1.0.19"
+        versionCode 1020
+        versionName "1.0.20"
     }
     buildTypes {
 
@@ -19,8 +19,8 @@ android {
             buildConfigField "int", "DEFAULT_KEEP_ALIVE_TIME_OUT", "240"
             buildConfigField "boolean", "CLEAN_SESSION", "false"
             buildConfigField "int", "MQTT_CONNECTION_TIMEOUT", "10" // second
-            buildConfigField "int", "HTTP_CONNTCTION_TIMEOUT", "3000" // 3초
-            buildConfigField "int", "HTTP_SOCKET_TIMEOUT", "5000" // 5초
+            buildConfigField "int", "HTTP_CONNTCTION_TIMEOUT", "10000" // 10초
+            buildConfigField "int", "HTTP_SOCKET_TIMEOUT", "10000" // 10초
             buildConfigField "boolean", "CLIENT_SESSION_DEBUG", "false"
 
             buildConfigField "String", "AUTH_URL", "\"https://push4.ktp.co.kr:8080/v1/auth\""
@@ -39,8 +39,8 @@ android {
             buildConfigField "int", "DEFAULT_KEEP_ALIVE_TIME_OUT", "240"
             buildConfigField "boolean", "CLEAN_SESSION", "false"
             buildConfigField "int", "MQTT_CONNECTION_TIMEOUT", "10" // second
-            buildConfigField "int", "HTTP_CONNTCTION_TIMEOUT", "3000" // 3초
-            buildConfigField "int", "HTTP_SOCKET_TIMEOUT", "5000" // 5초
+            buildConfigField "int", "HTTP_CONNTCTION_TIMEOUT", "10000" // 10초
+            buildConfigField "int", "HTTP_SOCKET_TIMEOUT", "10000" // 10초
             buildConfigField "boolean", "CLIENT_SESSION_DEBUG", "false"
 
             buildConfigField "String", "AUTH_URL", "\"https://push2.ktp.co.kr:8080/v1/auth\""
@@ -63,4 +63,5 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:18.0.0'
     compile files('libs/org.eclipse.paho.client.mqttv3-1.0.0.jar')
+    compile 'com.github.kevinsawicki:http-request:5.6'
 }
