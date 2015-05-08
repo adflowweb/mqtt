@@ -88,7 +88,7 @@ public class UserMessageServiceImpl implements UserMessageService {
 	 * @see kr.co.adflow.pms.svc.service.UserMessageService#sendMessage(java.lang.String, kr.co.adflow.pms.svc.request.MessageReq)
 	 */
 	@Override
-	public int sendMessage(MessageReq message, String appKey) {
+	public int sendMessage(MessageReq message, String appKey) throws Exception {
 
 		// String[] msgIdArray = null;
 
@@ -139,7 +139,7 @@ public class UserMessageServiceImpl implements UserMessageService {
 		// message size
 		msg.setMsgSize(msg.getContent().length());
 		
-		logger.info(" ========= getMsgSize ::{}",msg.getMsgSize());
+//		logger.info(" ========= getMsgSize ::{}",msg.getMsgSize());
 		
 		// TMS:0, MMS:1
 		if (msg.getMsgSize() > 100) {
@@ -166,33 +166,33 @@ public class UserMessageServiceImpl implements UserMessageService {
 		this.sendJMS(msg);
 		resultCnt++;
 
-		//Group Message check;
-		String groupTemp = message.getReceiver();
-		if (groupTemp.indexOf("g") > 0) {
-			//group message Ok
-			List<GroupMessage> list = this.groupList(groupTemp, msg.getKeyMon(), msg.getMsgId() , appKey);
-			
-			for (GroupMessage groupMessage : list) {
-				//insert Group message
-				messageMapper.insertGroupMessage(groupMessage);
-				resultCnt++;
-			}
-			
-		} else {
-			GroupMessage groupMessage = new GroupMessage();
-			groupMessage.setKeyMon(msg.getKeyMon());
-			groupMessage.setMsgId(msg.getMsgId());
-			
-			String ufmi = RecordFomatUtil.topicToUfmi(msg.getReceiverTopic());
-			
-			String token = pushMapper.getToken(ufmi);
-			if(token != null){
-				groupMessage.setReceiverTokenId(token);
-			}else{
-				groupMessage.setReceiverTokenId("");
-			}
-			messageMapper.insertGroupMessage(groupMessage);
-		}
+//		//Group Message check;
+//		String groupTemp = message.getReceiver();
+//		if (groupTemp.indexOf("g") > 0) {
+//			//group message Ok
+//			List<GroupMessage> list = this.groupList(groupTemp, msg.getKeyMon(), msg.getMsgId() , appKey);
+//			
+//			for (GroupMessage groupMessage : list) {
+//				//insert Group message
+//				messageMapper.insertGroupMessage(groupMessage);
+//				resultCnt++;
+//			}
+//			
+//		} else {
+//			GroupMessage groupMessage = new GroupMessage();
+//			groupMessage.setKeyMon(msg.getKeyMon());
+//			groupMessage.setMsgId(msg.getMsgId());
+//			
+//			String ufmi = RecordFomatUtil.topicToUfmi(msg.getReceiverTopic());
+//			
+//			String token = pushMapper.getToken(ufmi);
+//			if(token != null){
+//				groupMessage.setReceiverTokenId(token);
+//			}else{
+//				groupMessage.setReceiverTokenId("");
+//			}
+//			messageMapper.insertGroupMessage(groupMessage);
+//		}
 		
 		return resultCnt;
 	}
@@ -214,23 +214,55 @@ public class UserMessageServiceImpl implements UserMessageService {
 	 * @see kr.co.adflow.pms.svc.service.UserMessageService#sendMessage(java.lang.String, kr.co.adflow.pms.svc.request.MessageReq)
 	 */
 	@Override
-	public int groupListCnt(String groupTopic) {
+	public Integer groupListCnt(String groupTopic) throws Exception{
 
-		PCFConnectionManagerHandler.PCFConnectionManager();
+//		PCFConnectionManagerHandler.PCFConnectionManager();
 	
-		int resultCnt = 0;
+		Integer resultCnt = null;
 		ConnectionManager connMan = MQEnvironment.getDefaultConnectionManager();
+		MQQueueManager qmgr = null;
+		PCFMessageAgent agent = null;
 		try {
-			MQQueueManager qmgr = new MQQueueManager("MQTT", connMan);
+			qmgr = new MQQueueManager("MQTT", connMan);
 			
 			
-			
-			PCFMessageAgent agent = new PCFMessageAgent(qmgr);
-			PCFMessage request = new PCFMessage(MQConstants.MQCMD_INQUIRE_SUB_STATUS);
-			request.addParameter(MQConstants.MQCACF_SUB_NAME, "*");
 
-			request.addFilterParameter(MQConstants.MQCA_TOPIC_STRING,MQConstants.MQCFOP_EQUAL, groupTopic);
-
+			
+			
+//			PCFMessageAgent agent = new PCFMessageAgent(qmgr);
+//			PCFMessage request = new PCFMessage(MQConstants.MQCMD_INQUIRE_SUB_STATUS);
+//			request.addParameter(MQConstants.MQCACF_SUB_NAME, "*");
+//
+//			request.addFilterParameter(MQConstants.MQCA_TOPIC_STRING,MQConstants.MQCFOP_EQUAL, groupTopic);
+//
+//			long start;
+//			long stop;
+//			start = System.currentTimeMillis();
+//			PCFMessage[] responses;
+//			responses = agent.send(request);
+//
+//			stop = System.currentTimeMillis();
+//			System.out.println("elapsedTime=" + (stop - start) + "ms");
+//			System.out.println("responses.length=" + responses.length);
+//			
+//			String token;
+//			int point = 0;
+//			for (int i = 0; i < responses.length; i++) {
+//				token = (String)responses[i].getParameterValue(MQConstants.MQCACF_SUB_NAME);
+//				point = token.indexOf(":");
+//				token = token.substring(0, token.indexOf(":"));
+//				System.out.println(i+":"+token);
+//				System.out.println("ufmi ::"+pushMapper.getUfmi(token));
+//			}
+//
+//			
+//			resultCnt = responses.length;
+			
+			
+			agent = new PCFMessageAgent(qmgr);
+			PCFMessage request = new PCFMessage(MQConstants.MQCMD_INQUIRE_TOPIC_STATUS);
+			request.addParameter(MQConstants.MQCA_TOPIC_STRING, groupTopic);
+			
 			long start;
 			long stop;
 			start = System.currentTimeMillis();
@@ -241,45 +273,57 @@ public class UserMessageServiceImpl implements UserMessageService {
 			System.out.println("elapsedTime=" + (stop - start) + "ms");
 			System.out.println("responses.length=" + responses.length);
 			
-			String token;
-			int point = 0;
-			for (int i = 0; i < responses.length; i++) {
-				token = (String)responses[i].getParameterValue(MQConstants.MQCACF_SUB_NAME);
-				point = token.indexOf(":");
-				token = token.substring(0, token.indexOf(":"));
-				System.out.println(i+":"+token);
-				System.out.println("ufmi ::"+pushMapper.getUfmi(token));
-			}
-
-			resultCnt = responses.length;
-
-		} catch (IOException e) {
-			e.printStackTrace();
+			resultCnt = (Integer) responses[0].getParameterValue(MQConstants.MQIA_SUB_COUNT);
 			
-		} catch (MQException e) {
+			
+
+		}catch (Exception e) {
 			e.printStackTrace();
+			throw e;
+		} finally {
+			if (agent != null) {
+				try {
+					agent.disconnect();
+				} catch (MQException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					throw e;
+				}
+			}
+			if (qmgr != null) {
+				try {
+					qmgr.disconnect();
+				} catch (MQException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					throw e;
+				}
+			}
+			
 		}
 		
 		return resultCnt;
+
 	}
 	
 	
 	/* (non-Javadoc)
 	 * @see kr.co.adflow.pms.svc.service.UserMessageService#sendMessage(java.lang.String, kr.co.adflow.pms.svc.request.MessageReq)
 	 */
-	public List<GroupMessage> groupList(String groupTopic, String keyMon, String msgId, String appKey) {
+	public List<GroupMessage> groupList(String groupTopic, String keyMon, String msgId, String appKey)  throws Exception {
 		
-		PCFConnectionManagerHandler.PCFConnectionManager();
+//		PCFConnectionManagerHandler.PCFConnectionManager();
 
 		int resultCnt = 0;
 		List<GroupMessage> list =  new ArrayList<GroupMessage>();
 		ConnectionManager connMan = MQEnvironment.getDefaultConnectionManager();
+		MQQueueManager qmgr = null;
+		PCFMessageAgent agent = null;
 		try {
-			MQQueueManager qmgr = new MQQueueManager("MQTT", connMan);
+			qmgr = new MQQueueManager("MQTT", connMan);
 			
 			
-			
-			PCFMessageAgent agent = new PCFMessageAgent(qmgr);
+			agent = new PCFMessageAgent(qmgr);
 			PCFMessage request = new PCFMessage(MQConstants.MQCMD_INQUIRE_SUB_STATUS);
 			request.addParameter(MQConstants.MQCACF_SUB_NAME, "*");
 
@@ -311,18 +355,43 @@ public class UserMessageServiceImpl implements UserMessageService {
 				ufmi = pushMapper.getUfmi(token);
 				groupMessage.setReceiverUfmi(ufmi);
 				
+//				logger.info("token ::{}  appkey ::{}", token, appKey);
 				if (ufmi != null && !token.equals(appKey)) {
 					list.add(groupMessage);
-				} 
+				} else {
+					logger.info("Group message self skip - token ::{}  appkey ::{}", token, appKey);
+				}
 				
 			}
 
 
 		} catch (IOException e) {
 			e.printStackTrace();
+			throw e;
 			
 		} catch (MQException e) {
 			e.printStackTrace();
+			throw e;
+		} finally {
+			if (agent != null) {
+				try {
+					agent.disconnect();
+				} catch (MQException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					throw e;
+				}
+			}
+			if (qmgr != null) {
+				try {
+					qmgr.disconnect();
+				} catch (MQException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					throw e;
+				}
+			}
+			
 		}
 		
 		return list;

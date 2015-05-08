@@ -64,7 +64,8 @@
 	<update id="createGroupMessage" parameterType="String">
 		CREATE TABLE pms.group_msg${value} (
 		   msg_id varchar(50) NOT NULL, 
-		   receiver_token_id varchar(100) NOT NULL, 
+		   receiver_token_id varchar(100) NOT NULL,
+		   receiver_ufmi varchar(100) DEFAULT NULL, 
 		   PRIMARY KEY (msg_id,receiver_token_id)
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8
 	</update>
