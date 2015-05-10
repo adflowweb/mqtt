@@ -176,6 +176,7 @@ public class TalkActivity extends Activity implements LoaderCallbacks<Cursor> {
                     ArrayList<String> list = new ArrayList<String>();
                     for (int i = 0; i < uriSpan.length; i++) {
                         String strUrl = uriSpan[i].getURL();
+                        Log.d(PMCType.TAG, "strUrl=" + strUrl);
                         if (list.contains(strUrl) == false)
                             list.add(strUrl);
 
@@ -515,7 +516,7 @@ public class TalkActivity extends Activity implements LoaderCallbacks<Cursor> {
                             Uri uri = Uri.withAppendedPath(DataColumn.CONTENT_URI_UPDATE_ACK_BY_ID, Long.toString(id));
                             getContentResolver().update(uri, null, null, null);
                         }
-						/*{
+                        /*{
 							String strResult = IPushUtil.ack(binder, strMsgID, strToken);
 							
 							if (TextUtils.isEmpty(strResult) == false) {
