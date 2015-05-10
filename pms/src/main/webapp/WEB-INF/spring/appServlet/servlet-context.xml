@@ -41,10 +41,10 @@
         <mapping path="/svcadm/**" />
         <beans:bean class="kr.co.adflow.pms.inf.filter.SvcAdmInterceptor"/> 
     </interceptor>           
-    <interceptor>
+<!--     <interceptor>
         <mapping path="/inf/**" />
         <beans:bean class="kr.co.adflow.pms.inf.filter.InterfaceInterceptor"/> 
-    </interceptor>   
+    </interceptor>    -->
     <interceptor>
         <mapping path="/users/**" />
         <beans:bean class="kr.co.adflow.pms.users.filter.UserInterceptor"/> 

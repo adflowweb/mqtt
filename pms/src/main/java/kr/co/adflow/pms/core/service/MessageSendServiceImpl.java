@@ -44,7 +44,7 @@ public class MessageSendServiceImpl implements MessageSendService {
 
 	/** The Constant logger. */
 	private static final Logger logger = LoggerFactory
-			.getLogger(MessageSendServiceImpl.class);
+			.getLogger(MessageSendServiceImpl2.class);
 
 	/** The message mapper. */
 	@Autowired
@@ -112,6 +112,7 @@ public class MessageSendServiceImpl implements MessageSendService {
 				// msg.getReceiverTopic(); 처리
 				isUserMessage = true;
 				if (!this.validReceiverUserId(msg.getReceiver())) {
+					logger.debug("============= MESSAGE_STATUS_RECEIVER_NOT_FOUNT");
 					msg.setStatus(StaticConfig.MESSAGE_STATUS_RECEIVER_NOT_FOUNT);
 					messageMapper.updateStatus(msg);
 					ctlQMapper.deleteQ(msg.getMsgId());
@@ -185,8 +186,10 @@ public class MessageSendServiceImpl implements MessageSendService {
 			msg.setMsgId(this.getMsgId());
 			msg.setResendCount(resendCnt++);
 			msg.setResendId(msgId);
-			messageMapper.insertMessage(msg);
-			messageMapper.insertContent(msg);
+			
+//			messageMapper.insertMessage(msg);
+//			messageMapper.insertContent(msg);
+			messageMapper.insertReservationMessage(msg);
 
 			ctlQMapper.insertQ(this.getCtlQ(msg));
 
@@ -221,22 +224,29 @@ public class MessageSendServiceImpl implements MessageSendService {
 	 * @return true, if successful
 	 */
 	private boolean validReceiverUserId(String receiver) {
-
+		logger.debug("=== receiver::"+receiver);
 		boolean result = false;
 
 		int type = userValidator.getRequestType(receiver);
+		
+		logger.debug("=== type::"+type);
 
 		if (StaticConfig.SERVICE_REQUEST_FORMAT_TYPE_PHONE == type) {
 			result = validationMapper.validPhoneNo(userValidator
 					.getRegstPhoneNo(receiver));
+			logger.debug("=== userValidator.getRegstPhoneNo::"+userValidator.getRegstPhoneNo(receiver));
+			logger.debug("===TYPE_PHONE result::"+result);
 		}
 
 		if (StaticConfig.SERVICE_REQUEST_FORMAT_TYPE_UFMI1 == type
 				|| StaticConfig.SERVICE_REQUEST_FORMAT_TYPE_UFMI2 == type) {
 			result = validationMapper.validUfmiNo(userValidator
 					.getRegstUfmiNo(receiver));
+			logger.debug("===TYPE_UFMI result::"+result);
 		}
 
+		
+		logger.debug("=== return result::"+result);
 		return result;
 
 	}
@@ -322,26 +332,26 @@ private String getKeyMon(String string) {
 		return result;
 	}
 
-	/**
-	 * Gets the reservation table name.
-	 *
-	 * @param serverId the server id
-	 * @return the reservation table name
-	 */
-	private String getReservationTableName(String serverId) {
-		CtlQ result = null;
-		CtlQ paramCtlQ = new CtlQ();
-		paramCtlQ
-				.setExeType(StaticConfig.CONTROL_QUEUE_EXECUTOR_TYPE_RESERVATION);
-		paramCtlQ.setServerId(serverId);
-		result = ctlQMapper.fetchQ(paramCtlQ);
-
-		if (result == null) {
-			return DateUtil.getYYYYMM();
-		} else {
-			return result.getTableName();
-		}
-	}
+//	/**
+//	 * Gets the reservation table name.
+//	 *
+//	 * @param serverId the server id
+//	 * @return the reservation table name
+//	 */
+//	private String getReservationTableName(String serverId) {
+//		CtlQ result = null;
+//		CtlQ paramCtlQ = new CtlQ();
+//		paramCtlQ
+//				.setExeType(StaticConfig.CONTROL_QUEUE_EXECUTOR_TYPE_RESERVATION);
+//		paramCtlQ.setServerId(serverId);
+//		result = ctlQMapper.fetchQ(paramCtlQ);
+//
+//		if (result == null) {
+//			return DateUtil.getYYYYMM();
+//		} else {
+//			return result.getTableName();
+//		}
+//	}
 
 	/**
 	 * Gets the callback table name.
@@ -370,8 +380,8 @@ private String getKeyMon(String string) {
 	public int sendReservationMessageArray(String serverId, int limit) {
 		HashMap<String, Object> param = new HashMap<String, Object>();
 
-		// param.put("keyMon", DateUtil.getYYYYMM());
-		param.put("keyMon", this.getReservationTableName(serverId));
+		param.put("keyMon", DateUtil.getYYYYMM());
+//		param.put("keyMon", this.getReservationTableName(serverId));
 		param.put("serverId", serverId);
 		param.put("limit", limit);
 
@@ -393,9 +403,12 @@ private String getKeyMon(String string) {
 				// msg.getReceiverTopic(); 처리
 				isUserMessage = true;
 				if (!this.validReceiverUserId(msg.getReceiver())) {
-					msg.setStatus(-2);
-					messageMapper.updateStatus(msg);
-					ctlQMapper.deleteQ(msg.getMsgId());
+					msg.setStatus(StaticConfig.MESSAGE_STATUS_RECEIVER_NOT_FOUNT);
+//					messageMapper.updateStatus(msg);
+//					ctlQMapper.deleteQ(msg.getMsgId());
+					messageMapper.insertMessageRV(msg);
+					messageMapper.insertContent(msg);
+					messageMapper.deleteReservationMessage(msg.getMsgId());
 					continue;
 				}
 
@@ -406,13 +419,14 @@ private String getKeyMon(String string) {
 				logger.info("Message Receiver topic name :",msg.getReceiverTopic());
 			}
 
-			if (isUserMessage
-					&& userMapper.getMsgCntLimit(msg.getIssueId()) < 1) {
-				msg.setStatus(StaticConfig.MESSAGE_STATUS_COUNT_OVER);
-				messageMapper.updateStatus(msg);
-				ctlQMapper.deleteQ(msg.getMsgId());
-				continue;
-			}
+			//20150510 - message count limit logic skip
+//			if (isUserMessage
+//					&& userMapper.getMsgCntLimit(msg.getIssueId()) < 1) {
+//				msg.setStatus(StaticConfig.MESSAGE_STATUS_COUNT_OVER);
+//				messageMapper.updateStatus(msg);
+//				ctlQMapper.deleteQ(msg.getMsgId());
+//				continue;
+//			}
 
 
 //			kicho-20150420:jms pool update [start]			
@@ -432,18 +446,23 @@ private String getKeyMon(String string) {
 			msg.setMsgId(msgId);
 			msg.setStatus(StaticConfig.MESSAGE_STATUS_SEND);
 
-			int resultCnt = messageMapper.updateStatus(msg);
-			ctlQMapper.deleteQ(msg.getMsgId());
+//			int resultCnt = messageMapper.updateStatus(msg);
+			messageMapper.insertMessageRV(msg);
+			messageMapper.insertContent(msg);
+			messageMapper.deleteReservationMessage(msgId);
+//			ctlQMapper.deleteQ(msg.getMsgId());
 			
-			if (resultCnt>0)
-			logger.info("update count is {}", resultCnt);
-			// message_cnt - result_count
-			User user = new User();
-			user.setUserId(msg.getIssueId());
-			user.setMsgCntLimit(resultCnt);
-			if (isUserMessage) {
-				userMapper.discountMsgCntLimit(user);
-			}
+			//20150510 - message count limit logic skip
+//			if (resultCnt>0)
+//			logger.info("update count is {}", resultCnt);
+//			// message_cnt - result_count
+//			User user = new User();
+//			user.setUserId(msg.getIssueId());
+//			user.setMsgCntLimit(resultCnt);
+//			if (isUserMessage) {
+//				userMapper.discountMsgCntLimit(user);
+//			}
+			
 			updateCnt++;
 		}
 

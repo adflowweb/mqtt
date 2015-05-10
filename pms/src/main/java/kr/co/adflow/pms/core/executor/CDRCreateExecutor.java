@@ -346,6 +346,7 @@ public class CDRCreateExecutor {
 				//Caller NO
 				callerNo = RecordFomatUtil.topicToUfmiNo(cDR.getIssueId());
 				recordSb.append(RecordFomatUtil.stingFormat(callerNo, 13));
+				pTalkVer = cDR.getIssueId().substring(5, 6);
 				
 				//Called NO - Group Msg NO : ReceiverTopic, Group Msg Yes : ReceiverUfmi
 				calledNo = pushMapper.getUfmi(cDR.getTokenId());
@@ -356,13 +357,19 @@ public class CDRCreateExecutor {
 					calledNo = "";
 				}
 				
+				//20150508 - 수신자번호가 없으면 RR Cause = "02"
+				if (calledNo.equals("")) {
+					rRCause = "02";
+				}
+				
 				recordSb.append(RecordFomatUtil.stingFormat(calledNo, 13));
 				//RR Cause
 				recordSb.append(rRCause);
 				//Message Type
 				recordSb.append(RecordFomatUtil.intFormat(cDR.getMediaType(), 2));
 				//Send Terminal Type
-				recordSb.append(RecordFomatUtil.intFormat(cDR.getSendTerminalType(), 2));
+//				recordSb.append(RecordFomatUtil.intFormat(cDR.getSendTerminalType(), 2));
+				recordSb.append(RecordFomatUtil.intFormat(Integer.parseInt(pTalkVer), 2));
 				//Packet Size
 
 				recordSb.append(RecordFomatUtil.intFormat(cDR.getMsgSize(), 11));

@@ -40,33 +40,52 @@ public class PCBSServiceImpl implements PCBSService {
 	 * @see kr.co.adflow.pms.inf.service.PCBSService#addUser(kr.co.adflow.pms.inf.request.UserReq, java.lang.String)
 	 */
 	@Override
-	public String addUser(UserReq userReq, String appKey) {
+	public String addUser(UserReq userReq, String issueId) {
+		
+		User user = userMapper.select(userReq.getUserId());
+		if (user == null || user.getUserId() == null || user.getUserId().trim().length() == 0) {
+			// Add User
+			user.setUserId(userReq.getUserId());
+			user.setPassword(this.getPassword(userReq));
+			user.setRole(StaticConfig.USER_ROLE_SERVICE);
+			user.setIpFilters(StaticConfig.INTERCEPTER_IP_FILTER);
+			user.setMsgCntLimit(userReq.getMsgCntLimit());
+			user.setStatus(-1);
+			user.setIssueId(issueId);
+			user.setUfmi(userReq.getUfmi());
+			user.setSaId(userReq.getSaId());
+			user.setGroupTopic(userReq.getGroupTopic());
 
-		String issueId = interceptMapper.selectCashedUserId(appKey);
+			Token token = new Token();
+			token.setUserId(userReq.getUserId());
+			token.setTokenType(StaticConfig.TOKEN_TYPE_APPLICATION);
+			token.setTokenId(this.getTokenId(userReq));
+			token.setIssueId(issueId);
 
-		User user = new User();
-		user.setUserId(userReq.getUserId());
-		user.setPassword(this.getPassword(userReq));
-		user.setRole(StaticConfig.USER_ROLE_SERVICE);
-		user.setIpFilters(StaticConfig.INTERCEPTER_IP_FILTER);
-		user.setMsgCntLimit(userReq.getMsgCntLimit());
-		user.setStatus(-1);
-		user.setIssueId(issueId);
+			user.setAction("addUser");
+			userMapper.logUserHistory(user);
+			userMapper.insertUser(user);
+			tokenMapper.insertToken(token);
+			user.setStatus(userReq.getStatus());
+			userMapper.updateUserStatus(user);
+			
+		} else {
+			//Update user
+			user.setPassword(this.getPassword(userReq));
+			user.setRole(StaticConfig.USER_ROLE_SERVICE);
+			user.setIpFilters(StaticConfig.INTERCEPTER_IP_FILTER);
+			user.setMsgCntLimit(userReq.getMsgCntLimit());
+			user.setStatus(userReq.getStatus());
+			user.setIssueId(issueId);
+			user.setUfmi(userReq.getUfmi());
+			user.setSaId(userReq.getSaId());
+			user.setGroupTopic(userReq.getGroupTopic());
+			
+			user.setAction("updateUser");
+			userMapper.logUserHistory(user);
+			userMapper.updateUser(user);
 
-		Token token = new Token();
-		token.setUserId(userReq.getUserId());
-		token.setTokenType(StaticConfig.TOKEN_TYPE_APPLICATION);
-		token.setTokenId(this.getTokenId(userReq));
-		token.setIssueId(issueId);
-
-		user.setAction("addUser");
-		userMapper.logUserHistory(user);
-		userMapper.insertUser(user);
-		tokenMapper.insertToken(token);
-		user.setStatus(0);
-		userMapper.updateUserStatus(user);
-		//
-		// userMapper udate
+		}
 
 		return user.getUserId();
 	}
