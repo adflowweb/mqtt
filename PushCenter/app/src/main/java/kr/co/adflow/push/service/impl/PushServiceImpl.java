@@ -921,15 +921,14 @@ public class PushServiceImpl extends Service implements PushService {
         return value;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see kr.co.adflow.push.service.PushService#getLostCout()
+    /**
+     * @return
      */
-    public int getLostCout() {
-        Log.d(TAG, "getLostCout시작()");
-        int lostCount = pushHandler.getLostCout();
-        Log.d(TAG, "getLostCout종료(lostCount=" + lostCount + ")");
+    @Override
+    public int getLostCount() {
+        Log.d(TAG, "getLostCount시작()");
+        int lostCount = pushHandler.getLostCount();
+        Log.d(TAG, "getLostCount종료(lostCount=" + lostCount + ")");
         return lostCount;
     }
 

@@ -784,7 +784,7 @@ public class PushHandler implements MqttCallback {
     /**
      * @return
      */
-    public int getLostCout() {
+    public int getLostCount() {
         return CONN_LOST_COUNT;
     }
 
@@ -983,7 +983,7 @@ public class PushHandler implements MqttCallback {
 
         Log.d(TAG, "X-ApiKey=" + currentToken);
         Log.d(TAG, "EXISTPMABYUFMI_URL=" + EXISTPMABYUFMI_URL);
-        HttpRequest request = HttpRequest.post(EXISTPMABYUSERID_URL)
+        HttpRequest request = HttpRequest.post(EXISTPMABYUFMI_URL)
                 .trustAllCerts() //Accept all certificates
                 .trustAllHosts() //Accept all hostnames
                 .header("X-ApiKey", currentToken)

@@ -20,6 +20,6 @@ public interface PushService {
 
     public void subscribe(String topic, int qos) throws Exception;
 
-    public int getLostCout();
+    public int getLostCount();
 
 }
