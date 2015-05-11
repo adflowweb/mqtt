@@ -146,6 +146,54 @@ public interface MessageMapper {
 	 */
 	int cancelReservationList(MsgIdsParams params);
 	
+	/**
+	 * Insert Reservation message.
+	 *
+	 * @param msg the msg
+	 * @return the int
+	 */
+	int insertReservationMessage(Message msg);
+	
+	/**
+	 * Insert message (Reservation).
+	 *
+	 * @param msg the msg
+	 * @return the int
+	 */
+	int insertMessageRV(Message msg);
+	
+	/**
+	 * Cancel reservation message.
+	 *
+	 * @param msg the msg
+	 * @return the int
+	 */
+	int cancelReservationMessage(Message msg);
+
+	/**
+	 * Cancel reservation message list.
+	 *
+	 * @param params the params
+	 * @return the int
+	 */
+	int cancelReservationMessageList(MsgIdsParams params);
+	
+	/**
+	 * Delete Reservation Message.
+	 *
+	 * @param msgId the msg id
+	 * @return the int
+	 */
+	int deleteReservationMessage(String msgId);
+	
+	/**
+	 * select Reservation Message.
+	 *
+	 * @param msgId the msg id
+	 * @return the Message
+	 */
+	Message selectReservationMessage(String msgId);
+	
 	
 	List<CDR> getCDRList2(Map<String, Object> params);
 

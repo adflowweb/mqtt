@@ -10,6 +10,8 @@ import java.util.List;
 import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.controller.BaseController;
 import kr.co.adflow.pms.domain.User;
+import kr.co.adflow.pms.domain.mapper.InterceptMapper;
+import kr.co.adflow.pms.inf.request.PCBSReq;
 import kr.co.adflow.pms.inf.request.PasswordReq;
 import kr.co.adflow.pms.inf.request.UserReq;
 import kr.co.adflow.pms.inf.request.UserUpdateReq;
@@ -43,143 +45,154 @@ public class PCBSController extends BaseController {
 	/** The pcbs service. */
 	@Autowired
 	private PCBSService pcbsService;
+	
+	/** The intercept mapper. */
+	@Autowired
+	private InterceptMapper interceptMapper;
 
 	/**
 	 * Adds the user.
 	 *
 	 * @param user the user
-	 * @param appKey the app key
 	 * @return the response
 	 * @throws Exception the exception
 	 */
-	@RequestMapping(value = "/users", method = RequestMethod.POST, consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
+//	@RequestMapping(value = "/users", method = RequestMethod.POST, consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
+	@RequestMapping(value = "/users", method = RequestMethod.POST, consumes = "text/plain", produces = "text/xml")
 	@ResponseBody
-	public Response<Result<HashMap<String, String>>> addUser(
-			@RequestBody UserReq user,
-			@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String appKey)
+	public String addUser (
+			@RequestBody String pCBSReq)
 			throws Exception {
 
 		logger.debug("addUser");
+		System.out.println("========= pCBSReq.getCertKey()::"+ pCBSReq);
+		
+		String appKey = "";
 
-		String userId = pcbsService.addUser(user, appKey);
+		String issueId = interceptMapper.selectCashedUserId(appKey);
+		//appkey check
+		if (issueId == null || issueId.trim().length() <= 0) {
+			logger.error("applicationKey error is {}", appKey);
+			throw new RuntimeException("CertKey not valid");
+		}
+		
+		UserReq userReq = new UserReq();
+		
+		String userId = pcbsService.addUser(userReq, issueId);
 
-		Result<HashMap<String, String>> result = new Result<HashMap<String, String>>();
-		result.setSuccess(true);
-		HashMap<String, String> hash = new HashMap<String, String>();
-		hash.put("userId", userId);
+		String res = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" + "\n" + "<boolen>true</boolen>";
 
-		result.setData(hash);
-		@SuppressWarnings({ "unchecked", "rawtypes" })
-		Response<Result<HashMap<String, String>>> res = new Response(result);
+		
+		
 		return res;
 
 	}
 
-	/**
-	 * Gets the users.
-	 *
-	 * @param userId the user id
-	 * @return the users
-	 */
-	@RequestMapping(value = "/users/{userId}", method = RequestMethod.GET)
-	@ResponseBody
-	public Response<Result<User>> getUsers(@PathVariable("userId") String userId) {
-
-		User user = pcbsService.retrieveUser(userId);
-
-		Result<User> result = new Result<User>();
-		result.setSuccess(true);
-		result.setData(user);
-		@SuppressWarnings({ "unchecked", "rawtypes" })
-		Response<Result<User>> res = new Response(result);
-		return res;
-
-	}
-
-	/**
-	 * Modify password.
-	 *
-	 * @param req the req
-	 * @param appKey the app key
-	 * @return the response
-	 */
-	@RequestMapping(value = "/users/{userId}/sec", method = RequestMethod.PUT, consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
-	@ResponseBody
-	public Response<Result<List<String>>> modifyPassword(@RequestBody PasswordReq req,
-			@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String appKey) {
-
-		int resultCnt = pcbsService.modifyPassword(req, appKey);
-
-		List<String> messages = new ArrayList<String>();
-		messages.add("modifyPassword SUCCESS :" + resultCnt);
-
-		Result<List<String>> result = new Result<List<String>>();
-		result.setSuccess(true);
-		result.setInfo(messages);
-		@SuppressWarnings({ "unchecked", "rawtypes" })
-		Response<Result<List<String>>> res = new Response(result);
-		return res;
-
-	}
-
-	/**
-	 * Update user.
-	 *
-	 * @param userId the user id
-	 * @param user the user
-	 * @param appKey the app key
-	 * @return the response
-	 */
-	@RequestMapping(value = "/users/{userId}/msgCntLimit", method = RequestMethod.PUT, consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
-	@ResponseBody
-	public Response<Result<HashMap<String, Integer>>> updateUser(
-			@PathVariable("userId") String userId,
-			@RequestBody UserUpdateReq user,
-			@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String appKey) {
-
-		logger.debug("updateUser");
-
-		// userId force setting
-		user.setUserId(userId);
-		int resultCnt = pcbsService.updateUser(user, appKey);
-
-		Result<HashMap<String, Integer>> result = new Result<HashMap<String, Integer>>();
-		result.setSuccess(true);
-		HashMap<String, Integer> hash = new HashMap<String, Integer>();
-		hash.put("updateCnt", resultCnt);
-
-		result.setData(hash);
-		@SuppressWarnings({ "unchecked", "rawtypes" })
-		Response<Result<HashMap<String, Integer>>> res = new Response(result);
-		return res;
-
-	}
-
-	/**
-	 * Delete user.
-	 *
-	 * @param userId the user id
-	 * @param appKey the app key
-	 * @return the response
-	 */
-	@RequestMapping(value = "/users/{userId}", method = RequestMethod.DELETE, consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
-	@ResponseBody
-	public Response<Result<HashMap<String, Integer>>> deleteUser(
-			@PathVariable("userId") String userId,
-			@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String appKey) {
-
-		int resultCnt = pcbsService.deleteUser(userId, appKey);
-
-		Result<HashMap<String, Integer>> result = new Result<HashMap<String, Integer>>();
-		result.setSuccess(true);
-		HashMap<String, Integer> hash = new HashMap<String, Integer>();
-		hash.put("deleteCnt", resultCnt);
-
-		result.setData(hash);
-		@SuppressWarnings({ "unchecked", "rawtypes" })
-		Response<Result<HashMap<String, Integer>>> res = new Response(result);
-		return res;
-
-	}
+//	/**
+//	 * Gets the users.
+//	 *
+//	 * @param userId the user id
+//	 * @return the users
+//	 */
+//	@RequestMapping(value = "/users/{userId}", method = RequestMethod.GET)
+//	@ResponseBody
+//	public Response<Result<User>> getUsers(@PathVariable("userId") String userId) {
+//
+//		User user = pcbsService.retrieveUser(userId);
+//
+//		Result<User> result = new Result<User>();
+//		result.setSuccess(true);
+//		result.setData(user);
+//		@SuppressWarnings({ "unchecked", "rawtypes" })
+//		Response<Result<User>> res = new Response(result);
+//		return res;
+//
+//	}
+//
+//	/**
+//	 * Modify password.
+//	 *
+//	 * @param req the req
+//	 * @param appKey the app key
+//	 * @return the response
+//	 */
+//	@RequestMapping(value = "/users/{userId}/sec", method = RequestMethod.PUT, consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
+//	@ResponseBody
+//	public Response<Result<List<String>>> modifyPassword(@RequestBody PasswordReq req,
+//			@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String appKey) {
+//
+//		int resultCnt = pcbsService.modifyPassword(req, appKey);
+//
+//		List<String> messages = new ArrayList<String>();
+//		messages.add("modifyPassword SUCCESS :" + resultCnt);
+//
+//		Result<List<String>> result = new Result<List<String>>();
+//		result.setSuccess(true);
+//		result.setInfo(messages);
+//		@SuppressWarnings({ "unchecked", "rawtypes" })
+//		Response<Result<List<String>>> res = new Response(result);
+//		return res;
+//
+//	}
+//
+//	/**
+//	 * Update user.
+//	 *
+//	 * @param userId the user id
+//	 * @param user the user
+//	 * @param appKey the app key
+//	 * @return the response
+//	 */
+//	@RequestMapping(value = "/users/{userId}/msgCntLimit", method = RequestMethod.PUT, consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
+//	@ResponseBody
+//	public Response<Result<HashMap<String, Integer>>> updateUser(
+//			@PathVariable("userId") String userId,
+//			@RequestBody UserUpdateReq user,
+//			@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String appKey) {
+//
+//		logger.debug("updateUser");
+//
+//		// userId force setting
+//		user.setUserId(userId);
+//		int resultCnt = pcbsService.updateUser(user, appKey);
+//
+//		Result<HashMap<String, Integer>> result = new Result<HashMap<String, Integer>>();
+//		result.setSuccess(true);
+//		HashMap<String, Integer> hash = new HashMap<String, Integer>();
+//		hash.put("updateCnt", resultCnt);
+//
+//		result.setData(hash);
+//		@SuppressWarnings({ "unchecked", "rawtypes" })
+//		Response<Result<HashMap<String, Integer>>> res = new Response(result);
+//		return res;
+//
+//	}
+//
+//	/**
+//	 * Delete user.
+//	 *
+//	 * @param userId the user id
+//	 * @param appKey the app key
+//	 * @return the response
+//	 */
+//	@RequestMapping(value = "/users/{userId}", method = RequestMethod.DELETE, consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
+//	@ResponseBody
+//	public Response<Result<HashMap<String, Integer>>> deleteUser(
+//			@PathVariable("userId") String userId,
+//			@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String appKey) {
+//
+//		int resultCnt = pcbsService.deleteUser(userId, appKey);
+//
+//		Result<HashMap<String, Integer>> result = new Result<HashMap<String, Integer>>();
+//		result.setSuccess(true);
+//		HashMap<String, Integer> hash = new HashMap<String, Integer>();
+//		hash.put("deleteCnt", resultCnt);
+//
+//		result.setData(hash);
+//		@SuppressWarnings({ "unchecked", "rawtypes" })
+//		Response<Result<HashMap<String, Integer>>> res = new Response(result);
+//		return res;
+//
+//	}
 
 }

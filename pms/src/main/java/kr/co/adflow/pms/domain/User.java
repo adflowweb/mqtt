@@ -62,8 +62,74 @@ public class User {
 	/** The callback method. */
 	private String callbackMethod;
 	
+
 	/** The callback cnt limit. */
 	private int callbackCntLimit;
+	
+	/** The ufmi. */
+	private String ufmi;
+	
+	/** The saId. */
+	private String saId;
+	
+	/** The groupTopict. */
+	private String groupTopic;
+
+	
+	/**
+	 * Gets the ufmi.
+	 *
+	 * @return the ufmi
+	 */
+	public String getUfmi() {
+		return ufmi;
+	}
+
+	
+	/**
+	 * Sets the ufmi.
+	 *
+	 * @param ufmi the new ufmi
+	 */
+	public void setUfmi(String ufmi) {
+		this.ufmi = ufmi;
+	}
+
+	/**
+	 * Gets the saId.
+	 *
+	 * @return the saId
+	 */
+	public String getSaId() {
+		return saId;
+	}
+
+	/**
+	 * Sets the saId.
+	 *
+	 * @param saId the new saId
+	 */
+	public void setSaId(String saId) {
+		this.saId = saId;
+	}
+
+	/**
+	 * Gets the groupTopic.
+	 *
+	 * @return the groupTopic
+	 */
+	public String getGroupTopic() {
+		return groupTopic;
+	}
+
+	/**
+	 * Sets the groupTopic.
+	 *
+	 * @param groupTopic the new groupTopic
+	 */
+	public void setGroupTopic(String groupTopic) {
+		this.groupTopic = groupTopic;
+	}
 
 	/**
 	 * Gets the user id.

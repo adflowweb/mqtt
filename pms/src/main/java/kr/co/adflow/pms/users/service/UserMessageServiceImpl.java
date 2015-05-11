@@ -90,6 +90,8 @@ public class UserMessageServiceImpl implements UserMessageService {
 	@Override
 	public int sendMessage(MessageReq message, String appKey) throws Exception {
 
+		logger.debug("=== message::{}","getContentType::"+message.getContentType()+",getExpiry::"+message.getExpiry()+",getQos::"+message.getQos()+
+				",getReceiver::"+message.getReceiver()+",getSender::"+message.getSender());
 		// String[] msgIdArray = null;
 
 		int resultCnt = 0;
@@ -142,7 +144,7 @@ public class UserMessageServiceImpl implements UserMessageService {
 //		logger.info(" ========= getMsgSize ::{}",msg.getMsgSize());
 		
 		// TMS:0, MMS:1
-		if (msg.getMsgSize() > 100) {
+		if (msg.getMsgSize() > 140) {
 			//MMS
 			msg.setMediaType(1);
 		} else {
@@ -163,6 +165,7 @@ public class UserMessageServiceImpl implements UserMessageService {
 			//group message Ok
 			msg.setGroupId(message.getReceiver());
 		}
+		
 		this.sendJMS(msg);
 		resultCnt++;
 
@@ -200,6 +203,13 @@ public class UserMessageServiceImpl implements UserMessageService {
 	
 	//JMS Send and Message DB insert
 	public void sendJMS(Message msg) {
+		logger.debug("=== msg::{}","getContentType::"+msg.getContentType()+",getExpiry::"+msg.getExpiry()+",getQos::"+msg.getQos()+",getReceiver::"+msg.getReceiver()
+				+",getIssueId::"+msg.getIssueId()+",getAppAckType::"+msg.getAppAckType()+",getGroupId::"+msg.getGroupId()+",getIssueName::"+msg.getIssueName()+",getKeyMon::"+msg.getKeyMon()
+				+",getMediaType::"+msg.getMediaType()+",getMsgId::"+msg.getMsgId()+",getMsgSize::"+msg.getMsgSize()+",getMsgType::"+msg.getMsgType()+",getPmaAckType::"+msg.getPmaAckType()
+				+",getReceiverTopic::"+msg.getReceiverTopic()+",getResendId::"+msg.getResendId()+",getResendMaxCount::"+msg.getResendMaxCount()+",getRetained::"+msg.getRetained()+
+				",getSendTerminalType::"+msg.getSendTerminalType()+",getServerId::"+msg.getServerId()+",getServiceId::"+msg.getServiceId()+",getStatus::"+msg.getStatus()
+				+",getUpdateId::"+msg.getUpdateId()+",getAppAckTime::"+msg.getAppAckTime()+",getPmaAckTime::"+msg.getIssueTime()+",getPmaAckTime::"+msg.getPmaAckTime()
+				+",getReservationTime::"+msg.getReservationTime()+",getUpdateTime::"+msg.getUpdateTime());
 		//JMS message send
 		jmsTemplate.execute(new DirectMsgHandlerBySessionCallback(jmsTemplate,msg));
 
@@ -216,6 +226,7 @@ public class UserMessageServiceImpl implements UserMessageService {
 	@Override
 	public Integer groupListCnt(String groupTopic) throws Exception{
 
+		logger.debug("=== groupTopic::{}",groupTopic);
 //		PCFConnectionManagerHandler.PCFConnectionManager();
 	
 		Integer resultCnt = null;
@@ -312,6 +323,8 @@ public class UserMessageServiceImpl implements UserMessageService {
 	 */
 	public List<GroupMessage> groupList(String groupTopic, String keyMon, String msgId, String appKey)  throws Exception {
 		
+		logger.debug("=== parm::{}","groupTopic::"+groupTopic+",keyMon::"+keyMon+",msgId::"+msgId+",appKey::"+appKey);
+		
 //		PCFConnectionManagerHandler.PCFConnectionManager();
 
 		int resultCnt = 0;
@@ -355,7 +368,8 @@ public class UserMessageServiceImpl implements UserMessageService {
 				ufmi = pushMapper.getUfmi(token);
 				groupMessage.setReceiverUfmi(ufmi);
 				
-//				logger.info("token ::{}  appkey ::{}", token, appKey);
+				logger.debug("=== groupMessage::{}","getKeyMon::"+groupMessage.getKeyMon()+",getMsgId::"+groupMessage.getMsgId()+",getReceiverTokenId::"
+						+groupMessage.getReceiverTokenId()+",getReceiverUfmi::"+groupMessage.getReceiverUfmi());
 				if (ufmi != null && !token.equals(appKey)) {
 					list.add(groupMessage);
 				} else {
@@ -411,7 +425,7 @@ public class UserMessageServiceImpl implements UserMessageService {
 			result = pmsConfig.EXECUTOR_SERVER_ID3;			
 		} 
 		
-		
+		logger.debug("=== result::{}",result);
 		return result;
 	}
 
@@ -437,6 +451,8 @@ public class UserMessageServiceImpl implements UserMessageService {
 	 */
 	private String getReceiverTopic(String receiver) {
 
+		logger.debug("=== receiver::{}",receiver);
+		
 		String result = null;
 
 		int type = userValidator.getRequestType(receiver);
@@ -453,6 +469,7 @@ public class UserMessageServiceImpl implements UserMessageService {
 			result = userValidator.getSubscribUfmi2(receiver);
 		}
 
+		logger.debug("=== result::{}",result);
 		return result;
 	}
 

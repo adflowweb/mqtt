@@ -41,7 +41,7 @@ public class PushMessageServiceImpl implements PushMessageService {
 
 	/** The Constant logger. */
 	private static final Logger logger = LoggerFactory
-			.getLogger(PushMessageServiceImpl.class);
+			.getLogger(PushMessageServiceImpl2.class);
 
 	/** The message mapper. */
 	@Autowired
@@ -81,6 +81,8 @@ public class PushMessageServiceImpl implements PushMessageService {
 	@Override
 	public List<Map<String, String>> sendMessage(String appKey,
 			MessageReq message) {
+		logger.debug("=== appKey::{}, MessageReq={}",appKey,"getContentType::"+message.getContentType()+",getResendInterval::"+message.getResendInterval()
+				+",getResendMaxCount::"+message.getResendMaxCount()+",getReservationTime::"+message.getReservationTime());
 
 		// String[] msgIdArray = null;
 
@@ -137,6 +139,7 @@ public class PushMessageServiceImpl implements PushMessageService {
 		// msgIdArray = new String[receivers.length];
 
 		for (int i = 0; i < receivers.length; i++) {
+			logger.debug("=== receivers[{}]::{}",i,receivers[i]);
 			if (!userValidator.validRequestValue(receivers[i])) {
 				throw new RuntimeException(
 						"receivers formatting error count : " + i);
@@ -165,15 +168,22 @@ public class PushMessageServiceImpl implements PushMessageService {
 			}
 
 			msg.setStatus(StaticConfig.MESSAGE_STATUS_SENDING);
-			messageMapper.insertMessage(msg);
-			messageMapper.insertContent(msg);
-
-			ctlQMapper.insertQ(this.getCtlQ(msg));
+			
+			//reservation message check
+			if (msg.isReservation()) {
+				messageMapper.insertReservationMessage(msg);
+			} else {
+				messageMapper.insertMessage(msg);
+				messageMapper.insertContent(msg);
+				ctlQMapper.insertQ(this.getCtlQ(msg));
+			}
+			
+			
 			msgMap.put("msgId", msg.getMsgId());
 			msgMap.put("receiver", msg.getReceiver());
 
 			resultList.add(msgMap);
-			//logger.info("message id :: {}", msg.getMsgId());
+			logger.info("message id :: {}", msg.getMsgId());
 		}
 
 		return resultList;
@@ -337,13 +347,23 @@ public class PushMessageServiceImpl implements PushMessageService {
 
 		String issueId = interceptMapper.selectCashedUserId(appKey);
 
-		Message msg = new Message();
-		msg.setKeyMon(this.getKeyMon(msgId));
-		msg.setMsgId(msgId);
-		msg.setUpdateId(issueId);
+//		Message msg = new Message();
+//		msg.setKeyMon(this.getKeyMon(msgId));
+//		msg.setMsgId(msgId);
+//		msg.setUpdateId(issueId);
+//		msg.setStatus(StaticConfig.MESSAGE_STATUS_RESEVATION_CANCEL);
+		
+		Message msg;
+		String keyMon = DateUtil.getYYYYMM();
+		msg = messageMapper.selectReservationMessage(msgId);
+		msg.setKeyMon(keyMon);
 		msg.setStatus(StaticConfig.MESSAGE_STATUS_RESEVATION_CANCEL);
+		int cnt = messageMapper.insertMessageRV(msg);
+		messageMapper.insertContent(msg);
+		messageMapper.deleteReservationMessage(msgId);
 
-		return messageMapper.cancelMessage(msg);
+//		return messageMapper.cancelMessage(msg);
+		return cnt;
 	}
 
 	/**

@@ -21,7 +21,7 @@ public interface PCBSService {
 	 * @param appKey the app key
 	 * @return the string
 	 */
-	public String addUser(UserReq userReq, String appKey);
+	public String addUser(UserReq userReq, String issueId);
 
 	/**
 	 * Retrieve user.

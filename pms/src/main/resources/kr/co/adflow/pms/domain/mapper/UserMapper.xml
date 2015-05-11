@@ -21,6 +21,9 @@
 		<result property="issueTime" column="issue_time" />
 		<result property="issueId" column="issue_id" />
 		<result property="applicationToken" column="application_token" />
+		<result property="ufmi" column="ufmi" />
+		<result property="saId" column="sa_id" />
+		<result property="groupTopic" column="group_topic" />
 	</resultMap>
 
 	<insert id="insertUser" parameterType="kr.co.adflow.pms.domain.User">
@@ -40,6 +43,9 @@
 		,callback_count_limit
 		,issue_time
 		,issue_id
+		,ufmi
+		,sa_id
+		,group_topic
 		)
 		values(
 		#{userId}
@@ -57,6 +63,9 @@
 		,#{callbackCntLimit}
 		,now()
 		,#{issueId}
+		,#{ufmi}
+		,#{saId}
+		,#{groupTopic}
 		)
 	</insert>
 
@@ -76,6 +85,9 @@
 		, a.callback_count_limit
 		, a.issue_time
 		, a.issue_id
+		, a.ufmi
+		, a.sa_id
+		, a.group_topic
         , b.token_id as application_token
 		FROM pms.user a, pms.token b
 		WHERE
@@ -100,6 +112,9 @@
 		, a.callback_count_limit		
 		, a.issue_time
 		, a.issue_id
+		, a.ufmi
+		, a.sa_id
+		, a.group_topic
 		
 		<!-- kicho change - 20150401 
 		FROM pms.user
@@ -141,12 +156,10 @@
 
 	<update id="updateUser" parameterType="kr.co.adflow.pms.domain.User">
 		UPDATE pms.user
-		SET role =
-		#{role}
+		SET role = #{role}
 		,user_name = #{userName}
 		,ip_filters = #{ipFilters}
-		,status =
-		#{status}
+		,status = #{status}
 		,message_count_limit = #{msgCntLimit}
 		,default_expiry = #{defaultExpiry}
 		,default_qos = #{defaultQos}
@@ -156,6 +169,10 @@
 		,callback_count_limit = #{callbackCntLimit}
 		,issue_time = now()
 		,issue_id = #{issueId}
+		,ufmi = #{ufmi}
+		,sa_id = #{saId}
+		,group_topic = #{groupTopic}
+		
 		WHERE user_id = #{userId}
 	</update>
 
@@ -182,6 +199,9 @@
 		,issue_time
 		,issue_id
 		,action
+		,ufmi
+		,sa_id
+		,group_topic
 		)
 		values(
 		#{userId}
@@ -200,6 +220,9 @@
 		,now()
 		,#{issueId}
 		,#{action}
+		,#{ufmi}
+		,#{saId}
+		,#{groupTopic}
 		)
 	</insert>
 	

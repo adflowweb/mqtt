@@ -73,7 +73,8 @@ public class UserMessageController extends BaseController {
 	public Response<Result<List<String>>> sendMessage(
 			@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String appKey,
 			@RequestBody @Valid MessageReq msg) throws Exception {
-		logger.debug("sendMessage");
+		
+		logger.debug("=== msg::{}","getContentType::"+msg.getContentType()+",getExpiry::"+msg.getExpiry()+",getQos::"+msg.getQos()+",getReceiver::"+msg.getReceiver()+",getSender::"+msg.getSender());
 
 		if (msg.getSender() == null || msg.getSender().trim().length() == 0) {
 			throw new RuntimeException("Sender is empty.");
@@ -119,7 +120,7 @@ public class UserMessageController extends BaseController {
 	public Response<Result<Boolean>> groupsListCnt(
 			@RequestParam("groupTopic") String groupTopic) throws Exception {
 
-		logger.info("group Topic :{}", groupTopic);
+		logger.debug("=== group Topic :{}", groupTopic);
 
 		Integer resultCnt = userMessageService.groupListCnt (groupTopic);
 
@@ -129,6 +130,8 @@ public class UserMessageController extends BaseController {
 		result.setData(resultCnt);
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		Response<Result<Boolean>> res = new Response(result);
+		
+		logger.debug("=== resultCnt :{}", resultCnt);
 		return res;
 	}
 

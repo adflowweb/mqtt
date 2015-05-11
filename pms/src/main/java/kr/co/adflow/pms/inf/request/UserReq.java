@@ -22,6 +22,91 @@ public class UserReq {
 	/** The msg cnt limit. */
 	@NotEmpty
 	private int msgCntLimit;
+	
+	/** The ufmi. */
+	private String ufmi;
+	
+	/** The saId. */
+	private String saId;
+	
+	/** The groupTopic. */
+	private String groupTopic;
+	
+	/** The status. */
+	private int status;
+	
+
+	/**
+	 * Gets the status.
+	 *
+	 * @return the status
+	 */
+	public int getStatus() {
+		return status;
+	}
+
+	/**
+	 * Sets the status.
+	 *
+	 * @param status the new status
+	 */
+	public void setStatus(int status) {
+		this.status = status;
+	}
+
+	/**
+	 * Gets the ufmi.
+	 *
+	 * @return the ufmi
+	 */
+	public String getUfmi() {
+		return ufmi;
+	}
+
+	/**
+	 * Sets the ufmi.
+	 *
+	 * @param ufmi the new ufmi
+	 */
+	public void setUfmi(String ufmi) {
+		this.ufmi = ufmi;
+	}
+
+	/**
+	 * Gets the saId.
+	 *
+	 * @return the saId
+	 */
+	public String getSaId() {
+		return saId;
+	}
+
+	/**
+	 * Sets the saId.
+	 *
+	 * @param saId the new saId
+	 */
+	public void setSaId(String saId) {
+		this.saId = saId;
+	}
+
+	/**
+	 * Gets the groupTopic.
+	 *
+	 * @return the groupTopic
+	 */
+	public String getGroupTopic() {
+		return groupTopic;
+	}
+
+	/**
+	 * Sets the groupTopic.
+	 *
+	 * @param groupTopic the new groupTopic
+	 */
+	public void setGroupTopic(String groupTopic) {
+		this.groupTopic = groupTopic;
+	}
 
 	/**
 	 * Gets the user id.

@@ -10,6 +10,7 @@ import java.util.Map;
 
 import kr.co.adflow.pms.adm.request.ReservationCancelReq;
 import kr.co.adflow.pms.adm.response.MessagesRes;
+import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.util.DateUtil;
 import kr.co.adflow.pms.domain.Message;
 import kr.co.adflow.pms.domain.MsgIdsParams;
@@ -217,15 +218,27 @@ public class SvcServiceImpl implements SvcService {
 
 		String issueId = interceptMapper.selectCashedUserId(appKey);
 
-		MsgIdsParams params = new MsgIdsParams();
+//		MsgIdsParams params = new MsgIdsParams();
+//		params.setKeyMon(this.getKeyMon(reqIds.getMsgIds()));
+//		params.setMsgIds(reqIds.getMsgIds());
+//		params.setIssueId(null);
+//		params.setUpdateId(issueId);
+//		int cnt = messageMapper.cancelReservationList(params);
+		
+		Message msg;
+		String keyMon = DateUtil.getYYYYMM();
+		String[] msgIds = reqIds.getMsgIds();
+		int cnt = 0;
+		for (int i = 0; i < msgIds.length; i++) {
 
-		params.setKeyMon(this.getKeyMon(reqIds.getMsgIds()));
-		params.setMsgIds(reqIds.getMsgIds());
-		params.setIssueId(null);
-		params.setUpdateId(issueId);
-
-		int cnt = messageMapper.cancelReservationList(params);
-
+			msg = messageMapper.selectReservationMessage(msgIds[i]);
+			msg.setKeyMon(keyMon);
+			msg.setStatus(StaticConfig.MESSAGE_STATUS_RESEVATION_CANCEL);
+			messageMapper.insertMessageRV(msg);
+			messageMapper.insertContent(msg);
+			messageMapper.deleteReservationMessage(msgIds[i]);
+			
+		}
 		return cnt;
 	}
 

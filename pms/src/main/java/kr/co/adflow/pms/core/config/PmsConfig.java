@@ -51,7 +51,7 @@ public class PmsConfig {
 
 	/** The message header expiry default. */
 	@Value("#{pms['message.header.expiry.default']}")
-	public int MESSAGE_HEADER_EXPIRY_DEFAULT;// = 0;
+	public int MESSAGE_HEADER_EXPIRY_DEFAULT;// = 600000;
 
 	/** The message header qos default. */
 	@Value("#{pms['message.header.qos.default']}")
