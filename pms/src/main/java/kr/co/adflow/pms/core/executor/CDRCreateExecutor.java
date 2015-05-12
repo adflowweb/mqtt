@@ -37,7 +37,7 @@ public class CDRCreateExecutor {
 
 	/** The Constant logger. */
 	private static final Logger logger = LoggerFactory
-			.getLogger(CDRCreateExecutor2.class);
+			.getLogger(CDRCreateExecutor.class);
 
 	/** The CDR mapper. */
 	@Autowired

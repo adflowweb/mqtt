@@ -10,8 +10,10 @@ import java.util.Map;
 
 import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.handler.DirectMsgHandler;
+import kr.co.adflow.pms.core.util.AckTRLog;
 import kr.co.adflow.pms.core.util.DateUtil;
 import kr.co.adflow.pms.core.util.KeyGenerator;
+import kr.co.adflow.pms.core.util.MessageTRLog;
 import kr.co.adflow.pms.domain.AckCallback;
 import kr.co.adflow.pms.domain.CtlQ;
 import kr.co.adflow.pms.domain.Message;
@@ -44,7 +46,7 @@ public class MessageSendServiceImpl implements MessageSendService {
 
 	/** The Constant logger. */
 	private static final Logger logger = LoggerFactory
-			.getLogger(MessageSendServiceImpl2.class);
+			.getLogger(MessageSendServiceImpl.class);
 
 	/** The message mapper. */
 	@Autowired
@@ -140,6 +142,14 @@ public class MessageSendServiceImpl implements MessageSendService {
 //			jmsTemplate.execute(msg.getReceiverTopic(), new DirectMsgHandler(msg));
 			jmsTemplate.execute(new DirectMsgHandlerBySessionCallback(jmsTemplate,msg));
 //			kicho-20150420:jms pool update [end]	
+			
+			//message tran log
+			try {
+				MessageTRLog.log(msg);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
 			
 			// 재전송 로직 추가
 			String msgId = msg.getMsgId();

@@ -41,7 +41,7 @@ public class PushMessageServiceImpl implements PushMessageService {
 
 	/** The Constant logger. */
 	private static final Logger logger = LoggerFactory
-			.getLogger(PushMessageServiceImpl2.class);
+			.getLogger(PushMessageServiceImpl.class);
 
 	/** The message mapper. */
 	@Autowired

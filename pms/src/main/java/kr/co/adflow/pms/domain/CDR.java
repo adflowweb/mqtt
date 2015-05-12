@@ -35,23 +35,45 @@ public class CDR {
 	/** The groupId */
 	private String groupId;
 	
-	/** The receiverUfmi */
+	/** The tokenId */
 	private String tokenId;
+	
+	/** The msg Type */
+	private int msgType;
 
 	
+	
 	/**
-	 * Gets the receiver Ufmi.
+	 * Gets the message Type.
 	 *
-	 * @return the receiverUfmi
+	 * @return the msgType
+	 */
+	public int getMsgType() {
+		return msgType;
+	}
+
+	/**
+	 * Sets the message Type.
+	 *
+	 * @param msgType the new message Type
+	 */
+	public void setMsgType(int msgType) {
+		this.msgType = msgType;
+	}
+
+	/**
+	 * Gets the token Id.
+	 *
+	 * @return the tokenId
 	 */
 	public String getTokenId() {
 		return tokenId;
 	}
 
 	/**
-	 * Sets the receiver Ufmi.
+	 * Sets the token Id.
 	 *
-	 * @param receiverUfmi the new receiver Ufmi
+	 * @param tokenId the new token Id
 	 */
 	public void setTokenId(String tokenId) {
 		this.tokenId = tokenId;

@@ -13,6 +13,8 @@ import javax.jms.Message;
 import javax.jms.MessageListener;
 
 import kr.co.adflow.pms.core.config.StaticConfig;
+import kr.co.adflow.pms.core.util.AckTRLog;
+import kr.co.adflow.pms.core.util.MessageTRLog;
 import kr.co.adflow.pms.domain.Ack;
 import kr.co.adflow.pms.domain.CtlQ;
 import kr.co.adflow.pms.domain.mapper.AckMapper;
@@ -59,6 +61,9 @@ public class AckMessageDrivenBean implements MessageListener {
 	public void onMessage(Message message) {
 
 		logger.debug("Message Driven Bean: New Message");
+		
+		
+		
 		byte[] body = null;
 		try {
 			body = new byte[(int) ((BytesMessage) message).getBodyLength()];
@@ -67,7 +72,15 @@ public class AckMessageDrivenBean implements MessageListener {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 		Ack ack = this.getAck(body);
+		
+		//message tran log
+		try {
+			AckTRLog.log(ack);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 		
 		int cnt = 0;

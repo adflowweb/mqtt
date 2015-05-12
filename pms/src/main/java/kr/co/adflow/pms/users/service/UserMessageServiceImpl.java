@@ -18,6 +18,7 @@ import kr.co.adflow.pms.core.util.CheckUtil;
 import kr.co.adflow.pms.core.util.DateUtil;
 import kr.co.adflow.pms.core.util.KeyGenerator;
 import kr.co.adflow.pms.core.util.RecordFomatUtil;
+import kr.co.adflow.pms.core.util.MessageTRLog;
 import kr.co.adflow.pms.domain.GroupMessage;
 //import kr.co.adflow.pms.core.handler.PCFConnectionManager;
 import kr.co.adflow.pms.domain.Message;
@@ -32,6 +33,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
+
+
 
 
 
@@ -213,6 +216,13 @@ public class UserMessageServiceImpl implements UserMessageService {
 		//JMS message send
 		jmsTemplate.execute(new DirectMsgHandlerBySessionCallback(jmsTemplate,msg));
 
+		//message tran log
+		try {
+			MessageTRLog.log(msg);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		// DB message insert 
 		messageMapper.insertMessage(msg);
 		messageMapper.insertContent(msg);

@@ -6,6 +6,7 @@ package kr.co.adflow.pms.inf.controller;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.controller.BaseController;
@@ -23,6 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.MultiValueMap;
+
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -58,29 +61,46 @@ public class PCBSController extends BaseController {
 	 * @throws Exception the exception
 	 */
 //	@RequestMapping(value = "/users", method = RequestMethod.POST, consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
-	@RequestMapping(value = "/users", method = RequestMethod.POST, consumes = "text/plain", produces = "text/xml")
+	@RequestMapping(value = "/users", method = RequestMethod.POST, consumes = "application/x-www-form-urlencoded", produces = "text/xml")
 	@ResponseBody
 	public String addUser (
-			@RequestBody String pCBSReq)
+			@RequestBody MultiValueMap<String,String> params)
 			throws Exception {
 
 		logger.debug("addUser");
-		System.out.println("========= pCBSReq.getCertKey()::"+ pCBSReq);
-		
-		String appKey = "";
+//		System.out.println("========= pCBSReq");
+//		System.out.println("========= pCBSReq.getCertKey()::"+ params.get("certKey"));
+//		
+//		for (String key : params.keySet()) {
+//			   System.out.println("key: " + key);
+//			   System.out.println("value: " + params.get(key));
+//			  }
+//		
+		List<String> tempList = params.get("certKey");
 
-		String issueId = interceptMapper.selectCashedUserId(appKey);
+		String issueId = interceptMapper.selectCashedUserId(tempList.get(0));
 		//appkey check
 		if (issueId == null || issueId.trim().length() <= 0) {
-			logger.error("applicationKey error is {}", appKey);
+			logger.error("applicationKey error is {}", tempList.get(0));
 			throw new RuntimeException("CertKey not valid");
 		}
 		
 		UserReq userReq = new UserReq();
 		
-		String userId = pcbsService.addUser(userReq, issueId);
+		tempList = params.get("solutionId");
+		userReq.setUserId(tempList.get(0));
+		tempList = params.get("solutionPw");
+		userReq.setPassword(tempList.get(0));
+		tempList = params.get("saId");
+		userReq.setSaId(tempList.get(0));
+		tempList = params.get("dSvcCd");
+		userReq.setUfmi(tempList.get(0));
+		tempList = params.get("solutionPw");
+		userReq.setGroupTopic(tempList.get(0));
+		
+//		String userId = pcbsService.addUser(userReq, issueId);
 
-		String res = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" + "\n" + "<boolen>true</boolen>";
+		String res = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" + "\n" + "<boolen>false</boolen>";
 
 		
 		

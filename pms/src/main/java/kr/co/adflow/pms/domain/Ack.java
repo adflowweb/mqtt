@@ -179,4 +179,15 @@ public class Ack {
 		this.serverId = serverId;
 	}
 
+	@Override
+	public String toString() {
+		return "Ack [keyMon=" + keyMon + ", msgId=" + msgId + ", ackType="
+				+ ackType + ", tokenId=" + tokenId + ", ackTime=" + ackTime
+				+ ", issueTime=" + issueTime + ", issueId=" + issueId
+				+ ", serverId=" + serverId + "]";
+	}
+	
+	
+	
+
 }

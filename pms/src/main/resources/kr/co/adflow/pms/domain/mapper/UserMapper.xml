@@ -256,4 +256,12 @@
 		,issue_id = #{issueId}
 		WHERE user_id = #{userId}
 	</update>
+	
+	<select id="selectUfmi" parameterType="String" resultType="String">
+		SELECT ufmi
+		FROM pms.user
+		WHERE
+		user_id = #{userId}
+	</select>
+	
 </mapper>	

@@ -107,5 +107,13 @@ public interface UserMapper {
 	 * @return the int
 	 */
 	int updatePassword(User user);
+	
+	/**
+	 * Gets the msg cnt limit.
+	 *
+	 * @param userId the user id
+	 * @return the msg cnt limit
+	 */
+	String selectUfmi(String userId);
 
 }

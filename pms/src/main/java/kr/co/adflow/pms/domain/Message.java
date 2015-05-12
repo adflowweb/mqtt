@@ -705,4 +705,25 @@ public class Message {
 		this.msgSize = msgSize;
 	}
 
+	@Override
+	public String toString() {
+		return "Message [keyMon=" + keyMon + ", groupId=" + groupId
+				+ ", msgId=" + msgId + ", msgType=" + msgType + ", receiver="
+				+ receiver + ", receiverTopic=" + receiverTopic
+				+ ", serviceId=" + serviceId + ", ack=" + ack + ", status="
+				+ status + ", reservation=" + reservation
+				+ ", reservationTime=" + reservationTime + ", resendCount="
+				+ resendCount + ", resendMaxCount=" + resendMaxCount
+				+ ", resendInterval=" + resendInterval + ", resendId="
+				+ resendId + ", serverId=" + serverId + ", expiry=" + expiry
+				+ ", qos=" + qos + ", retained=" + retained + ", issueTime="
+				+ issueTime + ", issueId=" + issueId + ", issueName="
+				+ issueName + ", updateTime=" + updateTime + ", updateId="
+				+ updateId + ", pmaAckType=" + pmaAckType + ", pmaAckTime="
+				+ pmaAckTime + ", appAckType=" + appAckType + ", appAckTime="
+				+ appAckTime + ", contentType=" + contentType + ", content="
+				+ content + ", mediaType=" + mediaType + ", sendTerminalType="
+				+ sendTerminalType + ", msgSize=" + msgSize + "]";
+	}
+
 }
