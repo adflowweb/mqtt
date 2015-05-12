@@ -107,8 +107,9 @@ public class PCBSController extends BaseController {
 			userReq.setUfmi(tempList.get(0));
 			
 			tempList = params.get("statusCd");
-			if (tempList.get(0).equals("01")) {
-				userReq.setStatus(1);
+			//01  - 사용중, 11 - 선불사용중
+			if (tempList.get(0).equals("01")||tempList.get(0).equals("11")) {
+				userReq.setStatus(0);
 			} else {
 				//상태코드 "01"아닌것은 모두 USER_STATUS_BROCK(2)처리 
 				userReq.setStatus(2);
