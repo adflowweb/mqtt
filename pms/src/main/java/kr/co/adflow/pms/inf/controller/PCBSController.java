@@ -172,7 +172,6 @@ public class PCBSController extends BaseController {
 			e.printStackTrace();
 		}
 
-
 		String res = "<?xml version=\"1.0\" encoding=\"utf-8\" ?> \n <boolen>" + resultCk + "</boolen>";
 		
 		return res;
