@@ -68,7 +68,7 @@
 	
 		<!-- Ack 날짜별 트랜잭션로그 파일 생성 -->
 	<appender name="ackLogFileAppender" class="org.apache.log4j.DailyRollingFileAppender">
-		<param name="File" value="/cdrData/tranLog/ack.log" /> -->
+		<param name="File" value="/cdrData/tranLog/ack.log" /> 
 <!-- <param name="File" value="/Users/gwang/Desktop/dev/workspace_PUSH_KT_V2/temp/ack.log" /> --> 
 		<param name="Append" value="true" />
 		<!-- param name="MaxFileSize" value="100MB"/ -->
