@@ -162,10 +162,11 @@ public class SvcServiceImpl implements SvcService {
 		String issueId = interceptMapper.selectCashedUserId(params
 				.get("appKey"));
 
-		if (params.get("cSearchDate") == null) {
-			// error
-			throw new RuntimeException("");
-		}
+//		if (params.get("cSearchDate") == null) {
+//			// error
+//			throw new RuntimeException("");
+//		}
+
 
 		MsgParams msgParams = new MsgParams();
 		
