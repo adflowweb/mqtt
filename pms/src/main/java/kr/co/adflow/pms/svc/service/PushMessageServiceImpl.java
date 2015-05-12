@@ -355,7 +355,9 @@ public class PushMessageServiceImpl implements PushMessageService {
 		
 		Message msg;
 		String keyMon = DateUtil.getYYYYMM();
-		msg = messageMapper.selectReservationMessage(msgId);
+		List<Message> list = messageMapper.selectReservationMessage(msgId);
+		msg = list.get(0);
+//		msg = messageMapper.selectReservationMessage(msgId);
 		msg.setKeyMon(keyMon);
 		msg.setStatus(StaticConfig.MESSAGE_STATUS_RESEVATION_CANCEL);
 		int cnt = messageMapper.insertMessageRV(msg);

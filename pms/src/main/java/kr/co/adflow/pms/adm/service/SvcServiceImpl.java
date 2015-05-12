@@ -224,18 +224,27 @@ public class SvcServiceImpl implements SvcService {
 //		params.setUpdateId(issueId);
 //		int cnt = messageMapper.cancelReservationList(params);
 		
+		List<Message> list;
 		Message msg;
 		String keyMon = DateUtil.getYYYYMM();
 		String[] msgIds = reqIds.getMsgIds();
 		int cnt = 0;
 		for (int i = 0; i < msgIds.length; i++) {
 
-			msg = messageMapper.selectReservationMessage(msgIds[i]);
+			logger.debug("msgIds[i]::"+msgIds[i]+"==");
+			list = messageMapper.selectReservationMessage(msgIds[i]);
+			if (list.size() == 0) {
+				continue;
+			}
+			msg = list.get(0);
+			
+			logger.debug("msg::"+msg.toString());
 			msg.setKeyMon(keyMon);
 			msg.setStatus(StaticConfig.MESSAGE_STATUS_RESEVATION_CANCEL);
 			messageMapper.insertMessageRV(msg);
 			messageMapper.insertContent(msg);
 			messageMapper.deleteReservationMessage(msgIds[i]);
+			cnt++;
 			
 		}
 		return cnt;
