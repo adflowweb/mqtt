@@ -22,7 +22,7 @@ public class AuthRes {
 	private String ufmi;
 	
 	/** The groupTopic. */
-	private String groupTopic;
+	private String[] groupTopics;
 	
 	
 	
@@ -45,22 +45,24 @@ public class AuthRes {
 		this.ufmi = ufmi;
 	}
 
+	
+
 	/**
-	 * Gets the groupTopic.
+	 * Gets the groupTopics.
 	 *
-	 * @return the groupTopic
+	 * @return the groupTopics
 	 */
-	public String getGroupTopic() {
-		return groupTopic;
+	public String[] getGroupTopics() {
+		return groupTopics;
 	}
 
 	/**
-	 * Sets the groupTopic.
+	 * Sets the groupTopics.
 	 *
-	 * @param groupTopic the new groupTopic
+	 * @param groupTopics the new groupTopics
 	 */
-	public void setGroupTopic(String groupTopic) {
-		this.groupTopic = groupTopic;
+	public void setGroupTopics(String[] groupTopics) {
+		this.groupTopics = groupTopics;
 	}
 
 	/**

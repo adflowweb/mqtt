@@ -191,7 +191,7 @@ public class CDRCreateExecutor2 {
 				this.tailPrint();
 			}
 			stop = System.currentTimeMillis();
-			System.out.println("CDR file create elapsedTime=" + (stop - start) + "ms");
+			logger.debug("CDR file create elapsedTime=" + (stop - start) + "ms");
 			
 //			this.cDRCopyCommand();
 			this.cDRFileCopy();
@@ -449,48 +449,48 @@ public class CDRCreateExecutor2 {
 	
 	
 	
-	public void cDRCopyCommand() {
-		
-		String path = pmsConfig.CDR_FILE_PATH+this.fileDate;
-		logger.info("path ::{}", path);
-		
-		String targetDir = pmsConfig.CDR_TARGETFILE_PATH;
-		String shellDir = pmsConfig.CDR_FILE_PATH;
-		
-//		String command = "cp /Users/gwang/Desktop/dev/workspace_PUSH_KT_V2/temp/* /Users/gwang/Desktop/dev/workspace_PUSH_KT_V2/temp/cdr";
-		String command = shellDir + "copyCDRFile.sh"+ " 123 " + path +"/* " + targetDir;
-		
-		logger.info("==== shell command ::{}", command);
-
-		java.lang.Runtime runTime = java.lang.Runtime.getRuntime();
-		java.lang.Process process;
-		try {
-			process = runTime.exec(command);
-			
-			process.waitFor();
-			StringBuffer output = new StringBuffer();
-
-			BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-			 
-            String line = "";           
-            while ((line = reader.readLine())!= null) {
-                output.append(line + "\n");
-            }
-            
-            logger.info("==== command shell result  ::{}", output.toString());
-            
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		
-		
-	}
+//	public void cDRCopyCommand() {
+//		
+//		String path = pmsConfig.CDR_FILE_PATH+this.fileDate;
+//		logger.info("path ::{}", path);
+//		
+//		String targetDir = pmsConfig.CDR_TARGETFILE_PATH;
+//		String shellDir = pmsConfig.CDR_FILE_PATH;
+//		
+////		String command = "cp /Users/gwang/Desktop/dev/workspace_PUSH_KT_V2/temp/* /Users/gwang/Desktop/dev/workspace_PUSH_KT_V2/temp/cdr";
+//		String command = shellDir + "copyCDRFile.sh"+ " 123 " + path +"/* " + targetDir;
+//		
+//		logger.info("==== shell command ::{}", command);
+//
+//		java.lang.Runtime runTime = java.lang.Runtime.getRuntime();
+//		java.lang.Process process;
+//		try {
+//			process = runTime.exec(command);
+//			
+//			process.waitFor();
+//			StringBuffer output = new StringBuffer();
+//
+//			BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+//			 
+//            String line = "";           
+//            while ((line = reader.readLine())!= null) {
+//                output.append(line + "\n");
+//            }
+//            
+//            logger.info("==== command shell result  ::{}", output.toString());
+//            
+//
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
+//		
+//		
+//	}
 	
 	public void cDRFileCopy() {
 		
@@ -501,17 +501,18 @@ public class CDRCreateExecutor2 {
 		String targetDir = pmsConfig.CDR_TARGETFILE_PATH;
 		
 		String fileName;
-		
-		File targetDirFile = new File(targetDir);
-		
-		File[] delFileList = targetDirFile.listFiles();
-		
-		
-		//file copy
-		for (int i = 0; i < delFileList.length; i++) {
-			
-			delFileList[i].delete();
-		}
+
+		//20150512 - 기존 파일 삭제 하지 말라고 요청함.
+//		File targetDirFile = new File(targetDir);
+//		
+//		File[] delFileList = targetDirFile.listFiles();
+//		
+//		
+//		//file delte
+//		for (int i = 0; i < delFileList.length; i++) {
+//			
+//			delFileList[i].delete();
+//		}
 		
 		
 		//file copy

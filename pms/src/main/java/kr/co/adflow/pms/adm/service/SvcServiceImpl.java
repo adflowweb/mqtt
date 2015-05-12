@@ -148,7 +148,6 @@ public class SvcServiceImpl implements SvcService {
 	 * @return the int
 	 */
 	private int getInt(String string) {
-		System.out.println(string);
 		return Integer.parseInt(string);
 	}
 

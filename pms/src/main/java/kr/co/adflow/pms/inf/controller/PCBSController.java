@@ -67,7 +67,10 @@ public class PCBSController extends BaseController {
 			@RequestBody MultiValueMap<String,String> params)
 			throws Exception {
 
-		logger.debug("addUser");
+		logger.debug("=== params={}","certKey::"+params.get("certKey")+",solutionId::"+params.get("solutionId")+",solutionPw::"+params.get("solutionPw")
+				+",saId::"+params.get("saId")+",dSvcCd::"+params.get("dSvcCd")+",statusCd::"+params.get("statusCd")+",ptalk20Bunch::"+params.get("ptalk20Bunch")
+				+",usegroupNm::"+params.get("usegroupNm"));
+		
 //		System.out.println("========= pCBSReq");
 //		System.out.println("========= pCBSReq.getCertKey()::"+ params.get("certKey"));
 //		
@@ -76,33 +79,101 @@ public class PCBSController extends BaseController {
 //			   System.out.println("value: " + params.get(key));
 //			  }
 //		
-		List<String> tempList = params.get("certKey");
+		boolean resultCk = false;
+		
+		try {
+			
+			List<String> tempList = params.get("certKey");
 
-		String issueId = interceptMapper.selectCashedUserId(tempList.get(0));
-		//appkey check
-		if (issueId == null || issueId.trim().length() <= 0) {
-			logger.error("applicationKey error is {}", tempList.get(0));
-			throw new RuntimeException("CertKey not valid");
+			String issueId = interceptMapper.selectCashedUserId(tempList.get(0));
+			//appkey check
+			if (issueId == null || issueId.trim().length() <= 0) {
+				logger.error("applicationKey error is {}", tempList.get(0));
+				throw new RuntimeException("CertKey not valid");
+			}
+			
+			UserReq userReq = new UserReq();
+			
+			tempList = params.get("solutionId");
+			userReq.setUserId(tempList.get(0));
+			
+			tempList = params.get("solutionPw");
+			userReq.setPassword(tempList.get(0));
+			
+			tempList = params.get("saId");
+			userReq.setSaId(tempList.get(0));
+			
+			tempList = params.get("dSvcCd");
+			userReq.setUfmi(tempList.get(0));
+			
+			tempList = params.get("statusCd");
+			if (tempList.get(0).equals("01")) {
+				userReq.setStatus(1);
+			} else {
+				//상태코드 "01"아닌것은 모두 USER_STATUS_BROCK(2)처리 
+				userReq.setStatus(2);
+			}
+			
+			
+			tempList = params.get("ptalk20Bunch");
+			String ptalk20Bunch = tempList.get(0);
+			
+			tempList = params.get("usegroupNm");
+			String usegroupNm = tempList.get(0);
+			String ufmi = userReq.getUfmi();
+			
+			usegroupNm = "130,131,132";
+			ufmi = "82*200*1111";
+			ptalk20Bunch = "150";
+			
+			int firstIndex = ufmi.indexOf("*");
+			int lastIndex = ufmi.lastIndexOf("*");
+			List<String> groupTopics = new ArrayList<String>();
+			String[] groupList = usegroupNm.split(",");
+			StringBuffer grpupTopics = new StringBuffer();
+			String bunchid = 
+
+			ufmi.replace("*", "/");
+			//group_toipc
+			tempList = params.get("solutionPw");
+			if (ufmi.substring(0, 2).equals("82")) {
+				//Ptalk 1.0
+				for (int i = 0; i < groupList.length; i++) {
+					grpupTopics.append("mms/P1/"+ufmi.substring(firstIndex, lastIndex)+"/g"+groupList[i]);
+					if (i + 1 < groupList.length) {
+						grpupTopics.append(",");
+					}
+				}
+				
+			} else {
+				//Ptalk 2.0
+				for (int i = 0; i < groupList.length; i++) {
+					grpupTopics.append("mms/P2/"+ufmi.substring(0, firstIndex)+"/b"+ptalk20Bunch+"/g"+groupList[i]);
+					if (i + 1 < groupList.length) {
+						grpupTopics.append(",");
+					}
+				}
+
+			}
+			userReq.setGroupTopics(grpupTopics.toString());
+			
+			System.out.println("userReq::"+userReq.toString());
+			System.out.println("issueId::"+issueId);
+			
+			
+			
+			String userId = pcbsService.addUser(userReq, issueId);
+			if (userId != null && userId.trim().length() > 0) {
+				resultCk = true;
+			}
+			
+		} catch (Exception e) {
+			resultCk = false;
+			e.printStackTrace();
 		}
-		
-		UserReq userReq = new UserReq();
-		
-		tempList = params.get("solutionId");
-		userReq.setUserId(tempList.get(0));
-		tempList = params.get("solutionPw");
-		userReq.setPassword(tempList.get(0));
-		tempList = params.get("saId");
-		userReq.setSaId(tempList.get(0));
-		tempList = params.get("dSvcCd");
-		userReq.setUfmi(tempList.get(0));
-		tempList = params.get("solutionPw");
-		userReq.setGroupTopic(tempList.get(0));
-		
-//		String userId = pcbsService.addUser(userReq, issueId);
 
-		String res = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" + "\n" + "<boolen>false</boolen>";
 
-		
+		String res = "<?xml version=\"1.0\" encoding=\"utf-8\" ?> \n <boolen>" + resultCk + "</boolen>";
 		
 		return res;
 

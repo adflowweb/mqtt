@@ -29,8 +29,8 @@ public class UserReq {
 	/** The saId. */
 	private String saId;
 	
-	/** The groupTopic. */
-	private String groupTopic;
+	/** The groupTopics. */
+	private String groupTopics;
 	
 	/** The status. */
 	private int status;
@@ -91,21 +91,21 @@ public class UserReq {
 	}
 
 	/**
-	 * Gets the groupTopic.
+	 * Gets the groupTopics.
 	 *
-	 * @return the groupTopic
+	 * @return the groupTopics
 	 */
-	public String getGroupTopic() {
-		return groupTopic;
+	public String getGroupTopics() {
+		return groupTopics;
 	}
 
 	/**
-	 * Sets the groupTopic.
+	 * Sets the groupTopics.
 	 *
-	 * @param groupTopic the new groupTopic
+	 * @param groupTopics the new groupTopics
 	 */
-	public void setGroupTopic(String groupTopic) {
-		this.groupTopic = groupTopic;
+	public void setGroupTopics(String groupTopics) {
+		this.groupTopics = groupTopics;
 	}
 
 	/**
@@ -161,5 +161,15 @@ public class UserReq {
 	public void setMsgCntLimit(int msgCntLimit) {
 		this.msgCntLimit = msgCntLimit;
 	}
+
+	@Override
+	public String toString() {
+		return "UserReq [userId=" + userId + ", password=" + password
+				+ ", msgCntLimit=" + msgCntLimit + ", ufmi=" + ufmi + ", saId="
+				+ saId + ", groupTopics=" + groupTopics + ", status=" + status
+				+ "]";
+	}
+	
+	
 
 }

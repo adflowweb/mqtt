@@ -23,59 +23,59 @@ public class UserValidator {
 
 		UserValidator valid = new UserValidator();
 
-		System.out.println("01012341234::"
-				+ valid.getRequestType("01012341234"));
-		System.out.println("82*1234*1234::"
-				+ valid.getRequestType("82*1234*1234"));
-		System.out.println("01*1234*1234::"
-				+ valid.getRequestType("01*1234*1234"));
-		System.out.println("82*12*1234::" + valid.getRequestType("82*12*1234"));
-		System.out.println("01*12*1234::" + valid.getRequestType("01*12*1234"));
-		System.out.println("01123412a34::"
-				+ valid.getRequestType("01123412a34"));
-		System.out.println("82*200*8003::"
-				+ valid.getRequestType("82*200*8003"));
-
-		System.out.println("01012341234::"
-				+ valid.validRequestValue("01012341234"));
-		System.out.println("82*1234*1234::"
-				+ valid.validRequestValue("82*1234*1234"));
-		System.out.println("01*1234*1234::"
-				+ valid.validRequestValue("01*1234*1234"));
-		System.out.println("82*12*1234::"
-				+ valid.validRequestValue("82*12*1234"));
-		System.out.println("01*12*1234::"
-				+ valid.validRequestValue("01*12*1234"));
-		System.out.println("01123412a34::"
-				+ valid.validRequestValue("01123412a34"));
-		System.out.println("82*200*8003::"
-				+ valid.validRequestValue("82*200*8003"));
-
-		System.out.println("01012341234::"
-				+ valid.getRegstPhoneNo("01012341234"));
-		System.out.println("82*1234*1234::"
-				+ valid.getRegstUfmiNo("82*1234*1234"));
-		System.out.println("01*1234*1234::"
-				+ valid.getRegstUfmiNo("01*1234*1234"));
-		System.out.println("82*1234*1234::"
-				+ valid.getRegstUfmiNo("82*12*1234"));
-		System.out.println("01*1234*1234::"
-				+ valid.getRegstUfmiNo("01*12*1234"));
-		System.out.println("82*200*8003::"
-				+ valid.getRegstUfmiNo("82*200*8003"));
-
-		System.out.println("01012341234::"
-				+ valid.getSubscribPhoneNo("01012341234"));
-		System.out.println("82*1234*1234::"
-				+ valid.getSubscribUfmi1("82*1234*1234"));
-		System.out.println("01*1234*1234::"
-				+ valid.getSubscribUfmi2("01*1234*1234"));
-		System.out.println("82*1234*1234::"
-				+ valid.getSubscribUfmi1("82*12*1234"));
-		System.out.println("01*1234*1234::"
-				+ valid.getSubscribUfmi2("01*12*1234"));
-		System.out.println("82*200*8003::"
-				+ valid.getSubscribUfmi1("82*200*8003"));
+//		System.out.println("01012341234::"
+//				+ valid.getRequestType("01012341234"));
+//		System.out.println("82*1234*1234::"
+//				+ valid.getRequestType("82*1234*1234"));
+//		System.out.println("01*1234*1234::"
+//				+ valid.getRequestType("01*1234*1234"));
+//		System.out.println("82*12*1234::" + valid.getRequestType("82*12*1234"));
+//		System.out.println("01*12*1234::" + valid.getRequestType("01*12*1234"));
+//		System.out.println("01123412a34::"
+//				+ valid.getRequestType("01123412a34"));
+//		System.out.println("82*200*8003::"
+//				+ valid.getRequestType("82*200*8003"));
+//
+//		System.out.println("01012341234::"
+//				+ valid.validRequestValue("01012341234"));
+//		System.out.println("82*1234*1234::"
+//				+ valid.validRequestValue("82*1234*1234"));
+//		System.out.println("01*1234*1234::"
+//				+ valid.validRequestValue("01*1234*1234"));
+//		System.out.println("82*12*1234::"
+//				+ valid.validRequestValue("82*12*1234"));
+//		System.out.println("01*12*1234::"
+//				+ valid.validRequestValue("01*12*1234"));
+//		System.out.println("01123412a34::"
+//				+ valid.validRequestValue("01123412a34"));
+//		System.out.println("82*200*8003::"
+//				+ valid.validRequestValue("82*200*8003"));
+//
+//		System.out.println("01012341234::"
+//				+ valid.getRegstPhoneNo("01012341234"));
+//		System.out.println("82*1234*1234::"
+//				+ valid.getRegstUfmiNo("82*1234*1234"));
+//		System.out.println("01*1234*1234::"
+//				+ valid.getRegstUfmiNo("01*1234*1234"));
+//		System.out.println("82*1234*1234::"
+//				+ valid.getRegstUfmiNo("82*12*1234"));
+//		System.out.println("01*1234*1234::"
+//				+ valid.getRegstUfmiNo("01*12*1234"));
+//		System.out.println("82*200*8003::"
+//				+ valid.getRegstUfmiNo("82*200*8003"));
+//
+//		System.out.println("01012341234::"
+//				+ valid.getSubscribPhoneNo("01012341234"));
+//		System.out.println("82*1234*1234::"
+//				+ valid.getSubscribUfmi1("82*1234*1234"));
+//		System.out.println("01*1234*1234::"
+//				+ valid.getSubscribUfmi2("01*1234*1234"));
+//		System.out.println("82*1234*1234::"
+//				+ valid.getSubscribUfmi1("82*12*1234"));
+//		System.out.println("01*1234*1234::"
+//				+ valid.getSubscribUfmi2("01*12*1234"));
+//		System.out.println("82*200*8003::"
+//				+ valid.getSubscribUfmi1("82*200*8003"));
 
 	}
 

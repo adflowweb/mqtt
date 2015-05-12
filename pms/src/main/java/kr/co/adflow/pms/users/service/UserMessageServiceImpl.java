@@ -291,8 +291,8 @@ public class UserMessageServiceImpl implements UserMessageService {
 			responses = agent.send(request);
 
 			stop = System.currentTimeMillis();
-			System.out.println("elapsedTime=" + (stop - start) + "ms");
-			System.out.println("responses.length=" + responses.length);
+			logger.debug("elapsedTime=" + (stop - start) + "ms");
+			logger.debug("responses.length=" + responses.length);
 			
 			resultCnt = (Integer) responses[0].getParameterValue(MQConstants.MQIA_SUB_COUNT);
 			
@@ -359,8 +359,8 @@ public class UserMessageServiceImpl implements UserMessageService {
 			responses = agent.send(request);
 
 			stop = System.currentTimeMillis();
-			System.out.println("elapsedTime=" + (stop - start) + "ms");
-			System.out.println("responses.length=" + responses.length);
+			logger.debug("elapsedTime=" + (stop - start) + "ms");
+			logger.debug("responses.length=" + responses.length);
 
 			String token;
 			String ufmi;
@@ -374,7 +374,7 @@ public class UserMessageServiceImpl implements UserMessageService {
 				token = token.substring(0, token.indexOf(":"));
 				groupMessage.setReceiverTokenId(token);
 				
-				System.out.println(i+":"+token);
+				logger.debug(i+":"+token);
 				ufmi = pushMapper.getUfmi(token);
 				groupMessage.setReceiverUfmi(ufmi);
 				

@@ -118,15 +118,15 @@ public class AckMessageDrivenBean implements MessageListener {
 	private CtlQ getCtlQ(Ack ack) {
 		CtlQ ctlQ = new CtlQ();
 
-		System.out.println("========== ack type: "+ack.getAckType());
+		logger.debug("========== ack type: "+ack.getAckType());
 		if (ack.getAckType().equals("pma")) {
 			ctlQ.setExeType(StaticConfig.CONTROL_QUEUE_EXECUTOR_TYPE_CALLBACK_PMA);
-			System.out.println("========== setExeType1: "+ctlQ.getExeType());
+			logger.debug("========== setExeType1: "+ctlQ.getExeType());
 		} else {
 			ctlQ.setExeType(StaticConfig.CONTROL_QUEUE_EXECUTOR_TYPE_CALLBACK_APP);
-			System.out.println("========== setExeType2: "+ctlQ.getExeType());
+			logger.debug("========== setExeType2: "+ctlQ.getExeType());
 		}
-		System.out.println("========== setExeType3: "+ctlQ.getExeType());
+		logger.debug("========== setExeType3: "+ctlQ.getExeType());
 		
 		ctlQ.setTableName(ack.getKeyMon());
 		ctlQ.setMsgId(ack.getMsgId());

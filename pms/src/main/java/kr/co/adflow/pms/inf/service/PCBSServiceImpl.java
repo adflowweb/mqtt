@@ -45,6 +45,7 @@ public class PCBSServiceImpl implements PCBSService {
 		User user = userMapper.select(userReq.getUserId());
 		if (user == null || user.getUserId() == null || user.getUserId().trim().length() == 0) {
 			// Add User
+			user = new User();
 			user.setUserId(userReq.getUserId());
 			user.setPassword(this.getPassword(userReq));
 			user.setRole(StaticConfig.USER_ROLE_SERVICE);
@@ -54,7 +55,7 @@ public class PCBSServiceImpl implements PCBSService {
 			user.setIssueId(issueId);
 			user.setUfmi(userReq.getUfmi());
 			user.setSaId(userReq.getSaId());
-			user.setGroupTopic(userReq.getGroupTopic());
+			user.setGroupTopics(userReq.getGroupTopics());
 
 			Token token = new Token();
 			token.setUserId(userReq.getUserId());
@@ -79,7 +80,7 @@ public class PCBSServiceImpl implements PCBSService {
 			user.setIssueId(issueId);
 			user.setUfmi(userReq.getUfmi());
 			user.setSaId(userReq.getSaId());
-			user.setGroupTopic(userReq.getGroupTopic());
+			user.setGroupTopics(userReq.getGroupTopics());
 			
 			user.setAction("updateUser");
 			userMapper.logUserHistory(user);

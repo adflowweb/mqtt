@@ -72,8 +72,8 @@ public class User {
 	/** The saId. */
 	private String saId;
 	
-	/** The groupTopict. */
-	private String groupTopic;
+	/** The groupTopics. */
+	private String groupTopics;
 
 	
 	/**
@@ -114,21 +114,21 @@ public class User {
 	}
 
 	/**
-	 * Gets the groupTopic.
+	 * Gets the groupTopics.
 	 *
-	 * @return the groupTopic
+	 * @return the groupTopics
 	 */
-	public String getGroupTopic() {
-		return groupTopic;
+	public String getGroupTopics() {
+		return groupTopics;
 	}
 
 	/**
-	 * Sets the groupTopic.
+	 * Sets the groupTopics.
 	 *
-	 * @param groupTopic the new groupTopic
+	 * @param groupTopics the new groupTopics
 	 */
-	public void setGroupTopic(String groupTopic) {
-		this.groupTopic = groupTopic;
+	public void setGroupTopics(String groupTopics) {
+		this.groupTopics = groupTopics;
 	}
 
 	/**
