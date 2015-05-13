@@ -158,8 +158,14 @@ public class UserMessageServiceImpl implements UserMessageService {
 			msg.setMediaType(0);
 		}
 		
+		
 		//WEB:0, P-Talk1.0:1, P-Talk2.0:2
-		msg.setSendTerminalType(1);
+		if (msg.getIssueId().subSequence(5, 6).equals("1")) {
+			msg.setSendTerminalType(1);
+		} else {
+			msg.setSendTerminalType(2);
+		}
+		
 		
 		msg.setStatus(StaticConfig.MESSAGE_STATUS_SEND);
 		

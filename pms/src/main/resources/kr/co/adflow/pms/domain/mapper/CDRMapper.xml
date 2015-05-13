@@ -45,48 +45,6 @@
         limit #{startRow}, #{lengthRow}
 	</select>
 	
-	
-	<select id="getCDRList_backup" parameterType="kr.co.adflow.pms.domain.CDRParams" resultMap="CDRResult">
-		SELECT a.update_time
-		, b.ack_time as pma_ack_time
-		, a.issue_id
-		, a.receiver_topic
-		, a.media_type
-		, a.send_terminal_type
-		, a.msg_size
-		, a.group_id
-
-		FROM
-		pms.message${keyMon} a LEFT OUTER JOIN pms.ack${keyMon} b ON a.msg_id = b.msg_id AND b.ack_type = 'pma'	
-
-		WHERE 
-		a.status = 1
-		AND a.msg_type = 106
-		AND a.update_time <![CDATA[>=]]>  #{startDate}
-		AND a.update_time <![CDATA[<]]> #{endDate}
-        ORDER BY update_time
-        limit #{startRow}, #{lengthRow}
-	</select>
-	
-	
-	
-	
-	<select id="getCDRListCnt" parameterType="kr.co.adflow.pms.domain.CDRParams" resultType="Integer">
-		SELECT COUNT(*)
-		
-		FROM
-		pms.message${keyMon}
-
-		WHERE 
-		status = 1
-		AND msg_type = 106
-		AND update_time <![CDATA[>=]]>  #{startDate}
-		AND update_time <![CDATA[<]]> #{endDate}
-		ORDER BY update_time
-        limit #{startRow}, 10
-        
-	</select>
-	
 	<select id="getCDRListTotalCnt" parameterType="kr.co.adflow.pms.domain.CDRParams" resultType="Integer">
 		SELECT COUNT(*)
 		
@@ -96,6 +54,50 @@
 	    WHERE a.msg_id = b.msg_id   
 	    AND a.msg_type = 106 
 		AND a.status = 1 
+		AND b.ack_type = 'pma'
+		AND a.update_time <![CDATA[>=]]>  #{startDate}
+		AND a.update_time <![CDATA[<]]> #{endDate}
+	</select>
+	
+	
+	<select id="getCDRList2" parameterType="kr.co.adflow.pms.domain.CDRParams" resultMap="CDRResult">
+		SELECT a.update_time
+		, a.msg_id
+		, b.ack_time
+		, a.issue_id
+		, a.receiver_topic
+		, a.media_type
+		, a.send_terminal_type
+		, a.msg_size
+		, a.group_id
+		, a.msg_type
+		, b.token_id
+
+		FROM 
+		pms.message${keyMon} a,  pms.ack${keyMon} b 
+	    
+	    WHERE a.msg_id = b.msg_id   
+		AND a.status = 1 
+		AND a.msg_type IN (10,106)
+		AND b.ack_type = 'pma'
+		AND a.update_time <![CDATA[>=]]>  #{startDate}
+		AND a.update_time <![CDATA[<]]> #{endDate}
+		ORDER BY a.update_time 
+        limit #{startRow}, #{lengthRow}
+	</select>
+	
+	
+
+	
+	<select id="getCDRListTotalCnt2" parameterType="kr.co.adflow.pms.domain.CDRParams" resultType="Integer">
+		SELECT COUNT(*)
+		
+		FROM 
+		pms.message${keyMon} a,  pms.ack${keyMon} b 
+	    
+	    WHERE a.msg_id = b.msg_id   
+		AND a.status = 1 
+		AND a.msg_type IN (10,106)
 		AND b.ack_type = 'pma'
 		AND a.update_time <![CDATA[>=]]>  #{startDate}
 		AND a.update_time <![CDATA[<]]> #{endDate}

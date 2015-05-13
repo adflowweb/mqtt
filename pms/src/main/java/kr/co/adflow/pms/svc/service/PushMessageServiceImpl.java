@@ -98,10 +98,11 @@ public class PushMessageServiceImpl implements PushMessageService {
 		}
 		// 2. get max count by userId
 		// 3. check max count
-		if (userMapper.getMsgCntLimit(issueId) < message.getReceivers().length) {
-			throw new RuntimeException(
-					"send message count is message count limit over ");
-		}
+		// msgCntLimit disable
+//		if (userMapper.getMsgCntLimit(issueId) < message.getReceivers().length) {
+//			throw new RuntimeException(
+//					"send message count is message count limit over ");
+//		}
 
 		Message msg = new Message();
 		msg.setKeyMon(DateUtil.getYYYYMM());
@@ -126,8 +127,6 @@ public class PushMessageServiceImpl implements PushMessageService {
 		msg.setResendMaxCount(message.getResendMaxCount());
 		msg.setResendInterval(message.getResendInterval());
 		
-		// TMS:0, MMS:1
-		msg.setMediaType(0);
 		
 		//WEB:0, P-Talk1.0:1, P-Talk2.0:2
 		msg.setSendTerminalType(0);
@@ -137,6 +136,14 @@ public class PushMessageServiceImpl implements PushMessageService {
 			message.setContentLength(0);
 		}
 		msg.setMsgSize(message.getContentLength());
+		
+		// TMS:0, MMS:1
+		if (msg.getMsgSize() > 140) {
+			msg.setMediaType(1);
+		} else {
+			msg.setMediaType(0);
+		}
+				
 
 		String[] receivers = message.getReceivers();
 
@@ -144,10 +151,18 @@ public class PushMessageServiceImpl implements PushMessageService {
 
 		for (int i = 0; i < receivers.length; i++) {
 			logger.debug("=== receivers[{}]::{}",i,receivers[i]);
-			if (!userValidator.validRequestValue(receivers[i])) {
-				throw new RuntimeException(
-						"receivers formatting error count : " + i);
+			
+			//group topic check
+			if (!(receivers[i].subSequence(0, 5).equals("mms/P")&&receivers[i].indexOf("g") > 0)) {
+
+				if (!userValidator.validRequestValue(receivers[i])) {
+					throw new RuntimeException(
+							"receivers formatting error count : " + i);
+				}
+
 			}
+			
+			
 		}
 
 		resultList = new ArrayList<Map<String, String>>(receivers.length);
@@ -159,11 +174,18 @@ public class PushMessageServiceImpl implements PushMessageService {
 			msgMap = new HashMap<String, String>();
 			msg.setReceiver(receivers[i]);
 			msg.setMsgId(this.getMsgId());
-			// MEMO 여러 건일때 0 번째 msgId 를 대표로 groupId에 추가
-			if (i == 0) {
-				groupId = msg.getMsgId();
+//			// MEMO 여러 건일때 0 번째 msgId 를 대표로 groupId에 추가
+//			if (i == 0) {
+//				groupId = msg.getMsgId();
+//			}
+//			msg.setGroupId(groupId);
+			
+			//group topic check
+			if (receivers[i].subSequence(0, 5).equals("mms/P")&&receivers[i].indexOf("g") > 0) {
+				msg.setGroupId(receivers[i]);
+				msg.setReceiverTopic(receivers[i]);
 			}
-			msg.setGroupId(groupId);
+
 			// MEMO resend msg 인 경우 resendId 에 msgId 추가
 			if (msg.getResendCount() > 0) {
 				msg.setResendId(msg.getMsgId());

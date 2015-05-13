@@ -316,10 +316,18 @@ public class SvcController extends BaseController {
 		} else {
 			String[] receivers = msg.getReceivers();
 			for (int i = 0; i < receivers.length; i++) {
-				if (!isValid(receivers[i])) {
-					throw new RuntimeException("getReceivers not valid"
-							+ receivers[i]);
+				
+				//group topic check
+				if (!(receivers[i].subSequence(0, 5).equals("mms/P")&&receivers[i].indexOf("g") > 0)) {
+
+					if (!isValid(receivers[i])) {
+						throw new RuntimeException("getReceivers not valid"
+								+ receivers[i]);
+					}
+
 				}
+				
+				
 			}
 
 		}

@@ -38,7 +38,7 @@ public class CDRCreateExecutor2 {
 
 	/** The Constant logger. */
 	private static final Logger logger = LoggerFactory
-			.getLogger(CDRCreateExecutor2.class);
+			.getLogger(CDRCreateExecutor.class);
 
 	/** The CDR mapper. */
 	@Autowired
@@ -150,7 +150,7 @@ public class CDRCreateExecutor2 {
 			long stop;
 			start = System.currentTimeMillis();
 
-			cDRTotCnt = cDRMapper.getCDRListTotalCnt(cDRParams);
+			cDRTotCnt = cDRMapper.getCDRListTotalCnt2(cDRParams);
 			
 			if (cDRTotCnt == null) {
 				cDRTotCnt = 0;
@@ -159,16 +159,6 @@ public class CDRCreateExecutor2 {
 			if (cDRTotCnt > 0) {
 				boolean cDRFileNext = true;
 				
-				
-//				//30000 CDR Row => new file
-//				cDRParams.setLengthRow(cDRFileMaxRow);
-//				
-//				//Header print
-//				if (cDRTotCnt - cDRPrintCnt > cDRFileMaxRow) {
-//					cDRCnt = cDRFileMaxRow;
-//				} else {
-//					cDRCnt = cDRTotCnt - cDRPrintCnt;
-//				}
 				this.headerPrint();
 				
 				//1000건씩 처리 
@@ -301,7 +291,7 @@ public class CDRCreateExecutor2 {
 		
 		try {
 			
-			List<CDR> list = cDRMapper.getCDRList(cDRParams);
+			List<CDR> list = cDRMapper.getCDRList2(cDRParams);
 			
 			// CDR PRINT
 			String messageTopic1 = "";
@@ -310,11 +300,20 @@ public class CDRCreateExecutor2 {
 			String tempNo, pTalkVer;
 			String rRCause = "01";
 			int tempIndex;
-			boolean groupYes;
+			boolean groupYes = false;
 			for (CDR cDR : list) {
 				//stringBuffer clear
 				recordSb = new StringBuffer();
 				
+				if (cDR.getMsgType() == 10) {
+					//web message
+					// sender 권한이 "svcadm"이면 skip.
+					if (userMapper.selectRole(cDR.getIssueId()).equals("svcadm")) {
+						continue;
+					}
+				} 
+				
+				// group message check
 				if (cDR.getGroupId() == null || cDR.getGroupId().indexOf("/") < 0) {
 					groupYes = false;
 				}else {
@@ -349,18 +348,28 @@ public class CDRCreateExecutor2 {
 				
 				
 				//Caller NO
-				if (cDR.getMsgType() == 10) {
-					// MesgType == 10 (webclient message)
-					callerNo = RecordFomatUtil.ufmiNo(userMapper.selectUfmi(cDR.getIssueId()));
-					
-				} else {
-					// MesgType == 106 (user message)
+				if (cDR.getMsgType() == 106) {
+					//user message
 					callerNo = RecordFomatUtil.topicToUfmiNo(cDR.getIssueId());
-
+					recordSb.append(RecordFomatUtil.stingFormat(callerNo, 13));
+					pTalkVer = cDR.getIssueId().substring(5, 6);
+					
+				} else  {
+					// web message
+//					System.out.println("======== cDR.getIssueId()::"+cDR.getIssueId()+", cDR.getMsgType()::"+cDR.getMsgType());
+					callerNo = userMapper.selectUfmi(cDR.getIssueId());
+//					System.out.println("======== callerNo::"+callerNo);
+					callerNo = RecordFomatUtil.ufmiNo(callerNo);
+//					System.out.println("======== callerNo::"+callerNo);
+					recordSb.append(RecordFomatUtil.stingFormat(callerNo, 13));
+					
+					if (callerNo.substring(0, 2).equals("82")) {
+						pTalkVer = "1";
+					} else {
+						pTalkVer = "2";
+					}
 				}
 				
-				recordSb.append(RecordFomatUtil.stingFormat(callerNo, 13));
-				pTalkVer = cDR.getIssueId().substring(5, 6);
 				
 				//Called NO - Group Msg NO : ReceiverTopic, Group Msg Yes : ReceiverUfmi
 				calledNo = pushMapper.getUfmi(cDR.getTokenId());
@@ -382,8 +391,12 @@ public class CDRCreateExecutor2 {
 				//Message Type
 				recordSb.append(RecordFomatUtil.intFormat(cDR.getMediaType(), 2));
 				//Send Terminal Type
-//				recordSb.append(RecordFomatUtil.intFormat(cDR.getSendTerminalType(), 2));
-				recordSb.append(RecordFomatUtil.intFormat(Integer.parseInt(pTalkVer), 2));
+				if (cDR.getMsgType() == 106) {
+					recordSb.append(RecordFomatUtil.intFormat(Integer.parseInt(pTalkVer), 2));
+				} else {
+					recordSb.append(RecordFomatUtil.intFormat(cDR.getSendTerminalType(), 2));
+				}
+				
 				//Packet Size
 
 				recordSb.append(RecordFomatUtil.intFormat(cDR.getMsgSize(), 11));
@@ -392,6 +405,8 @@ public class CDRCreateExecutor2 {
 				if (groupYes) {
 					// 그룹메세지에서 자신은 skip
 					if(callerNo.equals(calledNo)){
+						
+						System.out.println("======== skip::"+callerNo);
 						continue;
 					}
 					pTalkVer = cDR.getGroupId().substring(5, 6);
@@ -502,13 +517,14 @@ public class CDRCreateExecutor2 {
 		
 		String fileName;
 
+		
 		//20150512 - 기존 파일 삭제 하지 말라고 요청함.
 //		File targetDirFile = new File(targetDir);
 //		
 //		File[] delFileList = targetDirFile.listFiles();
 //		
 //		
-//		//file delte
+//		//file delete
 //		for (int i = 0; i < delFileList.length; i++) {
 //			
 //			delFileList[i].delete();

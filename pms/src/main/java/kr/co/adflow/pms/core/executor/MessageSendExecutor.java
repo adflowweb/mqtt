@@ -3,6 +3,8 @@
  */
 package kr.co.adflow.pms.core.executor;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.Date;
 
 import kr.co.adflow.pms.core.config.PmsConfig;
@@ -37,6 +39,8 @@ public class MessageSendExecutor {
 	/** The pms config. */
 	@Autowired
 	private PmsConfig pmsConfig;
+	
+	private String hostname;
 
 	// @Scheduled(cron = "#{pms['executor.message.cron']}")
 	/**
@@ -45,6 +49,14 @@ public class MessageSendExecutor {
 	public void sendMessageArray() {
 		//logger.info("sendMessageArray execute time is {}", new Date());
 
+		String serverId = pmsConfig.EXECUTOR_SERVER_ID1;
+		if(serverId == null){
+			if(this.hostname == null) {
+				this.hostname = readHostname();
+			}
+			serverId = this.hostname + "01";
+
+		}
 		messageSendService.sendMessageArray(pmsConfig.EXECUTOR_SERVER_ID1,
 				pmsConfig.EXECUTOR_SEND_LIMIT);
 
@@ -233,6 +245,23 @@ public class MessageSendExecutor {
 			logger.info("createGroupMessage");
 		}
 
+	}
+	
+	public String  readHostname() {
+		String lineStr = "";
+		String hName = "";
+		Process process;
+		try {
+			process = Runtime.getRuntime().exec("hostname");
+			BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
+			while((lineStr = br.readLine()) != null){
+				hName = lineStr;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			hName = "none";
+		}
+		return hName;
 	}
 
 }

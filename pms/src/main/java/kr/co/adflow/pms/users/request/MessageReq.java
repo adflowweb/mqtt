@@ -38,7 +38,6 @@ public class MessageReq {
 	private int expiry;
 	
 	/** The content length. */
-	@NotNull
 	private Integer contentLength;
 	
 

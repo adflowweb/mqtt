@@ -5,6 +5,8 @@ package kr.co.adflow.pms.adm.request;
 
 import java.util.Date;
 
+import javax.validation.constraints.NotNull;
+
 import org.hibernate.validator.constraints.NotEmpty;
 
 // TODO: Auto-generated Javadoc
@@ -51,6 +53,29 @@ public class MessageReq {
 
 	/** The qos. */
 	private int qos;
+	
+	
+	/** The content length. */
+	private Integer contentLength;
+	
+
+	/**
+	 * Gets the content Length.
+	 *
+	 * @return the content Length
+	 */
+	public Integer getContentLength() {
+		return contentLength;
+	}
+
+	/**
+	 * Sets the content Length.
+	 *
+	 * @param contentLength the new content Length
+	 */
+	public void setContentLength(Integer contentLength) {
+		this.contentLength = contentLength;
+	}
 
 	/**
 	 * Gets the content type.

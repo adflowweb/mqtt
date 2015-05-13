@@ -93,7 +93,9 @@ public class UserValidator {
 		}
 
 		if (requestVal.substring(0, 3).equals("010")) {
-			return StaticConfig.SERVICE_REQUEST_FORMAT_TYPE_PHONE;
+			//010 전화번호도 허용안하기로 함.
+//			return StaticConfig.SERVICE_REQUEST_FORMAT_TYPE_PHONE;
+			return StaticConfig.SERVICE_REQUEST_FORMAT_TYPE_ERROR;
 		}
 
 		//kicho(20150410) -P1 규칙 : 82 * 1~6자리 * 1 ~6자리, P2 규칙: 00 ~ 41 * 1~4자리 * 1~4자리 - [01-start]		

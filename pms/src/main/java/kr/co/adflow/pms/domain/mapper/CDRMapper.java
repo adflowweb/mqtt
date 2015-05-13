@@ -22,15 +22,6 @@ public interface CDRMapper {
 	 */
 	List<CDR> getCDRList(CDRParams cDRParams);
 	
-	
-	/**
-	 * Gets the CDR count.
-	 *
-	 * @param params the params
-	 * @return the CDR count
-	 */
-	int getCDRListCnt(CDRParams cDRParams);
-	
 	/**
 	 * Gets the CDR total count.
 	 *
@@ -39,6 +30,7 @@ public interface CDRMapper {
 	 */
 	int getCDRListTotalCnt(CDRParams cDRParams);
 	
-
-
+	// TEST 
+	List<CDR> getCDRList2(CDRParams cDRParams);
+	int getCDRListTotalCnt2(CDRParams cDRParams);
 }
