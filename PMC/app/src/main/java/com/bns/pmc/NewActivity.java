@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Vibrator;
 import android.provider.ContactsContract;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -25,6 +26,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -94,6 +96,7 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
     private boolean m_bSend = false;
     private Intent m_intentResult = new Intent();
     private boolean enablePTT = false; //메시지 전송가능 상태체크용
+    private boolean vibration = false;
 
 
     @Override
@@ -323,6 +326,7 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
+        Log.d(PMCType.TAG, "dispatchKeyEvent시작(event=" + event + ")");
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
             if (event.getKeyCode() == PMCType.BNS_PMC_KEY_CODE_PTT_CALL &&
                     event.getRepeatCount() == 0) {
@@ -330,7 +334,9 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                 return true;
             }
         }
-        return super.dispatchKeyEvent(event);
+        boolean response = super.dispatchKeyEvent(event);
+        Log.d(PMCType.TAG, "dispatchKeyEvent종료(response=" + response + ")");
+        return response;
     }
 
     @Override
@@ -445,6 +451,40 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
 
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
+        Log.d(PMCType.TAG, "onTextChanged시작(CharSequence=" + s + ", start=" + start + ", before=" + before + ", count=" + count + ")");
+
+        //testCode
+        Log.d(PMCType.TAG, "에디터포커스=" + m_etNewMsg.isFocused());
+        if (m_etNewMsg.isFocused()) {
+            Log.d(PMCType.TAG, "문자열=" + s);
+            String title = getResources().getString(R.string.title_new_activity);
+            String str = s.toString();
+            int maxCnt = 140;
+            for (int i = 0; i < str.length(); i++) {
+                if (Character.getType(str.charAt(i)) == 5) {
+                    maxCnt = maxCnt - 2;
+                } else {
+                    maxCnt--;
+                }
+            }
+
+            if (maxCnt < 0) {
+                this.setTitle(title + "(MMS)");
+                //진동
+                if (!vibration) {
+                    // Java Source Code
+                    Vibrator vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                    vibe.vibrate(500);
+                    vibration = true;
+                }
+            } else {
+                this.setTitle(title + "(" + maxCnt + ")");
+                vibration = false;
+            }
+        }
+        //testCodeEnd
+
+
         EditText etCurrFocusEditText = m_etCurrFocusEditText;
         EditText etNumber = (EditText) m_listNumberLayout.get(m_nIdxNumber - 1).findViewById(R.id.editText_new_number);
 
@@ -730,8 +770,7 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                 AlertDialog.Builder builder = new AlertDialog.Builder(this)
                         .setTitle("수신자확인")
                         .setMessage("메시지수신자는\n총" + receiversCnt + "명 입니다.\n메시지를 보내시겠습니까?")
-                        .setCancelable(false)
-                        .setPositiveButton(R.string.accept,
+                        .setCancelable(false).setPositiveButton(R.string.accept,
                                 new Dialog.OnClickListener() {
 
                                     @Override
@@ -753,7 +792,32 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                                         dialog.dismiss();
                                     }
                                 });
-                builder.create().show();
+                final AlertDialog ad = builder.create();
+                ad.setOnKeyListener(new Dialog.OnKeyListener() {
+                    @Override
+                    public boolean onKey(DialogInterface dialogInterface, int keyCode, KeyEvent keyEvent) {
+                        Log.d(PMCType.TAG, "onKey시작(dialogInterface=" + dialogInterface + ", keyCode=" + keyCode + ", keyEvent=" + keyEvent + ")");
+                        //ppt키를 이용하여 메시지를 발송한다.
+                        if (keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
+                            if (keyEvent.getKeyCode() == PMCType.BNS_PMC_KEY_CODE_PTT_CALL &&
+                                    keyEvent.getRepeatCount() == 0) {
+                                //만약 현재 포커스가 positive 버튼에 있다면 메시지 전송 아니면 취소
+                                Log.d(PMCType.TAG, "focus=" + (Button) ad.getCurrentFocus());
+                                Button focusedBtn = (Button) ad.getCurrentFocus();
+                                // Close dialog
+                                dialogInterface.dismiss();
+                                if (focusedBtn == ad.getButton(DialogInterface.BUTTON_POSITIVE)) {
+                                    //발송
+                                    new asyncSendMsg().execute(m_listItemNew[0], m_listItemNew[1], m_listItemNew[2], m_listItemNew[3], m_listItemNew[4],
+                                            m_listItemNew[5], m_listItemNew[6], m_listItemNew[7], m_listItemNew[8], m_listItemNew[9]);
+                                }
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                });
+                ad.show();
             } else {
                 //단일메시지 발송
                 new asyncSendMsg().execute(m_listItemNew[0], m_listItemNew[1], m_listItemNew[2], m_listItemNew[3], m_listItemNew[4],
@@ -761,7 +825,7 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
             }
         } else {
             //실패시
-            //단일메시지 발송
+            //단일메시지 발송 여부 문의바람 !!!!
             new asyncSendMsg().execute(m_listItemNew[0], m_listItemNew[1], m_listItemNew[2], m_listItemNew[3], m_listItemNew[4],
                     m_listItemNew[5], m_listItemNew[6], m_listItemNew[7], m_listItemNew[8], m_listItemNew[9]);
         }
@@ -1127,7 +1191,7 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
             for (int i = 0; i < numberOfParams; i++) {
                 long start = System.currentTimeMillis();
                 String strNumber = params[i].strNumber;
-                Log.d(PMCType.TAG, "strNumber=" + strNumber);
+                Log.d(PMCType.TAG, "입력무전번호=" + strNumber);
 
                 int nNumberType = DataColumn.COLUMN_NUMBER_TYPE_PTT;
                 if (TextUtils.isEmpty(strNumber) == false) {
@@ -1181,7 +1245,20 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                     // Send Msg.
                     boolean bResultSuccess = false;
                     String contentType = "application/base64";
-                    String strResult = IPushUtil.sendMsg(binder, strSenderMMS, strReceiverMMS, contentType, strContent);
+
+                    //testCode
+                    int contentLength = 0;
+                    for (int j = 0; j < strMsg.length(); j++) {
+                        if (Character.getType(strMsg.charAt(j)) == 5) {
+                            contentLength = contentLength + 2;
+                        } else {
+                            contentLength++;
+                        }
+                    }
+                    Log.d(PMCType.TAG, "입력문자크기=" + contentLength + "문자");
+                    //testCodeEnd
+
+                    String strResult = IPushUtil.sendMsg(binder, strSenderMMS, strReceiverMMS, contentType, strContent, contentLength);
                     if (TextUtils.isEmpty(strResult) == false) {
                         bResultSuccess = JSonUtil.responeSendMessageResultSuccess(strResult);
                     }
