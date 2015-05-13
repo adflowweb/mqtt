@@ -132,7 +132,11 @@ public class PushMessageServiceImpl implements PushMessageService {
 		//WEB:0, P-Talk1.0:1, P-Talk2.0:2
 		msg.setSendTerminalType(0);
 		
-		msg.setMsgSize(0);
+		// message size
+		if (message.getContentLength() == null) {
+			message.setContentLength(0);
+		}
+		msg.setMsgSize(message.getContentLength());
 
 		String[] receivers = message.getReceivers();
 

@@ -142,7 +142,10 @@ public class UserMessageServiceImpl implements UserMessageService {
 		
 		
 		// message size
-		msg.setMsgSize(msg.getContent().length());
+		if (message.getContentLength() == null) {
+			message.setContentLength(0);
+		}
+		msg.setMsgSize(message.getContentLength());
 		
 //		logger.info(" ========= getMsgSize ::{}",msg.getMsgSize());
 		

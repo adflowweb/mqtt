@@ -154,16 +154,6 @@ public class CDRCreateExecutor {
 			if (cDRTotCnt > 0) {
 				boolean cDRFileNext = true;
 				
-				
-//				//30000 CDR Row => new file
-//				cDRParams.setLengthRow(cDRFileMaxRow);
-//				
-//				//Header print
-//				if (cDRTotCnt - cDRPrintCnt > cDRFileMaxRow) {
-//					cDRCnt = cDRFileMaxRow;
-//				} else {
-//					cDRCnt = cDRTotCnt - cDRPrintCnt;
-//				}
 				this.headerPrint();
 				
 				//1000건씩 처리 
