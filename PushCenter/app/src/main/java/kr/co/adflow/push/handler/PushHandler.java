@@ -1001,9 +1001,9 @@ public class PushHandler implements MqttCallback {
 
 
     public String sendMsgWithOpts(String sender, String receiver, int qos, String contentType, String
-            content, int expiry) throws Exception {
+            content, int contentLength, int expiry) throws Exception {
         Log.d(TAG, "sendMsgWithOpts시작(sender=" + sender + ", receiver=" + receiver + ", qos="
-                + qos + ", contentType=" + contentType + ", content=" + content + ", expiry=" + expiry + ", thread=" + Thread.currentThread() + ")");
+                + qos + ", contentType=" + contentType + ", content=" + content + ", contentLength=" + contentLength + ", expiry=" + expiry + ", thread=" + Thread.currentThread() + ")");
 
         //setMode
         setStrictMode();
@@ -1019,6 +1019,7 @@ public class PushHandler implements MqttCallback {
         data.put("qos", qos);
         data.put("contentType", contentType);
         data.put("content", content);
+        data.put("contentLength", contentLength);
         data.put("expiry", expiry);
         Log.d(TAG, "data=" + data);
 

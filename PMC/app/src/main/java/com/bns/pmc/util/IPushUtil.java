@@ -193,8 +193,8 @@ public class IPushUtil {
      * @return
      */
     public static String sendMsg(IPushService binder, String sender, String receiver,
-                                 String contentType, String content) {
-        Log.i(PMCType.TAG, "=== SendMsg start ===");
+                                 String contentType, String content, int contentLength) {
+        Log.i(PMCType.TAG, "sendMsg시작(binder=" + binder + ", sender=" + sender + ", receiver=" + receiver + ", contentType=" + contentType + ", content=" + content + ", contentLength=" + contentLength + ")");
 
         String strResult = null;
         if (binder != null) {
@@ -202,7 +202,7 @@ public class IPushUtil {
                 long start = System.currentTimeMillis();
                 // mq publish를 rest로 변경
                 //strResult = binder.sendMsg(sender, receiver, contentType, content);
-                strResult = binder.sendMsgWithOpts(sender, receiver, 2, contentType, content, 600);
+                strResult = binder.sendMsgWithOpts(sender, receiver, 2, contentType, content, contentLength, 600);
 
 
                 long stop = System.currentTimeMillis();
@@ -215,7 +215,7 @@ public class IPushUtil {
         } else {
             Log.d(PMCType.TAG, "Disconnected Push Service");
         }
-
+        Log.i(PMCType.TAG, "sendMsg종료(result=" + strResult + ")");
         return strResult;
     }
 
