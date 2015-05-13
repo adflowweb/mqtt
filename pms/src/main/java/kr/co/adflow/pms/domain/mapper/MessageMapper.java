@@ -192,7 +192,7 @@ public interface MessageMapper {
 	 * @param msgId the msg id
 	 * @return the Message
 	 */
-	Message selectReservationMessage(String msgId);
+	List<Message> selectReservationMessage(String msgId);
 	
 	
 	List<CDR> getCDRList2(Map<String, Object> params);

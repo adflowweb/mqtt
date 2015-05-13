@@ -121,6 +121,10 @@ public class UserMessageController extends BaseController {
 			@RequestParam("groupTopic") String groupTopic) throws Exception {
 
 		logger.debug("=== group Topic :{}", groupTopic);
+		
+		if (groupTopic == null || groupTopic.trim().length() == 0) {
+			throw new RuntimeException("Group Topic is empty.");
+		}
 
 		Integer resultCnt = userMessageService.groupListCnt (groupTopic);
 

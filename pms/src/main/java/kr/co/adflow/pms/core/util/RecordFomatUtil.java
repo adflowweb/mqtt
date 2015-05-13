@@ -88,9 +88,6 @@ public class RecordFomatUtil {
 			int lastT = topicTemp.lastIndexOf("/");
 
 			
-//			System.out.println("pTalkVer :" + pTalkVer);
-//			System.out.println("topicTemp :" + topicTemp);
-			
 			if(pTalkVer.equals("1")){
 				//P-tail 1.0
 				//82
@@ -133,10 +130,7 @@ public class RecordFomatUtil {
 			int firstT = topicTemp.indexOf("*");
 			int lastT = topicTemp.lastIndexOf("*");
 
-			
-//			System.out.println("pTalkVer :" + pTalkVer);
-//			System.out.println("topicTemp :" + topicTemp);
-			
+		
 			if(pTalkVer.equals("82")){
 				//P-tail 1.0
 				//82

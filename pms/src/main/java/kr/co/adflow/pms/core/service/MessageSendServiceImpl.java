@@ -3,15 +3,19 @@
  */
 package kr.co.adflow.pms.core.service;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.handler.DirectMsgHandler;
+import kr.co.adflow.pms.core.util.AckTRLog;
 import kr.co.adflow.pms.core.util.DateUtil;
 import kr.co.adflow.pms.core.util.KeyGenerator;
+import kr.co.adflow.pms.core.util.MessageTRLog;
 import kr.co.adflow.pms.domain.AckCallback;
 import kr.co.adflow.pms.domain.CtlQ;
 import kr.co.adflow.pms.domain.Message;
@@ -44,7 +48,7 @@ public class MessageSendServiceImpl implements MessageSendService {
 
 	/** The Constant logger. */
 	private static final Logger logger = LoggerFactory
-			.getLogger(MessageSendServiceImpl2.class);
+			.getLogger(MessageSendServiceImpl.class);
 
 	/** The message mapper. */
 	@Autowired
@@ -141,6 +145,14 @@ public class MessageSendServiceImpl implements MessageSendService {
 			jmsTemplate.execute(new DirectMsgHandlerBySessionCallback(jmsTemplate,msg));
 //			kicho-20150420:jms pool update [end]	
 			
+			//message tran log
+			try {
+				MessageTRLog.log(msg);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+			
 			// 재전송 로직 추가
 			String msgId = msg.getMsgId();
 			if (msg.getResendMaxCount() > 0) {
@@ -170,19 +182,22 @@ public class MessageSendServiceImpl implements MessageSendService {
 
 	private void reservationResend(Message msg,String msgId) {
 
-		long reservationTime = 0L;
+		
+		Calendar cal;
+		Date reservationTime;
 		if (msg.getReservationTime() == null) {
-			reservationTime = System.currentTimeMillis();
+			cal = Calendar.getInstance();
 		} else {
-			reservationTime = msg.getReservationTime().getTime();	
+			cal = Calendar.getInstance();
+			cal.setTime(msg.getReservationTime());
 		}
+		cal.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
 		int resendCnt = 1;
 		for (int i = 0; i < msg.getResendMaxCount(); i++) {
-			int intervalM = msg.getResendInterval();
 			msg.setReservation(true);
-			long interval = intervalM * 1000 * 60;
-			reservationTime = reservationTime + interval;
-			msg.setReservationTime(new Date(reservationTime));
+			cal.add(Calendar.MINUTE, msg.getResendInterval());
+			
+			msg.setReservationTime(cal.getTime());
 			msg.setMsgId(this.getMsgId());
 			msg.setResendCount(resendCnt++);
 			msg.setResendId(msgId);
@@ -191,7 +206,7 @@ public class MessageSendServiceImpl implements MessageSendService {
 //			messageMapper.insertContent(msg);
 			messageMapper.insertReservationMessage(msg);
 
-			ctlQMapper.insertQ(this.getCtlQ(msg));
+//			ctlQMapper.insertQ(this.getCtlQ(msg));
 
 		}
 		

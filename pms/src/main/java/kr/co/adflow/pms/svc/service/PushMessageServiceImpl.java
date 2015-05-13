@@ -41,7 +41,7 @@ public class PushMessageServiceImpl implements PushMessageService {
 
 	/** The Constant logger. */
 	private static final Logger logger = LoggerFactory
-			.getLogger(PushMessageServiceImpl2.class);
+			.getLogger(PushMessageServiceImpl.class);
 
 	/** The message mapper. */
 	@Autowired
@@ -132,7 +132,11 @@ public class PushMessageServiceImpl implements PushMessageService {
 		//WEB:0, P-Talk1.0:1, P-Talk2.0:2
 		msg.setSendTerminalType(0);
 		
-		msg.setMsgSize(0);
+		// message size
+		if (message.getContentLength() == null) {
+			message.setContentLength(0);
+		}
+		msg.setMsgSize(message.getContentLength());
 
 		String[] receivers = message.getReceivers();
 
@@ -355,7 +359,9 @@ public class PushMessageServiceImpl implements PushMessageService {
 		
 		Message msg;
 		String keyMon = DateUtil.getYYYYMM();
-		msg = messageMapper.selectReservationMessage(msgId);
+		List<Message> list = messageMapper.selectReservationMessage(msgId);
+		msg = list.get(0);
+//		msg = messageMapper.selectReservationMessage(msgId);
 		msg.setKeyMon(keyMon);
 		msg.setStatus(StaticConfig.MESSAGE_STATUS_RESEVATION_CANCEL);
 		int cnt = messageMapper.insertMessageRV(msg);

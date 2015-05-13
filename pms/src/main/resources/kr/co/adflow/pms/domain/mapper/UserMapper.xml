@@ -23,7 +23,7 @@
 		<result property="applicationToken" column="application_token" />
 		<result property="ufmi" column="ufmi" />
 		<result property="saId" column="sa_id" />
-		<result property="groupTopic" column="group_topic" />
+		<result property="groupTopics" column="group_topics" />
 	</resultMap>
 
 	<insert id="insertUser" parameterType="kr.co.adflow.pms.domain.User">
@@ -45,7 +45,7 @@
 		,issue_id
 		,ufmi
 		,sa_id
-		,group_topic
+		,group_topics
 		)
 		values(
 		#{userId}
@@ -65,7 +65,7 @@
 		,#{issueId}
 		,#{ufmi}
 		,#{saId}
-		,#{groupTopic}
+		,#{groupTopics}
 		)
 	</insert>
 
@@ -87,7 +87,7 @@
 		, a.issue_id
 		, a.ufmi
 		, a.sa_id
-		, a.group_topic
+		, a.group_topics
         , b.token_id as application_token
 		FROM pms.user a, pms.token b
 		WHERE
@@ -114,7 +114,7 @@
 		, a.issue_id
 		, a.ufmi
 		, a.sa_id
-		, a.group_topic
+		, a.group_topics
 		
 		<!-- kicho change - 20150401 
 		FROM pms.user
@@ -134,11 +134,13 @@
 	<resultMap id="AuthResult" type="kr.co.adflow.pms.domain.User">
 		<result property="userId" column="user_id" />
 		<result property="role" column="role" />
+		<result property="ufmi" column="ufmi" />
+		<result property="groupTopics" column="group_topics" />
 	</resultMap>
 
 	<select id="selectAuth" parameterType="kr.co.adflow.pms.domain.User"
 		resultMap="AuthResult">
-		SELECT user_id, role
+		SELECT user_id, role, ufmi, group_topics
 		FROM pms.user a
 		WHERE a.user_id = #{userId}
 		AND a.password = #{password}
@@ -171,7 +173,7 @@
 		,issue_id = #{issueId}
 		,ufmi = #{ufmi}
 		,sa_id = #{saId}
-		,group_topic = #{groupTopic}
+		,group_topics = #{groupTopics}
 		
 		WHERE user_id = #{userId}
 	</update>
@@ -201,7 +203,7 @@
 		,action
 		,ufmi
 		,sa_id
-		,group_topic
+		,group_topics
 		)
 		values(
 		#{userId}
@@ -222,7 +224,7 @@
 		,#{action}
 		,#{ufmi}
 		,#{saId}
-		,#{groupTopic}
+		,#{groupTopics}
 		)
 	</insert>
 	
@@ -256,4 +258,12 @@
 		,issue_id = #{issueId}
 		WHERE user_id = #{userId}
 	</update>
+	
+	<select id="selectUfmi" parameterType="String" resultType="String">
+		SELECT ufmi
+		FROM pms.user
+		WHERE
+		user_id = #{userId}
+	</select>
+	
 </mapper>	

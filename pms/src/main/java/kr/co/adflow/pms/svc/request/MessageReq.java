@@ -7,6 +7,7 @@ import java.util.Date;
 
 import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.Range;
+import javax.validation.constraints.NotNull;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -45,6 +46,31 @@ public class MessageReq {
 	public String getContentType() {
 		return contentType;
 	}
+	
+	
+	/** The content length. */
+	@NotNull
+	private Integer contentLength;
+	
+
+	/**
+	 * Gets the content Length.
+	 *
+	 * @return the content Length
+	 */
+	public Integer getContentLength() {
+		return contentLength;
+	}
+
+	/**
+	 * Sets the content Length.
+	 *
+	 * @param contentLength the new content Length
+	 */
+	public void setContentLength(Integer contentLength) {
+		this.contentLength = contentLength;
+	}
+	
 
 	/**
 	 * Sets the content type.

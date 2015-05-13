@@ -17,6 +17,53 @@ public class AuthRes {
 	
 	/** The token. */
 	private String token;
+	
+	/** The ufmi. */
+	private String ufmi;
+	
+	/** The groupTopic. */
+	private String[] groupTopics;
+	
+	
+	
+
+	/**
+	 * Gets the ufmi.
+	 *
+	 * @return the ufmi
+	 */
+	public String getUfmi() {
+		return ufmi;
+	}
+
+	/**
+	 * Sets the ufmi.
+	 *
+	 * @param ufmi the new ufmi
+	 */
+	public void setUfmi(String ufmi) {
+		this.ufmi = ufmi;
+	}
+
+	
+
+	/**
+	 * Gets the groupTopics.
+	 *
+	 * @return the groupTopics
+	 */
+	public String[] getGroupTopics() {
+		return groupTopics;
+	}
+
+	/**
+	 * Sets the groupTopics.
+	 *
+	 * @param groupTopics the new groupTopics
+	 */
+	public void setGroupTopics(String[] groupTopics) {
+		this.groupTopics = groupTopics;
+	}
 
 	/**
 	 * Gets the user id.

@@ -4,6 +4,8 @@
 package kr.co.adflow.pms.users.request;
 
 
+import javax.validation.constraints.NotNull;
+
 import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.Range;
 
@@ -34,6 +36,29 @@ public class MessageReq {
 	
 	/** The expiry. */
 	private int expiry;
+	
+	/** The content length. */
+	@NotNull
+	private Integer contentLength;
+	
+
+	/**
+	 * Gets the content Length.
+	 *
+	 * @return the content Length
+	 */
+	public Integer getContentLength() {
+		return contentLength;
+	}
+
+	/**
+	 * Sets the content Length.
+	 *
+	 * @param contentLength the new content Length
+	 */
+	public void setContentLength(Integer contentLength) {
+		this.contentLength = contentLength;
+	}
 
 	/**
 	 * Gets the content type.

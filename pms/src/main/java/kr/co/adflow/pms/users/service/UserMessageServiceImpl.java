@@ -18,6 +18,7 @@ import kr.co.adflow.pms.core.util.CheckUtil;
 import kr.co.adflow.pms.core.util.DateUtil;
 import kr.co.adflow.pms.core.util.KeyGenerator;
 import kr.co.adflow.pms.core.util.RecordFomatUtil;
+import kr.co.adflow.pms.core.util.MessageTRLog;
 import kr.co.adflow.pms.domain.GroupMessage;
 //import kr.co.adflow.pms.core.handler.PCFConnectionManager;
 import kr.co.adflow.pms.domain.Message;
@@ -32,6 +33,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
+
+
 
 
 
@@ -139,7 +142,10 @@ public class UserMessageServiceImpl implements UserMessageService {
 		
 		
 		// message size
-		msg.setMsgSize(msg.getContent().length());
+		if (message.getContentLength() == null) {
+			message.setContentLength(0);
+		}
+		msg.setMsgSize(message.getContentLength());
 		
 //		logger.info(" ========= getMsgSize ::{}",msg.getMsgSize());
 		
@@ -213,6 +219,13 @@ public class UserMessageServiceImpl implements UserMessageService {
 		//JMS message send
 		jmsTemplate.execute(new DirectMsgHandlerBySessionCallback(jmsTemplate,msg));
 
+		//message tran log
+		try {
+			MessageTRLog.log(msg);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		// DB message insert 
 		messageMapper.insertMessage(msg);
 		messageMapper.insertContent(msg);
@@ -281,8 +294,8 @@ public class UserMessageServiceImpl implements UserMessageService {
 			responses = agent.send(request);
 
 			stop = System.currentTimeMillis();
-			System.out.println("elapsedTime=" + (stop - start) + "ms");
-			System.out.println("responses.length=" + responses.length);
+			logger.debug("elapsedTime=" + (stop - start) + "ms");
+			logger.debug("responses.length=" + responses.length);
 			
 			resultCnt = (Integer) responses[0].getParameterValue(MQConstants.MQIA_SUB_COUNT);
 			
@@ -349,8 +362,8 @@ public class UserMessageServiceImpl implements UserMessageService {
 			responses = agent.send(request);
 
 			stop = System.currentTimeMillis();
-			System.out.println("elapsedTime=" + (stop - start) + "ms");
-			System.out.println("responses.length=" + responses.length);
+			logger.debug("elapsedTime=" + (stop - start) + "ms");
+			logger.debug("responses.length=" + responses.length);
 
 			String token;
 			String ufmi;
@@ -364,7 +377,7 @@ public class UserMessageServiceImpl implements UserMessageService {
 				token = token.substring(0, token.indexOf(":"));
 				groupMessage.setReceiverTokenId(token);
 				
-				System.out.println(i+":"+token);
+				logger.debug(i+":"+token);
 				ufmi = pushMapper.getUfmi(token);
 				groupMessage.setReceiverUfmi(ufmi);
 				

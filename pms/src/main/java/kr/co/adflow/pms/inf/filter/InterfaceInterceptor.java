@@ -38,7 +38,6 @@ public class InterfaceInterceptor extends HandlerInterceptorAdapter {
 	public boolean preHandle(HttpServletRequest request,
 			HttpServletResponse response, Object handler) throws Exception {
 
-		System.out.println("==========================");
 		String applicationKey = request
 				.getHeader(StaticConfig.HEADER_APPLICATION_KEY);
 		

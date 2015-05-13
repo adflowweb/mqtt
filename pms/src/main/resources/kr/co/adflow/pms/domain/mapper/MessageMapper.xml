@@ -746,7 +746,7 @@
 	</delete>
 	
 	<select id="selectReservationMessage" parameterType="String"
-		resultType="kr.co.adflow.pms.domain.Message">
+		resultMap="MessageResult">
 		SELECT group_id
 		,msg_id
 		,msg_type

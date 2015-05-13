@@ -19,6 +19,7 @@ import kr.co.adflow.pms.core.util.RecordFomatUtil;
 import kr.co.adflow.pms.domain.CDR;
 import kr.co.adflow.pms.domain.CDRParams;
 import kr.co.adflow.pms.domain.mapper.CDRMapper;
+import kr.co.adflow.pms.domain.mapper.UserMapper;
 import kr.co.adflow.pms.domain.push.mapper.PushMapper;
 
 import org.slf4j.Logger;
@@ -32,12 +33,12 @@ import com.ibm.mq.pcf.PCFMessage;
 /**
  * The Class CDRCreateExecutor.
  */
-@Component("cDRCreateExecutor")
-public class CDRCreateExecutor {
+@Component("cDRCreateExecutor2")
+public class CDRCreateExecutor2 {
 
 	/** The Constant logger. */
 	private static final Logger logger = LoggerFactory
-			.getLogger(CDRCreateExecutor.class);
+			.getLogger(CDRCreateExecutor2.class);
 
 	/** The CDR mapper. */
 	@Autowired
@@ -46,6 +47,10 @@ public class CDRCreateExecutor {
 	/** The Push Mapper. */
 	@Autowired
 	private PushMapper pushMapper;
+	
+	/** The User Mapper. */
+	@Autowired
+	private UserMapper userMapper;
 	
 	/** The Pms Config. */
 	@Autowired
@@ -154,6 +159,16 @@ public class CDRCreateExecutor {
 			if (cDRTotCnt > 0) {
 				boolean cDRFileNext = true;
 				
+				
+//				//30000 CDR Row => new file
+//				cDRParams.setLengthRow(cDRFileMaxRow);
+//				
+//				//Header print
+//				if (cDRTotCnt - cDRPrintCnt > cDRFileMaxRow) {
+//					cDRCnt = cDRFileMaxRow;
+//				} else {
+//					cDRCnt = cDRTotCnt - cDRPrintCnt;
+//				}
 				this.headerPrint();
 				
 				//1000건씩 처리 
@@ -334,7 +349,16 @@ public class CDRCreateExecutor {
 				
 				
 				//Caller NO
-				callerNo = RecordFomatUtil.topicToUfmiNo(cDR.getIssueId());
+				if (cDR.getMsgType() == 10) {
+					// MesgType == 10 (webclient message)
+					callerNo = RecordFomatUtil.ufmiNo(userMapper.selectUfmi(cDR.getIssueId()));
+					
+				} else {
+					// MesgType == 106 (user message)
+					callerNo = RecordFomatUtil.topicToUfmiNo(cDR.getIssueId());
+
+				}
+				
 				recordSb.append(RecordFomatUtil.stingFormat(callerNo, 13));
 				pTalkVer = cDR.getIssueId().substring(5, 6);
 				
@@ -478,14 +502,13 @@ public class CDRCreateExecutor {
 		
 		String fileName;
 
-		
 		//20150512 - 기존 파일 삭제 하지 말라고 요청함.
 //		File targetDirFile = new File(targetDir);
 //		
 //		File[] delFileList = targetDirFile.listFiles();
 //		
 //		
-//		//file delete
+//		//file delte
 //		for (int i = 0; i < delFileList.length; i++) {
 //			
 //			delFileList[i].delete();

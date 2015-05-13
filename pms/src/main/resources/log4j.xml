@@ -9,26 +9,28 @@
 			<param name="ConversionPattern" value="%-5p: %c - %m%n" />
 		</layout>
 	</appender>
-	
-		<!-- Application Loggers -->
-	<logger name="kr.co.adflow.pms.domain.mapper.InterceptMapper">
-		<level value="info" />
+
+	<!-- Application Loggers -->
+	<logger name="kr.co.adflow.pms">
+		<level value="error" />
+		<appender-ref ref="console" />
 	</logger>
-	
+
 	<!-- Application Loggers -->
 	<logger name="kr.co.adflow.pms.domain">
 		<level value="info" />
+		<appender-ref ref="console" />
 	</logger>
-	
+
 	<!-- 3rdparty Loggers -->
 	<logger name="org.springframework.core">
 		<level value="info" />
 	</logger>
-	
+
 	<logger name="org.springframework.beans">
 		<level value="info" />
 	</logger>
-	
+
 	<logger name="org.springframework.context">
 		<level value="info" />
 	</logger>
@@ -36,11 +38,52 @@
 	<logger name="org.springframework.web">
 		<level value="info" />
 	</logger>
+	<logger name="org.apache.ibatis">
+		<level value="info" />
+	</logger>
 
 	<!-- Root Logger -->
 	<root>
-		<priority value="info" />
-		<appender-ref ref="console" />
+		<priority value="error" />
+		<!-- <appender-ref ref="console" /> -->
 	</root>
+
+	<!-- Message 날짜별 트랜잭션로그 파일 생성 -->
+	<appender name="messageTrLogFileAppender" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="File" value="//cdrData/tranLog/message.log" />
+		<!-- <param name="File" value="/Users/gwang/Desktop/dev/workspace_PUSH_KT_V2/temp/message.log" /> --> 
+		<param name="Append" value="true" />
+		<!-- param name="MaxFileSize" value="100MB"/ -->
+		<!-- param name="MaxBackupIndex" value="2"></param -->
+		<param name="DatePattern" value="'.'yyyy-MM-dd" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%-7p %d [%t] %c %x - %m%n" />
+		</layout>
+	</appender>
+
+	<logger name="messageTrLogger">
+		<level value="info" />
+		<appender-ref ref="messageTrLogFileAppender" />
+	</logger>
 	
+		<!-- Ack 날짜별 트랜잭션로그 파일 생성 -->
+	<appender name="ackLogFileAppender" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="File" value="/cdrData/tranLog/ack.log" /> 
+<!-- <param name="File" value="/Users/gwang/Desktop/dev/workspace_PUSH_KT_V2/temp/ack.log" /> --> 
+		<param name="Append" value="true" />
+		<!-- param name="MaxFileSize" value="100MB"/ -->
+		<!-- param name="MaxBackupIndex" value="2"></param -->
+		<param name="DatePattern" value="'.'yyyy-MM-dd" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%-7p %d [%t] %c %x - %m%n" />
+		</layout>
+	</appender>
+
+	<logger name="ackLogger">
+		<level value="info" />
+		<appender-ref ref="ackLogFileAppender" />
+	</logger>
+	
+	
+
 </log4j:configuration>

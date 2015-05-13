@@ -81,6 +81,13 @@ public class CommonServiceImpl implements CommonService {
 		res.setToken(paramToken.getTokenId());
 		res.setUserId(user.getUserId());
 		res.setRole(user.getRole());
+		res.setUfmi(user.getUfmi());
+		if (user.getGroupTopics() != null && user.getGroupTopics().trim().length() > 0) {
+			res.setGroupTopics(user.getGroupTopics().split(","));
+		} else {
+			res.setGroupTopics(null);
+		}
+		
 
 		return res;
 	}
