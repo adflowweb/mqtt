@@ -49,7 +49,6 @@ public class MessageReq {
 	
 	
 	/** The content length. */
-	@NotNull
 	private Integer contentLength;
 	
 

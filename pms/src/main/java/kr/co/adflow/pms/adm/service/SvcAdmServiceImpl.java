@@ -124,6 +124,22 @@ public class SvcAdmServiceImpl implements SvcAdmService {
 
 		msg.setResendMaxCount(message.getResendMaxCount());
 		msg.setResendInterval(message.getResendInterval());
+		
+		//WEB:0, P-Talk1.0:1, P-Talk2.0:2
+		msg.setSendTerminalType(0);
+				
+		// message size
+		if (message.getContentLength() == null) {
+			message.setContentLength(0);
+		}
+		msg.setMsgSize(message.getContentLength());
+				
+		// TMS:0, MMS:1
+		if (msg.getMsgSize() > 140) {
+			msg.setMediaType(1);
+		} else {
+			msg.setMediaType(0);
+		}
 
 		String[] receivers = message.getReceivers();
 
@@ -149,11 +165,18 @@ public class SvcAdmServiceImpl implements SvcAdmService {
 			msg.setReceiverTopic(receivers[i]);
 			msg.setMsgId(this.getMsgId());
 
-			// MEMO 여러 건일때 0 번째 msgId 를 대표로 groupId에 추가
-			if (i == 0) {
-				groupId = msg.getMsgId();
+//			// MEMO 여러 건일때 0 번째 msgId 를 대표로 groupId에 추가
+//			if (i == 0) {
+//				groupId = msg.getMsgId();
+//			}
+//			msg.setGroupId(groupId);
+			
+			//group topic check
+			if (receivers[i].subSequence(0, 5).equals("mms/P")&&receivers[i].indexOf("g") > 0) {
+				msg.setGroupId(receivers[i]);
+				msg.setReceiverTopic(receivers[i]);
 			}
-			msg.setGroupId(groupId);
+			
 			// MEMO resend msg 인 경우 resendId 에 msgId 추가
 			if (msg.getResendCount() > 0) {
 				msg.setResendId(msg.getMsgId());

@@ -132,13 +132,14 @@ public class MessageSendServiceImpl implements MessageSendService {
 						msg.getReceiverTopic());
 			}
 
-			if (isUserMessage
-					&& userMapper.getMsgCntLimit(msg.getIssueId()) < 1) {
-				msg.setStatus(StaticConfig.MESSAGE_STATUS_COUNT_OVER);
-				messageMapper.updateStatus(msg);
-				ctlQMapper.deleteQ(msg.getMsgId());
-				continue;
-			}
+			// msgCntLimit disable
+//			if (isUserMessage
+//					&& userMapper.getMsgCntLimit(msg.getIssueId()) < 1) {
+//				msg.setStatus(StaticConfig.MESSAGE_STATUS_COUNT_OVER);
+//				messageMapper.updateStatus(msg);
+//				ctlQMapper.deleteQ(msg.getMsgId());
+//				continue;
+//			}
 
 //			kicho-20150420:jms pool update [start]			
 //			jmsTemplate.execute(msg.getReceiverTopic(), new DirectMsgHandler(msg));
@@ -170,9 +171,11 @@ public class MessageSendServiceImpl implements MessageSendService {
 			User user = new User();
 			user.setUserId(msg.getIssueId());
 			user.setMsgCntLimit(resultCnt);
-			if (isUserMessage) {
-				userMapper.discountMsgCntLimit(user);
-			}
+			
+			// msgCntLimit disable
+//			if (isUserMessage) {
+//				userMapper.discountMsgCntLimit(user);
+//			}
 			updateCnt++;
 		}
 		if (updateCnt > 0)
@@ -332,9 +335,10 @@ private String getKeyMon(String string) {
 
 		int type = userValidator.getRequestType(receiver);
 
-		if (StaticConfig.SERVICE_REQUEST_FORMAT_TYPE_PHONE == type) {
-			result = userValidator.getSubscribPhoneNo(receiver);
-		}
+		// 관제에서 PhoneNo로 못 보냄.
+//		if (StaticConfig.SERVICE_REQUEST_FORMAT_TYPE_PHONE == type) {
+//			result = userValidator.getSubscribPhoneNo(receiver);
+//		}
 
 		if (StaticConfig.SERVICE_REQUEST_FORMAT_TYPE_UFMI1 == type) {
 			result = userValidator.getSubscribUfmi1(receiver);
@@ -449,6 +453,12 @@ private String getKeyMon(String string) {
 			jmsTemplate.execute(new DirectMsgHandlerBySessionCallback(jmsTemplate,msg));
 //			kicho-20150420:jms pool update [end]	
 			
+			//message tran log
+			try {
+				MessageTRLog.log(msg);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			
 			// 재전송 로직 추가
 			String msgId = msg.getMsgId();

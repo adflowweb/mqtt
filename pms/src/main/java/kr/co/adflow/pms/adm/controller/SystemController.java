@@ -5,9 +5,14 @@ package kr.co.adflow.pms.adm.controller;
 
 import java.io.BufferedWriter;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+import java.util.TimeZone;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -581,7 +586,7 @@ public class SystemController extends BaseController {
 	 * @param date the date
 	 * @return 
 	 */
-	@RequestMapping(value = "/cDRCreate", method = RequestMethod.GET, params = "date", consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
+	@RequestMapping(value = "/cDRCreate", method = RequestMethod.GET, params = "date", produces = StaticConfig.HEADER_CONTENT_TYPE)
 	@ResponseBody
 	public Response<Result<Integer>> cDRCreate(@RequestParam("date") String date) throws Exception{
 
@@ -599,7 +604,7 @@ public class SystemController extends BaseController {
 
 	}
 	
-	@RequestMapping(value = "/cDRCreate2", method = RequestMethod.GET, params = "date", consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
+	@RequestMapping(value = "/cDRCreate2", method = RequestMethod.GET, params = "date", produces = StaticConfig.HEADER_CONTENT_TYPE)
 	@ResponseBody
 	public Response<Result<Integer>> cDRCreate2(@RequestParam("date") String date) throws Exception{
 
@@ -630,9 +635,29 @@ public class SystemController extends BaseController {
 
 		
 		String re = "";
+		
+//		Date date = System.currentTimeMillis();
+		
+		Calendar cal = Calendar.getInstance();
+//		cal.setTime(date);
+		cal.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
+		
+		System.out.println("==== Time::" + cal.getTime());
+		cal.add(Calendar.MINUTE, 10);
+		System.out.println("==== Time::" + cal.getTime());
+		
+		Properties sysprops = System.getProperties();
+	    for (Enumeration e = sysprops.propertyNames(); e.hasMoreElements();) {
+	      String key = (String) e.nextElement();
+	      String value = sysprops.getProperty(key);
+	      System.out.println(key + "=" + value);
+	    }
+
+
+		
 //		re = systemService.testRun();
 //		PCFConnectionManagerHandler.PCFConnectionManager();
-		cDRCreateExecutor.createCDR();
+//		cDRCreateExecutor.createCDR();
 
 		Result<String> result = new Result<String>();
 		result.setSuccess(true);
