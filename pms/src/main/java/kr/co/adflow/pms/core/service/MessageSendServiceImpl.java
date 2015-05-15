@@ -157,7 +157,7 @@ public class MessageSendServiceImpl implements MessageSendService {
 			// 재전송 로직 추가
 			String msgId = msg.getMsgId();
 			if (msg.getResendMaxCount() > 0) {
-				
+//				System.out.println("==== msg.getMsgSize()::"+msg.getMsgSize());
 				this.reservationResend(msg,msgId);
 			}
 			msg.setMsgId(msgId);
@@ -204,6 +204,8 @@ public class MessageSendServiceImpl implements MessageSendService {
 			msg.setMsgId(this.getMsgId());
 			msg.setResendCount(resendCnt++);
 			msg.setResendId(msgId);
+			
+//			System.out.println("====reservationResend msg.getMsgSize()::"+msg.getMsgSize());
 			
 //			messageMapper.insertMessage(msg);
 //			messageMapper.insertContent(msg);

@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import kr.co.adflow.pms.adm.request.AccountReq;
 import kr.co.adflow.pms.adm.request.PasswordReq;
 import kr.co.adflow.pms.adm.request.ReservationCancelReq;
+import kr.co.adflow.pms.adm.request.UserReq;
 import kr.co.adflow.pms.adm.response.MessagesRes;
 import kr.co.adflow.pms.adm.service.AccountService;
 import kr.co.adflow.pms.adm.service.SvcService;
@@ -402,6 +403,32 @@ public class SvcController extends BaseController {
 		result.setData(resultList);
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		Response<Result<List<Map<String, Object>>>> res = new Response(result);
+		return res;
+
+	}
+	
+	/**
+	 * Modify user name.
+	 *
+	 * @param req the req
+	 * @param appKey the app key
+	 * @return the response
+	 */
+	@RequestMapping(value = "/users/name", method = RequestMethod.PUT)
+	@ResponseBody
+	public Response<Result<List<String>>> modifyUserName(@RequestBody UserReq req,
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey) {
+
+		int resultCnt = accountService.modifyUserName(req, appKey);
+
+		List<String> messages = new ArrayList<String>();
+		messages.add("modifyUserName SUCCESS :" + resultCnt);
+
+		Result<List<String>> result = new Result<List<String>>();
+		result.setSuccess(true);
+		result.setInfo(messages);
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		Response<Result<List<String>>> res = new Response(result);
 		return res;
 
 	}

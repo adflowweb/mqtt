@@ -15,6 +15,57 @@
 	</resultMap>
 
 	<select id="getMonthSummary" parameterType="kr.co.adflow.pms.domain.MsgParams" resultMap="summaryResult">
+		SELECT issue_id AS user_id
+		, status
+		, is_reservation
+		, COUNT(msg_id) as msg_cnt
+        , COUNT(pma_ack_type) AS pma_ack_cnt
+        , COUNT(app_ack_type) AS app_ack_cnt
+        
+		FROM
+		(
+		select 
+		a.issue_id, a.status, a.is_reservation, a.msg_id, b.ack_type AS pma_ack_type, d.ack_type AS app_ack_type
+		FROM
+		pms.message${keyMon} a LEFT OUTER JOIN pms.ack${keyMon} b ON a.msg_id = b.msg_id AND b.ack_type = 'pma',
+        pms.message${keyMon} c LEFT OUTER JOIN pms.ack${keyMon} d ON c.msg_id = d.msg_id AND d.ack_type = 'app'		
+		WHERE a.msg_id = c.msg_id
+		<if test="msgType != null and msgType != 0">
+		AND a.msg_type = #{msgType}
+		</if>
+		<if test="dateStart != null ">
+		AND a.update_time <![CDATA[>]]>  #{dateStart}
+		</if>
+		<if test="dateEnd != null ">
+		AND a.update_time <![CDATA[<]]> #{dateEnd}
+		</if>	
+		<if test="issueId != null and issueId != ''">
+		AND a.issue_id = #{issueId}
+		</if>
+
+        UNION 
+        select issue_id, status, is_reservation, msg_id, NULL, NULL 
+        
+        FROM reservation_msg 
+        WHERE 
+        status = 0
+        <if test="dateStart != null ">
+		AND update_time <![CDATA[>]]>  #{dateStart}
+		</if>
+		<if test="dateEnd != null ">
+		AND update_time <![CDATA[<]]> #{dateEnd}
+		</if>	
+		<if test="issueId != null and issueId != ''">
+		AND issue_id = #{issueId}
+		</if>
+
+		) s
+		
+        GROUP BY user_id, status, is_reservation
+        ORDER BY user_id, status, is_reservation
+	</select>
+	
+	<select id="getMonthSummary_org" parameterType="kr.co.adflow.pms.domain.MsgParams" resultMap="summaryResult">
 		SELECT a.issue_id AS user_id
 		, a.status
 		, a.is_reservation

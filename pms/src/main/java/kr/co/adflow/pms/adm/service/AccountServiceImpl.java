@@ -5,6 +5,7 @@ package kr.co.adflow.pms.adm.service;
 
 import kr.co.adflow.pms.adm.request.AccountReq;
 import kr.co.adflow.pms.adm.request.PasswordReq;
+import kr.co.adflow.pms.adm.request.UserReq;
 import kr.co.adflow.pms.core.util.CheckUtil;
 import kr.co.adflow.pms.core.util.KeyGenerator;
 import kr.co.adflow.pms.domain.User;
@@ -125,6 +126,40 @@ public class AccountServiceImpl implements AccountService {
 			cnt = userMapper.updateUser(paramUser);
 		} else {
 			throw new RuntimeException("modifyAccount fail");
+		}
+
+		return cnt;
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.pms.adm.service.AccountService#modifyPassword(kr.co.adflow.pms.adm.request.PasswordReq, java.lang.String)
+	 */
+	@Override
+	public int modifyUserName(UserReq req, String appKey) {
+
+		if (!req.getUserName().trim().equals(req.getUserName().trim())) {
+			throw new RuntimeException("유저 이름 변경 실패1");
+		}
+
+		// TODO OLD <> NEW 확인 필요?
+
+		String userId = interceptMapper.selectCashedUserId(appKey);
+
+		User paramUser = new User();
+		paramUser.setUserId(userId);
+		paramUser.setUserName(req.getUserName());
+
+
+		paramUser.setAction("modifyUserName");
+		paramUser.setIssueId(userId);
+
+		int cnt = userMapper.logUserHistory(paramUser);
+
+		if (cnt > 0) {
+			cnt = userMapper.updateUserName(paramUser);
+		} else {
+			throw new RuntimeException("유저 이름 변경 실패2");
 		}
 
 		return cnt;

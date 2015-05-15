@@ -60,6 +60,9 @@
 		, a.expiry
 		, a.qos
 		, a.retained
+		, a.send_terminal_type
+		, a.media_type
+		, a.msg_size
 		, a.issue_time
 		, a.issue_id
 		, a.update_time
@@ -94,6 +97,9 @@
 		, a.expiry
 		, a.qos
 		, a.retained
+		, a.send_terminal_type
+		, a.media_type
+		, a.msg_size
 		, a.issue_time
 		, a.issue_id
 		, a.update_time
@@ -132,6 +138,9 @@
 		, a.expiry
 		, a.qos
 		, a.retained
+		, a.send_terminal_type
+		, a.media_type
+		, a.msg_size
 		, a.issue_time
 		, a.issue_id
 		, a.update_time
@@ -234,6 +243,9 @@
 		, a.expiry
 		, a.qos
 		, a.retained
+		, a.send_terminal_type
+		, a.media_type
+		, a.msg_size
 		, a.issue_time
 		, a.issue_id
 		, a.update_time
@@ -420,6 +432,9 @@
 		, expiry
 		, qos
 		, retained
+		, send_terminal_type
+		, media_type
+		, msg_size
 		, issue_time
 		, issue_id
 		, update_time
@@ -765,6 +780,9 @@
 		,expiry
 		,qos
 		,retained
+		,send_terminal_type
+		,media_type
+		,msg_size
 		,send_terminal_type
 		,media_type
 		,msg_size
