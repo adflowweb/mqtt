@@ -73,55 +73,32 @@ public class IPushUtil {
      * @param topic
      * @return String
      */
-    public static String subscribe(IPushService binder, String topic) {
-        Log.d(PMCType.TAG, "Subscribe start");
-
-        String strResult = null;
-        if (binder != null) {
-            try {
-                long start = System.currentTimeMillis();
-                strResult = binder.subscribe(topic, 2);
-                long stop = System.currentTimeMillis();
-                Log.d(PMCType.TAG, "[Result]" + strResult +
-                        " [Time]" + (stop - start) + "ms");
-            } catch (RemoteException e) {
-                Log.e(PMCType.TAG, "[Error]" + e.getMessage());
-                e.printStackTrace();
-            }
-        } else {
-            Log.d(PMCType.TAG, "Disconnected Push Service");
-        }
-
-        return strResult;
+    public static String subscribe(IPushService binder, String topic) throws Exception {
+        Log.d(PMCType.TAG, "subscribe시작(binder=" + binder + ", topic=" + topic + ")");
+        long start = System.currentTimeMillis();
+        String response = binder.subscribe(topic, 2);
+        long stop = System.currentTimeMillis();
+        Log.d(PMCType.TAG, "[Result]" + response +
+                " [Time]" + (stop - start) + "ms");
+        Log.d(PMCType.TAG, "subscribe종료(response=" + response + ")");
+        return response;
     }
 
     /**
-     * unsubscribe
-     *
      * @param binder
      * @param topic
-     * @return String
+     * @return
+     * @throws Exception
      */
-    public static String UnSubscribe(IPushService binder, String topic) {
-        Log.d(PMCType.TAG, "UnSubscribe start");
-
-        String strResult = null;
-        if (binder != null) {
-            try {
-                long start = System.currentTimeMillis();
-                strResult = binder.unsubscribe(topic);
-                long stop = System.currentTimeMillis();
-                Log.d(PMCType.TAG, "[Result]" + strResult +
-                        " [Time]" + (stop - start) + "ms");
-            } catch (RemoteException e) {
-                Log.e(PMCType.TAG, "[Error]" + e.getMessage());
-                e.printStackTrace();
-            }
-        } else {
-            Log.d(PMCType.TAG, "Disconnected Push Service");
-        }
-
-        return strResult;
+    public static String unsubscribe(IPushService binder, String topic) throws Exception {
+        Log.d(PMCType.TAG, "unsubscribe시작(binder=" + binder + ", topic=" + topic + ")");
+        long start = System.currentTimeMillis();
+        String response = binder.unsubscribe(topic);
+        long stop = System.currentTimeMillis();
+        Log.d(PMCType.TAG, "[Result]" + response +
+                " [Time]" + (stop - start) + "ms");
+        Log.d(PMCType.TAG, "unsubscribe종료(response=" + response + ")");
+        return response;
     }
 
     /**
@@ -180,6 +157,17 @@ public class IPushUtil {
         }
 
         return strResult;
+    }
+
+    public static void registerPMC(IPushService binder) {
+        Log.i(PMCType.TAG, "registerPMC시작(binder=" + binder + ")");
+        if (binder != null) {
+            try {
+                binder.registerPMC();
+            } catch (RemoteException e) {
+                Log.e(PMCType.TAG, "PMC앱등록중에러발생=" + e);
+            }
+        }
     }
 
     /**

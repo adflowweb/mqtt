@@ -10,6 +10,8 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -161,6 +163,11 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
     protected void onStart() {
         super.onStart();
         Log.e(PMCType.TAG, "[onStart]");
+
+        // Show EULA
+        eula = new AppEULA(this);
+        eula.show();
+
         // 15.04.02 계정 동기화.
         {
             Log.i(PMCType.TAG, "Account Sync");
@@ -170,9 +177,17 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
             m_context.sendBroadcast(i);
         }
 
-        // Show EULA
-        eula = new AppEULA(this);
-        eula.show();
+    }
+
+    private PackageInfo getPackageInfo() {
+        PackageInfo info = null;
+        try {
+            info = this.getPackageManager().getPackageInfo(
+                    this.getPackageName(), PackageManager.GET_ACTIVITIES);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return info;
     }
 
     @Override
