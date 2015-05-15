@@ -229,7 +229,7 @@ public class PushHandlerTest extends AndroidTestCase {
         Log.d("PushHandlerTest", "testGetSubscriptions시작()");
         String response = handler.getSubscriptions();
         System.out.println("response=" + response);
-        JSONAssert.assertEquals("{\"result\":{\"success\":true,\"data\":[\"mms/P1/82/50/g131\",\"mms/P1/82/50/g130\",\"rcs/82/50/p1212\",\"mms/821029998341\",\"mms/P1/DH-A101K\",\"mms/P1/82/50/p1212\",\"mms/P1/82/200/8003\",\"mms/P1/82\",\"mms/P1/82/50/g132\",\"mms/821021805840\",\"rcs/82\"]}}", response, true);
+        JSONAssert.assertEquals("{\"result\":{\"success\":true}}", response, false);
         Log.d("PushHandlerTest", "testGetSubscriptions종료()");
     }
 
@@ -263,7 +263,7 @@ public class PushHandlerTest extends AndroidTestCase {
     @Test
     public void testExistPMAByUFMI() throws Exception {
         Log.d("PushHandlerTest", "testExistPMAByUFMI시작()");
-        String response = handler.existPMAByUFMI("82*50*1206");
+        String response = handler.existPMAByUFMI("82*50*1212");
         System.out.println("response=" + response);
         JSONAssert.assertEquals("{\"result\":{\"success\":true,\"data\":{\"validation\":true}}}", response, true);
         Log.d("PushHandlerTest", "testExistPMAByUFMI종료()");

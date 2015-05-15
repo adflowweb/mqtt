@@ -210,7 +210,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
                 Cursor c = (Cursor) m_listView.getSelectedItem();
                 if (c != null) {
                     String strNumber = c.getString(c.getColumnIndex(DataColumn.MessageColumn.DB_COLUMN_NUMBER));
-                    Log.d("MainActivity", "pttNumber=" + strNumber + ")");
+                    Log.d("MainActivity", "pttNumber=" + strNumber);
                     CommonUtil.callPtt(m_context, strNumber);
                 }
                 return true;

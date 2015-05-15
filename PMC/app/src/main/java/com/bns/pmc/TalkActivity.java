@@ -82,13 +82,18 @@ public class TalkActivity extends Activity implements LoaderCallbacks<Cursor> {
             Intent intent = getIntent();
             String strTitle = null;
             String strNumber = intent.getStringExtra(PMCType.BNS_PMC_INTENT_EXTRA_NUMBER);
+            Log.d(PMCType.TAG, "strNumber=" + strNumber);
             boolean bControl = intent.getBooleanExtra(PMCType.BNS_PMC_INTENT_EXTRA_CONTROL, false);
+            Log.d(PMCType.TAG, "bControl=" + bControl);
             String strName = null;
             if (CommonUtil.checkPttGroupNumFormat(strNumber)) {
                 strName = CommonUtil.searchName_FromContact_ByPtt(m_context, strNumber, strUfmi);
+                Log.d(PMCType.TAG, "strName=" + strName);
             } else if (CommonUtil.checkPttCallNumFormat(strNumber)) {
                 String strFleetMemberNum = CommonUtil.conv_UrbanFleetMemberNumToFleetMemberNum(strNumber);
+                Log.d(PMCType.TAG, "strFleetMemberNum=" + strFleetMemberNum);
                 strName = CommonUtil.searchName_FromContact_ByPtt(m_context, strFleetMemberNum, strUfmi);
+                Log.d(PMCType.TAG, "strName=" + strName);
                 if (strName == null) {
                     strName = strFleetMemberNum;
                 }
@@ -96,13 +101,17 @@ public class TalkActivity extends Activity implements LoaderCallbacks<Cursor> {
 
             if (TextUtils.isEmpty(strName)) {
                 boolean bequals = CommonUtil.comp_FleetNumber(m_strFleetNumber, strNumber);
+                Log.d(PMCType.TAG, "bequals=" + bequals);
                 if (bequals) {
                     strTitle = CommonUtil.getUserNumber(strNumber);
+                    Log.d(PMCType.TAG, "strTitle=" + strTitle);
                 } else {
                     strTitle = strNumber;
+                    Log.d(PMCType.TAG, "strTitle=" + strTitle);
                 }
             } else {
                 strTitle = strName;
+                Log.d(PMCType.TAG, "strTitle=" + strTitle);
             }
             m_strTitle = strTitle;
             m_strNumber = strNumber;
@@ -517,7 +526,7 @@ public class TalkActivity extends Activity implements LoaderCallbacks<Cursor> {
                             getContentResolver().update(uri, null, null, null);
                         }
                         /*{
-							String strResult = IPushUtil.ack(binder, strMsgID, strToken);
+                            String strResult = IPushUtil.ack(binder, strMsgID, strToken);
 							
 							if (TextUtils.isEmpty(strResult) == false) {
 								boolean bResultSuccess = JSonUtil.responeAckResultSuccess(strResult);

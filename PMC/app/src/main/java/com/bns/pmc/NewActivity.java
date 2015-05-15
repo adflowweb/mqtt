@@ -189,10 +189,14 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                     if (CommonUtil.checkPttGroupNumFormat(strExtraNumber)) {
                         m_strExtraNumber = strExtraNumber;
                     } else {
-                        String strFleetMemberNum = CommonUtil.conv_UrbanFleetMemberNumToFleetMemberNum(strExtraNumber);
-                        m_strExtraNumber = strFleetMemberNum;
+                        //String strFleetMemberNum = CommonUtil.conv_UrbanFleetMemberNumToFleetMemberNum(strExtraNumber);
+                        //Log.d(PMCType.TAG, "strFleetMemberNum=" + strFleetMemberNum);
+                        //m_strExtraNumber = strFleetMemberNum;
+
+                        m_strExtraNumber = strExtraNumber;
                     }
                 }
+                Log.d(PMCType.TAG, "m_strExtraNumber=" + m_strExtraNumber);
 
                 RelativeLayout lay = m_listNumberLayout.get(0);
                 EditText etNumber = (EditText) lay.findViewById(R.id.editText_new_number);
@@ -453,22 +457,22 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
     public void onTextChanged(CharSequence s, int start, int before, int count) {
         Log.d(PMCType.TAG, "onTextChanged시작(CharSequence=" + s + ", start=" + start + ", before=" + before + ", count=" + count + ")");
 
-        //testCode
+        //메시지 카운팅
         Log.d(PMCType.TAG, "에디터포커스=" + m_etNewMsg.isFocused());
         if (m_etNewMsg.isFocused()) {
             Log.d(PMCType.TAG, "문자열=" + s);
             String title = getResources().getString(R.string.title_new_activity);
             String str = s.toString();
-            int maxCnt = 140;
+            int msgCnt = 0;
             for (int i = 0; i < str.length(); i++) {
                 if (Character.getType(str.charAt(i)) == 5) {
-                    maxCnt = maxCnt - 2;
+                    msgCnt = msgCnt + 2;
                 } else {
-                    maxCnt--;
+                    msgCnt++;
                 }
             }
 
-            if (maxCnt < 0) {
+            if (msgCnt > 140) {
                 this.setTitle(title + "(MMS)");
                 //진동
                 if (!vibration) {
@@ -477,13 +481,14 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                     vibe.vibrate(500);
                     vibration = true;
                 }
+            } else if (msgCnt == 0) {
+                this.setTitle(title);
+                vibration = false;
             } else {
-                this.setTitle(title + "(" + maxCnt + ")");
+                this.setTitle(title + "(" + msgCnt + "/140)");
                 vibration = false;
             }
         }
-        //testCodeEnd
-
 
         EditText etCurrFocusEditText = m_etCurrFocusEditText;
         EditText etNumber = (EditText) m_listNumberLayout.get(m_nIdxNumber - 1).findViewById(R.id.editText_new_number);
@@ -1219,8 +1224,13 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                         strReceiver = CommonUtil.addToUrbanNumber(strUrban, strFleetUser);
                         Log.i(PMCType.TAG, "Receiver=" + strReceiver);
 
-                        strReceiverMMS = CommonUtil.conv_UFMIToMMS(strReceiver, nVersion);
 
+                        //82*로시작할경우 무전기버전은 P1 아니면 P2
+                        if (strReceiver.startsWith("82*")) {
+                            strReceiverMMS = CommonUtil.conv_UFMIToMMS(strReceiver, 1);
+                        } else {
+                            strReceiverMMS = CommonUtil.conv_UFMIToMMS(strReceiver, 2);
+                        }
                     }
 
                     Log.i(PMCType.TAG, "Receiver MMS= " + strReceiverMMS);
