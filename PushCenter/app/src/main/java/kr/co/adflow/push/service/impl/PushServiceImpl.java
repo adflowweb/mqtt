@@ -231,6 +231,14 @@ public class PushServiceImpl extends Service implements PushService {
         }
 
         @Override
+        public void registerPMC() throws RemoteException {
+            Log.d(TAG, "registerPMC시작()");
+            //PMC 등록
+            preference.put(PushPreference.REGISTERED_PMC, true);
+            Log.d(TAG, "registerPMC종료()");
+        }
+
+        @Override
         public String existPMAByUFMI(String ufmi) throws RemoteException {
             Log.d(TAG, "existPMAByUFMI시작(ufmi=" + ufmi + ")");
             long start = System.currentTimeMillis();
@@ -720,6 +728,12 @@ public class PushServiceImpl extends Service implements PushService {
                 Log.d(TAG, "keepAlive체크를시작합니다.");
                 pushHandler.keepAlive();
                 Log.d(TAG, "keepAlive체크를종료합니다.");
+            } else if (intent.getAction().equals(
+                    "kr.co.adflow.push.service.STOP")) {
+                Log.d(TAG, "푸시서비스를종료합니다.");
+                pushHandler.stop();
+                this.stopSelf();
+                Log.d(TAG, "푸시서비스를종료되었습니다.");
             }
             // else if (intent.getAction().equals("kr.co.adflow.action.login"))
             // {
@@ -866,7 +880,8 @@ public class PushServiceImpl extends Service implements PushService {
     @Override
     public void subscribe(String topic, int qos) throws Exception {
         Log.d(TAG, "subScribe시작(토픽=" + topic + ", qos=" + qos + ")");
-        pushHandler.subscribe(topic, qos);
+        //pushHandler.subscribe(topic, qos);
+        pushHandler.addSubscribeJob(topic);
         Log.d(TAG, "subscribe종료()");
     }
 
@@ -877,7 +892,8 @@ public class PushServiceImpl extends Service implements PushService {
     @Override
     public void unsubscribe(String topic) throws Exception {
         Log.d(TAG, "unsubscribe시작(토픽=" + topic + ")");
-        pushHandler.unsubscribe(topic);
+        //pushHandler.unsubscribe(topic);
+        pushHandler.addUnsubscribeJob(topic);
         Log.d(TAG, "unsubscribe종료()");
     }
 

@@ -11,6 +11,8 @@ import android.os.PowerManager.WakeLock;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
+import java.util.Calendar;
+
 import kr.co.adflow.push.PushPreference;
 import kr.co.adflow.push.handler.PushHandler;
 import kr.co.adflow.push.service.impl.PushServiceImpl;
@@ -33,6 +35,10 @@ public class PushReceiver extends BroadcastReceiver {
     public PushReceiver() {
         super();
     }
+
+    //	// PTT LOGOUT
+    //public static final String BNS_PMC_PTT_REG_STATE_ACTION_LOGOUT = "com.bns.pw.action.REG_STATE";
+    //public static final String BNS_PMC_PTT_REG_STATE_EXTRA_VALUE = "reg";
 
     /*
      * (non-Javadoc)
@@ -109,24 +115,27 @@ public class PushReceiver extends BroadcastReceiver {
                 //set cleanSession
                 preference.put(PushPreference.CLEANSESSION, PushHandler.CLEAN_SESSION);
 
-
-                Log.d(TAG, "keepAlive알람을설정합니다.");
-                AlarmManager service = (AlarmManager) context
-                        .getSystemService(Context.ALARM_SERVICE);
-                Intent i = new Intent(context, PushReceiver.class);
-                i.setAction("kr.co.adflow.push.service.KEEPALIVE");
-                PendingIntent pending = PendingIntent.getBroadcast(context, 0,
-                        i, PendingIntent.FLAG_UPDATE_CURRENT);
-                service.setRepeating(AlarmManager.RTC_WAKEUP,
-                        System.currentTimeMillis() + 1000,
-                        1000 * PushHandler.ALARM_INTERVAL, pending);
-                Log.d(TAG, "keepAlive알람이설정되었습니다");
+//알람설정
+//                Log.d(TAG, "keepAlive알람을설정합니다.");
+//                AlarmManager service = (AlarmManager) context
+//                        .getSystemService(Context.ALARM_SERVICE);
+//                Intent i = new Intent(context, PushReceiver.class);
+//                i.setAction("kr.co.adflow.push.service.KEEPALIVE");
+//                PendingIntent pending = PendingIntent.getBroadcast(context, 0,
+//                        i, PendingIntent.FLAG_UPDATE_CURRENT);
+//                service.setRepeating(AlarmManager.RTC_WAKEUP,
+//                        System.currentTimeMillis() + 1000,
+//                        1000 * PushHandler.ALARM_INTERVAL, pending);
+//                Log.d(TAG, "keepAlive알람이설정되었습니다");
                 Log.d(TAG, "부팅완료작업을종료합니다.");
             } else if (intent.getAction().equals(
                     "kr.co.adflow.push.service.KEEPALIVE")) {
                 // keepalive
                 Log.d(TAG, "keepAlive체크를시작합니다.");
-
+                PushPreference preference = new PushPreference(context);
+                //boolean pttLogin = preference.getValue(PushPreference.PTT_LOGIN, false);
+                //Log.d(TAG, "pttLogin=" + pttLogin);
+                //if (pttLogin) {
                 Bundle bundle = intent.getExtras();
                 for (String key : bundle.keySet()) {
                     Log.d(TAG, key + " is a key in the bundle");
@@ -149,7 +158,63 @@ public class PushReceiver extends BroadcastReceiver {
                     context.startService(i);
                     // wakeLock.release();
                 }
+                //}
                 Log.d(TAG, "keepAlive체크를종료합니다.");
+            } else if (intent.getAction().equals("com.bns.pw.action.REG_STATE")) {
+                Log.d(TAG, "PTT로그인상태처리");
+                boolean login = intent.getBooleanExtra("reg", false);
+                Log.d(TAG, "login=" + login);
+
+                //PushPreference preference = new PushPreference(context);
+                AlarmManager service = (AlarmManager) context
+                        .getSystemService(Context.ALARM_SERVICE);
+
+                if (login) {
+
+                    Log.d(TAG, "keepAlive알람을설정합니다.");
+
+                    Intent i = new Intent(context, PushReceiver.class);
+                    i.setAction("kr.co.adflow.push.service.KEEPALIVE");
+                    PendingIntent pending = PendingIntent.getBroadcast(context, 0,
+                            i, PendingIntent.FLAG_UPDATE_CURRENT);
+                    Calendar now = Calendar.getInstance();
+                    service.setRepeating(AlarmManager.RTC_WAKEUP, now.getTimeInMillis(), 1000 * PushHandler.ALARM_INTERVAL, pending);
+                    Log.d(TAG, "keepAlive알람이설정되었습니다");
+
+
+//                    //preference.put(PushPreference.PTT_LOGIN, true);
+//                    // get wakelock
+//                    PowerManager pm = (PowerManager) context
+//                            .getSystemService(Context.POWER_SERVICE);
+//                    WakeLock wakeLock = pm.newWakeLock(
+//                            PowerManager.PARTIAL_WAKE_LOCK, "KTPWakeLock");
+//                    PushServiceImpl.setWakeLock(wakeLock);
+//                    Log.d(TAG, "웨이크락상태=" + wakeLock.isHeld());
+//                    if (!wakeLock.isHeld()) {
+//                        wakeLock.acquire(wakeLockHoldTime);
+//                        // ..screen will stay on during this section..
+//                        Log.d(TAG, "웨이크락=" + wakeLock);
+//                        Intent keepAliveIntent = new Intent(context, PushServiceImpl.class);
+//                        keepAliveIntent.setAction("kr.co.adflow.push.service.KEEPALIVE");
+//                        context.startService(keepAliveIntent);
+//                        // wakeLock.release();
+//                    }
+                } else {
+                    //PTT 로그인 정보
+                    //preference.put(PushPreference.PTT_LOGIN, false);
+
+                    //알람제거
+                    Intent keepAliveIntent = new Intent(context, PushReceiver.class);
+                    keepAliveIntent.setAction("kr.co.adflow.push.service.KEEPALIVE");
+                    PendingIntent pending = PendingIntent.getBroadcast(context, 0,
+                            keepAliveIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    service.cancel(pending);
+
+                    //stop service
+                    Intent i = new Intent(context, PushServiceImpl.class);
+                    i.setAction("kr.co.adflow.push.service.STOP");
+                    context.startService(i);
+                }
             } else {
                 Log.e(TAG, "적절한처리핸들러가없습니다.");
             }

@@ -166,6 +166,7 @@ public class PushHandler implements MqttCallback {
                 token.waitForCompletion();
                 //dbworker thread 종료
                 dbworker.discard();
+                dbworker = null;
             } catch (MqttException e) {
                 Log.e(TAG, "에러발생", e);
             }
@@ -234,9 +235,15 @@ public class PushHandler implements MqttCallback {
             // ping
             pingSender.ping();
             // 할일처리
-            synchronized (dbworker) {
-                Log.d(TAG, "dbworker를깨웁니다.");
-                dbworker.notify();
+            if (dbworker == null) {
+                dbworker = new DBWorker();
+                dbworker.start();
+                Log.d(TAG, "dbworker=" + dbworker);
+            } else {
+                synchronized (dbworker) {
+                    Log.d(TAG, "dbworker를깨웁니다.");
+                    dbworker.notify();
+                }
             }
         } catch (Exception e) {
             Log.e(TAG, "keepAlive처리시예외상황발생", e);
@@ -260,7 +267,6 @@ public class PushHandler implements MqttCallback {
         pushdb.testQuery();
         Log.d(TAG, "expireMsg종료()");
     }
-
 
     /**
      *
@@ -303,6 +309,12 @@ public class PushHandler implements MqttCallback {
                                         Log.i(TAG, "SUBSCRIBE작업이수행되었습니다.jobID=" + jobs[i].getId());
                                         break;
                                     case 2: // UNSUBSCRIBE
+                                        Log.d(TAG, "UNSUBSCRIBE작업시작");
+                                        String unscribeTopic = jobs[i].getTopic();
+                                        Log.d(TAG, "topic=" + unscribeTopic);
+                                        unsubscribe(unscribeTopic);
+                                        pushdb.deteletJob(jobs[i].getId());
+                                        Log.i(TAG, "UNSUBSCRIBE작업이수행되었습니다.jobID=" + jobs[i].getId());
                                         break;
                                     case 3: // BROADCAST
                                         Log.d(TAG, "브로드캐스트작업시작");
@@ -545,9 +557,16 @@ public class PushHandler implements MqttCallback {
                     context.startService(restart);
                     break;
                 case CONTROL_MESSAGE:
+                case USER_MESSAGE:
+                    boolean enable = preference.getValue(PushPreference.REGISTERED_PMC, false);
+                    if (enable) {
+                        sendBroadcast(data, currentToken, msgId);
+                    } else {
+                        Log.d(TAG, "PMC가 사용가능하지 않습니다.");
+                    }
+                    break;
                 case FIRMWARE_UPDATE_MESSAGE:
                 case DIG_ACCOUNT_INFO_MESSAGE:
-                case USER_MESSAGE:
                     //broadcast 작업추가
                     //int jobID = pushdb.addJob(BROADCAST, "", "{\"msgId\":\"" + msgId + "\"}");
                     //Log.d(TAG, "broadcast작업이추가되었습니다.jobID=" + jobID);
@@ -577,11 +596,26 @@ public class PushHandler implements MqttCallback {
         Log.d(TAG, "addAckJob종료()");
     }
 
+    /**
+     * @param topic
+     * @throws Exception
+     */
     public void addSubscribeJob(String topic) throws Exception {
         Log.d(TAG, "addSubscribeJob시작(topic=" + topic + ")");
         int job = pushdb.addJob(Job.SUBSCRIBE, topic, null);
         Log.i(TAG, "subscribe작업이추가되었습니다.jobID=" + job);
         Log.d(TAG, "addSubscribeJob종료()");
+    }
+
+    /**
+     * @param topic
+     * @throws Exception
+     */
+    public void addUnsubscribeJob(String topic) throws Exception {
+        Log.d(TAG, "addUnsubscribeJob시작(topic=" + topic + ")");
+        int job = pushdb.addJob(Job.UNSUBSCRIBE, topic, null);
+        Log.i(TAG, "unsubscribe작업이추가되었습니다.jobID=" + job);
+        Log.d(TAG, "addUnsubscribeJob종료()");
     }
 
     /**
@@ -723,6 +757,10 @@ public class PushHandler implements MqttCallback {
         IMqttToken token = mqttClient.subscribe(topic, qos);
         token.waitForCompletion();
         Log.d(TAG, "토픽구독을완료하였습니다.");
+
+        //addSubscribeJob(topic);
+
+
         Log.d(TAG, "subscribe종료()");
     }
 
@@ -851,7 +889,7 @@ public class PushHandler implements MqttCallback {
         HttpRequest request = HttpRequest.post(url)
                 .trustAllCerts() //Accept all certificates
                 .trustAllHosts() //Accept all hostnames
-                .header("X-ApiKey", currentToken)
+                        //.header("X-ApiKey", currentToken)
                 .header("Content-Type", "application/json;charset=utf-8").send(data.toString());
 
         Log.d(TAG, "responseCode=" + request.code());
