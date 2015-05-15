@@ -41,6 +41,7 @@ public class MessageSendExecutor {
 	private PmsConfig pmsConfig;
 	
 	private String hostname;
+	private String serverId;
 
 	// @Scheduled(cron = "#{pms['executor.message.cron']}")
 	/**
@@ -49,16 +50,21 @@ public class MessageSendExecutor {
 	public void sendMessageArray() {
 		//logger.info("sendMessageArray execute time is {}", new Date());
 
-		String serverId = pmsConfig.EXECUTOR_SERVER_ID1;
-		if(serverId == null){
-			if(this.hostname == null) {
-				this.hostname = readHostname();
+		
+		int executorSendLimit = 1000;
+		if(this.serverId == null){
+			this.serverId = pmsConfig.EXECUTOR_SERVER_ID1;
+			if (this.serverId == null) {
+				if(this.hostname == null) {
+					this.hostname = readHostname();
+				}
+				this.serverId = this.hostname + "01";
+			}else {
+				executorSendLimit = pmsConfig.EXECUTOR_SEND_LIMIT;
 			}
-			serverId = this.hostname + "01";
-
+			
 		}
-		messageSendService.sendMessageArray(pmsConfig.EXECUTOR_SERVER_ID1,
-				pmsConfig.EXECUTOR_SEND_LIMIT);
+		messageSendService.sendMessageArray(this.serverId, executorSendLimit);
 
 	}
 
@@ -70,8 +76,21 @@ public class MessageSendExecutor {
 		//logger.info("sendReservationMessageArray execute time is {}",
 		//		new Date());
 
-		messageSendService.sendReservationMessageArray(
-				pmsConfig.EXECUTOR_SERVER_ID1, pmsConfig.EXECUTOR_SEND_LIMIT);
+		int executorSendLimit = 1000;
+		if(this.serverId == null){
+			this.serverId = pmsConfig.EXECUTOR_SERVER_ID1;
+			if (this.serverId == null) {
+				if(this.hostname == null) {
+					this.hostname = readHostname();
+				}
+				this.serverId = this.hostname + "01";
+			}else {
+				executorSendLimit = pmsConfig.EXECUTOR_SEND_LIMIT;
+			}
+			
+		}
+		
+		messageSendService.sendReservationMessageArray(serverId, executorSendLimit);
 
 	}
 	

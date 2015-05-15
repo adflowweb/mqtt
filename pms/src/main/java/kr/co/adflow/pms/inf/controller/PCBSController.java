@@ -84,6 +84,10 @@ public class PCBSController extends BaseController {
 		try {
 			
 			List<String> tempList = params.get("certKey");
+			if (tempList.get(0) == null || tempList.get(0).trim().length() <= 0) {
+				logger.error("certKey error is {}", tempList.get(0));
+				throw new RuntimeException("CertKey not valid");
+			}
 
 			String issueId = interceptMapper.selectCashedUserId(tempList.get(0));
 			//appkey check
@@ -95,18 +99,36 @@ public class PCBSController extends BaseController {
 			UserReq userReq = new UserReq();
 			
 			tempList = params.get("solutionId");
+			if (tempList.get(0) == null || tempList.get(0).trim().length() <= 0) {
+				logger.error("solutionId error is {}", tempList.get(0));
+				throw new RuntimeException("solutionId not valid");
+			}
 			userReq.setUserId(tempList.get(0));
+			userReq.setUserName(tempList.get(0));
+			
 			
 			tempList = params.get("solutionPw");
+			if (tempList.get(0) == null || tempList.get(0).trim().length() <= 0) {
+				logger.error("solutionPw error is {}", tempList.get(0));
+				throw new RuntimeException("solutionPw not valid");
+			}
 			userReq.setPassword(tempList.get(0));
 			
 			tempList = params.get("saId");
 			userReq.setSaId(tempList.get(0));
 			
 			tempList = params.get("dSvcCd");
+			if (tempList.get(0) == null || tempList.get(0).trim().length() <= 0) {
+				logger.error("dSvcCd error is {}", tempList.get(0));
+				throw new RuntimeException("dSvcCd not valid");
+			}
 			userReq.setUfmi(tempList.get(0));
 			
 			tempList = params.get("statusCd");
+			if (tempList.get(0) == null || tempList.get(0).trim().length() <= 0) {
+				logger.error("statusCd error is {}", tempList.get(0));
+				throw new RuntimeException("statusCd not valid");
+			}
 			//01  - 사용중, 11 - 선불사용중
 			if (tempList.get(0).equals("01")||tempList.get(0).equals("11")) {
 				userReq.setStatus(0);
@@ -114,7 +136,6 @@ public class PCBSController extends BaseController {
 				//상태코드 "01"아닌것은 모두 USER_STATUS_BROCK(2)처리 
 				userReq.setStatus(2);
 			}
-			
 			
 			tempList = params.get("ptalk20Bunch");
 			String ptalk20Bunch = tempList.get(0);

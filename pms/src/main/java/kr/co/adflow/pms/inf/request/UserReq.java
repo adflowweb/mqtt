@@ -35,6 +35,28 @@ public class UserReq {
 	/** The status. */
 	private int status;
 	
+	/** The user Name. */
+	private String userName;
+	
+	
+
+	/**
+	 * Gets the user Name.
+	 *
+	 * @return the userName
+	 */
+	public String getUserName() {
+		return userName;
+	}
+
+	/**
+	 * Sets the user Name.
+	 *
+	 * @param userName the new userName
+	 */
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
 
 	/**
 	 * Gets the status.
