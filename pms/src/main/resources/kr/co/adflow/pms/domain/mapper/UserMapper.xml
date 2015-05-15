@@ -136,11 +136,12 @@
 		<result property="role" column="role" />
 		<result property="ufmi" column="ufmi" />
 		<result property="groupTopics" column="group_topics" />
+		<result property="userName" column="user_name" />
 	</resultMap>
 
 	<select id="selectAuth" parameterType="kr.co.adflow.pms.domain.User"
 		resultMap="AuthResult">
-		SELECT user_id, role, ufmi, group_topics
+		SELECT user_id, role, ufmi, group_topics, user_name
 		FROM pms.user a
 		WHERE a.user_id = #{userId}
 		AND a.password = #{password}

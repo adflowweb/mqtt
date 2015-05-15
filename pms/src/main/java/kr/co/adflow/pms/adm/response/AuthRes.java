@@ -25,7 +25,30 @@ public class AuthRes {
 	private String[] groupTopics;
 	
 	
+	/** The userName. */
+	private String userName;
 	
+	
+	
+	
+
+	/**
+	 * Gets the userName.
+	 *
+	 * @return the userName
+	 */
+	public String getUserName() {
+		return userName;
+	}
+
+	/**
+	 * Sets the userName.
+	 *
+	 * @param ufmi the new userName
+	 */
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
 
 	/**
 	 * Gets the ufmi.
