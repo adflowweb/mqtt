@@ -273,4 +273,12 @@
 		user_id = #{userId}
 	</select>
 	
+	<update id="updateUserName" parameterType="kr.co.adflow.pms.domain.User">
+		UPDATE pms.user
+		SET user_name = #{userName}
+		,issue_time = now()
+		,issue_id = #{issueId}
+		WHERE user_id = #{userId}
+	</update>
+	
 </mapper>	

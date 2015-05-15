@@ -432,9 +432,9 @@
 		, expiry
 		, qos
 		, retained
-		, a.send_terminal_type
-		, a.media_type
-		, a.msg_size
+		, send_terminal_type
+		, media_type
+		, msg_size
 		, issue_time
 		, issue_id
 		, update_time

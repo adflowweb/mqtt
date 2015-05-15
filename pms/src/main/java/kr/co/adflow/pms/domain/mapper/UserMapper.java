@@ -123,5 +123,13 @@ public interface UserMapper {
 	 * @return the  Role.
 	 */
 	String selectRole(String userId);
+	
+	/**
+	 * Update user name.
+	 *
+	 * @param user the user
+	 * @return the int
+	 */
+	int updateUserName(User user);
 
 }

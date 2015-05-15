@@ -70,6 +70,9 @@ public class PCBSController extends BaseController {
 		logger.debug("=== params={}","certKey::"+params.get("certKey")+",solutionId::"+params.get("solutionId")+",solutionPw::"+params.get("solutionPw")
 				+",saId::"+params.get("saId")+",dSvcCd::"+params.get("dSvcCd")+",statusCd::"+params.get("statusCd")+",ptalk20Bunch::"+params.get("ptalk20Bunch")
 				+",usegroupNm::"+params.get("usegroupNm"));
+		System.out.println("=== params="+"certKey::"+params.get("certKey")+",solutionId::"+params.get("solutionId")+",solutionPw::"+params.get("solutionPw")
+				+",saId::"+params.get("saId")+",dSvcCd::"+params.get("dSvcCd")+",statusCd::"+params.get("statusCd")+",ptalk20Bunch::"+params.get("ptalk20Bunch")
+				+",usegroupNm::"+params.get("usegroupNm"));
 		
 //		System.out.println("========= pCBSReq");
 //		System.out.println("========= pCBSReq.getCertKey()::"+ params.get("certKey"));
@@ -118,10 +121,13 @@ public class PCBSController extends BaseController {
 			userReq.setSaId(tempList.get(0));
 			
 			tempList = params.get("dSvcCd");
-			if (tempList.get(0) == null || tempList.get(0).trim().length() <= 0) {
+			String ufmi = tempList.get(0);
+			if (ufmi == null || ufmi.trim().length() != 9) {
 				logger.error("dSvcCd error is {}", tempList.get(0));
 				throw new RuntimeException("dSvcCd not valid");
 			}
+			
+			ufmi = "82*"+ Integer.parseInt(ufmi.substring(0,4)) +"*"+  Integer.parseInt(ufmi.substring(4,ufmi.length())) ; 
 			userReq.setUfmi(tempList.get(0));
 			
 			tempList = params.get("statusCd");
@@ -136,48 +142,6 @@ public class PCBSController extends BaseController {
 				//상태코드 "01"아닌것은 모두 USER_STATUS_BROCK(2)처리 
 				userReq.setStatus(2);
 			}
-			
-			tempList = params.get("ptalk20Bunch");
-			String ptalk20Bunch = tempList.get(0);
-			
-			tempList = params.get("usegroupNm");
-			String usegroupNm = tempList.get(0);
-			String ufmi = userReq.getUfmi();
-			
-			usegroupNm = "130,131,132";
-			ufmi = "82*200*1111";
-			ptalk20Bunch = "150";
-			
-			int firstIndex = ufmi.indexOf("*");
-			int lastIndex = ufmi.lastIndexOf("*");
-			List<String> groupTopics = new ArrayList<String>();
-			String[] groupList = usegroupNm.split(",");
-			StringBuffer grpupTopics = new StringBuffer();
-			String bunchid = 
-
-			ufmi.replace("*", "/");
-			//group_toipc
-			tempList = params.get("solutionPw");
-			if (ufmi.substring(0, 2).equals("82")) {
-				//Ptalk 1.0
-				for (int i = 0; i < groupList.length; i++) {
-					grpupTopics.append("mms/P1/"+ufmi.substring(firstIndex, lastIndex)+"/g"+groupList[i]);
-					if (i + 1 < groupList.length) {
-						grpupTopics.append(",");
-					}
-				}
-				
-			} else {
-				//Ptalk 2.0
-				for (int i = 0; i < groupList.length; i++) {
-					grpupTopics.append("mms/P2/"+ufmi.substring(0, firstIndex)+"/b"+ptalk20Bunch+"/g"+groupList[i]);
-					if (i + 1 < groupList.length) {
-						grpupTopics.append(",");
-					}
-				}
-
-			}
-			userReq.setGroupTopics(grpupTopics.toString());
 			
 			System.out.println("userReq::"+userReq.toString());
 			System.out.println("issueId::"+issueId);
@@ -194,7 +158,7 @@ public class PCBSController extends BaseController {
 			e.printStackTrace();
 		}
 
-		String res = "<?xml version=\"1.0\" encoding=\"utf-8\" ?> \n <boolen>true</boolen>";
+		String res = "<?xml version=\"1.0\" encoding=\"utf-8\" ?> \n <boolen>false</boolen>";
 		
 		return res;
 
