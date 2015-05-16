@@ -256,11 +256,14 @@
         ,d.ack_time as app_ack_time		
 		, e.content_type
 		, e.content
+		, h.user_name AS issue_name
 		FROM
         pms.message${keyMon} a left outer join pms.ack${keyMon} b on a.msg_id = b.msg_id and b.ack_type = 'pma',
         pms.message${keyMon} c left outer join pms.ack${keyMon} d on c.msg_id = d.msg_id and d.ack_type = 'app',
-        pms.content${keyMon} e			
+        pms.message${keyMon} g left join pms.user h on g.issue_id = h.user_id,
+        pms.content${keyMon} e		
 		WHERE a.msg_id = c.msg_id
+		AND a.msg_id = g.msg_id
 		AND a.msg_id = e.msg_id
 		<if test="msgType != null and msgType != 0">
 		AND a.msg_type = #{msgType}
@@ -415,54 +418,55 @@
 	<select id="getSvcResevationMessageList" parameterType="kr.co.adflow.pms.domain.MsgParams"
 		resultMap="MessageResult">
 		SELECT group_id
-		, msg_id
-		, msg_type
-		, receiver
-		, receiver_topic
-		, service_id
-		, is_ack
-		, status
-		, is_reservation
-		, reservation_time
-		, resend_count
-		, resend_max_count
-		, resend_interval
-		, resend_id
-		, server_id
-		, expiry
-		, qos
-		, retained
-		, send_terminal_type
-		, media_type
-		, msg_size
-		, issue_time
-		, issue_id
-		, update_time
-		, update_id
-		, content_type
-		, content
+		, a.msg_id
+		, a.msg_type
+		, a.receiver
+		, a.receiver_topic
+		, a.service_id
+		, a.is_ack
+		, a.status
+		, a.is_reservation
+		, a.reservation_time
+		, a.resend_count
+		, a.resend_max_count
+		, a.resend_interval
+		, a.resend_id
+		, a.server_id
+		, a.expiry
+		, a.qos
+		, a.retained
+		, a.send_terminal_type
+		, a.media_type
+		, a.msg_size
+		, a.issue_time
+		, a.issue_id
+		, a.update_time
+		, a.update_id
+		, a.content_type
+		, a.content
+		, h.user_name AS issue_name
 		FROM
-        pms.reservation_msg		
-		WHERE status = 0
+        pms.reservation_msg a left join pms.user h on a.issue_id = h.user_id
+		WHERE a.status = 0
 		<if test="msgType != null and msgType != 0">
-		AND msg_type = #{msgType}
+		AND a.msg_type = #{msgType}
 		</if>
 		<if test="dateStart != null ">
-		AND reservation_time <![CDATA[>]]>  #{dateStart}
+		AND a.reservation_time <![CDATA[>]]>  #{dateStart}
 		</if>
 		<if test="dateEnd != null ">
-		AND reservation_time <![CDATA[<]]> #{dateEnd}
+		AND a.reservation_time <![CDATA[<]]> #{dateEnd}
 		</if>		
 		<if test="issueId != null and issueId != ''">
-		AND issue_id = #{issueId}
+		AND a.issue_id = #{issueId}
 		</if>
 		<if test="receiver != null and receiver != ''">
-		AND receiver = #{receiver}
+		AND a.receiver = #{receiver}
 		</if>
 		<if test="msgId != null and msgId != ''">
-		AND msg_id = #{msgId}
+		AND a.msg_id = #{msgId}
 		</if>
-		ORDER BY reservation_time ASC,update_time DESC
+		ORDER BY a.reservation_time ASC,a.update_time DESC
 		limit #{iDisplayStart} , #{iDisplayLength}
 	</select>
 

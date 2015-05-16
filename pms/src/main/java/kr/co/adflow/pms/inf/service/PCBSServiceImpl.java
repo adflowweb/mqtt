@@ -55,7 +55,7 @@ public class PCBSServiceImpl implements PCBSService {
 			user.setIssueId(issueId);
 			user.setUfmi(userReq.getUfmi());
 			user.setSaId(userReq.getSaId());
-			user.setGroupTopics(userReq.getGroupTopics());
+//			user.setGroupTopics(userReq.getGroupTopics());
 
 			Token token = new Token();
 			token.setUserId(userReq.getUserId());
@@ -80,7 +80,7 @@ public class PCBSServiceImpl implements PCBSService {
 			user.setIssueId(issueId);
 			user.setUfmi(userReq.getUfmi());
 			user.setSaId(userReq.getSaId());
-			user.setGroupTopics(userReq.getGroupTopics());
+//			user.setGroupTopics(userReq.getGroupTopics());
 			
 			user.setAction("updateUser");
 			userMapper.logUserHistory(user);

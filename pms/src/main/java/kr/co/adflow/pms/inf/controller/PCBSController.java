@@ -70,9 +70,6 @@ public class PCBSController extends BaseController {
 		logger.debug("=== params={}","certKey::"+params.get("certKey")+",solutionId::"+params.get("solutionId")+",solutionPw::"+params.get("solutionPw")
 				+",saId::"+params.get("saId")+",dSvcCd::"+params.get("dSvcCd")+",statusCd::"+params.get("statusCd")+",ptalk20Bunch::"+params.get("ptalk20Bunch")
 				+",usegroupNm::"+params.get("usegroupNm"));
-		System.out.println("=== params="+"certKey::"+params.get("certKey")+",solutionId::"+params.get("solutionId")+",solutionPw::"+params.get("solutionPw")
-				+",saId::"+params.get("saId")+",dSvcCd::"+params.get("dSvcCd")+",statusCd::"+params.get("statusCd")+",ptalk20Bunch::"+params.get("ptalk20Bunch")
-				+",usegroupNm::"+params.get("usegroupNm"));
 		
 //		System.out.println("========= pCBSReq");
 //		System.out.println("========= pCBSReq.getCertKey()::"+ params.get("certKey"));
@@ -128,7 +125,7 @@ public class PCBSController extends BaseController {
 			}
 			
 			ufmi = "82*"+ Integer.parseInt(ufmi.substring(0,4)) +"*"+  Integer.parseInt(ufmi.substring(4,ufmi.length())) ; 
-			userReq.setUfmi(tempList.get(0));
+			userReq.setUfmi(ufmi);
 			
 			tempList = params.get("statusCd");
 			if (tempList.get(0) == null || tempList.get(0).trim().length() <= 0) {
@@ -143,8 +140,7 @@ public class PCBSController extends BaseController {
 				userReq.setStatus(2);
 			}
 			
-			System.out.println("userReq::"+userReq.toString());
-			System.out.println("issueId::"+issueId);
+			logger.debug("userReq::"+userReq.toString());
 			
 			
 			
@@ -158,7 +154,7 @@ public class PCBSController extends BaseController {
 			e.printStackTrace();
 		}
 
-		String res = "<?xml version=\"1.0\" encoding=\"utf-8\" ?> \n <boolen>false</boolen>";
+		String res = "<?xml version=\"1.0\" encoding=\"utf-8\" ?> \n <boolen>true</boolen>";
 		
 		return res;
 

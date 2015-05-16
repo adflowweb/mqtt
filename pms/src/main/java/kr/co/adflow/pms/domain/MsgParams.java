@@ -3,6 +3,7 @@
  */
 package kr.co.adflow.pms.domain;
 
+import java.util.Arrays;
 import java.util.Date;
 
 // TODO: Auto-generated Javadoc
@@ -243,5 +244,17 @@ public class MsgParams {
 	public void setMsgType(int msgType) {
 		this.msgType = msgType;
 	}
+
+	@Override
+	public String toString() {
+		return "MsgParams [keyMon=" + keyMon + ", issueId=" + issueId
+				+ ", iDisplayStart=" + iDisplayStart + ", iDisplayLength="
+				+ iDisplayLength + ", dateStart=" + dateStart + ", dateEnd="
+				+ dateEnd + ", statusArray=" + Arrays.toString(statusArray)
+				+ ", ackType=" + ackType + ", receiver=" + receiver
+				+ ", msgId=" + msgId + ", msgType=" + msgType + "]";
+	}
+	
+	
 
 }

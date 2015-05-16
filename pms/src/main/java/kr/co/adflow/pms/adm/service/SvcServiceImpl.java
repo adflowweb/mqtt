@@ -242,6 +242,7 @@ public class SvcServiceImpl implements SvcService {
 			logger.debug("msg::"+msg.toString());
 			msg.setKeyMon(keyMon);
 			msg.setStatus(StaticConfig.MESSAGE_STATUS_RESEVATION_CANCEL);
+			msg.setUpdateId(issueId);
 			messageMapper.insertMessageRV(msg);
 			messageMapper.insertContent(msg);
 			messageMapper.deleteReservationMessage(msgIds[i]);

@@ -284,7 +284,6 @@ public class SystemServiceImpl implements SystemService {
 
 		msgParams.setKeyMon(params.get("cSearchDate"));
 
-		logger.info("msgParams :::::::{}", issueId);
 		msgParams.setIssueId(null);
 
 		msgParams.setiDisplayStart(this.getInt(params.get("iDisplayStart")));
@@ -311,11 +310,12 @@ public class SystemServiceImpl implements SystemService {
 			msgParams.setAckType(this.getInt(params.get("cSearchContent")));
 		}
 
+		logger.debug("[getSysMessageList]msgParams :::::::{}", msgParams.toString());
 		int cnt = messageMapper.getSvcMessageListCnt(msgParams);
-		logger.info("cnt :::::::{}", cnt);
+		logger.debug("[getSysMessageList]cnt :::::::{}", cnt);
 
 		List<Message> list = messageMapper.getSvcMessageList(msgParams);
-		logger.info("list size :::::::{}", list.size());
+		logger.debug("[getSysMessageList]list size :::::::{}", list.size());
 
 		res = new MessagesRes();
 		res.setRecordsFiltered(cnt);
@@ -358,7 +358,7 @@ public class SystemServiceImpl implements SystemService {
 
 		msgParams.setKeyMon(params.get("cSearchDate"));
 
-		logger.info("msgParams :::::::{}", issueId);
+		
 		msgParams.setIssueId(null);
 
 		msgParams.setiDisplayStart(this.getInt(params.get("iDisplayStart")));
@@ -376,7 +376,7 @@ public class SystemServiceImpl implements SystemService {
 		}
 
 		String filter = params.get("cSearchFilter");
-		logger.info("filter :::::::{}", filter);
+		logger.debug("[getSysResevationMessageList]filter :::::::{}", filter);
 		msgParams.setAckType(-1);
 		if ("receiver".equals(filter)) {
 			msgParams.setReceiver(params.get("cSearchContent"));
@@ -386,12 +386,14 @@ public class SystemServiceImpl implements SystemService {
 			msgParams.setAckType(this.getInt(params.get("cSearchContent")));
 		}
 
+		logger.debug("[getSysResevationMessageList]msgParams :::::::{}", msgParams.toString());
+		
 		int cnt = messageMapper.getSvcResevationMessageListCnt(msgParams);
-		logger.info("cnt :::::::{}", cnt);
+		logger.debug("[getSysResevationMessageList]cnt :::::::{}", cnt);
 
 		List<Message> list = messageMapper
 				.getSvcResevationMessageList(msgParams);
-		logger.info("list size :::::::{}", list.size());
+		logger.debug("[getSysResevationMessageList]list size :::::::{}", list.size());
 
 		res = new MessagesRes();
 		res.setRecordsFiltered(cnt);
