@@ -63,11 +63,11 @@ public class SvcAdmServiceImpl implements SvcAdmService {
 		// 1. get userId by appKey
 		String issueId = interceptMapper.selectCashedUserId(appKey);
 
-		if (message.getContent().getBytes().length > this
-				.getMessageSizeLimit(issueId)) {
-			throw new RuntimeException(" message body size limit over :"
-					+ this.getMessageSizeLimit(issueId));
-		}
+//		if (message.getContent().getBytes().length > this
+//				.getMessageSizeLimit(issueId)) {
+//			throw new RuntimeException(" message body size limit over :"
+//					+ this.getMessageSizeLimit(issueId));
+//		}
 		// 2. get max count by userId
 		// 3. check max count
 		// if (userMapper.getMsgCntLimit(issueId) <

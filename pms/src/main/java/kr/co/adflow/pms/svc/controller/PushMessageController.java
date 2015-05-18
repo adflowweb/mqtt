@@ -11,6 +11,7 @@ import javax.validation.Valid;
 import kr.co.adflow.pms.adm.service.AccountService;
 import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.controller.BaseController;
+import kr.co.adflow.pms.core.exception.PmsRuntimeException;
 import kr.co.adflow.pms.domain.MessageResult;
 import kr.co.adflow.pms.domain.User;
 import kr.co.adflow.pms.domain.validator.UserValidator;
@@ -79,9 +80,19 @@ public class PushMessageController extends BaseController {
 			String[] receivers = msg.getReceivers();
 			for (int i = 0; i < receivers.length; i++) {
 				
-				if (!isValid(receivers[i])) {
-					throw new RuntimeException("Receiver format is invalid : "
-							+ receivers[i]);
+//				if (!isValid(receivers[i])) {
+////					throw new RuntimeException("Receiver format is invalid : "+ receivers[i]);
+//					throw new PmsRuntimeException("Receiver format is invalid : "+ receivers[i]);
+//				}
+				
+				//group topic check
+				if (!(receivers[i].subSequence(0, 5).equals("mms/P")&&receivers[i].indexOf("g") > 0)) {
+
+					if (!isValid(receivers[i])) {
+//						throw new RuntimeException("getReceivers not valid"	+ receivers[i]);
+						throw new PmsRuntimeException("getReceivers not valid"	+ receivers[i]);
+					}
+
 				}
 
 			}
@@ -91,7 +102,8 @@ public class PushMessageController extends BaseController {
 		if (msg.getReservationTime() != null
 				&& msg.getReservationTime().getTime() < System
 						.currentTimeMillis()) {
-			throw new RuntimeException("ReservationTime is the past time");
+//			throw new RuntimeException("ReservationTime is the past time");
+			throw new PmsRuntimeException("ReservationTime is the past time");
 		}
 
 		List<Map<String, String>> resultList = pushMessageService.sendMessage(
@@ -124,7 +136,8 @@ public class PushMessageController extends BaseController {
 		User user = accountService.retrieveAccount(appKey);
 
 		if (user == null) {
-			throw new RuntimeException("not found");
+//			throw new RuntimeException("not found");
+			throw new PmsRuntimeException("not found");
 		}
 
 		Result<Integer> result = new Result<Integer>();

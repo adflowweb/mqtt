@@ -12,6 +12,7 @@ import kr.co.adflow.pms.adm.request.MessageReq;
 import kr.co.adflow.pms.adm.service.SvcAdmService;
 import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.controller.BaseController;
+import kr.co.adflow.pms.core.exception.PmsRuntimeException;
 import kr.co.adflow.pms.domain.MessageResult;
 import kr.co.adflow.pms.response.Response;
 import kr.co.adflow.pms.response.Result;
@@ -66,13 +67,14 @@ public class DisptcherController extends BaseController {
 
 		if (msg.getReceivers() == null || msg.getReceivers().length == 0) {
 			//
-			throw new RuntimeException("getReceivers is null");
+//			throw new RuntimeException("getReceivers is null");
+			throw new PmsRuntimeException("getReceivers is null");
 		} else {
 			String[] receivers = msg.getReceivers();
 			for (int i = 0; i < receivers.length; i++) {
 				if (!isValid(receivers[i])) {
-					throw new RuntimeException("getReceivers not valid :"
-							+ receivers[i]);
+//					throw new RuntimeException("getReceivers not valid :"+ receivers[i]);
+					throw new PmsRuntimeException("getReceivers not valid :"+ receivers[i]);
 				}
 			}
 

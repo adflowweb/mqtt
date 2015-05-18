@@ -7,6 +7,7 @@ import kr.co.adflow.pms.adm.request.AuthReq;
 import kr.co.adflow.pms.adm.response.AuthRes;
 import kr.co.adflow.pms.core.config.PmsConfig;
 import kr.co.adflow.pms.core.config.StaticConfig;
+import kr.co.adflow.pms.core.exception.PmsRuntimeException;
 import kr.co.adflow.pms.core.util.DateUtil;
 import kr.co.adflow.pms.core.util.KeyGenerator;
 import kr.co.adflow.pms.domain.Token;
@@ -46,7 +47,7 @@ public class CommonServiceImpl implements CommonService {
 	 * @see kr.co.adflow.pms.adm.service.CommonService#authUser(kr.co.adflow.pms.adm.request.AuthReq)
 	 */
 	@Override
-	public AuthRes authUser(AuthReq auth) {
+	public AuthRes authUser(AuthReq auth) throws Exception {
 
 		AuthRes res = null;
 		res = new AuthRes();
@@ -58,7 +59,8 @@ public class CommonServiceImpl implements CommonService {
 		User user = userMapper.selectAuth(paramUser);
 		if (user == null) {
 			// error
-			throw new RuntimeException("invalid auth");
+//			throw new RuntimeException("invalid auth");
+			throw new PmsRuntimeException("invalid auth");
 		}
 
 		Token paramToken = new Token();
@@ -73,7 +75,8 @@ public class CommonServiceImpl implements CommonService {
 		// 5. token 테이블 저장
 		int cnt = tokenMapper.insertToken(paramToken);
 		if (cnt < 1) {
-			throw new RuntimeException("invalid auth error");
+//			throw new RuntimeException("invalid auth error");
+			throw new PmsRuntimeException("invalid auth error");
 		}
 		// 6. 만료일 지난 token 삭제
 		tokenMapper.deleteExpiredToken(paramToken.getUserId());

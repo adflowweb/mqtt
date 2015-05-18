@@ -10,6 +10,7 @@ import java.util.Map;
 
 import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.controller.BaseController;
+import kr.co.adflow.pms.core.exception.PmsRuntimeException;
 import kr.co.adflow.pms.domain.User;
 import kr.co.adflow.pms.domain.mapper.InterceptMapper;
 import kr.co.adflow.pms.inf.request.PCBSReq;
@@ -25,7 +26,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.MultiValueMap;
-
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -86,14 +86,16 @@ public class PCBSController extends BaseController {
 			List<String> tempList = params.get("certKey");
 			if (tempList.get(0) == null || tempList.get(0).trim().length() <= 0) {
 				logger.error("certKey error is {}", tempList.get(0));
-				throw new RuntimeException("CertKey not valid");
+//				throw new RuntimeException("CertKey not valid");
+				throw new PmsRuntimeException("CertKey not valid");
 			}
 
 			String issueId = interceptMapper.selectCashedUserId(tempList.get(0));
 			//appkey check
 			if (issueId == null || issueId.trim().length() <= 0) {
 				logger.error("applicationKey error is {}", tempList.get(0));
-				throw new RuntimeException("CertKey not valid");
+//				throw new RuntimeException("CertKey not valid");
+				throw new PmsRuntimeException("CertKey not valid");
 			}
 			
 			UserReq userReq = new UserReq();
@@ -101,7 +103,8 @@ public class PCBSController extends BaseController {
 			tempList = params.get("solutionId");
 			if (tempList.get(0) == null || tempList.get(0).trim().length() <= 0) {
 				logger.error("solutionId error is {}", tempList.get(0));
-				throw new RuntimeException("solutionId not valid");
+//				throw new RuntimeException("solutionId not valid");
+				throw new PmsRuntimeException("solutionId not valid");
 			}
 			userReq.setUserId(tempList.get(0));
 			userReq.setUserName(tempList.get(0));
@@ -110,7 +113,8 @@ public class PCBSController extends BaseController {
 			tempList = params.get("solutionPw");
 			if (tempList.get(0) == null || tempList.get(0).trim().length() <= 0) {
 				logger.error("solutionPw error is {}", tempList.get(0));
-				throw new RuntimeException("solutionPw not valid");
+//				throw new RuntimeException("solutionPw not valid");
+				throw new PmsRuntimeException("solutionPw not valid");
 			}
 			userReq.setPassword(tempList.get(0));
 			
@@ -121,7 +125,8 @@ public class PCBSController extends BaseController {
 			String ufmi = tempList.get(0);
 			if (ufmi == null || ufmi.trim().length() != 9) {
 				logger.error("dSvcCd error is {}", tempList.get(0));
-				throw new RuntimeException("dSvcCd not valid");
+//				throw new RuntimeException("dSvcCd not valid");
+				throw new PmsRuntimeException("dSvcCd not valid");
 			}
 			
 			ufmi = "82*"+ Integer.parseInt(ufmi.substring(0,4)) +"*"+  Integer.parseInt(ufmi.substring(4,ufmi.length())) ; 
@@ -130,7 +135,8 @@ public class PCBSController extends BaseController {
 			tempList = params.get("statusCd");
 			if (tempList.get(0) == null || tempList.get(0).trim().length() <= 0) {
 				logger.error("statusCd error is {}", tempList.get(0));
-				throw new RuntimeException("statusCd not valid");
+//				throw new RuntimeException("statusCd not valid");
+				throw new PmsRuntimeException("statusCd not valid");
 			}
 			//01  - 사용중, 11 - 선불사용중
 			if (tempList.get(0).equals("01")||tempList.get(0).equals("11")) {

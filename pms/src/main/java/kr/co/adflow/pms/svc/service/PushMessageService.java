@@ -23,7 +23,7 @@ public interface PushMessageService {
 	 * @param msg the msg
 	 * @return the list
 	 */
-	public List<Map<String, String>> sendMessage(String appKey, MessageReq msg);
+	public List<Map<String, String>> sendMessage(String appKey, MessageReq msg) throws Exception;
 
 	/**
 	 * Gets the message result.
@@ -33,7 +33,7 @@ public interface PushMessageService {
 	 * @return the message result
 	 */
 	public List<MessageResult> getMessageResult(MessageIdsReq msgIds,
-			String appKey);
+			String appKey) throws Exception;
 
 	/**
 	 * Valid phone no.

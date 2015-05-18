@@ -56,6 +56,6 @@ public interface PCBSService {
 	 * @param appKey the app key
 	 * @return the int
 	 */
-	public int modifyPassword(PasswordReq req, String appKey);
+	public int modifyPassword(PasswordReq req, String appKey) throws Exception;
 
 }

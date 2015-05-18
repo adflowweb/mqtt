@@ -12,6 +12,7 @@ import javax.validation.Valid;
 import kr.co.adflow.pms.adm.service.AccountService;
 import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.controller.BaseController;
+import kr.co.adflow.pms.core.exception.PmsRuntimeException;
 import kr.co.adflow.pms.domain.MessageResult;
 import kr.co.adflow.pms.domain.User;
 import kr.co.adflow.pms.domain.validator.UserValidator;
@@ -19,6 +20,7 @@ import kr.co.adflow.pms.response.Response;
 import kr.co.adflow.pms.response.Result;
 import kr.co.adflow.pms.users.request.MessageReq;
 import kr.co.adflow.pms.users.service.UserMessageService;
+
 
 
 
@@ -77,16 +79,20 @@ public class UserMessageController extends BaseController {
 		logger.debug("=== msg::{}","getContentType::"+msg.getContentType()+",getExpiry::"+msg.getExpiry()+",getQos::"+msg.getQos()+",getReceiver::"+msg.getReceiver()+",getSender::"+msg.getSender());
 
 		if (msg.getSender() == null || msg.getSender().trim().length() == 0) {
-			throw new RuntimeException("Sender is empty.");
+//			throw new RuntimeException("Sender is empty.");
+			throw new PmsRuntimeException("Sender is empty.");
 		}
 		if (msg.getReceiver() == null || msg.getReceiver().trim().length() == 0) {
-			throw new RuntimeException("Receiver is empty.");
+//			throw new RuntimeException("Receiver is empty.");
+			throw new PmsRuntimeException("Receiver is empty.");
 		}
 		if (msg.getContentType() == null || msg.getContentType().trim().length() == 0) {
-			throw new RuntimeException("ContentType is empty.");
+//			throw new RuntimeException("ContentType is empty.");
+			throw new PmsRuntimeException("ContentType is empty.");
 		}
 		if (msg.getContent() == null || msg.getContent().trim().length() == 0) {
-			throw new RuntimeException("Content is empty.");
+//			throw new RuntimeException("Content is empty.");
+			throw new PmsRuntimeException("Content is empty.");
 		}
 
 

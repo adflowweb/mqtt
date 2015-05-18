@@ -4,6 +4,7 @@
 package kr.co.adflow.pms.inf.service;
 
 import kr.co.adflow.pms.core.config.StaticConfig;
+import kr.co.adflow.pms.core.exception.PmsRuntimeException;
 import kr.co.adflow.pms.core.util.KeyGenerator;
 import kr.co.adflow.pms.domain.Token;
 import kr.co.adflow.pms.domain.User;
@@ -164,9 +165,10 @@ public class PCBSServiceImpl implements PCBSService {
 	 * @see kr.co.adflow.pms.inf.service.PCBSService#modifyPassword(kr.co.adflow.pms.inf.request.PasswordReq, java.lang.String)
 	 */
 	@Override
-	public int modifyPassword(PasswordReq req, String appKey) {
+	public int modifyPassword(PasswordReq req, String appKey) throws Exception{
 		if (!req.getNewPassword().trim().equals(req.getRePassword().trim())) {
-			throw new RuntimeException("패스워드 변경 실패1");
+//			throw new RuntimeException("패스워드 변경 실패1");
+			throw new PmsRuntimeException("패스워드 변경 실패1");
 		}
 
 		// TODO OLD <> NEW 확인 필요?
@@ -179,7 +181,8 @@ public class PCBSServiceImpl implements PCBSService {
 
 		User user = userMapper.selectAuth(paramUser);
 		if (user == null) {
-			throw new RuntimeException("패스워드 변경 실패2");
+//			throw new RuntimeException("패스워드 변경 실패2");
+			throw new PmsRuntimeException("패스워드 변경 실패2");
 		}
 
 		paramUser.setAction("modifyPassword");
@@ -191,7 +194,8 @@ public class PCBSServiceImpl implements PCBSService {
 		if (cnt > 0) {
 			cnt = userMapper.updatePassword(paramUser);
 		} else {
-			throw new RuntimeException("패스워드 변경 실패3");
+//			throw new RuntimeException("패스워드 변경 실패3");
+			throw new PmsRuntimeException("패스워드 변경 실패3");
 		}
 
 		return cnt;

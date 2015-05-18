@@ -8,13 +8,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import kr.co.adflow.pms.adm.request.AddressReq;
 import kr.co.adflow.pms.adm.request.ReservationCancelReq;
 import kr.co.adflow.pms.adm.response.MessagesRes;
 import kr.co.adflow.pms.core.config.StaticConfig;
+import kr.co.adflow.pms.core.exception.PmsRuntimeException;
 import kr.co.adflow.pms.core.util.DateUtil;
+import kr.co.adflow.pms.domain.Address;
+import kr.co.adflow.pms.domain.AddressParams;
 import kr.co.adflow.pms.domain.Message;
 import kr.co.adflow.pms.domain.MsgIdsParams;
 import kr.co.adflow.pms.domain.MsgParams;
+import kr.co.adflow.pms.domain.User;
+import kr.co.adflow.pms.domain.mapper.AddressMapper;
 import kr.co.adflow.pms.domain.mapper.InterceptMapper;
 import kr.co.adflow.pms.domain.mapper.MessageMapper;
 import kr.co.adflow.pms.domain.mapper.SummaryMapper;
@@ -49,6 +55,10 @@ public class SvcServiceImpl implements SvcService {
 	/** The validation mapper. */
 	@Autowired
 	private ValidationMapper validationMapper;
+	
+	/** The validation mapper. */
+	@Autowired
+	private AddressMapper addressMapper;
 
 	/** The user validator. */
 	@Autowired
@@ -66,7 +76,7 @@ public class SvcServiceImpl implements SvcService {
 	 * @see kr.co.adflow.pms.adm.service.SvcService#getSvcMessageList(java.util.Map)
 	 */
 	@Override
-	public MessagesRes getSvcMessageList(Map<String, String> params) {
+	public MessagesRes getSvcMessageList(Map<String, String> params)  throws Exception {
 
 		MessagesRes res = null;
 
@@ -75,7 +85,8 @@ public class SvcServiceImpl implements SvcService {
 
 		if (params.get("cSearchDate") == null) {
 			// error
-			throw new RuntimeException("");
+//			throw new RuntimeException("");
+			throw new PmsRuntimeException("Search Date is null");
 		}
 
 		MsgParams msgParams = new MsgParams();
@@ -258,9 +269,10 @@ public class SvcServiceImpl implements SvcService {
 	 * @param msgIds the msg ids
 	 * @return the key mon
 	 */
-	private String getKeyMon(String[] msgIds) {
+	private String getKeyMon(String[] msgIds) throws Exception{
 		if (msgIds.length < 1) {
-			throw new RuntimeException("msgId not found");
+//			throw new RuntimeException("msgId not found");
+			throw new PmsRuntimeException("msgId not found");
 		}
 		return msgIds[0].substring(0, 6);
 	}
@@ -286,6 +298,85 @@ public class SvcServiceImpl implements SvcService {
 
 
 		return summaryMapper.getMonthSummary(msgParams);
+	}
+	
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.pms.adm.service.SvcService#addAdress(java.lang.String, kr.co.adflow.pms.adm.request.AddressReq)
+	 */
+	@Override
+	public int addAdress(String appKey,AddressReq addr) {
+		String issueId = interceptMapper.selectCashedUserId(appKey);
+		
+		Address address = new Address();
+		address.setUserId(issueId);
+		address.setUfmi(addr.getUfmi());
+		address.setUfmiName(addr.getUfmiName());
+		address.setItem1(addr.getItem1());
+		address.setItem2(addr.getItem2());
+		address.setItem3(addr.getItem3());
+		address.setIssueId(issueId);
+		
+		int insertCnt = addressMapper.insertAddress(address);
+		
+		return insertCnt;
+	}
+	
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.pms.adm.service.SvcService#updateAdress(java.lang.String, kr.co.adflow.pms.adm.request.AddressReq)
+	 */
+	@Override
+	public int updateAdress(String appKey,AddressReq addr) throws Exception {
+		String issueId = interceptMapper.selectCashedUserId(appKey);
+
+		AddressParams addressParams = new AddressParams();
+		addressParams.setUserId(issueId);
+		addressParams.setUfmi(addr.getUfmi());
+		
+		Address address = addressMapper.selectAddress(addressParams);
+		
+	
+		if (address == null) {
+			throw new PmsRuntimeException("Ufmi not found");
+			
+		} else {
+			
+			address.setUfmiName(addr.getUfmiName());
+			address.setItem1(addr.getItem1());
+			address.setItem2(addr.getItem2());
+			address.setItem3(addr.getItem3());
+			address.setIssueId(issueId);
+		}
+		
+		return addressMapper.updateAddress(address);
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.pms.adm.service.SvcService#deleteAddress(java.lang.String, java.lang.String)
+	 */
+	@Override
+	public int deleteAddress(String appKey, String ufmi) {
+
+		String issueId = interceptMapper.selectCashedUserId(appKey);
+
+		AddressParams addressParams = new AddressParams();
+		addressParams.setUserId(issueId);
+		addressParams.setUfmi(ufmi);
+
+		return addressMapper.deleteAddress(addressParams);
+	}
+	
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.pms.adm.service.SvcService#getAddressList()
+	 */
+	@Override
+	public List<Address> getAddressList(String appKey) {
+
+		String issueId = interceptMapper.selectCashedUserId(appKey);
+		List<Address> resultAddress = null;
+		resultAddress = addressMapper.selectAddressList(issueId);
+
+		return resultAddress;
 	}
 
 }

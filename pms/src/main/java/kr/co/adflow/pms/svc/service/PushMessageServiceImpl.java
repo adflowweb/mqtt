@@ -11,6 +11,7 @@ import java.util.Map;
 
 import kr.co.adflow.pms.core.config.PmsConfig;
 import kr.co.adflow.pms.core.config.StaticConfig;
+import kr.co.adflow.pms.core.exception.PmsRuntimeException;
 import kr.co.adflow.pms.core.util.CheckUtil;
 import kr.co.adflow.pms.core.util.DateUtil;
 import kr.co.adflow.pms.core.util.KeyGenerator;
@@ -80,7 +81,7 @@ public class PushMessageServiceImpl implements PushMessageService {
 	 */
 	@Override
 	public List<Map<String, String>> sendMessage(String appKey,
-			MessageReq message) {
+			MessageReq message) throws Exception{
 		logger.debug("=== appKey::{}, MessageReq={}",appKey,"getContentType::"+message.getContentType()+",getResendInterval::"+message.getResendInterval()
 				+",getResendMaxCount::"+message.getResendMaxCount()+",getReservationTime::"+message.getReservationTime());
 
@@ -91,11 +92,14 @@ public class PushMessageServiceImpl implements PushMessageService {
 		// 1. get userId by appKey
 		String issueId = interceptMapper.selectCashedUserId(appKey);
 
-		if (message.getContent().getBytes().length > this
-				.getMessageSizeLimit(issueId)) {
-			throw new RuntimeException(" message body size limit over :"
-					+ this.getMessageSizeLimit(issueId));
-		}
+		//message size limit skip 
+//		if (message.getContent().getBytes().length > this
+//				.getMessageSizeLimit(issueId)) {
+//			throw new RuntimeException(" message body size limit over :"
+//					+ this.getMessageSizeLimit(issueId));
+//			throw new PmsRuntimeException("invalid auth");
+//			
+//		}
 		// 2. get max count by userId
 		// 3. check max count
 		// msgCntLimit disable
@@ -156,8 +160,9 @@ public class PushMessageServiceImpl implements PushMessageService {
 			if (!(receivers[i].subSequence(0, 5).equals("mms/P")&&receivers[i].indexOf("g") > 0)) {
 
 				if (!userValidator.validRequestValue(receivers[i])) {
-					throw new RuntimeException(
-							"receivers formatting error count : " + i);
+//					throw new RuntimeException(
+//							"receivers formatting error count : " + i);
+					throw new PmsRuntimeException("receivers formatting error count : " + i);
 				}
 
 			}
@@ -279,7 +284,7 @@ public class PushMessageServiceImpl implements PushMessageService {
 	 */
 	@Override
 	public List<MessageResult> getMessageResult(MessageIdsReq msgIds,
-			String appKey) {
+			String appKey)  throws Exception{
 
 		List<MessageResult> resultList = null;
 
@@ -322,9 +327,10 @@ public class PushMessageServiceImpl implements PushMessageService {
 	 * @param msgIds the msg ids
 	 * @return the key mon
 	 */
-	private String getKeyMon(String[] msgIds) {
+	private String getKeyMon(String[] msgIds)  throws Exception{
 		if (msgIds.length < 1) {
-			throw new RuntimeException("msgId not found");
+//			throw new RuntimeException("msgId not found");
+			throw new PmsRuntimeException("msgId not found");
 		}
 		return msgIds[0].substring(0, 6);
 	}

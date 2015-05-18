@@ -39,7 +39,7 @@ public class CommonController extends BaseController {
 	 */
 	@RequestMapping(value = "/adm/cmm/auth", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
-	public Response<Result<AuthRes>> authUser(@RequestBody @Valid AuthReq auth) {
+	public Response<Result<AuthRes>> authUser(@RequestBody @Valid AuthReq auth) throws Exception {
 
 		AuthRes authRes = commonService.authUser(auth);
 

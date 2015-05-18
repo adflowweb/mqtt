@@ -22,6 +22,7 @@ import kr.co.adflow.pms.adm.service.SvcService;
 import kr.co.adflow.pms.core.config.PmsConfig;
 import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.controller.BaseController;
+import kr.co.adflow.pms.core.exception.PmsRuntimeException;
 import kr.co.adflow.pms.domain.Message;
 import kr.co.adflow.pms.domain.User;
 import kr.co.adflow.pms.domain.validator.UserValidator;
@@ -81,7 +82,7 @@ public class SvcAdmController extends BaseController {
 	@RequestMapping(value = "/account", method = RequestMethod.GET)
 	@ResponseBody
 	public Response<Result<User>> getAccount(
-			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey) {
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey) throws Exception{
 
 		User user = accountService.retrieveAccount(appKey);
 
@@ -104,7 +105,7 @@ public class SvcAdmController extends BaseController {
 	@RequestMapping(value = "/account", method = RequestMethod.PUT)
 	@ResponseBody
 	public Response<Result<List<String>>> modifyAccount(@RequestBody AccountReq req,
-			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey) {
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey) throws Exception{
 
 		int resultCnt = accountService.modifyAccount(req, appKey);
 
@@ -130,7 +131,7 @@ public class SvcAdmController extends BaseController {
 	@RequestMapping(value = "/account/sec", method = RequestMethod.PUT)
 	@ResponseBody
 	public Response<Result<List<String>>> modifyPassword(@RequestBody PasswordReq req,
-			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey) {
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey) throws Exception{
 
 		int resultCnt = accountService.modifyPassword(req, appKey);
 
@@ -226,13 +227,14 @@ public class SvcAdmController extends BaseController {
 
 		if (msg.getReceivers() == null || msg.getReceivers().length == 0) {
 			//
-			throw new RuntimeException("getReceivers is null");
+//			throw new RuntimeException("getReceivers is null");
+			throw new PmsRuntimeException("getReceivers is null");
 		} else {
 			String[] receivers = msg.getReceivers();
 			for (int i = 0; i < receivers.length; i++) {
 				if (!isValid(receivers[i])) {
-					throw new RuntimeException("getReceivers not valid :"
-							+ receivers[i]);
+//					throw new RuntimeException("getReceivers not valid :"+ receivers[i]);
+					throw new PmsRuntimeException("getReceivers not valid :"+ receivers[i]);
 				}
 			}
 

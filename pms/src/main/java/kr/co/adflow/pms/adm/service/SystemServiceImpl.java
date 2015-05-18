@@ -16,6 +16,7 @@ import kr.co.adflow.pms.adm.request.UserUpdateReq;
 import kr.co.adflow.pms.adm.response.MessagesRes;
 import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.dao.ServerDao;
+import kr.co.adflow.pms.core.exception.PmsRuntimeException;
 import kr.co.adflow.pms.core.util.CheckUtil;
 import kr.co.adflow.pms.core.util.DateUtil;
 import kr.co.adflow.pms.core.util.KeyGenerator;
@@ -267,7 +268,7 @@ public class SystemServiceImpl implements SystemService {
 	 * @see kr.co.adflow.pms.adm.service.SystemService#getSysMessageList(java.util.Map)
 	 */
 	@Override
-	public MessagesRes getSysMessageList(Map<String, String> params) {
+	public MessagesRes getSysMessageList(Map<String, String> params)  throws Exception{
 
 		MessagesRes res = null;
 
@@ -276,6 +277,7 @@ public class SystemServiceImpl implements SystemService {
 
 		if (params.get("cSearchDate") == null) {
 			// error
+			throw new PmsRuntimeException("SearchDate is null");
 		}
 
 		MsgParams msgParams = new MsgParams();
@@ -340,7 +342,7 @@ public class SystemServiceImpl implements SystemService {
 	 * @see kr.co.adflow.pms.adm.service.SystemService#getSysResevationMessageList(java.util.Map)
 	 */
 	@Override
-	public MessagesRes getSysResevationMessageList(Map<String, String> params) {
+	public MessagesRes getSysResevationMessageList(Map<String, String> params) throws Exception{
 
 		MessagesRes res = null;
 
@@ -349,7 +351,8 @@ public class SystemServiceImpl implements SystemService {
 
 		if (params.get("cSearchDate") == null) {
 			// error
-			throw new RuntimeException("");
+//			throw new RuntimeException("");
+			throw new PmsRuntimeException("SearchDate is null");
 		}
 
 		MsgParams msgParams = new MsgParams();
@@ -407,7 +410,7 @@ public class SystemServiceImpl implements SystemService {
 	 * @see kr.co.adflow.pms.adm.service.SystemService#getServerInfo()
 	 */
 	@Override
-	public ServerInfo getServerInfo() {
+	public ServerInfo getServerInfo()  throws Exception{
 		// TODO Auto-generated method stub
 		try {
 			
@@ -418,7 +421,8 @@ public class SystemServiceImpl implements SystemService {
 			return info;
 		} catch (Exception e) {
 			logger.error("getServerInfo", e);
-			throw new RuntimeException("getServerInfo error");
+//			throw new RuntimeException("getServerInfo error");
+			throw new PmsRuntimeException("getServerInfo error");
 		}
 	}
 
@@ -459,7 +463,7 @@ public class SystemServiceImpl implements SystemService {
 	 * @see kr.co.adflow.pms.adm.service.SystemService#cancelReservationList(java.lang.String, kr.co.adflow.pms.adm.request.ReservationCancelReq)
 	 */
 	@Override
-	public int cancelReservationList(String appKey, ReservationCancelReq reqIds) {
+	public int cancelReservationList(String appKey, ReservationCancelReq reqIds) throws Exception{
 
 		String issueId = interceptMapper.selectCashedUserId(appKey);
 
@@ -481,9 +485,10 @@ public class SystemServiceImpl implements SystemService {
 	 * @param msgIds the msg ids
 	 * @return the key mon
 	 */
-	private String getKeyMon(String[] msgIds) {
+	private String getKeyMon(String[] msgIds) throws Exception{
 		if (msgIds.length < 1) {
-			throw new RuntimeException("msgId not found");
+//			throw new RuntimeException("msgId not found");
+			throw new PmsRuntimeException("msgId not found");
 		}
 		return msgIds[0].substring(0, 6);
 	}
@@ -495,7 +500,7 @@ public class SystemServiceImpl implements SystemService {
 	public List<Map<String, Object>> getMonthSummary(Map<String, String> params,
 			String appKey,
 			String keyMon, 
-			String issueId) {
+			String issueId)  throws Exception{
 		
 		MsgParams msgParams = new MsgParams();
 		msgParams.setMsgType(0);

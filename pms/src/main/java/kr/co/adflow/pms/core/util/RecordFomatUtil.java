@@ -1,5 +1,7 @@
 package kr.co.adflow.pms.core.util;
 
+import kr.co.adflow.pms.core.exception.PmsRuntimeException;
+
 public class RecordFomatUtil {
 	public static String intFormat(int valueInt, int stringLen) {
 		String valueStr;
@@ -14,7 +16,7 @@ public class RecordFomatUtil {
 			
 			// length check
 			if (stringLen < valueLen) {
-				new RuntimeException("String Length is smail-StringLen:"+stringLen+", valueInt:"+valueInt);
+				new PmsRuntimeException("String Length is smail-StringLen:"+stringLen+", valueInt:"+valueInt);
 			}
 			
 			//"0" add
@@ -39,7 +41,7 @@ public class RecordFomatUtil {
 			
 			// length check
 			if (stringLen < valueLen) {
-				new RuntimeException("String Length is smail-StringLen:"+stringLen+", value:"+value);
+				new PmsRuntimeException("String Length is smail-StringLen:"+stringLen+", value:"+value);
 			}
 			
 			sb.append(value);
@@ -105,7 +107,7 @@ public class RecordFomatUtil {
 				//개별번호
 				sb.append(RecordFomatUtil.intFormat(Integer.parseInt(topicTemp.substring(lastT,topicTemp.length()).replace("/", "")),4));
 			} else {
-				new RuntimeException("ufmi Topic not valid - Topic:"+topic);
+				new PmsRuntimeException("ufmi Topic not valid - Topic:"+topic);
 			}
 			
 			

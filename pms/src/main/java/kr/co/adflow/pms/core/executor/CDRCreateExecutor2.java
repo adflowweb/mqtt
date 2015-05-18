@@ -14,12 +14,12 @@ import java.util.HashMap;
 import java.util.List;
 
 import kr.co.adflow.pms.core.config.PmsConfig;
+import kr.co.adflow.pms.core.exception.PmsRuntimeException;
 import kr.co.adflow.pms.core.util.DateUtil;
 import kr.co.adflow.pms.core.util.RecordFomatUtil;
 import kr.co.adflow.pms.domain.CDR;
 import kr.co.adflow.pms.domain.CDRParams;
 import kr.co.adflow.pms.domain.mapper.CDRMapper;
-import kr.co.adflow.pms.domain.mapper.UserMapper;
 import kr.co.adflow.pms.domain.push.mapper.PushMapper;
 
 import org.slf4j.Logger;
@@ -47,10 +47,6 @@ public class CDRCreateExecutor2 {
 	/** The Push Mapper. */
 	@Autowired
 	private PushMapper pushMapper;
-	
-	/** The User Mapper. */
-	@Autowired
-	private UserMapper userMapper;
 	
 	/** The Pms Config. */
 	@Autowired
@@ -97,6 +93,9 @@ public class CDRCreateExecutor2 {
 	 */
 	public int createCDR(String date) throws Exception {
 
+//		if (true) {
+//			throw new PmsRuntimeException("excetion Test");
+//		}
 		
 		int startRow = 0;
 		this.fileNo = 0;
@@ -150,7 +149,7 @@ public class CDRCreateExecutor2 {
 			long stop;
 			start = System.currentTimeMillis();
 
-			cDRTotCnt = cDRMapper.getCDRListTotalCnt2(cDRParams);
+			cDRTotCnt = cDRMapper.getCDRListTotalCnt(cDRParams);
 			
 			if (cDRTotCnt == null) {
 				cDRTotCnt = 0;
@@ -291,7 +290,7 @@ public class CDRCreateExecutor2 {
 		
 		try {
 			
-			List<CDR> list = cDRMapper.getCDRList2(cDRParams);
+			List<CDR> list = cDRMapper.getCDRList(cDRParams);
 			
 			// CDR PRINT
 			String messageTopic1 = "";
@@ -300,20 +299,11 @@ public class CDRCreateExecutor2 {
 			String tempNo, pTalkVer;
 			String rRCause = "01";
 			int tempIndex;
-			boolean groupYes = false;
+			boolean groupYes;
 			for (CDR cDR : list) {
 				//stringBuffer clear
 				recordSb = new StringBuffer();
 				
-				if (cDR.getMsgType() == 10) {
-					//web message
-					// sender 권한이 "svcadm"이면 skip.
-					if (userMapper.selectRole(cDR.getIssueId()).equals("svcadm")) {
-						continue;
-					}
-				} 
-				
-				// group message check
 				if (cDR.getGroupId() == null || cDR.getGroupId().indexOf("/") < 0) {
 					groupYes = false;
 				}else {
@@ -348,28 +338,9 @@ public class CDRCreateExecutor2 {
 				
 				
 				//Caller NO
-				if (cDR.getMsgType() == 106) {
-					//user message
-					callerNo = RecordFomatUtil.topicToUfmiNo(cDR.getIssueId());
-					recordSb.append(RecordFomatUtil.stingFormat(callerNo, 13));
-					pTalkVer = cDR.getIssueId().substring(5, 6);
-					
-				} else  {
-					// web message
-//					System.out.println("======== cDR.getIssueId()::"+cDR.getIssueId()+", cDR.getMsgType()::"+cDR.getMsgType());
-					callerNo = userMapper.selectUfmi(cDR.getIssueId());
-//					System.out.println("======== callerNo::"+callerNo);
-					callerNo = RecordFomatUtil.ufmiNo(callerNo);
-//					System.out.println("======== callerNo::"+callerNo);
-					recordSb.append(RecordFomatUtil.stingFormat(callerNo, 13));
-					
-					if (callerNo.substring(0, 2).equals("82")) {
-						pTalkVer = "1";
-					} else {
-						pTalkVer = "2";
-					}
-				}
-				
+				callerNo = RecordFomatUtil.topicToUfmiNo(cDR.getIssueId());
+				recordSb.append(RecordFomatUtil.stingFormat(callerNo, 13));
+				pTalkVer = cDR.getIssueId().substring(5, 6);
 				
 				//Called NO - Group Msg NO : ReceiverTopic, Group Msg Yes : ReceiverUfmi
 				calledNo = pushMapper.getUfmi(cDR.getTokenId());
@@ -391,12 +362,8 @@ public class CDRCreateExecutor2 {
 				//Message Type
 				recordSb.append(RecordFomatUtil.intFormat(cDR.getMediaType(), 2));
 				//Send Terminal Type
-				if (cDR.getMsgType() == 106) {
-					recordSb.append(RecordFomatUtil.intFormat(Integer.parseInt(pTalkVer), 2));
-				} else {
-					recordSb.append(RecordFomatUtil.intFormat(cDR.getSendTerminalType(), 2));
-				}
-				
+//				recordSb.append(RecordFomatUtil.intFormat(cDR.getSendTerminalType(), 2));
+				recordSb.append(RecordFomatUtil.intFormat(Integer.parseInt(pTalkVer), 2));
 				//Packet Size
 
 				recordSb.append(RecordFomatUtil.intFormat(cDR.getMsgSize(), 11));
@@ -405,8 +372,6 @@ public class CDRCreateExecutor2 {
 				if (groupYes) {
 					// 그룹메세지에서 자신은 skip
 					if(callerNo.equals(calledNo)){
-						
-						System.out.println("======== skip::"+callerNo);
 						continue;
 					}
 					pTalkVer = cDR.getGroupId().substring(5, 6);

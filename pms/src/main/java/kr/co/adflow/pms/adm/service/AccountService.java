@@ -20,7 +20,7 @@ public interface AccountService {
 	 * @param appKey the app key
 	 * @return the user
 	 */
-	public User retrieveAccount(String appKey);
+	public User retrieveAccount(String appKey) throws Exception;
 
 	/**
 	 * Modify password.
@@ -29,7 +29,7 @@ public interface AccountService {
 	 * @param appKey the app key
 	 * @return the int
 	 */
-	public int modifyPassword(PasswordReq req, String appKey);
+	public int modifyPassword(PasswordReq req, String appKey) throws Exception;
 
 	/**
 	 * Modify account.
@@ -38,7 +38,7 @@ public interface AccountService {
 	 * @param appKey the app key
 	 * @return the int
 	 */
-	public int modifyAccount(AccountReq req, String appKey);
+	public int modifyAccount(AccountReq req, String appKey) throws Exception;
 	
 	
 	/**
@@ -48,6 +48,6 @@ public interface AccountService {
 	 * @param appKey the app key
 	 * @return the int
 	 */
-	public int modifyUserName(UserReq req, String appKey);
+	public int modifyUserName(UserReq req, String appKey) throws Exception;
 
 }

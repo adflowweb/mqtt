@@ -27,6 +27,7 @@ import kr.co.adflow.pms.adm.service.SystemService;
 import kr.co.adflow.pms.core.config.PmsConfig;
 import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.controller.BaseController;
+import kr.co.adflow.pms.core.exception.PmsRuntimeException;
 import kr.co.adflow.pms.core.executor.CDRCreateExecutor;
 import kr.co.adflow.pms.core.executor.CDRCreateExecutor2;
 import kr.co.adflow.pms.core.handler.PCFConnectionManagerHandler;
@@ -90,7 +91,7 @@ public class SystemController extends BaseController {
 	@RequestMapping(value = "/account", method = RequestMethod.GET)
 	@ResponseBody
 	public Response<Result<User>> getAccount(
-			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey) {
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey)  throws Exception{
 
 		User user = accountService.retrieveAccount(appKey);
 
@@ -113,7 +114,7 @@ public class SystemController extends BaseController {
 	@RequestMapping(value = "/account", method = RequestMethod.PUT)
 	@ResponseBody
 	public Response<Result<List<String>>> modifyAccount(@RequestBody AccountReq req,
-			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey) {
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey)  throws Exception{
 
 		int resultCnt = accountService.modifyAccount(req, appKey);
 
@@ -139,7 +140,7 @@ public class SystemController extends BaseController {
 	@RequestMapping(value = "/account/sec", method = RequestMethod.PUT)
 	@ResponseBody
 	public Response<Result<List<String>>> modifyPassword(@RequestBody PasswordReq req,
-			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey) {
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey)  throws Exception{
 
 		int resultCnt = accountService.modifyPassword(req, appKey);
 
@@ -534,7 +535,7 @@ public class SystemController extends BaseController {
 	public Response<Result<List<Map<String, Object>>>> getMonthSummary(
 			@RequestParam Map<String, String> params,
 			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey,
-			@PathVariable("month") String keyMon) {
+			@PathVariable("month") String keyMon)  throws Exception{
 
 		List<Map<String, Object>> resultList = systemService.getMonthSummary(params,
 				appKey, keyMon, null);
@@ -562,7 +563,7 @@ public class SystemController extends BaseController {
 			@RequestParam Map<String, String> params,
 			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey,
 			@PathVariable("month") String keyMon,
-			@PathVariable("userId") String issueId) {
+			@PathVariable("userId") String issueId)  throws Exception{
 
 		List<Map<String, Object>> resultList = systemService.getMonthSummary(params,
 				appKey, keyMon, issueId);
@@ -608,17 +609,31 @@ public class SystemController extends BaseController {
 	@ResponseBody
 	public Response<Result<Integer>> cDRCreate2(@RequestParam("date") String date) throws Exception{
 
+		Result<Integer> result;
+
+			Integer re = 0;
+			re = (Integer) cDRCreateExecutor2.createCDR(date);
+
+			result = new Result<Integer>();
+			result.setSuccess(true);
+
+			result.setData(re);
+			@SuppressWarnings({ "unchecked", "rawtypes" })
+
+			Response<Result<Integer>> res = new Response(result);
+			
+//			if (true) {
+//				throw new PmsRuntimeException("excetion Test");
+//			}
+			
+			
+			return res;
+			
+
 		
-		Integer re = 0;
-		re = (Integer) cDRCreateExecutor2.createCDR(date);
+		
 
-		Result<Integer> result = new Result<Integer>();
-		result.setSuccess(true);
-
-		result.setData(re);
-		@SuppressWarnings({ "unchecked", "rawtypes" })
-		Response<Result<Integer>> res = new Response(result);
-		return res;
+		
 
 	}
 	
@@ -631,7 +646,7 @@ public class SystemController extends BaseController {
 	 */
 	@RequestMapping(value = "/test", method = RequestMethod.GET)
 	@ResponseBody
-	public Response<Result<Integer>> getTest() {
+	public Response<Result<Integer>> getTest() throws Exception{
 
 		
 		String re = "";

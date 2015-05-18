@@ -67,7 +67,7 @@ public interface SystemService {
 	 * @param params the params
 	 * @return the sys message list
 	 */
-	public MessagesRes getSysMessageList(Map<String, String> params);
+	public MessagesRes getSysMessageList(Map<String, String> params) throws Exception;
 
 	/**
 	 * Gets the sys resevation message list.
@@ -75,14 +75,14 @@ public interface SystemService {
 	 * @param params the params
 	 * @return the sys resevation message list
 	 */
-	public MessagesRes getSysResevationMessageList(Map<String, String> params);
+	public MessagesRes getSysResevationMessageList(Map<String, String> params) throws Exception;
 
 	/**
 	 * Gets the server info.
 	 *
 	 * @return the server info
 	 */
-	public ServerInfo getServerInfo();
+	public ServerInfo getServerInfo() throws Exception;
 
 	/**
 	 * Cancel reservation list.
@@ -91,7 +91,7 @@ public interface SystemService {
 	 * @param ids the ids
 	 * @return the int
 	 */
-	public int cancelReservationList(String appKey, ReservationCancelReq ids);
+	public int cancelReservationList(String appKey, ReservationCancelReq ids) throws Exception;
 
 	/**
 	 * Gets the month summary.
@@ -104,7 +104,7 @@ public interface SystemService {
 	public List<Map<String, Object>> getMonthSummary(Map<String, String> params, 
 			String appKey,
 			String keyMon, 
-			String issueId);
+			String issueId) throws Exception;
 	
 	/**
 	 * Test.

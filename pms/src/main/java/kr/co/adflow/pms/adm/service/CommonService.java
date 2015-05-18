@@ -18,6 +18,6 @@ public interface CommonService {
 	 * @param auth the auth
 	 * @return the auth res
 	 */
-	AuthRes authUser(AuthReq auth);
+	AuthRes authUser(AuthReq auth) throws Exception;
 
 }

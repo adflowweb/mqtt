@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import kr.co.adflow.pms.adm.service.CommonServiceImpl;
+import kr.co.adflow.pms.core.exception.PmsRuntimeException;
 import kr.co.adflow.pms.response.Response;
 import kr.co.adflow.pms.response.Result;
 
@@ -41,7 +42,14 @@ public class BaseController {
 	@ResponseBody
 	public Response<Result<List<String>>> handleAllException(final Exception e) {
 
-		logger.error("런타임에러발생::",e);
+		
+
+		if (e instanceof PmsRuntimeException) {
+//			System.out.println("=== PmsRuntimeException 맞어 ");
+			
+		} else {
+			logger.error("런타임에러발생::",e);
+		}
 		
 		String errorMessage = null;
 		// org.springframework.web.bind.MethodArgumentNotValidException

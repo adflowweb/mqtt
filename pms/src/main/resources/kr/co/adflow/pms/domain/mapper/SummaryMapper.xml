@@ -25,7 +25,7 @@
 		FROM
 		(
 		select 
-		a.issue_id, a.status, a.is_reservation, a.msg_id, b.ack_type AS pma_ack_type, d.ack_type AS app_ack_type
+		a.issue_id, a.status, a.is_reservation, a.msg_id, b.ack_type AS pma_ack_type, d.ack_type AS app_ack_type, b.token_id
 		FROM
 		pms.message${keyMon} a LEFT OUTER JOIN pms.ack${keyMon} b ON a.msg_id = b.msg_id AND b.ack_type = 'pma',
         pms.message${keyMon} c LEFT OUTER JOIN pms.ack${keyMon} d ON c.msg_id = d.msg_id AND d.ack_type = 'app'		
@@ -44,7 +44,7 @@
 		</if>
 
         UNION 
-        select issue_id, status, is_reservation, msg_id, NULL, NULL 
+        select issue_id, status, is_reservation, msg_id, NULL, NULL , NULL
         
         FROM reservation_msg 
         WHERE 

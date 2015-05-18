@@ -6,6 +6,7 @@ package kr.co.adflow.pms.adm.service;
 import kr.co.adflow.pms.adm.request.AccountReq;
 import kr.co.adflow.pms.adm.request.PasswordReq;
 import kr.co.adflow.pms.adm.request.UserReq;
+import kr.co.adflow.pms.core.exception.PmsRuntimeException;
 import kr.co.adflow.pms.core.util.CheckUtil;
 import kr.co.adflow.pms.core.util.KeyGenerator;
 import kr.co.adflow.pms.domain.User;
@@ -38,7 +39,7 @@ public class AccountServiceImpl implements AccountService {
 	 * @see kr.co.adflow.pms.adm.service.AccountService#retrieveAccount(java.lang.String)
 	 */
 	@Override
-	public User retrieveAccount(String appKey) {
+	public User retrieveAccount(String appKey) throws Exception {
 		User resultUser = null;
 		String userId = interceptMapper.selectCashedUserId(appKey);
 		resultUser = userMapper.select(userId);
@@ -57,10 +58,11 @@ public class AccountServiceImpl implements AccountService {
 	 * @see kr.co.adflow.pms.adm.service.AccountService#modifyPassword(kr.co.adflow.pms.adm.request.PasswordReq, java.lang.String)
 	 */
 	@Override
-	public int modifyPassword(PasswordReq req, String appKey) {
+	public int modifyPassword(PasswordReq req, String appKey)  throws Exception{
 
 		if (!req.getNewPassword().trim().equals(req.getRePassword().trim())) {
-			throw new RuntimeException("패스워드 변경 실패1");
+//			throw new RuntimeException("패스워드 변경 실패1");
+			throw new PmsRuntimeException("패스워드 변경 실패1");
 		}
 
 		// TODO OLD <> NEW 확인 필요?
@@ -73,7 +75,8 @@ public class AccountServiceImpl implements AccountService {
 
 		User user = userMapper.selectAuth(paramUser);
 		if (user == null) {
-			throw new RuntimeException("패스워드 변경 실패2");
+//			throw new RuntimeException("패스워드 변경 실패2");
+			throw new PmsRuntimeException("패스워드 변경 실패2");
 		}
 
 		paramUser.setAction("modifyPassword");
@@ -85,7 +88,8 @@ public class AccountServiceImpl implements AccountService {
 		if (cnt > 0) {
 			cnt = userMapper.updatePassword(paramUser);
 		} else {
-			throw new RuntimeException("패스워드 변경 실패3");
+//			throw new RuntimeException("패스워드 변경 실패3");
+			throw new PmsRuntimeException("패스워드 변경 실패3");
 		}
 
 		return cnt;
@@ -107,7 +111,7 @@ public class AccountServiceImpl implements AccountService {
 	 * @see kr.co.adflow.pms.adm.service.AccountService#modifyAccount(kr.co.adflow.pms.adm.request.AccountReq, java.lang.String)
 	 */
 	@Override
-	public int modifyAccount(AccountReq req, String appKey) {
+	public int modifyAccount(AccountReq req, String appKey)  throws Exception{
 
 		String userId = interceptMapper.selectCashedUserId(appKey);
 
@@ -125,7 +129,8 @@ public class AccountServiceImpl implements AccountService {
 		if (cnt > 0) {
 			cnt = userMapper.updateUser(paramUser);
 		} else {
-			throw new RuntimeException("modifyAccount fail");
+//			throw new RuntimeException("modifyAccount fail");
+			throw new PmsRuntimeException("modifyAccount fail");
 		}
 
 		return cnt;
@@ -136,10 +141,11 @@ public class AccountServiceImpl implements AccountService {
 	 * @see kr.co.adflow.pms.adm.service.AccountService#modifyPassword(kr.co.adflow.pms.adm.request.PasswordReq, java.lang.String)
 	 */
 	@Override
-	public int modifyUserName(UserReq req, String appKey) {
+	public int modifyUserName(UserReq req, String appKey) throws Exception{
 
 		if (!req.getUserName().trim().equals(req.getUserName().trim())) {
-			throw new RuntimeException("유저 이름 변경 실패1");
+//			throw new RuntimeException("유저 이름 변경 실패1");
+			throw new PmsRuntimeException("유저 이름 변경 실패1");
 		}
 
 		// TODO OLD <> NEW 확인 필요?
@@ -159,7 +165,8 @@ public class AccountServiceImpl implements AccountService {
 		if (cnt > 0) {
 			cnt = userMapper.updateUserName(paramUser);
 		} else {
-			throw new RuntimeException("유저 이름 변경 실패2");
+//			throw new RuntimeException("유저 이름 변경 실패2");
+			throw new PmsRuntimeException("유저 이름 변경 실패2");
 		}
 
 		return cnt;

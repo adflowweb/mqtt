@@ -11,6 +11,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 
 import kr.co.adflow.pms.adm.request.AccountReq;
+import kr.co.adflow.pms.adm.request.AddressReq;
 import kr.co.adflow.pms.adm.request.PasswordReq;
 import kr.co.adflow.pms.adm.request.ReservationCancelReq;
 import kr.co.adflow.pms.adm.request.UserReq;
@@ -20,6 +21,8 @@ import kr.co.adflow.pms.adm.service.SvcService;
 import kr.co.adflow.pms.core.config.PmsConfig;
 import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.controller.BaseController;
+import kr.co.adflow.pms.core.exception.PmsRuntimeException;
+import kr.co.adflow.pms.domain.Address;
 import kr.co.adflow.pms.domain.Message;
 import kr.co.adflow.pms.domain.User;
 import kr.co.adflow.pms.domain.validator.UserValidator;
@@ -80,7 +83,7 @@ public class SvcController extends BaseController {
 	@RequestMapping(value = "/account", method = RequestMethod.GET)
 	@ResponseBody
 	public Response<Result<User>> getAccount(
-			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey) {
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey) throws Exception{
 
 		User user = accountService.retrieveAccount(appKey);
 
@@ -103,7 +106,7 @@ public class SvcController extends BaseController {
 	@RequestMapping(value = "/account", method = RequestMethod.PUT)
 	@ResponseBody
 	public Response<Result<List<String>>> modifyAccount(@RequestBody AccountReq req,
-			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey) {
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey)throws Exception{
 
 		int resultCnt = accountService.modifyAccount(req, appKey);
 
@@ -129,7 +132,7 @@ public class SvcController extends BaseController {
 	@RequestMapping(value = "/account/sec", method = RequestMethod.PUT)
 	@ResponseBody
 	public Response<Result<List<String>>> modifyPassword(@RequestBody PasswordReq req,
-			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey) {
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey) throws Exception{
 
 		int resultCnt = accountService.modifyPassword(req, appKey);
 
@@ -313,7 +316,8 @@ public class SvcController extends BaseController {
 
 		if (msg.getReceivers() == null || msg.getReceivers().length == 0) {
 			//
-			throw new RuntimeException("getReceivers is null");
+//			throw new RuntimeException("getReceivers is null");
+			throw new PmsRuntimeException("getReceivers is null");
 		} else {
 			String[] receivers = msg.getReceivers();
 			for (int i = 0; i < receivers.length; i++) {
@@ -322,8 +326,8 @@ public class SvcController extends BaseController {
 				if (!(receivers[i].subSequence(0, 5).equals("mms/P")&&receivers[i].indexOf("g") > 0)) {
 
 					if (!isValid(receivers[i])) {
-						throw new RuntimeException("getReceivers not valid"
-								+ receivers[i]);
+//						throw new RuntimeException("getReceivers not valid"	+ receivers[i]);
+						throw new PmsRuntimeException("getReceivers not valid"	+ receivers[i]);
 					}
 
 				}
@@ -417,7 +421,7 @@ public class SvcController extends BaseController {
 	@RequestMapping(value = "/users/name", method = RequestMethod.PUT)
 	@ResponseBody
 	public Response<Result<List<String>>> modifyUserName(@RequestBody UserReq req,
-			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey) {
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey) throws Exception{
 
 		int resultCnt = accountService.modifyUserName(req, appKey);
 
@@ -432,5 +436,120 @@ public class SvcController extends BaseController {
 		return res;
 
 	}
+	
+	
+	
+	/**
+	 * add address.
+	 *
+	 * @param appKey the app key
+	 * @param AddressReq the req
+	 * @return the response
+	 * @throws Exception the exception
+	 */
+	@RequestMapping(value = "/address", method = RequestMethod.POST, consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
+	@ResponseBody
+	public Response<Result<Integer>> addAdress(
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey,
+			@RequestBody AddressReq req) throws Exception {
+
+		logger.debug("=== AdressReq ::{}", req.toString());
+		
+
+
+		int insertCnt = svcService.addAdress(appKey, req);
+
+		Result<Integer> result = new Result<Integer>();
+		result.setSuccess(true);
+
+		result.setData(insertCnt);
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		Response<Result<Integer>> res = new Response(result);
+		return res;
+
+	}
+	
+	/**
+	 * update address.
+	 *
+	 * @param appKey the app key
+	 * @param AddressReq the req
+	 * @return the response
+	 * @throws Exception the exception
+	 */
+	@RequestMapping(value = "/address", method = RequestMethod.PUT, consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
+	@ResponseBody
+	public Response<Result<Integer>> updateAdress(
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey,
+			@RequestBody AddressReq req) throws Exception {
+
+		logger.debug("=== AdressReq ::{}", req.toString());
+
+		int insertCnt = svcService.updateAdress(appKey, req);
+
+		Result<Integer> result = new Result<Integer>();
+		result.setSuccess(true);
+
+		result.setData(insertCnt);
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		Response<Result<Integer>> res = new Response(result);
+		return res;
+
+	}
+	
+	/**
+	 * get address list.
+	 *
+	 * @param appKey the app key
+	 * @param AddressReq the req
+	 * @return the response
+	 * @throws Exception the exception
+	 */
+	@RequestMapping(value = "/address", method = RequestMethod.GET, produces = StaticConfig.HEADER_CONTENT_TYPE)
+	@ResponseBody
+	public Response<Result<List<Address>>> getAdress(
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey) throws Exception {
+
+		logger.debug("=== appKey ::{}", appKey);
+
+		List<Address> resultList = svcService.getAddressList(appKey);
+
+		Result<List<Address>> result = new Result<List<Address>>();
+		result.setSuccess(true);
+		result.setData(resultList);
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		Response<Result<List<Address>>> res = new Response(result);
+		return res;
+
+	}
+	
+	/**
+	 * delete address.
+	 *
+	 * @param appKey the app key
+	 * @param String the ufmi
+	 * @return the response
+	 * @throws Exception the exception
+	 */
+	@RequestMapping(value = "/address/{ufmi}", method = RequestMethod.DELETE, produces = StaticConfig.HEADER_CONTENT_TYPE)
+	@ResponseBody
+	public Response<Result<Integer>> deleteAdress(
+			@PathVariable("ufmi") String ufmi,
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey) throws Exception {
+
+		logger.debug("=== appKey ::{}, ufmi::{}", appKey, ufmi);
+
+		int delCnt = svcService.deleteAddress(appKey, ufmi);
+
+		Result<Integer> result = new Result<Integer>();
+		result.setSuccess(true);
+
+		result.setData(delCnt);
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		Response<Result<Integer>> res = new Response(result);
+		return res;
+
+	}
+	
 
 }
