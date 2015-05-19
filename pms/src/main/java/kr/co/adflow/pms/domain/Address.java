@@ -7,7 +7,7 @@ import java.util.Date;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class Ack.
+ * The Class Address.
  */
 public class Address {
 

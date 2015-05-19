@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.adflow.pms.domain.mapper.TemplateMapper">
+
+	<resultMap id="TemplateResult" type="kr.co.adflow.pms.domain.Template">
+		<result property="userId" column="user_id" />
+		<result property="templateId" column="template_id" />
+		<result property="templateName" column="template_name" />
+		<result property="templateMsg" column="template_msg" />
+		<result property="issueTime" column="issue_time" />
+		<result property="issueId" column="issue_id" />
+	</resultMap>
+
+	<insert id="insertTemplate" parameterType="kr.co.adflow.pms.domain.Template">
+		INSERT INTO pms.template
+		(user_id
+		,template_id
+		,template_name
+		,template_msg
+		,issue_time
+		,issue_id
+		)
+		values(
+		#{userId}
+		,#{templateId}
+		,#{templateName}
+		,#{templateMsg}
+		,now()
+		,#{issueId}
+		)
+	</insert>
+	
+	<select id="selectTemplate" parameterType="kr.co.adflow.pms.domain.TemplateParams" resultMap="TemplateResult">
+		SELECT
+		user_id
+		,template_id
+		,template_name
+		,template_msg
+		,issue_time
+		,issue_id
+		FROM pms.template
+		WHERE
+		user_id = #{userId}
+		AND template_id = #{templateId}
+	</select>
+	
+	<select id="selectTemplateList" parameterType="String" resultMap="TemplateResult">
+		SELECT
+		user_id
+		,template_id
+		,template_name
+		,template_msg
+		,issue_time
+		,issue_id
+		FROM pms.template
+		WHERE
+		user_id = #{userId}
+	</select>
+	
+	<update id="updateTemplate" parameterType="kr.co.adflow.pms.domain.Template">
+		UPDATE pms.template
+		SET
+		template_name = #{templateName}
+		,template_msg = #{templateMsg}
+		WHERE
+		user_id = #{userId}
+		AND template_id = #{templateId}
+	</update>
+	
+	
+	
+	<delete id="deleteTemplate" parameterType="kr.co.adflow.pms.domain.TemplateParams">
+		DELETE FROM pms.template
+		WHERE 
+		user_id = #{userId}
+		AND template_id = #{templateId}
+	</delete>
+	
+	
+	
+	
+</mapper>	

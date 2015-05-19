@@ -297,7 +297,8 @@ public class CDRCreateExecutor {
 			String messageTopic1 = "";
 			String messageTopic2 = "";
 			String callerNo, calledNo;
-			String tempNo, pTalkVer;
+			String tempNo;
+			String pTalkVer = "";
 			String rRCause = "01";
 			int tempIndex;
 			boolean groupYes = false;
@@ -312,6 +313,7 @@ public class CDRCreateExecutor {
 						continue;
 					}
 				} 
+				
 				
 				// group message check
 				if (cDR.getGroupId() == null || cDR.getGroupId().indexOf("/") < 0) {
@@ -359,15 +361,21 @@ public class CDRCreateExecutor {
 //					System.out.println("======== cDR.getIssueId()::"+cDR.getIssueId()+", cDR.getMsgType()::"+cDR.getMsgType());
 					callerNo = userMapper.selectUfmi(cDR.getIssueId());
 //					System.out.println("======== callerNo::"+callerNo);
-					callerNo = RecordFomatUtil.ufmiNo(callerNo);
+					if (callerNo == null || callerNo.trim().length() <= 0) {
+						callerNo = "";
+						rRCause = "03";
+					} else {
+						callerNo = RecordFomatUtil.ufmiNo(callerNo);
+					}
+					
 //					System.out.println("======== callerNo::"+callerNo);
 					recordSb.append(RecordFomatUtil.stingFormat(callerNo, 13));
 					
-					if (callerNo.substring(0, 2).equals("82")) {
-						pTalkVer = "1";
-					} else {
-						pTalkVer = "2";
-					}
+//					if (callerNo.substring(0, 2).equals("82")) {
+//						pTalkVer = "1";
+//					} else {
+//						pTalkVer = "2";
+//					}
 				}
 				
 				
@@ -381,9 +389,18 @@ public class CDRCreateExecutor {
 				}
 				
 				//20150508 - 수신자번호가 없으면 RR Cause = "02"
-				if (calledNo.equals("")) {
-					rRCause = "02";
+				//20150519 - 송신번호가 없으면 RR Cause = "03", 수신자번호, 송신번호 둘다 없으면 RR Cause = "04"
+				if (rRCause.equals("03")) {
+					if (calledNo.equals("")) {
+						rRCause = "04";
+					}
+					
+				} else {
+					if (calledNo.equals("")) {
+						rRCause = "02";
+					}
 				}
+				
 				
 				recordSb.append(RecordFomatUtil.stingFormat(calledNo, 13));
 				//RR Cause
@@ -398,7 +415,10 @@ public class CDRCreateExecutor {
 				}
 				
 				//Packet Size
-
+				//2015-05-19 - Message Size 0 이면 1로 출력 요청함.
+				if (cDR.getMsgSize() == 0) {
+					cDR.setMsgSize(1);
+				}
 				recordSb.append(RecordFomatUtil.intFormat(cDR.getMsgSize(), 11));
 
 

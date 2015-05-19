@@ -91,12 +91,25 @@ public class DirectMsgHandlerBySessionCallback implements
 			
 			byteArr = json.getBytes();
 			bytesMessage.writeBytes(byteArr);
+			
+			if (msg.getQos() <= 0) {
+				//Qos 0 => delivery mod 1
+				msg.setQos(1);
+			} else {
+				//Qos 1,2 => delivery mod 2
+				msg.setQos(2);
+			}
 
 			producer.send(bytesMessage, msg.getQos(),
 					javax.jms.Message.DEFAULT_PRIORITY/* default */,
 					msg.getExpiry());
 			logger.debug("메시지가전송되었습니다.");
-		} catch (JSONException e) {
+//		} catch (JSONException e) {
+//			e.printStackTrace();
+//		
+//		} catch (JMSException e) {
+//			throw e;
+		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			if (producer != null) {

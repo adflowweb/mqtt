@@ -56,6 +56,8 @@ public class PCBSServiceImpl implements PCBSService {
 			user.setIssueId(issueId);
 			user.setUfmi(userReq.getUfmi());
 			user.setSaId(userReq.getSaId());
+			user.setDefaultQos(2);
+			user.setDefaultExpiry(600000);
 //			user.setGroupTopics(userReq.getGroupTopics());
 
 			Token token = new Token();
