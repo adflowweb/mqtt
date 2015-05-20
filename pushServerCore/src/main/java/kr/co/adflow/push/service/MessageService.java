@@ -3,7 +3,10 @@
  */
 package kr.co.adflow.push.service;
 
+import java.util.Map;
+
 import kr.co.adflow.push.domain.Message;
+import kr.co.adflow.push.domain.ktp.MessagesRes;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -73,4 +76,12 @@ public interface MessageService {
 	 * @throws Exception the exception
 	 */
 	Message[] getDeliveredMsgs() throws Exception;
+	
+	/**
+	 * Gets the message list.
+	 *
+	 * @return the MessagesRes
+	 * @throws Exception the exception
+	 */
+	MessagesRes getMessageList(Map<String, String> params) throws Exception;
 }

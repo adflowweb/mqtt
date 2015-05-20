@@ -8,6 +8,7 @@ import java.util.List;
 import kr.co.adflow.push.domain.Acknowledge;
 import kr.co.adflow.push.domain.Message;
 import kr.co.adflow.push.domain.Sms;
+import kr.co.adflow.push.domain.ktp.MsgParams;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -177,4 +178,20 @@ public interface MessageMapper {
 	 * @throws Exception the exception
 	 */
 	Message[] getDeliveredMsgs() throws Exception;
+	
+	/**
+	 * Gets the Message List Count.
+	 *
+	 * @return the int
+	 * @throws Exception the exception
+	 */
+	int getMessageListCnt(MsgParams msgParams) throws Exception;
+	
+	/**
+	 * Gets the delivered msgs.
+	 *
+	 * @return the List<Message>
+	 * @throws Exception the exception
+	 */
+	List<Message> getMessageList(MsgParams msgParams) throws Exception;
 }
