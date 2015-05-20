@@ -3,8 +3,13 @@
  */
 package kr.co.adflow.push.dao.impl;
 
+import java.util.List;
+import java.util.Map;
+
 import kr.co.adflow.push.dao.MessageDao;
 import kr.co.adflow.push.domain.Message;
+import kr.co.adflow.push.domain.ktp.MessagesRes;
+import kr.co.adflow.push.domain.ktp.MsgParams;
 import kr.co.adflow.push.mapper.MessageMapper;
 
 import org.apache.ibatis.session.SqlSession;
@@ -133,5 +138,29 @@ public class MessageDaoImpl implements MessageDao {
 		Message[] msg = msgMapper.getDeliveredMsgs();
 		logger.debug("getDeliveredMsgs종료(" + msg + ")");
 		return msg;
+	}
+	
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.dao.MessageDao#getMessageList()
+	 */
+	@Override
+	public MessagesRes getMessageList(MsgParams msgParams) throws Exception {
+		logger.debug("getDeliveredMsgs시작()");
+		
+		MessagesRes res;
+		MessageMapper msgMapper = sqlSession.getMapper(MessageMapper.class);
+		
+		int cnt = msgMapper.getMessageListCnt(msgParams);
+		logger.debug("cnt :::::::{}", cnt);
+
+		List<Message> list = msgMapper.getMessageList(msgParams);
+		logger.debug("list size :::::::{}", list.size());
+
+		res = new MessagesRes();
+		res.setRecordsFiltered(cnt);
+		res.setRecordsTotal(cnt);
+		res.setData(list);
+		
+		return res;
 	}
 }

@@ -100,7 +100,7 @@ public class MessageSendServiceImpl implements MessageSendService {
 		param.put("limit", limit);
 
 		List<Message> list = messageMapper.selectList(param);
-
+		logger.debug("============= serverId::" + serverId);
 		
 		//logger.info("list cnt :: {}", list.size());
 
@@ -123,7 +123,9 @@ public class MessageSendServiceImpl implements MessageSendService {
 					continue;
 				}
 
+				logger.debug("============= msg.getReceiver()::"+msg.getReceiver());
 				msg.setReceiverTopic(this.getReceiverTopic(msg.getReceiver()));
+				logger.debug("=============  msg.getReceiverTopic()" + msg.getReceiverTopic());
 
 			} else {
 				isUserMessage = false;
@@ -132,6 +134,7 @@ public class MessageSendServiceImpl implements MessageSendService {
 						msg.getReceiverTopic());
 			}
 
+			logger.debug("============= bbbbb");
 			// msgCntLimit disable
 //			if (isUserMessage
 //					&& userMapper.getMsgCntLimit(msg.getIssueId()) < 1) {
@@ -145,6 +148,8 @@ public class MessageSendServiceImpl implements MessageSendService {
 //			jmsTemplate.execute(msg.getReceiverTopic(), new DirectMsgHandler(msg));
 			jmsTemplate.execute(new DirectMsgHandlerBySessionCallback(jmsTemplate,msg));
 //			kicho-20150420:jms pool update [end]	
+
+			logger.debug("============= cccccc");
 			
 			//message tran log
 			try {
@@ -172,6 +177,7 @@ public class MessageSendServiceImpl implements MessageSendService {
 			user.setUserId(msg.getIssueId());
 			user.setMsgCntLimit(resultCnt);
 			
+			logger.debug("============= dddddd");
 			// msgCntLimit disable
 //			if (isUserMessage) {
 //				userMapper.discountMsgCntLimit(user);

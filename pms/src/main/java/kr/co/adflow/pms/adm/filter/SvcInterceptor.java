@@ -79,7 +79,9 @@ public class SvcInterceptor extends HandlerInterceptorAdapter {
 
 		long diffTime = expiredTime.getTime() - System.currentTimeMillis();
 
-		long checkTime = 1000 * 60 * 20;
+//		long checkTime = 1000 * 60 * 20;
+		// 2015-05-19 만료 시간 1시간으로 변경 요청.
+		long checkTime = 1000 * 60 * 60;
 
 		if (diffTime < checkTime) {
 			// 3 만료시간 연장

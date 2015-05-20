@@ -14,6 +14,7 @@ import kr.co.adflow.pms.adm.request.AccountReq;
 import kr.co.adflow.pms.adm.request.AddressReq;
 import kr.co.adflow.pms.adm.request.PasswordReq;
 import kr.co.adflow.pms.adm.request.ReservationCancelReq;
+import kr.co.adflow.pms.adm.request.TemplateReq;
 import kr.co.adflow.pms.adm.request.UserReq;
 import kr.co.adflow.pms.adm.response.MessagesRes;
 import kr.co.adflow.pms.adm.service.AccountService;
@@ -24,6 +25,7 @@ import kr.co.adflow.pms.core.controller.BaseController;
 import kr.co.adflow.pms.core.exception.PmsRuntimeException;
 import kr.co.adflow.pms.domain.Address;
 import kr.co.adflow.pms.domain.Message;
+import kr.co.adflow.pms.domain.Template;
 import kr.co.adflow.pms.domain.User;
 import kr.co.adflow.pms.domain.validator.UserValidator;
 import kr.co.adflow.pms.response.Response;
@@ -550,6 +552,122 @@ public class SvcController extends BaseController {
 		return res;
 
 	}
+	
+	
+	
+	
+	/**
+	 * add Template.
+	 *
+	 * @param appKey the app key
+	 * @param TemplateReq the req
+	 * @return the response
+	 * @throws Exception the exception
+	 */
+	@RequestMapping(value = "/template", method = RequestMethod.POST, consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
+	@ResponseBody
+	public Response<Result<Integer>> addTemplate(
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey,
+			@RequestBody TemplateReq req) throws Exception {
+
+		logger.debug("=== TemplateReq ::{}", req.toString());
+		
+
+
+		int insertCnt = svcService.addTemplate(appKey, req);
+
+		Result<Integer> result = new Result<Integer>();
+		result.setSuccess(true);
+
+		result.setData(insertCnt);
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		Response<Result<Integer>> res = new Response(result);
+		return res;
+
+	}
+	
+	/**
+	 * update Template.
+	 *
+	 * @param appKey the app key
+	 * @param TemplateReq the req
+	 * @return the response
+	 * @throws Exception the exception
+	 */
+	@RequestMapping(value = "/template", method = RequestMethod.PUT, consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
+	@ResponseBody
+	public Response<Result<Integer>> updateTemplate(
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey,
+			@RequestBody TemplateReq req) throws Exception {
+
+		logger.debug("=== TemplateReq ::{}", req.toString());
+
+		int insertCnt = svcService.updateTemplate(appKey, req);
+
+		Result<Integer> result = new Result<Integer>();
+		result.setSuccess(true);
+
+		result.setData(insertCnt);
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		Response<Result<Integer>> res = new Response(result);
+		return res;
+
+	}
+	
+	/**
+	 * get Template list.
+	 *
+	 * @param appKey the app key
+	 * @param TemplateReq the req
+	 * @return the response
+	 * @throws Exception the exception
+	 */
+	@RequestMapping(value = "/template", method = RequestMethod.GET, produces = StaticConfig.HEADER_CONTENT_TYPE)
+	@ResponseBody
+	public Response<Result<List<Template>>> getTemplate(
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey) throws Exception {
+
+		logger.debug("=== appKey ::{}", appKey);
+
+		List<Template> resultList = svcService.getTemplateList(appKey);
+
+		Result<List<Template>> result = new Result<List<Template>>();
+		result.setSuccess(true);
+		result.setData(resultList);
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		Response<Result<List<Template>>> res = new Response(result);
+		return res;
+
+	}
+	
+	/**
+	 * delete Template.
+	 *
+	 * @param appKey the app key
+	 * @param String the Template Id
+	 * @return the response
+	 * @throws Exception the exception
+	 */
+	@RequestMapping(value = "/template/{templateId}", method = RequestMethod.DELETE, produces = StaticConfig.HEADER_CONTENT_TYPE)
+	@ResponseBody
+	public Response<Result<Integer>> deleteTemplate(
+			@PathVariable("templateId") String templateId,
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey) throws Exception {
+
+		logger.debug("=== appKey ::{}, templateId::{}", appKey, templateId);
+
+		int delCnt = svcService.deleteTemplate(appKey, templateId);
+
+		Result<Integer> result = new Result<Integer>();
+		result.setSuccess(true);
+
+		result.setData(delCnt);
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		Response<Result<Integer>> res = new Response(result);
+		return res;
+
+	}
+	
 	
 
 }

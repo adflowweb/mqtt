@@ -3,7 +3,11 @@
  */
 package kr.co.adflow.push.dao;
 
+import java.util.Map;
+
 import kr.co.adflow.push.domain.Message;
+import kr.co.adflow.push.domain.ktp.MessagesRes;
+import kr.co.adflow.push.domain.ktp.MsgParams;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -74,4 +78,12 @@ public interface MessageDao {
 	 * @throws Exception the exception
 	 */
 	Message[] getDeliveredMsgs() throws Exception;
+	
+	/**
+	 * Gets the Message List.
+	 *
+	 * @return the MessagesRes
+	 * @throws Exception the exception
+	 */
+	MessagesRes getMessageList(MsgParams msgParams) throws Exception;
 }

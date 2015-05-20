@@ -5,9 +5,11 @@ package kr.co.adflow.push.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
+import kr.co.adflow.push.domain.ktp.MessagesRes;
 import kr.co.adflow.push.domain.Message;
 import kr.co.adflow.push.domain.Response;
 import kr.co.adflow.push.domain.Result;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 // TODO: Auto-generated Javadoc
@@ -218,31 +221,35 @@ public class MessageController {
 		return res;
 	}
 
-	/**
-	 * 전체 메시지 가져오기.
-	 *
-	 * @return the msgs
-	 * @throws Exception the exception
-	 */
-	@RequestMapping(value = "messages", method = RequestMethod.GET)
-	@ResponseBody
-	public Response<Message[]> getMsgs() throws Exception {
-		Message[] msg = msgService.getMsgs();
-		logger.debug("메시지=" + msg);
-		Result<Message[]> result = new Result<Message[]>();
-		result.setSuccess(true);
-		result.setData(msg);
-		Response<Message[]> res = new Response<Message[]>(result);
-		logger.debug("response=" + res);
-		return res;
-	}
+//	/**
+//	 * 전체 메시지 가져오기.
+//	 *
+//	 * @return the msgs
+//	 * @throws Exception the exception
+//	 */
+//	@RequestMapping(value = "messages", method = RequestMethod.GET)
+//	@ResponseBody
+//	public Response<Message[]> getMsgs() throws Exception {
+//		Message[] msg = msgService.getMsgs();
+//		logger.debug("메시지=" + msg);
+//		Result<Message[]> result = new Result<Message[]>();
+//		result.setSuccess(true);
+//		result.setData(msg);
+//		Response<Message[]> res = new Response<Message[]>(result);
+//		logger.debug("response=" + res);
+//		return res;
+//	}
+	
+	
 
+
+	
 	/**
 	 * 발송 메시지 가져오기.
 	 *
 	 * @return the delivered msgs
 	 * @throws Exception the exception
-	 */
+	 */	
 	@RequestMapping(value = "messages", params = "type=sent", method = RequestMethod.GET)
 	@ResponseBody
 	public Response<Message[]> getDeliveredMsgs(
@@ -266,6 +273,36 @@ public class MessageController {
 		logger.debug("response=" + res);
 		return res;
 	}
+	
+	
+	
+	/**
+	 * 전체 메시지 가져오기.
+	 *
+	 * @return the delivered msgs
+	 * @throws Exception the exception
+	 */
+	@RequestMapping(value = "messages", method = RequestMethod.GET)
+	@ResponseBody
+	public Response<Result<MessagesRes>> getMessageList(
+			@RequestParam Map<String, String> params)
+			throws Exception {
+		
+		String sEcho = (String) params.get("sEcho");
+		
+		MessagesRes messagesRes = msgService.getMessageList(params);
+		messagesRes.setsEcho(sEcho);
+		
+		Result<MessagesRes> result = new Result<MessagesRes>();
+		result.setSuccess(true);
+		result.setData(messagesRes);
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		Response<Result<MessagesRes>> res = new Response(result);
+		
+		return res;
+	
+	}
+	
 
 	/**
 	 * 예약 메시지 가져오기.

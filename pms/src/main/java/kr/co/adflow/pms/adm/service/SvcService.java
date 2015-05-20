@@ -8,8 +8,10 @@ import java.util.Map;
 
 import kr.co.adflow.pms.adm.request.AddressReq;
 import kr.co.adflow.pms.adm.request.ReservationCancelReq;
+import kr.co.adflow.pms.adm.request.TemplateReq;
 import kr.co.adflow.pms.adm.response.MessagesRes;
 import kr.co.adflow.pms.domain.Address;
+import kr.co.adflow.pms.domain.Template;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -88,6 +90,43 @@ public interface SvcService {
 	 * @return the update count
 	 */
 	public int deleteAddress(String appKey, String ufmi);
+	
+	
+	/**
+	 * insert Template.
+	 *
+	 * @param appKey the app key
+	 * @param TemplateReq the TemplateReq
+	 * @return the insert count
+	 */
+	public int addTemplate(String appKey,TemplateReq tempReq);
+	
+	/**
+	 * update Template.
+	 *
+	 * @param appKey the app key
+	 * @param TemplateReq the TemplateReq
+	 * @return the update count
+	 */
+	public int updateTemplate(String appKey,TemplateReq tempReq) throws Exception;
+	
+	/**
+	 * get Template List.
+	 *
+	 * @param appKey the app key
+	 * @param TemplateReq the TemplateReq
+	 * @return the update count
+	 */
+	public List<Template> getTemplateList(String appKey);
+	
+	/**
+	 * delete Template.
+	 *
+	 * @param appKey the app key
+	 * @param TemplateReq the TemplateReq
+	 * @return the update count
+	 */
+	public int deleteTemplate(String appKey, String templateId);
 	
 	
 

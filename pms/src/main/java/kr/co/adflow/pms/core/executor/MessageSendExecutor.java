@@ -51,20 +51,23 @@ public class MessageSendExecutor {
 		//logger.info("sendMessageArray execute time is {}", new Date());
 
 		
-		int executorSendLimit = 1000;
-		if(this.serverId == null){
-			this.serverId = pmsConfig.EXECUTOR_SERVER_ID1;
-			if (this.serverId == null) {
-				if(this.hostname == null) {
-					this.hostname = readHostname();
-				}
-				this.serverId = this.hostname + "01";
-			}else {
-				executorSendLimit = pmsConfig.EXECUTOR_SEND_LIMIT;
-			}
-			
-		}
-		messageSendService.sendMessageArray(this.serverId, executorSendLimit);
+//		int executorSendLimit = 1000;
+//		if(this.serverId == null){
+//			this.serverId = pmsConfig.EXECUTOR_SERVER_ID1;
+//			if (this.serverId == null) {
+//				if(this.hostname == null) {
+//					this.hostname = readHostname();
+//				}
+//				this.serverId = this.hostname + "01";
+//			}else {
+//				executorSendLimit = pmsConfig.EXECUTOR_SEND_LIMIT;
+//			}
+//			
+//		}
+//		messageSendService.sendMessageArray(this.serverId, executorSendLimit);
+		
+		messageSendService.sendMessageArray(pmsConfig.EXECUTOR_SERVER_ID1,
+				pmsConfig.EXECUTOR_SEND_LIMIT);
 
 	}
 
@@ -76,21 +79,24 @@ public class MessageSendExecutor {
 		//logger.info("sendReservationMessageArray execute time is {}",
 		//		new Date());
 
-		int executorSendLimit = 1000;
-		if(this.serverId == null){
-			this.serverId = pmsConfig.EXECUTOR_SERVER_ID1;
-			if (this.serverId == null) {
-				if(this.hostname == null) {
-					this.hostname = readHostname();
-				}
-				this.serverId = this.hostname + "01";
-			}else {
-				executorSendLimit = pmsConfig.EXECUTOR_SEND_LIMIT;
-			}
-			
-		}
+//		int executorSendLimit = 1000;
+//		if(this.serverId == null){
+//			this.serverId = pmsConfig.EXECUTOR_SERVER_ID1;
+//			if (this.serverId == null) {
+//				if(this.hostname == null) {
+//					this.hostname = readHostname();
+//				}
+//				this.serverId = this.hostname + "01";
+//			}else {
+//				executorSendLimit = pmsConfig.EXECUTOR_SEND_LIMIT;
+//			}
+//			
+//		}
+//		
+//		messageSendService.sendReservationMessageArray(serverId, executorSendLimit);
 		
-		messageSendService.sendReservationMessageArray(serverId, executorSendLimit);
+		messageSendService.sendReservationMessageArray(
+				pmsConfig.EXECUTOR_SERVER_ID1, pmsConfig.EXECUTOR_SEND_LIMIT);
 
 	}
 	

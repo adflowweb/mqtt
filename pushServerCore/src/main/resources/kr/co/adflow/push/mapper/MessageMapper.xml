@@ -53,6 +53,59 @@
 		]]>
 		<!-- and reservation is not null -->
 	</select>
+	
+	
+	<select id="getMessageListCnt" parameterType="kr.co.adflow.push.domain.ktp.MsgParams" resultType="Integer">
+		SELECT 
+		   COUNT(*)
+		FROM
+		    message
+		WHERE
+		issue IS NOT NULL
+		<if test="type != 0">
+		AND type = #{type}
+		</if>
+		<if test="type == 0">
+		AND type IN ( 102,104,105)
+		</if>
+		<if test="dateStart != null ">
+		AND issue <![CDATA[>]]>  #{dateStart}
+		</if>
+		<if test="dateEnd != null ">
+		AND issue <![CDATA[<]]> #{dateEnd}
+		</if>		
+		<if test="receiver != null and receiver != ''">
+		AND receiver = #{receiver}
+		</if>
+	</select>
+	
+	<select id="getMessageList" parameterType="kr.co.adflow.push.domain.ktp.MsgParams" resultMap="MessageResult">
+		SELECT 
+		   type, id, sender, receiver, issue, issueSms, sms, timeout, qos, retained, reservation,  status, serviceID
+		FROM
+		    message
+		WHERE
+		issue IS NOT NULL
+		<if test="type != 0">
+		AND type = #{type}
+		</if>
+		<if test="type == 0">
+		AND type IN ( 102,104,105)
+		</if>
+		<if test="dateStart != null ">
+		AND issue <![CDATA[>]]>  #{dateStart}
+		</if>
+		<if test="dateEnd != null ">
+		AND issue <![CDATA[<]]> #{dateEnd}
+		</if>		
+		<if test="receiver != null and receiver != ''">
+		AND receiver = #{receiver}
+		</if>
+
+		ORDER BY issue DESC
+		limit #{iDisplayStart} , #{iDisplayLength}
+	</select>
+	
 
 	<select id="getReservationMsgs" resultMap="MessageResult">
 		select * from message a, content b where a.id = b.id and reservation

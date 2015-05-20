@@ -10,20 +10,25 @@ import java.util.Map;
 
 import kr.co.adflow.pms.adm.request.AddressReq;
 import kr.co.adflow.pms.adm.request.ReservationCancelReq;
+import kr.co.adflow.pms.adm.request.TemplateReq;
 import kr.co.adflow.pms.adm.response.MessagesRes;
 import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.exception.PmsRuntimeException;
 import kr.co.adflow.pms.core.util.DateUtil;
+import kr.co.adflow.pms.core.util.KeyGenerator;
 import kr.co.adflow.pms.domain.Address;
 import kr.co.adflow.pms.domain.AddressParams;
 import kr.co.adflow.pms.domain.Message;
 import kr.co.adflow.pms.domain.MsgIdsParams;
 import kr.co.adflow.pms.domain.MsgParams;
+import kr.co.adflow.pms.domain.Template;
+import kr.co.adflow.pms.domain.TemplateParams;
 import kr.co.adflow.pms.domain.User;
 import kr.co.adflow.pms.domain.mapper.AddressMapper;
 import kr.co.adflow.pms.domain.mapper.InterceptMapper;
 import kr.co.adflow.pms.domain.mapper.MessageMapper;
 import kr.co.adflow.pms.domain.mapper.SummaryMapper;
+import kr.co.adflow.pms.domain.mapper.TemplateMapper;
 import kr.co.adflow.pms.domain.mapper.UserMapper;
 import kr.co.adflow.pms.domain.push.mapper.ValidationMapper;
 import kr.co.adflow.pms.domain.validator.UserValidator;
@@ -56,9 +61,13 @@ public class SvcServiceImpl implements SvcService {
 	@Autowired
 	private ValidationMapper validationMapper;
 	
-	/** The validation mapper. */
+	/** The Address mapper. */
 	@Autowired
 	private AddressMapper addressMapper;
+	
+	/** The Template mapper. */
+	@Autowired
+	private TemplateMapper templateMapper;
 
 	/** The user validator. */
 	@Autowired
@@ -377,6 +386,86 @@ public class SvcServiceImpl implements SvcService {
 		resultAddress = addressMapper.selectAddressList(issueId);
 
 		return resultAddress;
+	}
+	
+	
+	
+	
+	
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.pms.adm.service.SvcService#addTemplate(java.lang.String, kr.co.adflow.pms.adm.request.TemplateReq)
+	 */
+	@Override
+	public int addTemplate(String appKey,TemplateReq tempReq) {
+		String issueId = interceptMapper.selectCashedUserId(appKey);
+		
+		Template template = new Template();
+		template.setUserId(issueId);
+		//KeyGenerator
+		template.setTemplateId(KeyGenerator.generateMsgId());
+		template.setTemplateName(tempReq.getTemplateName());
+		template.setTemplateMsg(tempReq.getTemplateMsg());
+		template.setIssueId(issueId);
+		
+		int insertCnt = templateMapper.insertTemplate(template);
+		
+		return insertCnt;
+	}
+	
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.pms.adm.service.SvcService#updateTemplate(java.lang.String, kr.co.adflow.pms.adm.request.TemplateReq)
+	 */
+	@Override
+	public int updateTemplate(String appKey,TemplateReq tempReq) throws Exception {
+		String issueId = interceptMapper.selectCashedUserId(appKey);
+
+		TemplateParams templateParams = new TemplateParams();
+		templateParams.setUserId(issueId);
+		templateParams.setTemplateId(tempReq.getTemplateId());
+		
+		Template template = templateMapper.selectTemplate(templateParams);
+		
+	
+		if (template == null) {
+			throw new PmsRuntimeException("template not found");
+			
+		} else {
+			
+			template.setTemplateName(tempReq.getTemplateName());;
+			template.setTemplateMsg(tempReq.getTemplateMsg());;
+			template.setIssueId(issueId);
+		}
+		
+		return templateMapper.updateTemplate(template);
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.pms.adm.service.SvcService#deleteTemplate(java.lang.String, java.lang.String)
+	 */
+	@Override
+	public int deleteTemplate(String appKey, String templateId) {
+
+		String issueId = interceptMapper.selectCashedUserId(appKey);
+
+		TemplateParams templateParams = new TemplateParams();
+		templateParams.setUserId(issueId);
+		templateParams.setTemplateId(templateId);
+
+		return templateMapper.deleteTemplate(templateParams);
+	}
+	
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.pms.adm.service.SvcService#getTemplateList()
+	 */
+	@Override
+	public List<Template> getTemplateList(String appKey) {
+
+		String issueId = interceptMapper.selectCashedUserId(appKey);
+		List<Template> resultTemplate = null;
+		resultTemplate = templateMapper.selectTemplateList(issueId);
+
+		return resultTemplate;
 	}
 
 }
