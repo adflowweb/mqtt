@@ -1,8 +1,5 @@
 package com.bns.pmc.provider;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import android.content.ContentProvider;
 import android.content.ContentProviderOperation;
 import android.content.ContentProviderResult;
@@ -20,6 +17,9 @@ import com.bns.pmc.provider.DataColumn.MessageColumn;
 import com.bns.pmc.provider.DataColumn.ValidationColumn;
 import com.bns.pmc.util.Log;
 import com.bns.pmc.util.PMCType;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class DataProvider extends ContentProvider {
 
@@ -53,7 +53,7 @@ public class DataProvider extends ContentProvider {
     private DBHelper mOpenHelper;
 
     static {
-    	// Message Table Column이 추가 되면 만들자!!
+        // Message Table Column이 추가 되면 만들자!!
         sMessageProjectionMap = new HashMap<String, String>();
         sMessageProjectionMap.put(MessageColumn.DB_COLUMN_ID, MessageColumn.DB_COLUMN_ID);
         sMessageProjectionMap.put(MessageColumn.DB_COLUMN_MSG_ID, MessageColumn.DB_COLUMN_MSG_ID);
@@ -71,7 +71,7 @@ public class DataProvider extends ContentProvider {
         sMessageProjectionMap.put(MessageColumn.DB_COLUMN_STATE, MessageColumn.DB_COLUMN_STATE);
         sMessageProjectionMap.put(MessageColumn.DB_COLUMN_RESEND_COUNT, MessageColumn.DB_COLUMN_RESEND_COUNT);
         sMessageProjectionMap.put(MessageColumn.DB_COLUMN_CREATETIME, MessageColumn.DB_COLUMN_CREATETIME); // 16 Column.
-        
+
         sValidationProjectionMap = new HashMap<String, String>();
         sValidationProjectionMap.put(ValidationColumn.DB_COLUMN_ID, ValidationColumn.DB_COLUMN_ID);
         sValidationProjectionMap.put(ValidationColumn.DB_COLUMN_NUMBER, ValidationColumn.DB_COLUMN_NUMBER);
@@ -94,14 +94,14 @@ public class DataProvider extends ContentProvider {
         sUriMatcher.addURI(DataColumn.AUTHORITY, DataColumn.UPDATE_DONT_READ_BY_NUMBER + "/*", IDX_UPDATE_DONT_READ_BY_NUMBER);
         sUriMatcher.addURI(DataColumn.AUTHORITY, DataColumn.UPDATE_ACK_BY_ID + "/#", IDX_UPDATE_ACK_BY_ID);
         sUriMatcher.addURI(DataColumn.AUTHORITY, DataColumn.INSERT_MESSAGE, IDX_INSERT_MSG);
-        
+
         sUriMatcher.addURI(DataColumn.AUTHORITY, DataColumn.SELECT_VALID_ALL, IDX_VALID_LIST);
         sUriMatcher.addURI(DataColumn.AUTHORITY, DataColumn.SELECT_VALID_COUNT_LIST, IDX_VALID_TOTAL_COUNT);
         sUriMatcher.addURI(DataColumn.AUTHORITY, DataColumn.INSERT_VALID, IDX_VALID_INSERT);
         sUriMatcher.addURI(DataColumn.AUTHORITY, DataColumn.DELETE_VALID_ALL, IDX_VALID_DELETE_ALL);
         sUriMatcher.addURI(DataColumn.AUTHORITY, DataColumn.DELETE_VALID_FIRST, IDX_VALID_DELETE_FIRST);
     }
-    
+
     @Override
     public ContentProviderResult[] applyBatch(
             ArrayList<ContentProviderOperation> operations)
@@ -139,7 +139,7 @@ public class DataProvider extends ContentProvider {
 
         switch (uriType) {
             //case MESSAGE:
-        	default:
+            default:
                 table = MessageColumn.DB_TABLE_MESSAGE;
                 break;
         }
@@ -191,7 +191,7 @@ public class DataProvider extends ContentProvider {
 
     @Override
     public int update(Uri uri, ContentValues values, String selection,
-            String[] selectionArgs) {
+                      String[] selectionArgs) {
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         // db.beginTransactionNonExclusive();
         checkTransactionStart(db, TRANSACTION_WAIT_MAX_COUNT);
@@ -204,7 +204,7 @@ public class DataProvider extends ContentProvider {
             db.endTransaction();
         }
     }
-    
+
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
@@ -226,120 +226,113 @@ public class DataProvider extends ContentProvider {
 
     @Override
     public Cursor query(Uri uri, String[] projection, String strSelection,
-            String[] selectionArgs, String sortOrder) {
-    	/*Log.d(PMCType.TAG, "query uri: " + uri + ", projection: " + projection + ", selection: " + selection + ", \n selectionArgs: " + selectionArgs
-        		+ ", sortOrder: " + sortOrder);*/
+                        String[] selectionArgs, String sortOrder) {
+        Log.d(PMCType.TAG, "query uri: " + uri + ", projection: " + projection + ", selection: " + strSelection + ", \n selectionArgs: " + selectionArgs
+                + ", sortOrder: " + sortOrder);
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
 
         String strTableName = null;
         String groupBy = null;
         final int match = sUriMatcher.match(uri);
+        Log.d(PMCType.TAG, "match=" + match);
         switch (match) {
-            case IDX_LIST: 
-            	{
-	                /* SQLiteDatabase db = mOpenHelper.getReadableDatabase();
-	                String sql = "select _id, ptt, groupPtt, msg, recv, dontRead, createtime, SUM(dontRead) as sum_dont_read from " + Message.DB_TABLE_MESSAGE + 
+            case IDX_LIST: {
+                    /* SQLiteDatabase db = mOpenHelper.getReadableDatabase();
+                    String sql = "select _id, ptt, groupPtt, msg, recv, dontRead, createtime, SUM(dontRead) as sum_dont_read from " + Message.DB_TABLE_MESSAGE +
 	                        " group by " + Message.DB_COLUMN_PTT + 
 	                        " order by " + Message.DB_COLUMN_DONT_READ + ", " +
 	                        Message.DB_COLUMN_CREATETIME + " desc";
 	                return db.rawQuery(sql, null);*/
-	            	strTableName = MessageColumn.DB_TABLE_MESSAGE;
-	            	String[] proj = {MessageColumn.DB_COLUMN_ID, MessageColumn.DB_COLUMN_MSG_ID, MessageColumn.DB_COLUMN_TOKEN, 
-	            			MessageColumn.DB_COLUMN_NUMBER, MessageColumn.DB_COLUMN_GROUP_MEMBER, MessageColumn.DB_COLUMN_NUMBER_TYPE, 
-	            			MessageColumn.DB_COLUMN_MSG,  MessageColumn.DB_COLUMN_DATA, MessageColumn.DB_COLUMN_DATA_TYPE,
-	            			MessageColumn.DB_COLUMN_RECV, MessageColumn.DB_COLUMN_DONT_READ, MessageColumn.DB_COLUMN_ACK, 
-	            			MessageColumn.DB_COLUMN_STATE, MessageColumn.DB_COLUMN_RESEND_COUNT, MessageColumn.DB_COLUMN_CREATETIME, 
-	            			"SUM(" + MessageColumn.DB_COLUMN_DONT_READ + ")" + " as " + MessageColumn.DB_COLUMN_SUM_DONT_READ};
-	            	
-	            	projection = proj;
-	            	groupBy = MessageColumn.DB_COLUMN_NUMBER;
-	            	sortOrder = MessageColumn.DB_COLUMN_DONT_READ + " desc, " + MessageColumn.DB_COLUMN_CREATETIME + " desc";
-	            	qb.setProjectionMap(sMessageProjectionMap);
-            	}
-            	break;
-            case IDX_LIST_TOTAL_COUNT : 
-            	{
-	            	strTableName = MessageColumn.DB_TABLE_MESSAGE;
-	            	String[] proj = {"Count(*) as " + MessageColumn.DB_COLUMN_COUNT_ALL};
-	            	projection = proj;
-	            	qb.setProjectionMap(sMessageProjectionMap);
-            	}
-            	break;
-            case IDX_LIST_TOTAL_DONT_READ : 
-            	{
-	            	strTableName = MessageColumn.DB_TABLE_MESSAGE;
-	            	String[] proj = {"SUM(" + MessageColumn.DB_COLUMN_DONT_READ + ")" + 
-	            	" as " + MessageColumn.DB_COLUMN_SUM_DONT_READ};
-	            	
-	            	projection = proj;
-	            	qb.setProjectionMap(sMessageProjectionMap);
-            	}
-            	break;
-            case IDX_TALK_BY_NUMBER: 
-            	{
-	                strTableName = MessageColumn.DB_TABLE_MESSAGE;
-	                String strNumber = uri.getPathSegments().get(1);
-	                strSelection = MessageColumn.DB_COLUMN_NUMBER + " = ?";
-	                String[] args = { strNumber };
-	                selectionArgs = args;
-	                sortOrder = MessageColumn.DB_COLUMN_STATE + " desc, " + MessageColumn.DB_COLUMN_CREATETIME + " asc";
-	                qb.setProjectionMap(sMessageProjectionMap);
-            	}
-                break;
-            case IDX_TALK_SAVE_BY_NUMBER:
-            	{
-            		strTableName = MessageColumn.DB_TABLE_MESSAGE;
-	                
-	                strSelection = MessageColumn.DB_COLUMN_NUMBER + " = ? and " + MessageColumn.DB_COLUMN_STATE + 
-	                		" = " + DataColumn.COLUMN_STATE_SAVE;
-	                String strNumber = uri.getPathSegments().get(1);
-	                String[] args = { strNumber };
-	                selectionArgs = args;
-	                qb.setProjectionMap(sMessageProjectionMap);
-            	}
-            	break;
-            case IDX_TALK_ACK_BY_NUMBER:
-            	{
-            		strTableName = MessageColumn.DB_TABLE_MESSAGE;
-	                strSelection = MessageColumn.DB_COLUMN_NUMBER + " = ? and " + MessageColumn.DB_COLUMN_ACK + 
-	                		" = " + DataColumn.COLUMN_ACK_ING;
-	                String strNumber = uri.getPathSegments().get(1);
-	                String[] args = { strNumber };
-	                selectionArgs = args;
-	                qb.setProjectionMap(sMessageProjectionMap);
-            	}
-            	break;
-            case IDX_TALK_ACK_BY_READ:
-            	{
-            		strTableName = MessageColumn.DB_TABLE_MESSAGE;
-	                strSelection = MessageColumn.DB_COLUMN_DONT_READ + " = " + DataColumn.COLUMN_DONT_READ_READ + " and " + 
-	                		MessageColumn.DB_COLUMN_ACK + " = " + DataColumn.COLUMN_ACK_ING;
-	                qb.setProjectionMap(sMessageProjectionMap);
-            	}
-            	break;
-            case IDX_VALID_LIST :
-            	{
-            		strTableName = ValidationColumn.DB_TABLE_VALIDATION;
-	            	String[] proj = {ValidationColumn.DB_COLUMN_ID, ValidationColumn.DB_COLUMN_NUMBER, ValidationColumn.DB_COLUMN_CREATETIME};
-	            	
-	            	projection = proj;
-	            	qb.setProjectionMap(sValidationProjectionMap);
-            	}
-            	break;
-            case IDX_VALID_TOTAL_COUNT :
-            	{
-            		strTableName = ValidationColumn.DB_TABLE_VALIDATION;
-	            	String[] proj = {"Count(*) as " + ValidationColumn.DB_COLUMN_VALID_COUNT_ALL};
-	            	projection = proj;
-	            	qb.setProjectionMap(sValidationProjectionMap);
-            	}
-            	break;
-            default:
-            	{
-            		strTableName = MessageColumn.DB_TABLE_MESSAGE;
-            		qb.setProjectionMap(sMessageProjectionMap);
-            	}
-                break;
+                strTableName = MessageColumn.DB_TABLE_MESSAGE;
+                String[] proj = {MessageColumn.DB_COLUMN_ID, MessageColumn.DB_COLUMN_MSG_ID, MessageColumn.DB_COLUMN_TOKEN,
+                        MessageColumn.DB_COLUMN_NUMBER, MessageColumn.DB_COLUMN_GROUP_MEMBER, MessageColumn.DB_COLUMN_NUMBER_TYPE,
+                        MessageColumn.DB_COLUMN_MSG, MessageColumn.DB_COLUMN_DATA, MessageColumn.DB_COLUMN_DATA_TYPE,
+                        MessageColumn.DB_COLUMN_RECV, MessageColumn.DB_COLUMN_DONT_READ, MessageColumn.DB_COLUMN_ACK,
+                        MessageColumn.DB_COLUMN_STATE, MessageColumn.DB_COLUMN_RESEND_COUNT, MessageColumn.DB_COLUMN_CREATETIME,
+                        "SUM(" + MessageColumn.DB_COLUMN_DONT_READ + ")" + " as " + MessageColumn.DB_COLUMN_SUM_DONT_READ};
+
+                projection = proj;
+                groupBy = MessageColumn.DB_COLUMN_NUMBER;
+                //sortOrder = MessageColumn.DB_COLUMN_DONT_READ + " desc, " + MessageColumn.DB_COLUMN_CREATETIME + " desc";
+                //카톡처럼 최종메시지 순으로 정렬 
+                sortOrder = MessageColumn.DB_COLUMN_CREATETIME + " desc";
+                qb.setProjectionMap(sMessageProjectionMap);
+            }
+            break;
+            case IDX_LIST_TOTAL_COUNT: {
+                strTableName = MessageColumn.DB_TABLE_MESSAGE;
+                String[] proj = {"Count(*) as " + MessageColumn.DB_COLUMN_COUNT_ALL};
+                projection = proj;
+                qb.setProjectionMap(sMessageProjectionMap);
+            }
+            break;
+            case IDX_LIST_TOTAL_DONT_READ: {
+                strTableName = MessageColumn.DB_TABLE_MESSAGE;
+                String[] proj = {"SUM(" + MessageColumn.DB_COLUMN_DONT_READ + ")" +
+                        " as " + MessageColumn.DB_COLUMN_SUM_DONT_READ};
+
+                projection = proj;
+                qb.setProjectionMap(sMessageProjectionMap);
+            }
+            break;
+            case IDX_TALK_BY_NUMBER: {
+                strTableName = MessageColumn.DB_TABLE_MESSAGE;
+                String strNumber = uri.getPathSegments().get(1);
+                strSelection = MessageColumn.DB_COLUMN_NUMBER + " = ?";
+                String[] args = {strNumber};
+                selectionArgs = args;
+                sortOrder = MessageColumn.DB_COLUMN_STATE + " desc, " + MessageColumn.DB_COLUMN_CREATETIME + " asc";
+                qb.setProjectionMap(sMessageProjectionMap);
+            }
+            break;
+            case IDX_TALK_SAVE_BY_NUMBER: {
+                strTableName = MessageColumn.DB_TABLE_MESSAGE;
+
+                strSelection = MessageColumn.DB_COLUMN_NUMBER + " = ? and " + MessageColumn.DB_COLUMN_STATE +
+                        " = " + DataColumn.COLUMN_STATE_SAVE;
+                String strNumber = uri.getPathSegments().get(1);
+                String[] args = {strNumber};
+                selectionArgs = args;
+                qb.setProjectionMap(sMessageProjectionMap);
+            }
+            break;
+            case IDX_TALK_ACK_BY_NUMBER: {
+                strTableName = MessageColumn.DB_TABLE_MESSAGE;
+                strSelection = MessageColumn.DB_COLUMN_NUMBER + " = ? and " + MessageColumn.DB_COLUMN_ACK +
+                        " = " + DataColumn.COLUMN_ACK_ING;
+                String strNumber = uri.getPathSegments().get(1);
+                String[] args = {strNumber};
+                selectionArgs = args;
+                qb.setProjectionMap(sMessageProjectionMap);
+            }
+            break;
+            case IDX_TALK_ACK_BY_READ: {
+                strTableName = MessageColumn.DB_TABLE_MESSAGE;
+                strSelection = MessageColumn.DB_COLUMN_DONT_READ + " = " + DataColumn.COLUMN_DONT_READ_READ + " and " +
+                        MessageColumn.DB_COLUMN_ACK + " = " + DataColumn.COLUMN_ACK_ING;
+                qb.setProjectionMap(sMessageProjectionMap);
+            }
+            break;
+            case IDX_VALID_LIST: {
+                strTableName = ValidationColumn.DB_TABLE_VALIDATION;
+                String[] proj = {ValidationColumn.DB_COLUMN_ID, ValidationColumn.DB_COLUMN_NUMBER, ValidationColumn.DB_COLUMN_CREATETIME};
+
+                projection = proj;
+                qb.setProjectionMap(sValidationProjectionMap);
+            }
+            break;
+            case IDX_VALID_TOTAL_COUNT: {
+                strTableName = ValidationColumn.DB_TABLE_VALIDATION;
+                String[] proj = {"Count(*) as " + ValidationColumn.DB_COLUMN_VALID_COUNT_ALL};
+                projection = proj;
+                qb.setProjectionMap(sValidationProjectionMap);
+            }
+            break;
+            default: {
+                strTableName = MessageColumn.DB_TABLE_MESSAGE;
+                qb.setProjectionMap(sMessageProjectionMap);
+            }
+            break;
         }
 
         qb.setTables(strTableName);
@@ -365,18 +358,18 @@ public class DataProvider extends ContentProvider {
     }
 
     private Uri insertInTransaction(SQLiteDatabase db, Uri uri,
-            ContentValues values) {
+                                    ContentValues values) {
         Log.d(PMCType.TAG, "insert uri: " + uri + ", values: " + values);
 
         String tableName = null;
         final int match = sUriMatcher.match(uri);
         switch (match) {
-        	case IDX_INSERT_MSG :
-        		tableName = MessageColumn.DB_TABLE_MESSAGE;
-        		break;
-        	case IDX_VALID_INSERT :
-        		tableName = ValidationColumn.DB_TABLE_VALIDATION;
-        		break;
+            case IDX_INSERT_MSG:
+                tableName = MessageColumn.DB_TABLE_MESSAGE;
+                break;
+            case IDX_VALID_INSERT:
+                tableName = ValidationColumn.DB_TABLE_VALIDATION;
+                break;
             default:
                 tableName = MessageColumn.DB_TABLE_MESSAGE;
                 break;
@@ -392,10 +385,10 @@ public class DataProvider extends ContentProvider {
         }
         return null;
     }
-    
-    private int updateInTransaction(SQLiteDatabase db, Uri uri, ContentValues values, 
-    		String whereClause, String[] whereArgs) {
-    	/*Log.d(PMCType.TAG, "update uri: " + uri + ", values: " + values +
+
+    private int updateInTransaction(SQLiteDatabase db, Uri uri, ContentValues values,
+                                    String whereClause, String[] whereArgs) {
+        /*Log.d(PMCType.TAG, "update uri: " + uri + ", values: " + values +
          ", whereClause: " + whereClause);*/
         int count = 0;
 
@@ -404,35 +397,32 @@ public class DataProvider extends ContentProvider {
 
         final int match = sUriMatcher.match(uri);
         switch (match) {
-            case IDX_UPDATE_DONT_READ_BY_NUMBER :
-            	{
-	            	tableName = MessageColumn.DB_TABLE_MESSAGE;
-	            	values = new ContentValues();
-	            	values.put(MessageColumn.DB_COLUMN_DONT_READ, DataColumn.COLUMN_DONT_READ_READ);
-	                sb.append(MessageColumn.DB_COLUMN_NUMBER + " = ? and " + MessageColumn.DB_COLUMN_DONT_READ + 
-	                		" = " + DataColumn.COLUMN_DONT_READ_DONT);
-	                String strNumber = uri.getPathSegments().get(1);
-	                String[] args = { strNumber };
-	                whereArgs = args;
-            	}
-            	break;
-            case IDX_UPDATE_ACK_BY_ID :
-            	{
-            		tableName = MessageColumn.DB_TABLE_MESSAGE;
-	            	values = new ContentValues();
-	            	values.put(MessageColumn.DB_COLUMN_ACK, DataColumn.COLUMN_ACK_SEND);
-	                sb.append(MessageColumn.DB_COLUMN_ID + " = ?");
-	                Long id = Long.parseLong(uri.getPathSegments().get(1));
-	                String[] args = { id.toString() };
-	                whereArgs = args;
-            	}
-            	break;
-            default:
-            	{
-            		tableName = MessageColumn.DB_TABLE_MESSAGE;
-            		sb.append(whereClause);
-            	}
-                break;
+            case IDX_UPDATE_DONT_READ_BY_NUMBER: {
+                tableName = MessageColumn.DB_TABLE_MESSAGE;
+                values = new ContentValues();
+                values.put(MessageColumn.DB_COLUMN_DONT_READ, DataColumn.COLUMN_DONT_READ_READ);
+                sb.append(MessageColumn.DB_COLUMN_NUMBER + " = ? and " + MessageColumn.DB_COLUMN_DONT_READ +
+                        " = " + DataColumn.COLUMN_DONT_READ_DONT);
+                String strNumber = uri.getPathSegments().get(1);
+                String[] args = {strNumber};
+                whereArgs = args;
+            }
+            break;
+            case IDX_UPDATE_ACK_BY_ID: {
+                tableName = MessageColumn.DB_TABLE_MESSAGE;
+                values = new ContentValues();
+                values.put(MessageColumn.DB_COLUMN_ACK, DataColumn.COLUMN_ACK_SEND);
+                sb.append(MessageColumn.DB_COLUMN_ID + " = ?");
+                Long id = Long.parseLong(uri.getPathSegments().get(1));
+                String[] args = {id.toString()};
+                whereArgs = args;
+            }
+            break;
+            default: {
+                tableName = MessageColumn.DB_TABLE_MESSAGE;
+                sb.append(whereClause);
+            }
+            break;
 
         }
 
@@ -451,68 +441,60 @@ public class DataProvider extends ContentProvider {
 
         final int match = sUriMatcher.match(uri);
         switch (match) {
-        	case IDX_DELETE_ALL: 
-        		{
-	        		tableName = MessageColumn.DB_TABLE_MESSAGE;
-	        	}
-	        	break;
-        	case IDX_DELETE_FIRST: 
-	        	{
-	        		tableName = MessageColumn.DB_TABLE_MESSAGE;
-	        		sb.append(MessageColumn.DB_COLUMN_ID + 
-	        				" = (select min(" + MessageColumn.DB_COLUMN_ID + ") from " + 
-	        				MessageColumn.DB_TABLE_MESSAGE + ")");
-	        	}
-	        	break;
-            case IDX_DELETE_BY_ID: 
-	            {
-	                tableName = MessageColumn.DB_TABLE_MESSAGE;
-	                Long id = Long.parseLong(uri.getPathSegments().get(1));
-	                sb.append(MessageColumn.DB_COLUMN_ID + " = ?");
-	
-	                String[] args = { id.toString() };
-	                whereArgs = args;
-	            }
-	            break;
-            case IDX_DELETE_BY_NUMBER: 
-	            {
-	                tableName = MessageColumn.DB_TABLE_MESSAGE;
-	                String phoneNumber = uri.getPathSegments().get(1);
-	                sb.append(MessageColumn.DB_COLUMN_NUMBER + " = ?");
-	
-	                String[] args = { phoneNumber };
-	                whereArgs = args;
-	            }
-	            break;
-            case IDX_DELETE_SAVE_BY_NUMBER:
-            	{
-            		tableName = MessageColumn.DB_TABLE_MESSAGE;
-	                String phoneNumber = uri.getPathSegments().get(1);
-	                sb.append(MessageColumn.DB_COLUMN_NUMBER + " = ? and " + MessageColumn.DB_COLUMN_STATE + " = 0");
-	
-	                String[] args = { phoneNumber };
-	                whereArgs = args;
-            	}
-            	break;
-            case IDX_VALID_DELETE_ALL:
-            	{
-            		tableName = ValidationColumn.DB_TABLE_VALIDATION;
-            	}
-            	break;
-            case IDX_VALID_DELETE_FIRST:
-            	{
-            		tableName = ValidationColumn.DB_TABLE_VALIDATION;
-	        		sb.append(ValidationColumn.DB_COLUMN_ID + 
-	        				" = (select min(" + ValidationColumn.DB_COLUMN_ID + ") from " + 
-	        				ValidationColumn.DB_TABLE_VALIDATION + ")");
-            	}
-            	break;
-            default:
-            	{
-	                tableName = MessageColumn.DB_TABLE_MESSAGE;
-	                sb.append(where);
-            	}
-            	break;
+            case IDX_DELETE_ALL: {
+                tableName = MessageColumn.DB_TABLE_MESSAGE;
+            }
+            break;
+            case IDX_DELETE_FIRST: {
+                tableName = MessageColumn.DB_TABLE_MESSAGE;
+                sb.append(MessageColumn.DB_COLUMN_ID +
+                        " = (select min(" + MessageColumn.DB_COLUMN_ID + ") from " +
+                        MessageColumn.DB_TABLE_MESSAGE + ")");
+            }
+            break;
+            case IDX_DELETE_BY_ID: {
+                tableName = MessageColumn.DB_TABLE_MESSAGE;
+                Long id = Long.parseLong(uri.getPathSegments().get(1));
+                sb.append(MessageColumn.DB_COLUMN_ID + " = ?");
+
+                String[] args = {id.toString()};
+                whereArgs = args;
+            }
+            break;
+            case IDX_DELETE_BY_NUMBER: {
+                tableName = MessageColumn.DB_TABLE_MESSAGE;
+                String phoneNumber = uri.getPathSegments().get(1);
+                sb.append(MessageColumn.DB_COLUMN_NUMBER + " = ?");
+
+                String[] args = {phoneNumber};
+                whereArgs = args;
+            }
+            break;
+            case IDX_DELETE_SAVE_BY_NUMBER: {
+                tableName = MessageColumn.DB_TABLE_MESSAGE;
+                String phoneNumber = uri.getPathSegments().get(1);
+                sb.append(MessageColumn.DB_COLUMN_NUMBER + " = ? and " + MessageColumn.DB_COLUMN_STATE + " = 0");
+
+                String[] args = {phoneNumber};
+                whereArgs = args;
+            }
+            break;
+            case IDX_VALID_DELETE_ALL: {
+                tableName = ValidationColumn.DB_TABLE_VALIDATION;
+            }
+            break;
+            case IDX_VALID_DELETE_FIRST: {
+                tableName = ValidationColumn.DB_TABLE_VALIDATION;
+                sb.append(ValidationColumn.DB_COLUMN_ID +
+                        " = (select min(" + ValidationColumn.DB_COLUMN_ID + ") from " +
+                        ValidationColumn.DB_TABLE_VALIDATION + ")");
+            }
+            break;
+            default: {
+                tableName = MessageColumn.DB_TABLE_MESSAGE;
+                sb.append(where);
+            }
+            break;
         }
 
         count = db.delete(tableName, sb.toString(), whereArgs);
@@ -521,7 +503,7 @@ public class DataProvider extends ContentProvider {
                 DataColumn.AUTHORITY_URI, null);
         return count;
     }
-    
+
     private void checkTransactionStart(SQLiteDatabase db, int waitCount) {
         if (waitCount != TRANSACTION_WAIT_MAX_COUNT) {
             Log.e(PMCType.TAG, "checkTransactionStart IN, waitCount : " + waitCount);

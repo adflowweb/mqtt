@@ -12,7 +12,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
@@ -21,6 +23,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
@@ -1680,6 +1683,17 @@ public class PMCService extends Service {
         }
     }
 
+    private PackageInfo getPackageInfo() {
+        PackageInfo info = null;
+        try {
+            info = getPackageManager().getPackageInfo(
+                    getPackageName(), PackageManager.GET_ACTIVITIES);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return info;
+    }
+
     /**
      * PMCService BroadcastReceiver Class
      */
@@ -1693,36 +1707,47 @@ public class PMCService extends Service {
                 Log.d(PMCType.TAG, "Curr state Ptt Call " + m_bPttCall);
                 boolean b = intent.getBooleanExtra(PMCType.BNS_PMC_PTT_CALL_START_END_MODE_EXTRA_VALUE, false);
                 Log.d(PMCType.TAG, "Change state Ptt Call " + b);
-
                 m_bPttCall = b;
             } else if (action.equals(PMCType.UNI_PMC_PTT_SET_PTT_NUMBER_ACTION)) {
+                Log.d(PMCType.TAG, "PTT계정정보가도착하였습니다.");
                 Intent i = new Intent(intent);
                 processReceivedPttNumberAction(i);
             } else if (action.equals(PMCType.BNS_PMC_PTT_REG_STATE_ACTION_LOGOUT)) {
+                Log.d(PMCType.TAG, "PTT로그인/아웃정보가도착하였습니다.");
                 Intent i = new Intent(intent);
                 processReceivedPttLogInOutAction(i);
             } else if (action.equals(PMCType.BNS_PMC_KTP_PUSH_USERMSG)) {
-                // 메신져 앱 간의 메시지 수신
-                Log.i(PMCType.TAG, "== User Msg == ");
-                Intent i = new Intent(intent);
-                processReceivedUserMsg(i);
+                PackageInfo versionInfo = getPackageInfo();
+                String EULA_PREFIX = "appeula";
+                String eulaKey = EULA_PREFIX + versionInfo.versionCode;
+                SharedPreferences prefs = PreferenceManager
+                        .getDefaultSharedPreferences(context);
+                boolean enabled = prefs.getBoolean(eulaKey, false);
+                Log.d(PMCType.TAG, "사용자등록=" + enabled);
+                //사용자동의자에 한해 메시지 전달
+                if (enabled) {
+                    // 메신져 앱 간의 메시지 수신
+                    Log.i(PMCType.TAG, "유저메시지가도착하였습니다.");
+                    Intent i = new Intent(intent);
+                    processReceivedUserMsg(i);
+                }
             } else if (action.equals(PMCType.BNS_PMC_KTP_PUSH_MMS)) {
                 // 관제 시스템 메시지 수신
-                Log.i(PMCType.TAG, "== Control Msg == ");
+                Log.i(PMCType.TAG, "관제메시지가도착하였습니다.");
                 Intent i = new Intent(intent);
                 processReceivedControlMsg(i);
             } else if (action.equals(PMCType.BNS_PMC_KTP_PUSH_FWUPDATE_INFO)) {
                 // FW 메시지 수신
-                Log.i(PMCType.TAG, "== FW Msg == ");
+                Log.i(PMCType.TAG, "펌웨어업데이트정보가도착하였습니다.");
                 Intent i = new Intent(intent);
                 processReceivedFWMsg(i);
             } else if (action.equals(PMCType.BNS_PMC_KTP_PUSH_CONN_STATE)) {
                 // MQTT 세션 수신
-                Log.i(PMCType.TAG, "== MQTT Msg == ");
+                Log.i(PMCType.TAG, "MQTT상태정보가도착하였습니다.");
                 Intent i = new Intent(intent);
                 processReceivedMQTTMsg(i);
             } else if (action.equals(PMCType.BNS_PMC_KTP_PUSH_DIG)) {
-                Log.i(PMCType.TAG, "== DIG Msg == ");
+                Log.i(PMCType.TAG, "계정정보변경메시지가도착하였습니다.");
                 // DIG 수신
                 Intent i = new Intent(intent);
                 processReceivedDIGMsg(i);

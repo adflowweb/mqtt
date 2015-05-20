@@ -16,5 +16,4 @@ interface IPushService {
         String sendMsgWithOpts(String sender, String receiver, int qos, String contentType, String content, int contentLength, int expiry);
         String updateUFMI(String ufmi);
         String getGrpSubscribers(String topic);
-        void registerPMC();
 }

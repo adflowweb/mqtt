@@ -10,6 +10,10 @@ import kr.co.adflow.push.IPushService;
  * @author kyu
  */
 public class IPushUtil {
+
+    public static final int EXPIRY = 600; //사용자 메시지 기본 유지 시간 600초
+    public static final int QOS = 2; //사용자 메시지 기본 QOS
+
     /**
      * MqttSession 연결상태 확인.
      *
@@ -159,16 +163,16 @@ public class IPushUtil {
         return strResult;
     }
 
-    public static void registerPMC(IPushService binder) {
-        Log.i(PMCType.TAG, "registerPMC시작(binder=" + binder + ")");
-        if (binder != null) {
-            try {
-                binder.registerPMC();
-            } catch (RemoteException e) {
-                Log.e(PMCType.TAG, "PMC앱등록중에러발생=" + e);
-            }
-        }
-    }
+//    public static void registerPMC(IPushService binder) {
+//        Log.i(PMCType.TAG, "registerPMC시작(binder=" + binder + ")");
+//        if (binder != null) {
+//            try {
+//                binder.registerPMC();
+//            } catch (RemoteException e) {
+//                Log.e(PMCType.TAG, "PMC앱등록중에러발생=" + e);
+//            }
+//        }
+//    }
 
     /**
      * 클라이언트 간 메시지 전송.
@@ -190,7 +194,7 @@ public class IPushUtil {
                 long start = System.currentTimeMillis();
                 // mq publish를 rest로 변경
                 //strResult = binder.sendMsg(sender, receiver, contentType, content);
-                strResult = binder.sendMsgWithOpts(sender, receiver, 2, contentType, content, contentLength, 600);
+                strResult = binder.sendMsgWithOpts(sender, receiver, QOS, contentType, content, contentLength, EXPIRY);
 
 
                 long stop = System.currentTimeMillis();

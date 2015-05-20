@@ -303,6 +303,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Log.e(PMCType.TAG, "[onCreateLoader]");
         // Create a new CursorLoader with the following query parameters.
+        Log.d(PMCType.TAG, "CONTENT_URI_LIST=" + DataColumn.CONTENT_URI_LIST);
         return new CursorLoader(m_context, DataColumn.CONTENT_URI_LIST, null, null, null, null);
     }
 

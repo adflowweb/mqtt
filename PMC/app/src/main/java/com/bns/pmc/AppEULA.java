@@ -10,8 +10,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
 
-import com.bns.pmc.receiver.PMCService;
-import com.bns.pmc.util.IPushUtil;
 import com.bns.pmc.util.Log;
 
 /**
@@ -90,7 +88,7 @@ public class AppEULA {
                                     dialogInterface.dismiss();
 
                                     //send notification to pma
-                                    IPushUtil.registerPMC(PMCService.m_Binder);
+                                    //IPushUtil.registerPMC(PMCService.m_Binder);
 
                                     // Enable orientation changes based on
                                     // device's sensor
