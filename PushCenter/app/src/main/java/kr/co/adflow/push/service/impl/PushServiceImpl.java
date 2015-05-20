@@ -230,13 +230,13 @@ public class PushServiceImpl extends Service implements PushService {
             }
         }
 
-        @Override
-        public void registerPMC() throws RemoteException {
-            Log.d(TAG, "registerPMC시작()");
-            //PMC 등록
-            preference.put(PushPreference.REGISTERED_PMC, true);
-            Log.d(TAG, "registerPMC종료()");
-        }
+//        @Override
+//        public void registerPMC() throws RemoteException {
+//            Log.d(TAG, "registerPMC시작()");
+//            //PMC 등록
+//            preference.put(PushPreference.REGISTERED_PMC, true);
+//            Log.d(TAG, "registerPMC종료()");
+//        }
 
         @Override
         public String existPMAByUFMI(String ufmi) throws RemoteException {

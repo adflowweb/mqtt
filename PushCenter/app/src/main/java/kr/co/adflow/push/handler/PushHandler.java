@@ -190,17 +190,19 @@ public class PushHandler implements MqttCallback {
             connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
             Log.d(TAG, "networkInfo=" + networkInfo);
-            Log.d(TAG, "로밍=" + networkInfo.isRoaming());
 
-            //로밍사용자
-            if (networkInfo.isRoaming()) {
-                if (mqttClient != null) {
-                    //푸시핸들러종료
-                    stop();
+            if (networkInfo != null) {
+                Log.d(TAG, "로밍=" + networkInfo.isRoaming());
+
+                //로밍사용자
+                if (networkInfo.isRoaming()) {
+                    if (mqttClient != null) {
+                        //푸시핸들러종료
+                        stop();
+                    }
+                    return;
                 }
-                return;
             }
-            //testCodeEnd
 
             //토큰가져오기
             String token = preference.getValue(PushPreference.TOKEN, null);
@@ -247,6 +249,7 @@ public class PushHandler implements MqttCallback {
             }
         } catch (Exception e) {
             Log.e(TAG, "keepAlive처리시예외상황발생", e);
+            e.printStackTrace();
             if (PushServiceImpl.getWakeLock() != null) {
                 try {
                     PushServiceImpl.getWakeLock().release();
@@ -558,12 +561,12 @@ public class PushHandler implements MqttCallback {
                     break;
                 case CONTROL_MESSAGE:
                 case USER_MESSAGE:
-                    boolean enable = preference.getValue(PushPreference.REGISTERED_PMC, false);
-                    if (enable) {
-                        sendBroadcast(data, currentToken, msgId);
-                    } else {
-                        Log.d(TAG, "PMC가 사용가능하지 않습니다.");
-                    }
+                    //boolean enable = preference.getValue(PushPreference.REGISTERED_PMC, false);
+                    //if (enable) {
+                    sendBroadcast(data, currentToken, msgId);
+                    //} else {
+                    //    Log.d(TAG, "PMC가 사용가능하지 않습니다.");
+                    //}
                     break;
                 case FIRMWARE_UPDATE_MESSAGE:
                 case DIG_ACCOUNT_INFO_MESSAGE:
