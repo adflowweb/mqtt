@@ -6,6 +6,8 @@ package kr.co.adflow.push.ktp.service.impl;
 import java.io.IOException;
 import java.util.Properties;
 
+import javax.resource.spi.ConnectionManager;
+
 import kr.co.adflow.push.domain.ktp.Status;
 import kr.co.adflow.push.handler.AbstractMessageHandler;
 import kr.co.adflow.push.ktp.service.PCFService;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import com.ibm.mq.MQEnvironment;
 import com.ibm.mq.MQException;
+import com.ibm.mq.MQQueueManager;
 import com.ibm.mq.constants.MQConstants;
 import com.ibm.mq.pcf.PCFException;
 import com.ibm.mq.pcf.PCFMessage;
@@ -55,25 +58,17 @@ public class PCFServiceImpl implements PCFService {
 	 */
 	@Override
 	public String[] get(String token) throws Exception {
-		logger.debug("get시작(token={})",token);
+		logger.debug("== get시작(token={})",token);
 
 		String[] subsList = null;
+		ConnectionManager connMan = MQEnvironment.getDefaultConnectionManager();
+		MQQueueManager qmgr = null;
 		PCFMessageAgent agent = null;
 		try {
 
-			// MQEnvironment.userID = "adflow";
-			MQEnvironment.userID = prop.getProperty("mq.pcf.id");
-			// MQEnvironment.password = "!ADFlow@";
-			MQEnvironment.password = prop.getProperty("mq.pcf.password");
-
-			String pcfHost = prop.getProperty("mq.pcf.host");
-			int pcfPort = Integer.parseInt(prop.getProperty("mq.pcf.port"));
-			String pcfChannel = prop.getProperty("mq.pcf.channel");
-
-			// PCFMessageAgent agent = new PCFMessageAgent("adflow.net", 1414,
-			// "ADFlowAdminPCF");
-			agent = new PCFMessageAgent(pcfHost, pcfPort,
-					pcfChannel);
+			qmgr = new MQQueueManager("MQTT", connMan);
+			
+			agent = new PCFMessageAgent(qmgr);
 			PCFMessage request = new PCFMessage(
 					MQConstants.MQCMD_INQUIRE_SUBSCRIPTION);
 			request.addParameter(MQConstants.MQCACF_SUB_NAME, token + ":*");
@@ -87,12 +82,6 @@ public class PCFServiceImpl implements PCFService {
 			for (int i = 0; i < responses.length; i++) {
 				subsList[i] = responses[i].getParameterValue(
 						MQConstants.MQCA_TOPIC_STRING).toString();
-
-				// topic = topic.substring(token.length() + 1);
-
-//				System.out.println("topic :: " + topic);
-//				subsList[i] = new Subscribe();
-//				subsList[i].setTopic(topic);
 			}
 			
 		} catch (PCFException pcfe) {
@@ -110,18 +99,104 @@ public class PCFServiceImpl implements PCFService {
 			logger.error("IOException is ",ioe);
 			throw ioe;
 		} finally {
-			
 			if (agent != null) {
-				logger.info("agent disconnect" );
-				agent.disconnect();
-			} else {
-				logger.info("agent null" );
+				try {
+					agent.disconnect();
+				} catch (MQException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					throw e;
+				}
 			}
+			if (qmgr != null) {
+				try {
+					qmgr.disconnect();
+				} catch (MQException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					throw e;
+				}
+			}
+			
 		}
 
 		// logger.debug("get종료(Subscribe result=" + subsList + ")");
 		return subsList;
 	}
+
+//	/* (non-Javadoc)
+//	 * @see kr.co.adflow.push.ktp.service.PCFService#get(java.lang.String)
+//	 */
+//	@Override
+//	public String[] get(String token) throws Exception {
+//		logger.debug("get시작(token={})",token);
+//
+//		String[] subsList = null;
+//		PCFMessageAgent agent = null;
+//		try {
+//
+//			// MQEnvironment.userID = "adflow";
+//			MQEnvironment.userID = prop.getProperty("mq.pcf.id");
+//			// MQEnvironment.password = "!ADFlow@";
+//			MQEnvironment.password = prop.getProperty("mq.pcf.password");
+//
+//			String pcfHost = prop.getProperty("mq.pcf.host");
+//			int pcfPort = Integer.parseInt(prop.getProperty("mq.pcf.port"));
+//			String pcfChannel = prop.getProperty("mq.pcf.channel");
+//
+//			// PCFMessageAgent agent = new PCFMessageAgent("adflow.net", 1414,
+//			// "ADFlowAdminPCF");
+//			agent = new PCFMessageAgent(pcfHost, pcfPort,
+//					pcfChannel);
+//			PCFMessage request = new PCFMessage(
+//					MQConstants.MQCMD_INQUIRE_SUBSCRIPTION);
+//			request.addParameter(MQConstants.MQCACF_SUB_NAME, token + ":*");
+//
+//			PCFMessage[] responses = agent.send(request);
+//
+//			// System.out.println("responses.length ::" + responses.length);
+//			subsList = new String[responses.length];
+//			//String topic = "";
+//
+//			for (int i = 0; i < responses.length; i++) {
+//				subsList[i] = responses[i].getParameterValue(
+//						MQConstants.MQCA_TOPIC_STRING).toString();
+//
+//				// topic = topic.substring(token.length() + 1);
+//
+////				System.out.println("topic :: " + topic);
+////				subsList[i] = new Subscribe();
+////				subsList[i].setTopic(topic);
+//			}
+//			
+//		} catch (PCFException pcfe) {
+//			if (pcfe.getMessage().indexOf("2428") > 0) {
+//				logger.error("해당 토큰관련 subscriptions 가 없습니다. -errorcode:2428");
+//
+//			} else {
+//				logger.error("PCF error: " + pcfe);
+//			}
+//
+//		} catch (MQException mqe) {
+//			logger.error("MQException is ",mqe);
+//			throw mqe;
+//		} catch (IOException ioe) {
+//			logger.error("IOException is ",ioe);
+//			throw ioe;
+//		} finally {
+//			
+//			if (agent != null) {
+//				logger.info("agent disconnect" );
+//				agent.disconnect();
+//			} else {
+//				logger.info("agent null" );
+//			}
+//		}
+//
+//		// logger.debug("get종료(Subscribe result=" + subsList + ")");
+//		return subsList;
+//	}
+	
 
 	/* (non-Javadoc)
 	 * @see kr.co.adflow.push.ktp.service.PCFService#getStatus(java.lang.String)
@@ -131,22 +206,15 @@ public class PCFServiceImpl implements PCFService {
 		logger.debug("get시작(token=" + token + ")");
 
 		Status status = new Status();
+		ConnectionManager connMan = MQEnvironment.getDefaultConnectionManager();
+		MQQueueManager qmgr = null;
 		PCFMessageAgent agent = null;
 		try {
 
-			// MQEnvironment.userID = "adflow";
-			MQEnvironment.userID = prop.getProperty("mq.pcf.id");
-			// MQEnvironment.password = "!ADFlow@";
-			MQEnvironment.password = prop.getProperty("mq.pcf.password");
+			qmgr = new MQQueueManager("MQTT", connMan);
+			
+			agent = new PCFMessageAgent(qmgr);
 
-			String pcfHost = prop.getProperty("mq.pcf.host");
-			int pcfPort = Integer.parseInt(prop.getProperty("mq.pcf.port"));
-			String pcfChannel = prop.getProperty("mq.pcf.channel");
-
-			// PCFMessageAgent agent = new PCFMessageAgent("adflow.net", 1414,
-			// "ADFlowAdminPCF");
-			agent = new PCFMessageAgent(pcfHost, pcfPort,
-					pcfChannel);
 			PCFMessage request = new PCFMessage(
 					MQConstants.MQCMD_INQUIRE_CHANNEL_STATUS);
 			request.addParameter(MQConstants.MQCACH_CHANNEL_NAME, "*");
@@ -190,15 +258,106 @@ public class PCFServiceImpl implements PCFService {
 			throw ioe;
 		} finally {
 			if (agent != null) {
-				logger.info("agent disconnect" );
-				agent.disconnect();
-			} else {
-				logger.info("agent null" );
+				try {
+					agent.disconnect();
+				} catch (MQException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					throw e;
+				}
+			}
+			if (qmgr != null) {
+				try {
+					qmgr.disconnect();
+				} catch (MQException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					throw e;
+				}
 			}
 		}
 
 		// logger.debug("get종료(Subscribe result=" + subsList + ")");
 		return status;
 	}
+	
+	
+//	/* (non-Javadoc)
+//	 * @see kr.co.adflow.push.ktp.service.PCFService#getStatus(java.lang.String)
+//	 */
+//	@Override
+//	public Status getStatus(String token) throws Exception {
+//		logger.debug("get시작(token=" + token + ")");
+//
+//		Status status = new Status();
+//		PCFMessageAgent agent = null;
+//		try {
+//
+//			// MQEnvironment.userID = "adflow";
+//			MQEnvironment.userID = prop.getProperty("mq.pcf.id");
+//			// MQEnvironment.password = "!ADFlow@";
+//			MQEnvironment.password = prop.getProperty("mq.pcf.password");
+//
+//			String pcfHost = prop.getProperty("mq.pcf.host");
+//			int pcfPort = Integer.parseInt(prop.getProperty("mq.pcf.port"));
+//			String pcfChannel = prop.getProperty("mq.pcf.channel");
+//
+//			// PCFMessageAgent agent = new PCFMessageAgent("adflow.net", 1414,
+//			// "ADFlowAdminPCF");
+//			agent = new PCFMessageAgent(pcfHost, pcfPort,
+//					pcfChannel);
+//			PCFMessage request = new PCFMessage(
+//					MQConstants.MQCMD_INQUIRE_CHANNEL_STATUS);
+//			request.addParameter(MQConstants.MQCACH_CHANNEL_NAME, "*");
+//			request.addParameter(MQConstants.MQIACH_CHANNEL_TYPE,
+//					MQConstants.MQCHT_MQTT);
+//			request.addParameter(MQConstants.MQCACH_CLIENT_ID, token);
+//
+//			PCFMessage[] responses = agent.send(request);
+//
+//			int chStatus = ((Integer) (responses[0]
+//					.getParameterValue(MQConstants.MQIACH_CHANNEL_STATUS)))
+//					.intValue();
+//
+//			if (chStatus == 3) {
+//				status.setStatus("MQTT Connected");
+//			} else {
+//				status.setStatus("MQTT Disconnected");
+//
+//			}
+//
+//			// String[] chStatusText = {"", "MQCHS_BINDING", "MQCHS_STARTING",
+//			// "MQCHS_RUNNING",
+//			// "MQCHS_STOPPING", "MQCHS_RETRYING", "MQCHS_STOPPED",
+//			// "MQCHS_REQUESTING", "MQCHS_PAUSED",
+//			// "", "", "", "", "MQCHS_INITIALIZING"};
+//			// status = chStatusText[chStatus];
+//
+//		} catch (PCFException pcfe) {
+//			if (pcfe.getMessage().indexOf("3065") > 0) {
+//				logger.debug("해당 토큰관련 클라이언트가 Pending 메시지가 없을 경우 채널상태는 없음. -errorcode:3065");
+//				status.setStatus("MQTT Disconnected");
+//			} else {
+//				logger.debug("PCF error: " + pcfe);
+//				status.setStatus(pcfe.toString());
+//			}
+//		} catch (MQException mqe) {
+//			logger.error("MQException is",mqe);
+//			throw mqe;
+//		} catch (IOException ioe) {
+//			logger.error("IOException is",ioe);
+//			throw ioe;
+//		} finally {
+//			if (agent != null) {
+//				logger.info("agent disconnect" );
+//				agent.disconnect();
+//			} else {
+//				logger.info("agent null" );
+//			}
+//		}
+//
+//		// logger.debug("get종료(Subscribe result=" + subsList + ")");
+//		return status;
+//	}
 
 }
