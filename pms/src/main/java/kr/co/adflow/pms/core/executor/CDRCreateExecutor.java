@@ -174,7 +174,7 @@ public class CDRCreateExecutor {
 				this.tailPrint();
 			} else {
 				
-				logger.info("==   CDR NO DATA  ==");
+				logger.debug("==   CDR NO DATA  ==");
 				//Header print
 				this.headerPrint();
 				//Tail print
@@ -250,7 +250,7 @@ public class CDRCreateExecutor {
 		directory = new File(pmsConfig.CDR_FILE_PATH+this.fileDate);
 		if (!directory.isDirectory()) {
 			directory.mkdir();
-			logger.info("{} directory mkdir Ok",directory.getName());
+			logger.debug("{} directory mkdir Ok",directory.getName());
 		}
 		
 		file = new File(directory.getPath()+"/"+ fileName.toString());
@@ -426,7 +426,7 @@ public class CDRCreateExecutor {
 					// 그룹메세지에서 자신은 skip
 					if(callerNo.equals(calledNo)){
 						
-						System.out.println("======== skip::"+callerNo);
+						logger.debug("======== skip::"+callerNo);
 						continue;
 					}
 					pTalkVer = cDR.getGroupId().substring(5, 6);

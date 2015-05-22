@@ -4,6 +4,7 @@
 package kr.co.adflow.pms.domain.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import kr.co.adflow.pms.domain.User;
 
@@ -131,5 +132,23 @@ public interface UserMapper {
 	 * @return the int
 	 */
 	int updateUserName(User user);
+	
+	
+	/**
+	 * Update svc user.
+	 *
+	 * @param user the user
+	 * @return the int
+	 */
+	int updateSvcUser(User user);
+	
+	
+	/**
+	 * Gets the  callback url.
+	 *
+	 * @param tokenId the token id
+	 * @return the  String.
+	 */
+	String selectCallbackUrl(Map<String, Object> params);
 
 }

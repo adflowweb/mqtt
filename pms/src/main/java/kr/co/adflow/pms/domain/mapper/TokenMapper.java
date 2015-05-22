@@ -50,5 +50,13 @@ public interface TokenMapper {
 	 * @return the int
 	 */
 	int deleteUserToken(String userId);
+	
+	/**
+	 * Select appKey.
+	 *
+	 * @param String the userId
+	 * @return the String
+	 */
+	String selectApplicationKey(String userId);
 
 }

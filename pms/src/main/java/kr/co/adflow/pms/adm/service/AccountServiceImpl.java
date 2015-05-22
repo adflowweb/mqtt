@@ -76,7 +76,7 @@ public class AccountServiceImpl implements AccountService {
 		User user = userMapper.selectAuth(paramUser);
 		if (user == null) {
 //			throw new RuntimeException("패스워드 변경 실패2");
-			throw new PmsRuntimeException("패스워드 변경 실패2");
+			throw new PmsRuntimeException("user not valid");
 		}
 
 		paramUser.setAction("modifyPassword");
@@ -143,17 +143,23 @@ public class AccountServiceImpl implements AccountService {
 	@Override
 	public int modifyUserName(UserReq req, String appKey) throws Exception{
 
-		if (!req.getUserName().trim().equals(req.getUserName().trim())) {
+		if (req.getUserName() == null ||req.getUserName().trim().length() == 0) {
 //			throw new RuntimeException("유저 이름 변경 실패1");
-			throw new PmsRuntimeException("유저 이름 변경 실패1");
+			throw new PmsRuntimeException("User name not valid. userName::"+ req.getUserName());
 		}
 
 		// TODO OLD <> NEW 확인 필요?
 
 		String userId = interceptMapper.selectCashedUserId(appKey);
+		
+		User paramUser = userMapper.select(userId);
+		if (paramUser == null) {
+//			throw new RuntimeException("패스워드 변경 실패2");
+			throw new PmsRuntimeException("user not found");
+		}
 
-		User paramUser = new User();
-		paramUser.setUserId(userId);
+//		User paramUser = new User();
+//		paramUser.setUserId(userId);
 		paramUser.setUserName(req.getUserName());
 
 
@@ -166,7 +172,48 @@ public class AccountServiceImpl implements AccountService {
 			cnt = userMapper.updateUserName(paramUser);
 		} else {
 //			throw new RuntimeException("유저 이름 변경 실패2");
-			throw new PmsRuntimeException("유저 이름 변경 실패2");
+			throw new PmsRuntimeException("user name Update fail");
+		}
+
+		return cnt;
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.pms.adm.service.AccountService#modifyPassword(kr.co.adflow.pms.adm.request.PasswordReq, java.lang.String)
+	 */
+	@Override
+	public int modifySvcUser(UserReq req, String appKey) throws Exception{
+
+		if (req.getUserName() == null ||req.getUserName().trim().length() == 0) {
+			throw new PmsRuntimeException("User name not valid. userName::"+ req.getUserName());
+		}
+		
+		if (req.getCallbackUrl() == null ||req.getCallbackUrl().trim().length() == 0) {
+			throw new PmsRuntimeException("User callback url not valid. callbackUrl::"+ req.getCallbackUrl());
+		}
+
+		// TODO OLD <> NEW 확인 필요?
+
+		String userId = interceptMapper.selectCashedUserId(appKey);
+
+		User paramUser = userMapper.select(userId);
+		if (paramUser == null) {
+			throw new PmsRuntimeException("user not found");
+		}
+		
+		paramUser.setUserName(req.getUserName());
+		paramUser.setCallbackUrl(req.getCallbackUrl());
+
+		paramUser.setAction("modifySvcUser");
+		paramUser.setIssueId(userId);
+
+		int cnt = userMapper.logUserHistory(paramUser);
+
+		if (cnt > 0) {
+			cnt = userMapper.updateSvcUser(paramUser);
+		} else {
+			throw new PmsRuntimeException("svc user Update fail");
 		}
 
 		return cnt;

@@ -43,7 +43,7 @@ public class PmsConfig {
 
 	/** The header application token expired. */
 	@Value("#{pms['header.application.token.expired']}")
-	public int HEADER_APPLICATION_TOKEN_EXPIRED; // = 30;
+	public int HEADER_APPLICATION_TOKEN_EXPIRED; // = 180;
 
 	/** The message header type default. */
 	@Value("#{pms['message.header.type.default']}")

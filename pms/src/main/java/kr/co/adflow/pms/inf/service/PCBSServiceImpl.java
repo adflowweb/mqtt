@@ -184,7 +184,7 @@ public class PCBSServiceImpl implements PCBSService {
 		User user = userMapper.selectAuth(paramUser);
 		if (user == null) {
 //			throw new RuntimeException("패스워드 변경 실패2");
-			throw new PmsRuntimeException("패스워드 변경 실패2");
+			throw new PmsRuntimeException("user not valid");
 		}
 
 		paramUser.setAction("modifyPassword");

@@ -522,18 +522,19 @@ private String getKeyMon(String string) {
 			if (ack.getCallbackUrl() != null
 					&& ack.getCallbackUrl().trim().length() > 0) {
 				// 3. RestTemplate
-				logger.info("ack.getCallbackUrl() {}", ack.getCallbackUrl());
-				logger.info("ack.getAckType() {}",	ack.getAckType());
-				logger.info("ack.getApplicationKey() {}",	ack.getApplicationKey());
+				logger.debug("ack.getCallbackUrl() {}", ack.getCallbackUrl());
+				logger.debug("ack.getAckType() {}",	ack.getAckType());
+				logger.debug("ack.getApplicationKey() {}",	ack.getApplicationKey());
 				if (ack.getCallbackMethod().equals("POST")) {
 					try {
 						String result = restTemplate.postForObject(
 								ack.getCallbackUrl(), this.getRequest(ack),
 								String.class);
-						logger.info("{}", result);
+						logger.debug("{}", result);
 						ack.setCallbackStatus(1);
 						ack.setCallbackCount(1);
 					} catch (Exception e) {
+						logger.error("callback Error. issueID::{} , CallbackUrl::{}", ack.getIssueId(), ack.getCallbackUrl());
 						e.printStackTrace();
 						// error
 						ack.setCallbackStatus(-1);
@@ -547,13 +548,13 @@ private String getKeyMon(String string) {
 				ack.setCallbackCount(0);
 			}
 
-			logger.info("updateAckCallback before {}", ack.getMsgId());
+			logger.debug("updateAckCallback before {}", ack.getMsgId());
 			// 4. ack update
 			ackMapper.updateAckCallback(this.getParams(ack));
-			logger.info("updateAckCallback after {}", ack.getMsgId());
+			logger.debug("updateAckCallback after {}", ack.getMsgId());
 			// 5. ctl_q 삭제
 			ctlQMapper.deleteQ(ack.getMsgId());
-			logger.info("deleteQ end {}", ack.getMsgId());
+			logger.debug("deleteQ end {}", ack.getMsgId());
 
 		}
 

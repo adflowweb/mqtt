@@ -3,11 +3,13 @@
  */
 package kr.co.adflow.pms.svc.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
 
+import kr.co.adflow.pms.adm.request.UserReq;
 import kr.co.adflow.pms.adm.service.AccountService;
 import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.controller.BaseController;
@@ -300,6 +302,33 @@ public class PushMessageController extends BaseController {
 		result.setData(msgId);
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		Response<Result<String>> res = new Response(result);
+		return res;
+
+	}
+	
+	
+	/**
+	 * Modify user name.
+	 *
+	 * @param req the req
+	 * @param appKey the app key
+	 * @return the response
+	 */
+	@RequestMapping(value = "/users", method = RequestMethod.PUT)
+	@ResponseBody
+	public Response<Result<List<String>>> modifySvcUser(@RequestBody UserReq req,
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String appKey) throws Exception{
+
+		int resultCnt = accountService.modifySvcUser(req, appKey);
+
+		List<String> messages = new ArrayList<String>();
+		messages.add("modifySvcUser SUCCESS :" + resultCnt);
+
+		Result<List<String>> result = new Result<List<String>>();
+		result.setSuccess(true);
+		result.setInfo(messages);
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		Response<Result<List<String>>> res = new Response(result);
 		return res;
 
 	}

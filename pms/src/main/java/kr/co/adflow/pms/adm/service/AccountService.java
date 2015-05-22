@@ -49,5 +49,14 @@ public interface AccountService {
 	 * @return the int
 	 */
 	public int modifyUserName(UserReq req, String appKey) throws Exception;
+	
+	/**
+	 * Modify password.
+	 *
+	 * @param req the req
+	 * @param appKey the app key
+	 * @return the int
+	 */
+	public int modifySvcUser(UserReq req, String appKey) throws Exception;
 
 }

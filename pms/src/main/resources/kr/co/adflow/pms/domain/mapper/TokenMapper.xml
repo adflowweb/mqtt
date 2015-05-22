@@ -64,5 +64,14 @@
 		WHERE token_id = #{tokenId} 
 	</update>
 	
+	<select id="selectApplicationKey" parameterType="String"
+		resultType="String">
+		SELECT token_id
+		FROM pms.token
+		WHERE 
+		token_type = 'A'
+		AND user_id = #{userId} 
+	</select>
+	
 
 </mapper>	

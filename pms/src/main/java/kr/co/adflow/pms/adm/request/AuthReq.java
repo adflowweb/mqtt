@@ -18,6 +18,29 @@ public class AuthReq {
 	/** The password. */
 	@NotEmpty
 	private String password;
+	
+	/** The user type. */
+	private String type;
+	
+	
+
+	/**
+	 * Gets the user type.
+	 *
+	 * @return the type
+	 */
+	public String getType() {
+		return type;
+	}
+
+	/**
+	 * Sets the user type.
+	 *
+	 * @param type the new user type
+	 */
+	public void setType(String type) {
+		this.type = type;
+	}
 
 	/**
 	 * Gets the user id.

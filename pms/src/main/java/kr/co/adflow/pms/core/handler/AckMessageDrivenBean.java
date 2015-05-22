@@ -20,6 +20,7 @@ import kr.co.adflow.pms.domain.CtlQ;
 import kr.co.adflow.pms.domain.mapper.AckMapper;
 import kr.co.adflow.pms.domain.mapper.CtlQMapper;
 import kr.co.adflow.pms.domain.mapper.MessageMapper;
+import kr.co.adflow.pms.domain.mapper.UserMapper;
 
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -46,9 +47,9 @@ public class AckMessageDrivenBean implements MessageListener {
 	@Autowired
 	private CtlQMapper ctlQMapper;
 	
-	/** The message mapper. */
+	/** The user mapper. */
 	@Autowired
-	private MessageMapper messageMapper;
+	private UserMapper userMapper;
 	
 
 	/** The executor server id. */
@@ -91,21 +92,33 @@ public class AckMessageDrivenBean implements MessageListener {
 		// param.put("keyMon", DateUtil.getYYYYMM());
 		param.put("keyMon", ack.getKeyMon());
 		param.put("msgId", ack.getMsgId());
+		
+		logger.debug("callback param ::"+param.toString());
+		try {
+			String callbackUrl = userMapper.selectCallbackUrl(param);
 
-		Integer msgType = messageMapper.selectMessageType(param);
-		// callback
-		//MESSAGE_HEADER_TYPE_DEFAULT
-		//message type check
-		if (msgType != null && msgType == 10) {
-			// 관제 message
-			cnt = ackMapper.insertAck(ack);
-			ctlQMapper.insertQ(this.getCtlQ(ack));
-		} else{
+			logger.debug("callback URL ::"+callbackUrl);
 			
-			cnt = ackMapper.insertAck(ack);
+			//callback check
+			if (callbackUrl != null && callbackUrl.trim().length() > 0) {
+				
+				// 관제 message
+				cnt = ackMapper.insertAck(ack);
+				ctlQMapper.insertQ(this.getCtlQ(ack));
+				logger.debug("ctl_q ADD::"+ack.toString());
+				
+			} else{
+				
+				cnt = ackMapper.insertAck(ack);
+				
+			}
+			logger.debug("ack result : {}", cnt);
 			
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		logger.info("ack result : {}", cnt);
+
+		
 
 	}
 

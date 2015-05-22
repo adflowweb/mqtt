@@ -145,6 +145,7 @@
 		FROM pms.user a
 		WHERE a.user_id = #{userId}
 		AND a.password = #{password}
+		AND a.status = 0
 	</select>
 
 	<update id="updateUserStatus" parameterType="kr.co.adflow.pms.domain.User">
@@ -281,5 +282,23 @@
 		,issue_id = #{issueId}
 		WHERE user_id = #{userId}
 	</update>
+	
+	<update id="updateSvcUser" parameterType="kr.co.adflow.pms.domain.User">
+		UPDATE pms.user
+		SET user_name = #{userName}
+		,callback_url = #{callbackUrl}
+		,callback_method = 'POST'
+		,issue_time = now()
+		,issue_id = #{issueId}
+		WHERE user_id = #{userId}
+	</update>
+	
+	<select id="selectCallbackUrl" parameterType="Map" resultType="String">
+		SELECT a.callback_url
+		FROM pms.user a, pms.message${keyMon} b
+		WHERE
+		a.user_id = b.issue_id
+		AND b.msg_id = #{msgId}
+	</select>
 	
 </mapper>	

@@ -63,25 +63,34 @@ public class CommonServiceImpl implements CommonService {
 			throw new PmsRuntimeException("invalid auth");
 		}
 
-		Token paramToken = new Token();
-		paramToken.setUserId(user.getUserId());
-		paramToken.setTokenType(StaticConfig.TOKEN_TYPE_TOKEN);
-		// 3. 정상 사용자의 경우 token 해싱
-		paramToken.setTokenId(KeyGenerator.generateToken(auth.getUserId()));
-		// 4 , expired_time 현재로 부터 30분
-		paramToken.setExpiredTime(DateUtil.afterMinute(
-				pmsConfig.HEADER_APPLICATION_TOKEN_EXPIRED,
-				System.currentTimeMillis()));
-		// 5. token 테이블 저장
-		int cnt = tokenMapper.insertToken(paramToken);
-		if (cnt < 1) {
-//			throw new RuntimeException("invalid auth error");
-			throw new PmsRuntimeException("invalid auth error");
-		}
-		// 6. 만료일 지난 token 삭제
-		tokenMapper.deleteExpiredToken(paramToken.getUserId());
+		if (auth.getType() != null && auth.getType().equals("svc")) {
+			//서드파티 관제 유저는 application Key 리턴.
+			String appKey = tokenMapper.selectApplicationKey(user.getUserId());
+			res.setToken(appKey);
+		} else {
+			//일반 관제 유저는 application Token 리턴.
+			Token paramToken = new Token();
+			paramToken.setUserId(user.getUserId());
+			paramToken.setTokenType(StaticConfig.TOKEN_TYPE_TOKEN);
+			// 3. 정상 사용자의 경우 token 해싱
+			paramToken.setTokenId(KeyGenerator.generateToken(auth.getUserId()));
+			// 4 , expired_time 현재로 부터 30분
+			paramToken.setExpiredTime(DateUtil.afterMinute(
+					pmsConfig.HEADER_APPLICATION_TOKEN_EXPIRED,
+					System.currentTimeMillis()));
+			// 5. token 테이블 저장
+			int cnt = tokenMapper.insertToken(paramToken);
+			if (cnt < 1) {
+//				throw new RuntimeException("invalid auth error");
+				throw new PmsRuntimeException("invalid auth error");
+			}
+			// 6. 만료일 지난 token 삭제
+			tokenMapper.deleteExpiredToken(paramToken.getUserId());
 
-		res.setToken(paramToken.getTokenId());
+			res.setToken(paramToken.getTokenId());
+
+		}
+
 		res.setUserId(user.getUserId());
 		res.setRole(user.getRole());
 		res.setUfmi(user.getUfmi());
