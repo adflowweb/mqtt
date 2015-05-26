@@ -189,6 +189,10 @@ public class PlatformServiceImpl implements PlatformService {
 		message.setReceiver(digInfo.getReceiver());
 		message.setContentType(digInfo.getContentType());
 		message.setContent(digInfo.getContent());
+		
+		//2015-05-26 - expiry time => 24hour
+		long expiryTime = 1000 * 60 * 60 * 24;
+		message.setExpiry(expiryTime);
 
 		try {
 
