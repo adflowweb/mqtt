@@ -26,6 +26,14 @@ public interface SvcService {
 	 * @return the svc message list
 	 */
 	public MessagesRes getSvcMessageList(Map<String, String> params)  throws Exception;
+	
+	/**
+	 * Gets the svc message detail list.
+	 *
+	 * @param String the msgId
+	 * @return the svc message list
+	 */
+	public MessagesRes getSvcMessageDetailList(String msgId, String keyMon)  throws Exception;
 
 	/**
 	 * Gets the svc resevation message list.

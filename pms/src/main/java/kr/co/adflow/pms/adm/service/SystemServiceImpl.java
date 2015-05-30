@@ -326,6 +326,26 @@ public class SystemServiceImpl implements SystemService {
 
 		return res;
 	}
+	
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.pms.adm.service.SysService#getSysMessageDetailList(java.util.Map)
+	 */
+	@Override
+	public MessagesRes getSysMessageDetailList(String msgId, String keyMon)  throws Exception {
+
+		MessagesRes res = null;
+		MsgParams msgParams = new MsgParams();
+		msgParams.setMsgId(msgId);
+		msgParams.setKeyMon(keyMon);
+
+		List<Message> list = messageMapper.getSvcMessageDetailList(msgParams);
+		logger.info("list size :::::::{}", list.size());
+
+		res = new MessagesRes();
+		res.setData(list);
+
+		return res;
+	}
 
 	/**
 	 * Gets the int.

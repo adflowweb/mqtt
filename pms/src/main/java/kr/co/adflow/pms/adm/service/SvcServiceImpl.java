@@ -137,6 +137,27 @@ public class SvcServiceImpl implements SvcService {
 
 		return res;
 	}
+	
+	
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.pms.adm.service.SvcService#getSvcMessageList(java.util.Map)
+	 */
+	@Override
+	public MessagesRes getSvcMessageDetailList(String msgId, String keyMon)  throws Exception {
+
+		MessagesRes res = null;
+		MsgParams msgParams = new MsgParams();
+		msgParams.setMsgId(msgId);
+		msgParams.setKeyMon(keyMon);
+
+		List<Message> list = messageMapper.getSvcMessageDetailList(msgParams);
+		logger.info("list size :::::::{}", list.size());
+
+		res = new MessagesRes();
+		res.setData(list);
+
+		return res;
+	}
 
 	/**
 	 * Gets the string array.
