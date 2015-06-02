@@ -125,6 +125,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
         TextView tvBtLeft = (TextView) findViewById(R.id.bottom_button_left);
         TextView tvBtRight = (TextView) findViewById(R.id.bottom_button_right);
         tvBtLeft.setText(R.string.new_msg);
+
         //tvBtLeft.setFocusable(true);
         int[][] states = new int[][]{
                 new int[]{android.R.attr.state_pressed}, // pressed
@@ -133,9 +134,9 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
         };
 
         int[] colors = new int[]{
-                Color.parseColor("#008000"), // green
-                Color.parseColor("#0000FF"), // blue
-                Color.parseColor("#FFFFFF")  // red
+                Color.parseColor("#ff000000"),
+                Color.parseColor("#999999"),
+                Color.parseColor("#ffffffff")
         };
 
         ColorStateList list = new ColorStateList(states, colors);

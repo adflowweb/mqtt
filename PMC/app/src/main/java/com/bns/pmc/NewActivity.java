@@ -9,7 +9,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnKeyListener;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -112,6 +114,44 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
         m_tvBtLeft.setVisibility(View.GONE);
         enablePTT = false;
         m_tvBtRight.setText(R.string.back);
+
+        int[][] states = new int[][]{
+                new int[]{android.R.attr.state_pressed}, // pressed
+                new int[]{android.R.attr.state_focused}, // focused
+                new int[]{android.R.attr.state_enabled} // enabled
+        };
+
+        int[] colors = new int[]{
+                Color.parseColor("#ff000000"),
+                Color.parseColor("#999999"),
+                Color.parseColor("#ffffffff")
+        };
+
+        ColorStateList list = new ColorStateList(states, colors);
+        m_tvBtRight.setTextColor(list);
+        //tvBtLeft.setClickable(true);
+        //tvBtLeft.setFocusableInTouchMode(true);
+
+        //testCode
+        m_tvBtRight.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String txt = (String) ((TextView) v).getText();
+                Log.d(PMCType.TAG, "text=" + txt);
+                if (txt.equals("이전")) {
+                    Log.d(PMCType.TAG, "이전버튼클릭");
+                    ((Activity) m_context).onBackPressed();
+                } else if (txt.equals("삭제")) {
+                    Log.d(PMCType.TAG, "삭제버튼클릭");
+                    ((Activity) m_context).dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK));
+                } else {
+                    Log.d(PMCType.TAG, "무슨버튼이냥 ");
+                }
+            }
+        });
+        //testCodeEnd
+
+
         m_etNewMsg.setOnFocusChangeListener(this);
         m_etNewMsg.addTextChangedListener(this);
 
