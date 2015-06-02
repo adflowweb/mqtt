@@ -34,6 +34,7 @@ import kr.co.adflow.pms.core.handler.PCFConnectionManagerHandler;
 import kr.co.adflow.pms.domain.Message;
 import kr.co.adflow.pms.domain.ServerInfo;
 import kr.co.adflow.pms.domain.User;
+import kr.co.adflow.pms.domain.validator.UserValidator;
 import kr.co.adflow.pms.response.Response;
 import kr.co.adflow.pms.response.Result;
 
@@ -79,6 +80,9 @@ public class SystemController extends BaseController {
 	
 	@Autowired
 	private CDRCreateExecutor2 cDRCreateExecutor2;
+	
+	@Autowired
+	private UserValidator userValidator;
 	
 	
 
@@ -699,6 +703,9 @@ public class SystemController extends BaseController {
 	      String value = sysprops.getProperty(key);
 	      System.out.println(key + "=" + value);
 	    }
+	    
+	    String ufmi  = userValidator.getSubscribUfmi2("00*001*0011");
+	    System.out.println("==== ufmi::" + ufmi);
 
 
 		

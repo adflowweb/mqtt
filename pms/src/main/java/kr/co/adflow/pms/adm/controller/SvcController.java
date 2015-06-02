@@ -181,6 +181,38 @@ public class SvcController extends BaseController {
 
 	}
 	
+	
+	/**
+	 * Gets the message list.
+	 *
+	 * @param params the params
+	 * @param appKey the app key
+	 * @return the message list
+	 * @throws Exception the exception
+	 */
+	@RequestMapping(value = "/messages2", method = RequestMethod.GET)
+	@ResponseBody
+	public Response<Result<MessagesRes>> getMessageList2(
+			@RequestParam Map<String, String> params,
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey)
+			throws Exception {
+
+		String sEcho = (String) params.get("sEcho");
+		params.put("appKey", appKey);
+
+		MessagesRes messagesRes = svcService.getSvcMessageList2(params);
+
+		messagesRes.setsEcho(sEcho);
+
+		Result<MessagesRes> result = new Result<MessagesRes>();
+		result.setSuccess(true);
+		result.setData(messagesRes);
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		Response<Result<MessagesRes>> res = new Response(result);
+		return res;
+
+	}
+	
 	/**
 	 * Gets the message list.
 	 *

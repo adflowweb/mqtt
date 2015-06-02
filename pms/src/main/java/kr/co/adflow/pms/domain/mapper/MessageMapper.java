@@ -99,6 +99,23 @@ public interface MessageMapper {
 	List<Message> getSvcMessageList(MsgParams params);
 	
 	/**
+	 * Gets the sys message list.
+	 *
+	 * @param params the params
+	 * @return the sys message list
+	 */
+	List<Message> getSysMessageList(MsgParams params);
+	
+	/**
+	 * Gets the sys message list cnt.
+	 *
+	 * @param params the params
+	 * @return the sys message list cnt
+	 */
+	int getSysMessageListCnt(MsgParams params);
+	
+	
+	/**
 	 * Gets the svc message list.
 	 *
 	 * @param String the msgId

@@ -233,7 +233,7 @@ public class UserValidator {
 
 		// System.out.println("temp len"+ temp.length);
 
-		result = temp[0] + "/" + temp[1] + "/p" + temp[2];
+		result = Integer.parseInt(temp[0]) + "/" + Integer.parseInt(temp[1]) + "/p" + Integer.parseInt(temp[2]);
 
 		return result;
 	}

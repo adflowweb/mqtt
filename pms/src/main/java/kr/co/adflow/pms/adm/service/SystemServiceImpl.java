@@ -313,10 +313,10 @@ public class SystemServiceImpl implements SystemService {
 		}
 
 		logger.debug("[getSysMessageList]msgParams :::::::{}", msgParams.toString());
-		int cnt = messageMapper.getSvcMessageListCnt(msgParams);
+		int cnt = messageMapper.getSysMessageListCnt(msgParams);
 		logger.debug("[getSysMessageList]cnt :::::::{}", cnt);
 
-		List<Message> list = messageMapper.getSvcMessageList(msgParams);
+		List<Message> list = messageMapper.getSysMessageList(msgParams);
 		logger.debug("[getSysMessageList]list size :::::::{}", list.size());
 
 		res = new MessagesRes();

@@ -326,7 +326,7 @@
 	</select>
 
 
-<!-- 	<select id="getSvcMessageListCnt" parameterType="kr.co.adflow.pms.domain.MsgParams"
+ 	<select id="getSysMessageListCnt" parameterType="kr.co.adflow.pms.domain.MsgParams"
 		resultType="Integer">
 		SELECT COUNT(*)
 		FROM
@@ -370,7 +370,7 @@
 	   </if>
 	</select>	
 	
-	<select id="getSvcMessageList" parameterType="kr.co.adflow.pms.domain.MsgParams"
+	<select id="getSysMessageList" parameterType="kr.co.adflow.pms.domain.MsgParams"
 		resultMap="MessageResult">
 		SELECT a.group_id
 		, a.msg_id
@@ -447,7 +447,7 @@
 	   </if>
 		ORDER BY a.update_time DESC, a.issue_time DESC
 		limit #{iDisplayStart} , #{iDisplayLength}
-	</select> -->
+	</select>
 	
 	
 	
