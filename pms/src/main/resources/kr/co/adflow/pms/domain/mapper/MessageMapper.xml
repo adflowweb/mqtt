@@ -276,6 +276,27 @@
 	
 	<select id="getSvcMessageDetailList" parameterType="kr.co.adflow.pms.domain.MsgParams"
 		resultMap="MessageResult">
+		SELECT 
+			a.msg_id
+			, j.ufmi AS receiver
+			,a.ack_type as pma_ack_type
+			,a.ack_time as pma_ack_time
+			,b.ack_type as app_ack_type
+			,b.ack_time as app_ack_time 
+		FROM 
+			pms.ack${keyMon} a left outer join pms.ack${keyMon} b on a.token_id = b.token_id AND a.msg_id = b.msg_id and b.ack_type = 'app'
+			,push.token i
+			,push.user j 
+		WHERE 
+			a.token_id = i.tokenid 
+			AND i.userid = j.userid 
+			AND a.ack_type = "pma" 
+			AND a.msg_id = #{msgId};
+	</select>
+	
+	
+<!-- 	<select id="getSvcMessageDetailList" parameterType="kr.co.adflow.pms.domain.MsgParams"
+		resultMap="MessageResult">
 		SELECT a.group_id
 		, a.msg_id
 		, a.msg_type
@@ -323,7 +344,7 @@
 		AND b.token_id = i.tokenid
 		AND i.userid = j.userid
 		GROUP BY b.token_id
-	</select>
+	</select> -->
 
 
  	<select id="getSysMessageListCnt" parameterType="kr.co.adflow.pms.domain.MsgParams"
