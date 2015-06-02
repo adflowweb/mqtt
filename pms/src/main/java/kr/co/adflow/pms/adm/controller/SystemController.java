@@ -664,13 +664,6 @@ public class SystemController extends BaseController {
 			
 			
 			return res;
-			
-
-		
-		
-
-		
-
 	}
 	
 
@@ -707,6 +700,21 @@ public class SystemController extends BaseController {
 	    String ufmi  = userValidator.getSubscribUfmi2("00*001*0011");
 	    System.out.println("==== ufmi::" + ufmi);
 
+	    String requestVal = "1*01*11";
+	    int firstT = requestVal.indexOf('*');
+		int lastT = requestVal.lastIndexOf('*');
+		int lengT = requestVal.length();
+		
+//		System.out.println("firstT :"+ firstT + ", lastT :"+lastT + ", len :"+ lengT);
+		if (requestVal.substring(0, 1).equals("0")) {
+			System.out.println("==== 1::" + requestVal.substring(0, 1));
+		} 
+		if (requestVal.substring(firstT+1, firstT+2).equals("0")) {
+			System.out.println("==== 2::" + requestVal.substring(firstT+1, firstT+2));
+		} 
+		if (requestVal.substring(lastT+1, lastT+2).equals("0")) {
+			System.out.println("==== 3::" + requestVal.substring(lastT+1, lastT+2));
+		} 
 
 		
 //		re = systemService.testRun();

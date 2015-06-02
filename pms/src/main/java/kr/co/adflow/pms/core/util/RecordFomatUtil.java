@@ -101,7 +101,7 @@ public class RecordFomatUtil {
 			} else if(pTalkVer.equals("2")){
 				//P-tail 2.0
 				//01~04
-				sb.append(topicTemp.substring(0,firstT));
+				sb.append(RecordFomatUtil.intFormat(Integer.parseInt(topicTemp.substring(0,firstT)),2));
 				//국번
 				sb.append(RecordFomatUtil.intFormat(Integer.parseInt(topicTemp.substring(firstT,lastT).replace("/", "")),4));
 				//개별번호
@@ -143,8 +143,9 @@ public class RecordFomatUtil {
 				sb.append(RecordFomatUtil.intFormat(Integer.parseInt(topicTemp.substring(lastT,topicTemp.length()).replace("*", "")),5));
 			} else {
 				//P-tail 2.0
-				//01~41
-				sb.append(topicTemp.substring(0,firstT));
+				//0~41
+//				sb.append(topicTemp.substring(0,firstT));
+				sb.append(RecordFomatUtil.intFormat(Integer.parseInt(topicTemp.substring(0,firstT)),2));
 				//국번
 				sb.append(RecordFomatUtil.intFormat(Integer.parseInt(topicTemp.substring(firstT,lastT).replace("*", "")),4));
 				//개별번호
