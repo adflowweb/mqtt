@@ -34,6 +34,7 @@ import kr.co.adflow.pms.core.handler.PCFConnectionManagerHandler;
 import kr.co.adflow.pms.domain.Message;
 import kr.co.adflow.pms.domain.ServerInfo;
 import kr.co.adflow.pms.domain.User;
+import kr.co.adflow.pms.domain.validator.UserValidator;
 import kr.co.adflow.pms.response.Response;
 import kr.co.adflow.pms.response.Result;
 
@@ -79,6 +80,9 @@ public class SystemController extends BaseController {
 	
 	@Autowired
 	private CDRCreateExecutor2 cDRCreateExecutor2;
+	
+	@Autowired
+	private UserValidator userValidator;
 	
 	
 
@@ -342,6 +346,38 @@ public class SystemController extends BaseController {
 		MessagesRes messagesRes = systemService.getSysMessageList(params);
 
 		messagesRes.setsEcho(sEcho);
+
+		Result<MessagesRes> result = new Result<MessagesRes>();
+		result.setSuccess(true);
+		result.setData(messagesRes);
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		Response<Result<MessagesRes>> res = new Response(result);
+		return res;
+
+	}
+	
+	/**
+	 * Gets the message list.
+	 *
+	 * @param params the params
+	 * @param appKey the app key
+	 * @return the message list
+	 * @throws Exception the exception
+	 */
+	@RequestMapping(value = "/messages/{msgId}", method = RequestMethod.GET)
+	@ResponseBody
+	public Response<Result<MessagesRes>> getMessageDetailList(
+			@RequestParam Map<String, String> params,
+			@PathVariable("msgId") String msgId,
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey)
+			throws Exception {
+
+		String keyMon = (String) params.get("keyMon");
+//		params.put("appKey", appKey);
+
+		MessagesRes messagesRes = systemService.getSysMessageDetailList(msgId, keyMon);
+
+//		messagesRes.setsEcho(sEcho);
 
 		Result<MessagesRes> result = new Result<MessagesRes>();
 		result.setSuccess(true);
@@ -628,13 +664,6 @@ public class SystemController extends BaseController {
 			
 			
 			return res;
-			
-
-		
-		
-
-		
-
 	}
 	
 
@@ -667,7 +696,25 @@ public class SystemController extends BaseController {
 	      String value = sysprops.getProperty(key);
 	      System.out.println(key + "=" + value);
 	    }
+	    
+	    String ufmi  = userValidator.getSubscribUfmi2("00*001*0011");
+	    System.out.println("==== ufmi::" + ufmi);
 
+	    String requestVal = "1*01*11";
+	    int firstT = requestVal.indexOf('*');
+		int lastT = requestVal.lastIndexOf('*');
+		int lengT = requestVal.length();
+		
+//		System.out.println("firstT :"+ firstT + ", lastT :"+lastT + ", len :"+ lengT);
+		if (requestVal.substring(0, 1).equals("0")) {
+			System.out.println("==== 1::" + requestVal.substring(0, 1));
+		} 
+		if (requestVal.substring(firstT+1, firstT+2).equals("0")) {
+			System.out.println("==== 2::" + requestVal.substring(firstT+1, firstT+2));
+		} 
+		if (requestVal.substring(lastT+1, lastT+2).equals("0")) {
+			System.out.println("==== 3::" + requestVal.substring(lastT+1, lastT+2));
+		} 
 
 		
 //		re = systemService.testRun();

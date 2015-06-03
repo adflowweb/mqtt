@@ -177,6 +177,38 @@ public class SvcAdmController extends BaseController {
 		return res;
 
 	}
+	
+	/**
+	 * Gets the message list.
+	 *
+	 * @param params the params
+	 * @param appKey the app key
+	 * @return the message list
+	 * @throws Exception the exception
+	 */
+	@RequestMapping(value = "/messages/{msgId}", method = RequestMethod.GET)
+	@ResponseBody
+	public Response<Result<MessagesRes>> getMessageDetailList(
+			@RequestParam Map<String, String> params,
+			@PathVariable("msgId") String msgId,
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey)
+			throws Exception {
+
+		String keyMon = (String) params.get("keyMon");
+//		params.put("appKey", appKey);
+
+		MessagesRes messagesRes = svcService.getSvcMessageDetailList(msgId, keyMon);
+
+//		messagesRes.setsEcho(sEcho);
+
+		Result<MessagesRes> result = new Result<MessagesRes>();
+		result.setSuccess(true);
+		result.setData(messagesRes);
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		Response<Result<MessagesRes>> res = new Response(result);
+		return res;
+
+	}
 
 	/**
 	 * Gets the resevation message list.

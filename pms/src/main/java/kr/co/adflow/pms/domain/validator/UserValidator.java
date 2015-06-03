@@ -120,8 +120,19 @@ public class UserValidator {
 		int lengT = requestVal.length();
 		
 //		System.out.println("firstT :"+ firstT + ", lastT :"+lastT + ", len :"+ lengT);
+		if (requestVal.substring(0, 1).equals("0")) {
+			return StaticConfig.SERVICE_REQUEST_FORMAT_TYPE_ERROR;
+		} 
+		if (requestVal.substring(firstT+1, firstT+2).equals("0")) {
+			return StaticConfig.SERVICE_REQUEST_FORMAT_TYPE_ERROR;
+		} 
+		if (requestVal.substring(lastT+1, lastT+2).equals("0")) {
+			return StaticConfig.SERVICE_REQUEST_FORMAT_TYPE_ERROR;
+		} 
+		
+		
 		//P1 check		
-		if(requestVal.substring(0, 2).equals("82") 
+		if(requestVal.substring(0, firstT).equals("82") 
 				&& firstT + 1 < lastT  
 				&& lastT - firstT < 8  
 				&& lastT+1 < lengT 
@@ -130,7 +141,7 @@ public class UserValidator {
 		}
 		
 		//P2 check		
-		if(!requestVal.substring(0, 2).equals("82") 
+		if(!requestVal.substring(0, firstT).equals("82") 
 				&& firstT + 1 < lastT  
 				&& lastT - firstT < 6  
 				&& lastT+1 < lengT 

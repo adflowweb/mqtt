@@ -68,6 +68,14 @@ public interface SystemService {
 	 * @return the sys message list
 	 */
 	public MessagesRes getSysMessageList(Map<String, String> params) throws Exception;
+	
+	/**
+	 * Gets the sys message detail list.
+	 *
+	 * @param String the msgId
+	 * @return the sys message list
+	 */
+	public MessagesRes getSysMessageDetailList(String msgId, String keyMon)  throws Exception;
 
 	/**
 	 * Gets the sys resevation message list.
