@@ -12,7 +12,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -23,7 +22,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
@@ -50,6 +48,7 @@ import kr.co.adflow.push.IPushService;
 
 public class PMCService extends Service {
     public static IPushService m_Binder = null;
+    public static boolean loginStatus = false;
     private static boolean m_bPttCall = false;
 
     private Context m_context;
@@ -512,7 +511,7 @@ public class PMCService extends Service {
             @Override
             public void run() {
 
-
+// 비동기로 처리되어 필요가 없어짐 
 //                IPushService binder = null;
 //                boolean bIsBinder = true;
 //                boolean bIsConnected = false;
@@ -744,7 +743,8 @@ public class PMCService extends Service {
      */
     private void processReceivedPttLogInOutAction(Intent intent) {
         boolean flag = intent.getBooleanExtra(PMCType.BNS_PMC_PTT_REG_STATE_EXTRA_VALUE, false);
-        Log.i(PMCType.TAG, "Ptt LogInOut State= " + flag);
+        loginStatus = flag;
+        Log.i(PMCType.TAG, "Ptt LogInOut State= " + loginStatus);
     }
 
     /**
@@ -1717,20 +1717,20 @@ public class PMCService extends Service {
                 Intent i = new Intent(intent);
                 processReceivedPttLogInOutAction(i);
             } else if (action.equals(PMCType.BNS_PMC_KTP_PUSH_USERMSG)) {
-                PackageInfo versionInfo = getPackageInfo();
-                String EULA_PREFIX = "appeula";
-                String eulaKey = EULA_PREFIX + versionInfo.versionCode;
-                SharedPreferences prefs = PreferenceManager
-                        .getDefaultSharedPreferences(context);
-                boolean enabled = prefs.getBoolean(eulaKey, false);
-                Log.d(PMCType.TAG, "사용자등록=" + enabled);
-                //사용자동의자에 한해 메시지 전달
-                if (enabled) {
-                    // 메신져 앱 간의 메시지 수신
-                    Log.i(PMCType.TAG, "유저메시지가도착하였습니다.");
-                    Intent i = new Intent(intent);
-                    processReceivedUserMsg(i);
-                }
+//                PackageInfo versionInfo = getPackageInfo();
+//                String EULA_PREFIX = "appeula";
+//                String eulaKey = EULA_PREFIX + versionInfo.versionCode;
+//                SharedPreferences prefs = PreferenceManager
+//                        .getDefaultSharedPreferences(context);
+//                boolean enabled = prefs.getBoolean(eulaKey, false);
+//                Log.d(PMCType.TAG, "사용자등록=" + enabled);
+//                //사용자동의자에 한해 메시지 전달
+//                if (enabled) {
+                // 메신져 앱 간의 메시지 수신
+                Log.i(PMCType.TAG, "유저메시지가도착하였습니다.");
+                Intent i = new Intent(intent);
+                processReceivedUserMsg(i);
+//                }
             } else if (action.equals(PMCType.BNS_PMC_KTP_PUSH_MMS)) {
                 // 관제 시스템 메시지 수신
                 Log.i(PMCType.TAG, "관제메시지가도착하였습니다.");

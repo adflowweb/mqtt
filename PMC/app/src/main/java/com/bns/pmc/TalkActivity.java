@@ -12,7 +12,9 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface.OnKeyListener;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -131,7 +133,52 @@ public class TalkActivity extends Activity implements LoaderCallbacks<Cursor> {
         TextView tvBtLeft = (TextView) findViewById(R.id.bottom_button_left);
         TextView tvBtRight = (TextView) findViewById(R.id.bottom_button_right);
         tvBtLeft.setText(R.string.reply);
+
+        int[][] states = new int[][]{
+                new int[]{android.R.attr.state_pressed}, // pressed
+                new int[]{android.R.attr.state_focused}, // focused
+                new int[]{android.R.attr.state_enabled} // enabled
+        };
+
+        int[] colors = new int[]{
+                Color.parseColor("#ff000000"),
+                Color.parseColor("#999999"),
+                Color.parseColor("#ffffffff")
+        };
+
+        ColorStateList list = new ColorStateList(states, colors);
+        tvBtLeft.setTextColor(list);
+        //tvBtLeft.setClickable(true);
+        //tvBtLeft.setFocusableInTouchMode(true);
+
+        //testCode
+        tvBtLeft.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(PMCType.TAG, "답장버튼이 클릭되었습니다.");
+                optionReply();
+            }
+        });
+        //testCodeEnd
+
+
         tvBtRight.setText(R.string.back);
+        tvBtRight.setTextColor(list);
+        //tvBtLeft.setClickable(true);
+        //tvBtLeft.setFocusableInTouchMode(true);
+
+        //testCode
+        tvBtRight.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // DoIt(v);
+                Log.d(PMCType.TAG, "이전버튼이 클릭되었습니다.");
+                ((Activity) m_context).onBackPressed();
+            }
+        });
+        //testCodeEnd
+
+
         // 관제 메시지일 때 reply가 표시되지 않도록 설정.
         if (m_bControl)
             tvBtLeft.setText("");
@@ -397,6 +444,7 @@ public class TalkActivity extends Activity implements LoaderCallbacks<Cursor> {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Log.d(PMCType.TAG, "onOptionsItemSelected시작(item=" + item + ")");
         super.onOptionsItemSelected(item);
 
         switch (item.getItemId()) {
@@ -417,6 +465,7 @@ public class TalkActivity extends Activity implements LoaderCallbacks<Cursor> {
             default:
                 break;
         }
+        Log.d(PMCType.TAG, "onOptionsItemSelected종료()");
         return true;
     }
 
@@ -583,13 +632,16 @@ public class TalkActivity extends Activity implements LoaderCallbacks<Cursor> {
      * option Forwarding
      */
     private void optionForwarding() {
+        Log.d(PMCType.TAG, "optionForwarding시작()");
         // 계정 정보 확인.
         if (m_configure.getUFMI() == Configure.UFMI_INIT) {
+            Log.d(PMCType.TAG, "계정정보가등록되지않았습니다.");
             Toast.makeText(m_context, R.string.disconnect_init_account, Toast.LENGTH_SHORT).show();
             return;
         }
 
         Cursor c = (Cursor) m_listView.getSelectedItem();
+        Log.d(PMCType.TAG, "커서=" + c);
         if (c != null) {
             String strMsg = c.getString(c.getColumnIndex(MessageColumn.DB_COLUMN_MSG));
 
@@ -598,6 +650,7 @@ public class TalkActivity extends Activity implements LoaderCallbacks<Cursor> {
             i.putExtra(PMCType.BNS_PMC_INTENT_EXTRA_CONTENT, strMsg);
             startActivityForResult(i, 101);
         }
+        Log.d(PMCType.TAG, "optionForwarding종료()");
     }
 
     /**

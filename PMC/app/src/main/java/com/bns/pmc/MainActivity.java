@@ -12,7 +12,9 @@ import android.content.Intent;
 import android.content.Loader;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -123,7 +125,54 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
         TextView tvBtLeft = (TextView) findViewById(R.id.bottom_button_left);
         TextView tvBtRight = (TextView) findViewById(R.id.bottom_button_right);
         tvBtLeft.setText(R.string.new_msg);
+
+        //tvBtLeft.setFocusable(true);
+        int[][] states = new int[][]{
+                new int[]{android.R.attr.state_pressed}, // pressed
+                new int[]{android.R.attr.state_focused}, // focused
+                new int[]{android.R.attr.state_enabled} // enabled
+        };
+
+        int[] colors = new int[]{
+                Color.parseColor("#ff000000"),
+                Color.parseColor("#999999"),
+                Color.parseColor("#ffffffff")
+        };
+
+        ColorStateList list = new ColorStateList(states, colors);
+        tvBtLeft.setTextColor(list);
+        //tvBtLeft.setClickable(true);
+        //tvBtLeft.setFocusableInTouchMode(true);
+
+        //testCode
+        tvBtLeft.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // DoIt(v);
+                Log.d(PMCType.TAG, "신규버튼이 클릭되었습니다.");
+                optionNewMessage();
+            }
+        });
+        //testCodeEnd
+
+
         tvBtRight.setText(R.string.back);
+        tvBtRight.setTextColor(list);
+        //tvBtLeft.setClickable(true);
+        //tvBtLeft.setFocusableInTouchMode(true);
+
+        //testCode
+        tvBtRight.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // DoIt(v);
+                Log.d(PMCType.TAG, "이전버튼이 클릭되었습니다.");
+                ((Activity) m_context).onBackPressed();
+
+            }
+        });
+        //testCodeEnd
+
 
         m_adapter = new MsgAdapter(m_context, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         // Associate the (now empty) adapter with the ListView.

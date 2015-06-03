@@ -15,7 +15,7 @@
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <permission
         android:name="com.bns.pmc.READ"
@@ -37,7 +37,6 @@
             android:label="@string/title_main_activity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -48,19 +47,18 @@
         <activity
             android:name=".TalkActivity"
             android:icon="@drawable/ic_pmc_launcher"
-            android:label="@string/title_talk_activity">
-        </activity>
+            android:label="@string/title_talk_activity"></activity>
         <activity
             android:name=".SettingsActivity"
             android:icon="@drawable/ic_pmc_launcher"
             android:label="@string/title_settings_activity"></activity>
         <activity
             android:name=".NotiPopupActivity"
-            android:theme="@style/CustomNotiPopupTheme"
-            android:screenOrientation="portrait"
-            android:launchMode="singleInstance"
             android:excludeFromRecents="true"
-            android:taskAffinity="" />
+            android:launchMode="singleInstance"
+            android:screenOrientation="portrait"
+            android:taskAffinity=""
+            android:theme="@style/CustomNotiPopupTheme" />
 
         <receiver android:name=".receiver.ServiceCaller$ServiceCallBR">
             <intent-filter>
@@ -80,8 +78,8 @@
 
         <service
             android:name=".receiver.PMCService"
-            android:exported="false"
-            android:enabled="true"></service>
+            android:enabled="true"
+            android:exported="false"></service>
 
         <provider
             android:name="com.bns.pmc.provider.DataProvider"
