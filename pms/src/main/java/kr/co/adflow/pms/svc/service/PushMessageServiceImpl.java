@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import kr.co.adflow.pms.adm.response.MessagesRes;
 import kr.co.adflow.pms.core.config.PmsConfig;
 import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.exception.PmsRuntimeException;
@@ -19,6 +20,7 @@ import kr.co.adflow.pms.domain.CtlQ;
 import kr.co.adflow.pms.domain.Message;
 import kr.co.adflow.pms.domain.MessageResult;
 import kr.co.adflow.pms.domain.MsgIdsParams;
+import kr.co.adflow.pms.domain.MsgParams;
 import kr.co.adflow.pms.domain.mapper.CtlQMapper;
 import kr.co.adflow.pms.domain.mapper.InterceptMapper;
 import kr.co.adflow.pms.domain.mapper.MessageMapper;
@@ -76,6 +78,9 @@ public class PushMessageServiceImpl implements PushMessageService {
 	@Autowired
 	private PmsConfig pmsConfig;
 
+	
+
+	
 	/* (non-Javadoc)
 	 * @see kr.co.adflow.pms.svc.service.PushMessageService#sendMessage(java.lang.String, kr.co.adflow.pms.svc.request.MessageReq)
 	 */
@@ -314,6 +319,7 @@ public class PushMessageServiceImpl implements PushMessageService {
 			messageResult.setPmaAckTime(msg.getPmaAckTime());
 			messageResult.setAppAckType(msg.getAppAckType());
 			messageResult.setAppAckTime(msg.getAppAckTime());
+			messageResult.setUfmi(msg.getUfmi());
 
 			resultList.add(messageResult);
 		}
@@ -442,6 +448,26 @@ public class PushMessageServiceImpl implements PushMessageService {
 	private int getMessageQos(String userId) {
 		return checkUtil.getMessageQos(interceptMapper
 				.getCashedMessageQos(userId));
+	}
+	
+	/**
+	 * Gets the int.
+	 *
+	 * @param string the string
+	 * @return the int
+	 */
+	private int getInt(String string) {
+		return Integer.parseInt(string);
+	}
+	
+	/**
+	 * Gets the date.
+	 *
+	 * @param string the string
+	 * @return the date
+	 */
+	private Date getDate(String string) {
+		return DateUtil.fromISODateString(string);
 	}
 
 }

@@ -54,6 +54,19 @@ public class MessageResult {
 	@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL, using = JsonDateSerializer.class)
 	private Date appAckTime;
 	
+	/** The ufmi. */
+	private String ufmi;
+	
+
+	
+	
+	public String getUfmi() {
+		return ufmi;
+	}
+
+	public void setUfmi(String ufmi) {
+		this.ufmi = ufmi;
+	}
 
 	/**
 	 * Gets the msg id.

@@ -109,7 +109,18 @@ public class Message {
 	/** The msgSize. */
 	private int msgSize;
 	
+	/** The msgSize. */
+	private String ufmi;
 	
+	
+
+	public String getUfmi() {
+		return ufmi;
+	}
+
+	public void setUfmi(String ufmi) {
+		this.ufmi = ufmi;
+	}
 
 	/**
 	 * Gets the msg id.

@@ -37,6 +37,7 @@
 		<result property="appAckType" column="app_ack_type" />
 		<result property="appAckTime" column="app_ack_time" />
 		<result property="issueName" column="issue_name" />
+		<result property="ufmi" column="ufmi" />
 	</resultMap>
 
 
@@ -658,6 +659,77 @@
 		, a.resend_count
 		, a.resend_max_count
 		, a.update_time
+		, b.ufmi
+		, b.pma_ack_type
+        , b.pma_ack_time		
+        , b.app_ack_type
+        , b.app_ack_time
+	
+		FROM
+		pms.message${keyMon} a left outer join (
+			SELECT 
+				aa.msg_id, j.ufmi,aa.ack_type as pma_ack_type,aa.ack_time as pma_ack_time,bb.ack_type as app_ack_type,bb.ack_time as app_ack_time 
+			FROM 
+				pms.ack${keyMon} aa left outer join pms.ack${keyMon} bb on aa.token_id = bb.token_id AND aa.msg_id = bb.msg_id and bb.ack_type = 'app'
+				,push.token i
+				,push.user j 
+			WHERE 
+				aa.token_id = i.tokenid 
+				AND i.userid = j.userid 
+				AND aa.ack_type = "pma" 
+				AND aa.msg_id IN
+       				<foreach item="id" index="index" collection="msgIds" open="(" separator="," close=")" >
+					#{id}
+	   				</foreach>
+		) b on a.msg_id = b.msg_id  
+		WHERE 
+		a.issue_id = #{issueId}
+        AND a.msg_id IN
+       <foreach item="id" index="index" collection="msgIds" open="(" separator="," close=")" >
+			#{id}
+	   </foreach>
+		ORDER BY a.update_time DESC,a.issue_time DESC
+	</select>
+	
+	
+<!-- 	<select id="getMessageResult" parameterType="kr.co.adflow.pms.domain.MsgIdsParams"
+		resultMap="MessageResult">
+		SELECT a.group_id
+		, a.msg_id
+		, a.receiver
+		, a.status
+		, a.is_reservation
+		, a.reservation_time
+		, a.resend_count
+		, a.resend_max_count
+		, a.update_time
+		, b.ack_type as pma_ack_type
+        , b.ack_time as pma_ack_time		
+        , d.ack_type as app_ack_type
+        , d.ack_time as app_ack_time
+	
+		FROM
+		pms.message${keyMon} a	
+		WHERE 
+		a.issue_id = #{issueId}
+        AND a.msg_id IN
+       <foreach item="id" index="index" collection="msgIds" open="(" separator="," close=")" >
+			#{id}
+	   </foreach>
+		ORDER BY a.update_time DESC,a.issue_time DESC
+	</select> -->
+	
+<!-- 	<select id="getMessageResult" parameterType="kr.co.adflow.pms.domain.MsgIdsParams"
+		resultMap="MessageResult">
+		SELECT a.group_id
+		, a.msg_id
+		, a.receiver
+		, a.status
+		, a.is_reservation
+		, a.reservation_time
+		, a.resend_count
+		, a.resend_max_count
+		, a.update_time
         , b.ack_type as pma_ack_type
         , b.ack_time as pma_ack_time		
         , d.ack_type as app_ack_type
@@ -666,16 +738,14 @@
 		pms.message${keyMon} a left outer join pms.ack${keyMon} b on a.msg_id = b.msg_id and b.ack_type = 'pma',
         pms.message${keyMon} c left outer join pms.ack${keyMon} d on c.msg_id = d.msg_id and d.ack_type = 'app'		
 		WHERE a.msg_id = c.msg_id
-		<if test="msgType != null and msgType != 0">
-		AND a.msg_type = #{msgType}
-		</if>
+		AND b.token = d.token
 		AND a.issue_id = #{issueId}
         AND a.msg_id IN
        <foreach item="id" index="index" collection="msgIds" open="(" separator="," close=")" >
 			#{id}
 	   </foreach>
 		ORDER BY a.update_time DESC,a.issue_time DESC
-	</select>
+	</select> -->
 	
 	<update id="cancelMessage" parameterType="kr.co.adflow.pms.domain.Message">
 		UPDATE  pms.message${keyMon}

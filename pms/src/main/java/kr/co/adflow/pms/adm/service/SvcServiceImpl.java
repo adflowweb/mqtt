@@ -208,7 +208,7 @@ public class SvcServiceImpl implements SvcService {
 		msgParams.setKeyMon(keyMon);
 
 		List<Message> list = messageMapper.getSvcMessageDetailList(msgParams);
-		logger.info("list size :::::::{}", list.size());
+		logger.debug("list size :::::::{}", list.size());
 
 		res = new MessagesRes();
 		res.setData(list);
