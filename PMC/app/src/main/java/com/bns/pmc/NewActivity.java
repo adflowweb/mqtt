@@ -753,6 +753,12 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
             return;
         }
 
+        //ptt 로그아웃시 메시지전송하지 않음
+        if (PMCService.loginStatus == false) {
+            Toast.makeText(m_context, "PTT로그아웃상태입니다.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         //modified by nadir
         // validataionCheck
         // exist검사
