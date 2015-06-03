@@ -1,0 +1,31 @@
+{
+  "name": "contentsServer",
+  "version": "1.0.0",
+  "description": "컨텐츠서버",
+  "main": "contentsServer.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "assert": "^1.3.0",
+    "formidable": "^1.0.17",
+    "should": "^6.0.3",
+    "fs-extra": "^0.18.4",
+    "supertest": "^1.0.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adflowweb/mqtt.git"
+  },
+  "author": "@nadir93",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/adflowweb/mqtt/issues"
+  },
+  "homepage": "https://github.com/adflowweb/mqtt"
+}
