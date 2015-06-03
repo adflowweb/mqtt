@@ -10,7 +10,9 @@ import java.util.Map;
 import javax.validation.Valid;
 
 import kr.co.adflow.pms.adm.request.UserReq;
+import kr.co.adflow.pms.adm.response.MessagesRes;
 import kr.co.adflow.pms.adm.service.AccountService;
+import kr.co.adflow.pms.adm.service.SvcService;
 import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.controller.BaseController;
 import kr.co.adflow.pms.core.exception.PmsRuntimeException;
@@ -51,6 +53,10 @@ public class PushMessageController extends BaseController {
 	/** The push message service. */
 	@Autowired
 	private PushMessageService pushMessageService;
+	
+	/** The svc service. */
+	@Autowired
+	private SvcService svcService;
 
 	/** The account service. */
 	@Autowired
@@ -177,6 +183,71 @@ public class PushMessageController extends BaseController {
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		Response<Result<List<MessageResult>>> res = new Response(result);
 		return res;
+	}
+	
+	/**
+	 * Gets the resevation message list.
+	 *
+	 * @param params the params
+	 * @param appKey the app key
+	 * @return the resevation message list
+	 * @throws Exception the exception
+	 */
+	@RequestMapping(value = "/messages/reservations", method = RequestMethod.GET)
+	@ResponseBody
+	public Response<Result<MessagesRes>> getResevationMessageList(
+			@RequestParam Map<String, String> params,
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String appKey)
+			throws Exception {
+
+		String sEcho = (String) params.get("sEcho");
+		params.put("appKey", appKey);
+		params.put("iDisplayLength", "100");
+
+		MessagesRes messagesRes = svcService
+				.getSvcResevationMessageList(params);
+
+		messagesRes.setsEcho(sEcho);
+
+		Result<MessagesRes> result = new Result<MessagesRes>();
+		result.setSuccess(true);
+		result.setData(messagesRes);
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		Response<Result<MessagesRes>> res = new Response(result);
+		return res;
+
+	}
+	
+	/**
+	 * Gets the message detail list.
+	 *
+	 * @param params the params
+	 * @param appKey the app key
+	 * @return the message list
+	 * @throws Exception the exception
+	 */
+	@RequestMapping(value = "/messages/{msgId}", method = RequestMethod.GET)
+	@ResponseBody
+	public Response<Result<MessagesRes>> getMessageDetailList(
+			@RequestParam Map<String, String> params,
+			@PathVariable("msgId") String msgId,
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String appKey)
+			throws Exception {
+
+		String keyMon = (String) params.get("keyMon");
+//		params.put("appKey", appKey);
+
+		MessagesRes messagesRes = svcService.getSvcMessageDetailList(msgId, keyMon);
+
+//		messagesRes.setsEcho(sEcho);
+
+		Result<MessagesRes> result = new Result<MessagesRes>();
+		result.setSuccess(true);
+		result.setData(messagesRes);
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		Response<Result<MessagesRes>> res = new Response(result);
+		return res;
+
 	}
 
 	/**

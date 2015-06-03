@@ -214,7 +214,7 @@ public class SvcController extends BaseController {
 	}
 	
 	/**
-	 * Gets the message list.
+	 * Gets the message detail list.
 	 *
 	 * @param params the params
 	 * @param appKey the app key
