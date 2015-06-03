@@ -28,6 +28,7 @@ describe('컨텐츠서버\n\t\tenv : http://127.0.0.1:13532\n\t\tfile : contentS
                 // end handles the response
                 .end(function (err, res) {
                     if (err) {
+                        //console.error(err);
                         throw err;
                     }
                     console.log('response=', res.text);
