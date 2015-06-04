@@ -5,10 +5,8 @@
  */
 //https 인증스킵
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-//var bunyan = require('bunyan');
-//var srcName = __filename.substring(__filename.lastIndexOf('/'));
-//var log = bunyan.createLogger({name: "tokenValidator"});
-bunyan = require('bunyan'),
+
+var bunyan = require('bunyan'),
     logOptions = { name: 'tokenValidator', src: false, level: "debug", serializers: {req: bunyan.stdSerializers.req, err: bunyan.stdSerializers.err, res: bunyan.stdSerializers.res}};
 
 // Activate this logger only for development and leave the original for production
@@ -17,37 +15,33 @@ if (process.env.NODE_ENV === 'development') {
     bunyanCLI = spawn('bunyan', ['--color'], { stdio: ['pipe', process.stdout] });
     logOptions.stream = bunyanCLI.stdin;
 }
-var log = bunyan.createLogger(logOptions);
 
-var utils = require('util');
-var https = require('https');
-
-var tokenValidator = function () {
-};
-
-var options = {
-    hostname: 'push4.ktp.co.kr',
-    port: 8080,
-    path: '',
-    method: 'GET',
-    headers: {
-        'Content-Type': 'application/json',
-        'X-ApiKey': 'KTPJAAS'
-    }
-};
+var log = bunyan.createLogger(logOptions),
+    util = require('util'),
+    https = require('https'),
+    tokenValidator = function () {
+    },
+    options = {
+        hostname: 'push4.ktp.co.kr',
+        port: 8080,
+        path: '',
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-ApiKey': 'KTPJAAS'
+        }
+    };
 
 tokenValidator.prototype = {
     validate: function (req, cb) {
-        var token = req.url.substring(req.url.lastIndexOf('/') + 1);
+        var token = req.params.token;
+        //req.url.substring(req.url.lastIndexOf('/') + 1);
         log.debug({token: token});
         options.path = '/v1/validate/' + token;
         https.get(options, function (res) {
             cb(null, res);
         }).on('error', function (e) {
-            //console.error('error');
-            //console.error(e);
-            //throw e;
-            log.error({err: e});
+            log.error({err: e}, '토큰체크중에러발생');
             cb(e);
         });
 

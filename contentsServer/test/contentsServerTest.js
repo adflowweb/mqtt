@@ -9,7 +9,8 @@ var request = require('supertest');
 //var mongoose = require('mongoose');
 //var winston = require('winston');
 //var config = require('../../config');
-var url = 'http://127.0.0.1:13532';
+//var url = 'http://127.0.0.1:13532';
+var url = 'http://127.0.0.1:8080';
 
 describe('컨텐츠서버\n\t\tenv : http://127.0.0.1:13532\n\t\tfile : contentServerTest.js', function () {
 
@@ -20,6 +21,7 @@ describe('컨텐츠서버\n\t\tenv : http://127.0.0.1:13532\n\t\tfile : contentS
 
     describe('파일업로드', function () {
         it('파일업로드 테스트 : 응답코드 200', function (done) {
+            this.timeout(5000);
             request(url)
                 .post('/v1/users/fffbd697e5354b42a9f6628')
                 .set('md5', '7ae54aaf426a7483e2ae54cc17d9880f')
@@ -28,10 +30,10 @@ describe('컨텐츠서버\n\t\tenv : http://127.0.0.1:13532\n\t\tfile : contentS
                 // end handles the response
                 .end(function (err, res) {
                     if (err) {
-                        //console.error(err);
-                        throw err;
+                        console.error(err);
+                        //throw err;
                     }
-                    console.log('response=', res.text);
+                    console.log({response: res.text});
 //                    // this is should.js syntax, very clear
 //                    //res.should.have.status(200);
 //                    //res.should.have.property('status', 200);
