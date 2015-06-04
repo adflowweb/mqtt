@@ -24,6 +24,14 @@ server.name = 'contentsServer';
 
 server.use(ckeckToken);
 
+server.on('after', restify.auditLogger({
+    log: bunyan.createLogger({
+        name: 'audit',
+        stream: bunyanCLI.stdin,
+        level: "debug"
+    })
+}));
+
 server.get('/v1/users/:token', download);
 
 server.post('/v1/users/:token', upload);
@@ -52,9 +60,7 @@ function upload(req, res, next) {
      */
     fs.exists(__dirname + '/uploads/' + req.params.token + '/' + md5, function (exists) {
         if (exists) {
-            next(new restify.InvalidArgumentError("파일이이미존재합니다"))
-            log.info({res: res}, 'http응답이완료되었습니다(이미파일이존재합니다)');
-            return;
+            return next(new restify.InvalidArgumentError("파일이이미존재합니다"));
         } else {
             //파일업로드진행
             var form = new formidable.IncomingForm(),
@@ -66,10 +72,7 @@ function upload(req, res, next) {
             //form.keepExtensions = true;
 
             form.on('error', function (err) {
-                log.error({err: err}, '데이터처리중에러발생');
-                next(err);
-                log.info({res: res}, 'http응답이완료되었습니다(에러발생)');
-                return;
+                return next(err);
             }).on('field', function (field, value) {
                 log.debug({field: field});
                 log.debug({value: value});
@@ -91,15 +94,11 @@ function upload(req, res, next) {
                 log.debug({저장위치: location});
                 fs.copy(tempPath, location + fileName, function (err) {
                     if (err) {
-                        log.error({err: err}, '파일카피중에러발생');
-                        next(err);
-                        log.info({res: res}, 'http응답이완료되었습니다(에러발생)');
-                        return;
+                        return next(err);
                     } else {
                         log.debug("파일카피가완료되었습니다.");
                         res.send({message: "파일이업로드되었습니다"});
-                        log.info({res: res}, 'http응답이완료되었습니다');
-                        next();
+                        return next();
                     }
                 });
             });
@@ -124,11 +123,10 @@ function ckeckToken(req, res, next) {
              * 토큰이 유효하면 nextTask 수행 아니면 종료
              */
             if (obj.result.data.validation == true) {
-                next();
+                return next();
             } else {
                 //토큰이 유효하지 않음
-                next(new restify.UnauthorizedError("토큰이유효하지않습니다"));
-                log.debug({res: res}, 'http응답이완료되었습니다(토큰이유효하지않습니다)');
+                return next(new restify.UnauthorizedError("토큰이유효하지않습니다"));
             }
         });
     });
