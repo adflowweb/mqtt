@@ -38,6 +38,7 @@ import kr.co.adflow.pms.domain.validator.UserValidator;
 import kr.co.adflow.pms.response.Response;
 import kr.co.adflow.pms.response.Result;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -682,40 +683,63 @@ public class SystemController extends BaseController {
 		
 //		Date date = System.currentTimeMillis();
 		
-		Calendar cal = Calendar.getInstance();
-//		cal.setTime(date);
-		cal.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
-		
-		System.out.println("==== Time::" + cal.getTime());
-		cal.add(Calendar.MINUTE, 10);
-		System.out.println("==== Time::" + cal.getTime());
-		
-		Properties sysprops = System.getProperties();
-	    for (Enumeration e = sysprops.propertyNames(); e.hasMoreElements();) {
-	      String key = (String) e.nextElement();
-	      String value = sysprops.getProperty(key);
-	      System.out.println(key + "=" + value);
-	    }
+//		Calendar cal = Calendar.getInstance();
+////		cal.setTime(date);
+//		cal.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
+//		
+//		System.out.println("==== Time::" + cal.getTime());
+//		cal.add(Calendar.MINUTE, 10);
+//		System.out.println("==== Time::" + cal.getTime());
+//		
+//		Properties sysprops = System.getProperties();
+//	    for (Enumeration e = sysprops.propertyNames(); e.hasMoreElements();) {
+//	      String key = (String) e.nextElement();
+//	      String value = sysprops.getProperty(key);
+//	      System.out.println(key + "=" + value);
+//	    }
 	    
-	    String ufmi  = userValidator.getSubscribUfmi2("00*001*0011");
-	    System.out.println("==== ufmi::" + ufmi);
+//	    String ufmi  = userValidator.getSubscribUfmi2("00*001*0011");
+//	    System.out.println("==== ufmi::" + ufmi);
+//
+//	    String requestVal = "1*01*11";
+//	    int firstT = requestVal.indexOf('*');
+//		int lastT = requestVal.lastIndexOf('*');
+//		int lengT = requestVal.length();
+//		
+////		System.out.println("firstT :"+ firstT + ", lastT :"+lastT + ", len :"+ lengT);
+//		if (requestVal.substring(0, 1).equals("0")) {
+//			System.out.println("==== 1::" + requestVal.substring(0, 1));
+//		} 
+//		if (requestVal.substring(firstT+1, firstT+2).equals("0")) {
+//			System.out.println("==== 2::" + requestVal.substring(firstT+1, firstT+2));
+//		} 
+//		if (requestVal.substring(lastT+1, lastT+2).equals("0")) {
+//			System.out.println("==== 3::" + requestVal.substring(lastT+1, lastT+2));
+//		} 
 
-	    String requestVal = "1*01*11";
-	    int firstT = requestVal.indexOf('*');
-		int lastT = requestVal.lastIndexOf('*');
-		int lengT = requestVal.length();
-		
-//		System.out.println("firstT :"+ firstT + ", lastT :"+lastT + ", len :"+ lengT);
-		if (requestVal.substring(0, 1).equals("0")) {
-			System.out.println("==== 1::" + requestVal.substring(0, 1));
-		} 
-		if (requestVal.substring(firstT+1, firstT+2).equals("0")) {
-			System.out.println("==== 2::" + requestVal.substring(firstT+1, firstT+2));
-		} 
-		if (requestVal.substring(lastT+1, lastT+2).equals("0")) {
-			System.out.println("==== 3::" + requestVal.substring(lastT+1, lastT+2));
-		} 
-
+		try {
+			String en = "6rSA7KCcIOydvOuwmCDrqZTsi5zsp4A=";
+			byte[] decode = Base64.decodeBase64(en);
+			
+			System.out.println("decode::"+ decode.length);
+			
+			String aaa = new String(decode);
+			System.out.println("aaa::"+ aaa);
+			System.out.println("aaa.length::"+ aaa.length());
+			
+			int msgCnt = 0;
+			 for (int i = 0; i < aaa.length(); i++) {
+			 if (Character.getType(aaa.charAt(i)) == 5) {
+			 msgCnt = msgCnt + 2;
+			 } else {
+			 msgCnt++;
+			 }
+			 }
+			 System.out.println("msgCnt::"+ msgCnt);
+			
+		} catch (Exception e) {
+			throw e;
+		}
 		
 //		re = systemService.testRun();
 //		PCFConnectionManagerHandler.PCFConnectionManager();

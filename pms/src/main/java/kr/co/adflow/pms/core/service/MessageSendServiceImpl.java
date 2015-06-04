@@ -525,8 +525,10 @@ private String getKeyMon(String string) {
 				logger.debug("ack.getCallbackUrl() {}", ack.getCallbackUrl());
 				logger.debug("ack.getAckType() {}",	ack.getAckType());
 				logger.debug("ack.getApplicationKey() {}",	ack.getApplicationKey());
+				logger.debug("ack::"+ack.toString());
 				if (ack.getCallbackMethod().equals("POST")) {
 					try {
+						
 						String result = restTemplate.postForObject(
 								ack.getCallbackUrl(), this.getRequest(ack),
 								String.class);
@@ -575,10 +577,11 @@ private String getKeyMon(String string) {
 				ack.getApplicationKey());
 
 		CallbackReq req = new CallbackReq();
-		req.setCallbackmsgid(ack.getMsgId());
-		req.setAcktype(ack.getAckType());
-		req.setAcktime(DateUtil.getDate(ack.getAckTime()));
-		req.setAckresult(true);
+		req.setCallbackMsgId(ack.getMsgId());
+		req.setAckType(ack.getAckType());
+		req.setAckTime(DateUtil.getDate(ack.getAckTime()));
+		req.setAckResult(true);
+		req.setUfmi(ack.getUfmi());
 		HttpEntity entity = new HttpEntity(req, headers);
 
 		return entity;

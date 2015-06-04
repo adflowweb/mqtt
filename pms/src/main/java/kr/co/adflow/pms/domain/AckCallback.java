@@ -46,6 +46,20 @@ public class AckCallback {
 	
 	/** The application key. */
 	private String applicationKey;
+	
+	
+	/** The ufmi. */
+	private String ufmi;
+	
+	
+
+	public String getUfmi() {
+		return ufmi;
+	}
+
+	public void setUfmi(String ufmi) {
+		this.ufmi = ufmi;
+	}
 
 	/**
 	 * Gets the msg id.
@@ -262,5 +276,20 @@ public class AckCallback {
 	public void setApplicationKey(String applicationKey) {
 		this.applicationKey = applicationKey;
 	}
+
+	@Override
+	public String toString() {
+		return "AckCallback [msgId=" + msgId + ", ackType=" + ackType
+				+ ", tokenId=" + tokenId + ", ackTime=" + ackTime
+				+ ", callbackStatus=" + callbackStatus + ", callbackCount="
+				+ callbackCount + ", receiver=" + receiver + ", issueId="
+				+ issueId + ", callbackUrl=" + callbackUrl
+				+ ", callbackMethod=" + callbackMethod
+				+ ", callbackCountLimit=" + callbackCountLimit
+				+ ", applicationKey=" + applicationKey + ", ufmi=" + ufmi + "]";
+	}
+
+	
+	
 
 }

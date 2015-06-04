@@ -57,6 +57,8 @@
 		FROM pms.template
 		WHERE
 		user_id = #{userId}
+		ORDER BY issue_time DESC
+		
 	</select>
 	
 	<update id="updateTemplate" parameterType="kr.co.adflow.pms.domain.Template">

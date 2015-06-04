@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import kr.co.adflow.pms.adm.request.AddressDelReq;
 import kr.co.adflow.pms.adm.request.AddressReq;
 import kr.co.adflow.pms.adm.request.ReservationCancelReq;
 import kr.co.adflow.pms.adm.request.TemplateReq;
@@ -36,6 +37,7 @@ import kr.co.adflow.pms.domain.validator.UserValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 // TODO: Auto-generated Javadoc
@@ -402,8 +404,9 @@ public class SvcServiceImpl implements SvcService {
 		address.setItem2(addr.getItem2());
 		address.setItem3(addr.getItem3());
 		address.setIssueId(issueId);
+		int insertCnt = 0;
+		insertCnt = addressMapper.insertAddress(address);
 		
-		int insertCnt = addressMapper.insertAddress(address);
 		
 		return insertCnt;
 	}
@@ -442,13 +445,13 @@ public class SvcServiceImpl implements SvcService {
 	 * @see kr.co.adflow.pms.adm.service.SvcService#deleteAddress(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public int deleteAddress(String appKey, String ufmi) {
+	public int deleteAddress(String appKey, String[] ufmiArray) {
 
 		String issueId = interceptMapper.selectCashedUserId(appKey);
 
 		AddressParams addressParams = new AddressParams();
 		addressParams.setUserId(issueId);
-		addressParams.setUfmi(ufmi);
+		addressParams.setUfmiArray(ufmiArray);
 
 		return addressMapper.deleteAddress(addressParams);
 	}

@@ -107,7 +107,7 @@ public interface SvcService {
 	 * @param AddressReq the AddressReq
 	 * @return the update count
 	 */
-	public int deleteAddress(String appKey, String ufmi);
+	public int deleteAddress(String appKey, String[] ufmiArray);
 	
 	
 	/**

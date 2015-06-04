@@ -26,6 +26,7 @@ import kr.co.adflow.pms.svc.request.MessageIdsReq;
 import kr.co.adflow.pms.svc.request.MessageReq;
 import kr.co.adflow.pms.svc.service.PushMessageService;
 
+import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,6 +87,28 @@ public class PushMessageController extends BaseController {
 			throw new RuntimeException("getReceivers is null");
 		} else {
 			String[] receivers = msg.getReceivers();
+			
+			try {
+				String decode = new String(Base64.decodeBase64(msg.getContent()));
+				
+				int msgCnt = 0;
+				 for (int i = 0; i < decode.length(); i++) {
+				 if (Character.getType(decode.charAt(i)) == 5) {
+				 msgCnt = msgCnt + 2;
+				 } else {
+				 msgCnt++;
+				 }
+				 }
+				 
+				 logger.debug("ContentLength::"+ msgCnt);
+				
+				 msg.setContentLength(msgCnt);
+				
+			} catch (Exception e) {
+				throw e;
+			}
+			
+			
 			for (int i = 0; i < receivers.length; i++) {
 				
 //				if (!isValid(receivers[i])) {
@@ -345,7 +368,7 @@ public class PushMessageController extends BaseController {
 	@ResponseBody
 	public Response<Result<CallbackReq>> callbackPost(@RequestBody CallbackReq req) {
 
-		logger.info("callback test msgId : {}", req.getCallbackmsgid());
+		logger.info("callback test msgId : {}", req.getCallbackMsgId());
 
 		Result<CallbackReq> result = new Result<CallbackReq>();
 		result.setSuccess(true);

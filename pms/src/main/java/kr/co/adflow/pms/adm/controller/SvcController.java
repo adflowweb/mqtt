@@ -11,6 +11,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 
 import kr.co.adflow.pms.adm.request.AccountReq;
+import kr.co.adflow.pms.adm.request.AddressDelReq;
 import kr.co.adflow.pms.adm.request.AddressReq;
 import kr.co.adflow.pms.adm.request.PasswordReq;
 import kr.co.adflow.pms.adm.request.ReservationCancelReq;
@@ -36,6 +37,7 @@ import kr.co.adflow.pms.svc.service.PushMessageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -521,9 +523,13 @@ public class SvcController extends BaseController {
 
 		logger.debug("=== AdressReq ::{}", req.toString());
 		
-
-
-		int insertCnt = svcService.addAdress(appKey, req);
+		int insertCnt = 0;
+		try {
+			insertCnt = svcService.addAdress(appKey, req);
+		}  catch (DuplicateKeyException e) {
+			throw new PmsRuntimeException("DuplicateKeyException");
+		}
+		
 
 		Result<Integer> result = new Result<Integer>();
 		result.setSuccess(true);
@@ -597,15 +603,17 @@ public class SvcController extends BaseController {
 	 * @return the response
 	 * @throws Exception the exception
 	 */
-	@RequestMapping(value = "/address/{ufmi}", method = RequestMethod.DELETE, produces = StaticConfig.HEADER_CONTENT_TYPE)
+	@RequestMapping(value = "/address/delete", method = RequestMethod.POST, produces = StaticConfig.HEADER_CONTENT_TYPE)
 	@ResponseBody
 	public Response<Result<Integer>> deleteAdress(
-			@PathVariable("ufmi") String ufmi,
+			@RequestBody AddressDelReq req,
 			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey) throws Exception {
 
-		logger.debug("=== appKey ::{}, ufmi::{}", appKey, ufmi);
+		logger.debug("=== appKey ::"+appKey);
+		
+		String[] ufmiArray = req.getUfmiArray();
 
-		int delCnt = svcService.deleteAddress(appKey, ufmi);
+		int delCnt = svcService.deleteAddress(appKey, ufmiArray);
 
 		Result<Integer> result = new Result<Integer>();
 		result.setSuccess(true);

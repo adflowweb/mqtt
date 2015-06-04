@@ -57,9 +57,20 @@ public class MessageResult {
 	/** The ufmi. */
 	private String ufmi;
 	
+	/** The resend Count. */
+	private int resendCount;
+	
 
 	
 	
+	public int getResendCount() {
+		return resendCount;
+	}
+
+	public void setResendCount(int resendCount) {
+		this.resendCount = resendCount;
+	}
+
 	public String getUfmi() {
 		return ufmi;
 	}
