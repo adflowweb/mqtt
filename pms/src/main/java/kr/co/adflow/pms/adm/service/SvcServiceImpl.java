@@ -37,6 +37,7 @@ import kr.co.adflow.pms.domain.validator.UserValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 // TODO: Auto-generated Javadoc
@@ -403,8 +404,9 @@ public class SvcServiceImpl implements SvcService {
 		address.setItem2(addr.getItem2());
 		address.setItem3(addr.getItem3());
 		address.setIssueId(issueId);
+		int insertCnt = 0;
+		insertCnt = addressMapper.insertAddress(address);
 		
-		int insertCnt = addressMapper.insertAddress(address);
 		
 		return insertCnt;
 	}

@@ -13,6 +13,7 @@ import kr.co.adflow.pms.response.Result;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -63,6 +64,9 @@ public class BaseController {
 				errorMessage += " : " + error.getCode() + " : "
 						+ error.getDefaultMessage();
 			}
+//		} else if (e instanceof DuplicateKeyException) {
+//			errorMessage = e.getMessage();
+
 		} else {
 			errorMessage = e.getMessage();
 		}

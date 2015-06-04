@@ -37,6 +37,7 @@ import kr.co.adflow.pms.svc.service.PushMessageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -522,9 +523,13 @@ public class SvcController extends BaseController {
 
 		logger.debug("=== AdressReq ::{}", req.toString());
 		
-
-
-		int insertCnt = svcService.addAdress(appKey, req);
+		int insertCnt = 0;
+		try {
+			insertCnt = svcService.addAdress(appKey, req);
+		}  catch (DuplicateKeyException e) {
+			throw new PmsRuntimeException("DuplicateKeyException");
+		}
+		
 
 		Result<Integer> result = new Result<Integer>();
 		result.setSuccess(true);

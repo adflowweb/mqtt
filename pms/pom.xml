@@ -239,7 +239,14 @@
 			<artifactId>sigar</artifactId>
 			<version>1.6.2</version>
 			<scope>provided</scope>
-		</dependency>		
+		</dependency>
+			
+		<dependency>
+    		<groupId>commons-codec</groupId>
+    		<artifactId>commons-codec</artifactId>
+    		<version>1.9</version>
+		</dependency>
+	
 	</dependencies>
 	<build>
 		<plugins>

@@ -26,6 +26,7 @@ import kr.co.adflow.pms.svc.request.MessageIdsReq;
 import kr.co.adflow.pms.svc.request.MessageReq;
 import kr.co.adflow.pms.svc.service.PushMessageService;
 
+import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,6 +87,15 @@ public class PushMessageController extends BaseController {
 			throw new RuntimeException("getReceivers is null");
 		} else {
 			String[] receivers = msg.getReceivers();
+			
+			try {
+				byte[] decode = Base64.decodeBase64(msg.getContent());
+				msg.setContentLength(decode.length);
+			} catch (Exception e) {
+				throw e;
+			}
+			
+			
 			for (int i = 0; i < receivers.length; i++) {
 				
 //				if (!isValid(receivers[i])) {
