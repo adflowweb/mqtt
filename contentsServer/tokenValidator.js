@@ -7,7 +7,15 @@
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 var bunyan = require('bunyan'),
-    logOptions = { name: 'tokenValidator', src: false, level: "debug", serializers: {req: bunyan.stdSerializers.req, err: bunyan.stdSerializers.err, res: bunyan.stdSerializers.res}};
+    logOptions = {
+        name: 'tokenValidator',
+        src: false, level: "debug",
+        serializers: {
+            req: bunyan.stdSerializers.req,
+            err: bunyan.stdSerializers.err,
+            res: bunyan.stdSerializers.res
+        }
+    };
 
 // Activate this logger only for development and leave the original for production
 if (process.env.NODE_ENV === 'development') {
@@ -17,7 +25,6 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 var log = bunyan.createLogger(logOptions),
-    util = require('util'),
     https = require('https'),
     tokenValidator = function () {
     },
@@ -39,12 +46,24 @@ tokenValidator.prototype = {
         log.debug({token: token});
         options.path = '/v1/validate/' + token;
         https.get(options, function (res) {
-            cb(null, res);
+            var str = '';
+            res.on('data', function (chunk) {
+                str += chunk;
+            });
+            res.on('end', function () {
+                console.log(str);
+                var obj = JSON.parse(str);
+                if (obj.result.data.validation == true) {
+                    cb(null, true);
+                } else {
+                    //토큰이 유효하지 않음
+                    cb(null, false);
+                }
+            });
         }).on('error', function (e) {
             log.error({err: e}, '토큰체크중에러발생');
             cb(e);
         });
-
     }//,
 //    put: function (req, res, client) {
 //        try {

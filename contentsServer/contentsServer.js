@@ -8,7 +8,15 @@ var restify = require('restify'),
     fs = require('fs-extra'),
     tokenValidator = require('./tokenValidator'),
     bunyan = require('bunyan'),
-    logOptions = { name: 'contentsServer', src: false, level: "debug", serializers: {req: bunyan.stdSerializers.req, err: bunyan.stdSerializers.err, res: bunyan.stdSerializers.res}};
+    logOptions = { name: 'contentsServer',
+        src: false,
+        level: "debug",
+        serializers: {
+            req: bunyan.stdSerializers.req,
+            err: bunyan.stdSerializers.err,
+            res: bunyan.stdSerializers.res
+        }
+    };
 
 // Activate this logger only for development and leave the original for production
 if (process.env.NODE_ENV === 'development') {
@@ -111,23 +119,15 @@ function upload(req, res, next) {
  * 토큰유효성체크
  */
 function ckeckToken(req, res, next) {
-    tokenValidator.validate(req, function (err, response) {
+    tokenValidator.validate(req, function (err, validation) {
         next.ifError(err);
-        log.debug({res: response}, "토큰유효성체크결과");
-        response.setEncoding('utf8');
-        response.on('data', function (chunk) {
-            log.debug({data: chunk}, '토큰체크응답메시지');
-            var obj = JSON.parse(chunk);
+        log.debug({validation: validation}, "토큰유효성체크결과");
 
-            /**
-             * 토큰이 유효하면 nextTask 수행 아니면 종료
-             */
-            if (obj.result.data.validation == true) {
-                return next();
-            } else {
-                //토큰이 유효하지 않음
-                return next(new restify.UnauthorizedError("토큰이유효하지않습니다"));
-            }
-        });
+        if (validation) {
+            return next();
+        } else {
+            //토큰이 유효하지 않음
+            return next(new restify.UnauthorizedError("토큰이유효하지않습니다"));
+        }
     });
 }
