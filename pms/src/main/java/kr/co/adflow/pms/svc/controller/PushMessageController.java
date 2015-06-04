@@ -89,8 +89,21 @@ public class PushMessageController extends BaseController {
 			String[] receivers = msg.getReceivers();
 			
 			try {
-				byte[] decode = Base64.decodeBase64(msg.getContent());
-				msg.setContentLength(decode.length);
+				String decode = new String(Base64.decodeBase64(msg.getContent()));
+				
+				int msgCnt = 0;
+				 for (int i = 0; i < decode.length(); i++) {
+				 if (Character.getType(decode.charAt(i)) == 5) {
+				 msgCnt = msgCnt + 2;
+				 } else {
+				 msgCnt++;
+				 }
+				 }
+				 
+				 logger.debug("ContentLength::"+ msgCnt);
+				
+				 msg.setContentLength(msgCnt);
+				
 			} catch (Exception e) {
 				throw e;
 			}
