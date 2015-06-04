@@ -18,7 +18,19 @@ public class AddressParams {
 	private String ufmi;
 	
 	
+	/** The ufmi list */
+	private String[] ufmiArray;
+
 	
+	
+
+	public String[] getUfmiArray() {
+		return ufmiArray;
+	}
+
+	public void setUfmiArray(String[] ufmiArray) {
+		this.ufmiArray = ufmiArray;
+	}
 
 	/**
 	 * Gets the user id.

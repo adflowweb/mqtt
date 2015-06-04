@@ -345,7 +345,7 @@ public class PushMessageController extends BaseController {
 	@ResponseBody
 	public Response<Result<CallbackReq>> callbackPost(@RequestBody CallbackReq req) {
 
-		logger.info("callback test msgId : {}", req.getCallbackmsgid());
+		logger.info("callback test msgId : {}", req.getCallbackMsgId());
 
 		Result<CallbackReq> result = new Result<CallbackReq>();
 		result.setSuccess(true);

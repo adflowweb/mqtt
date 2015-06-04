@@ -10,57 +10,64 @@ package kr.co.adflow.pms.svc.request;
 public class CallbackReq {
 
 	/** The callbackmsgid. */
-	private String callbackmsgid;
+	private String callbackMsgId;
 	
 	
-	private String acktype;
+	private String ackType;
 	
-	private String acktime;
+	private String ackTime;
 	
 	/** The ackresult. */
-	private boolean ackresult;
+	private boolean ackResult;
+	
+	/** The ufmi. */
+	private String ufmi;
+	
+	
 
-	/**
-	 * Gets the callbackmsgid.
-	 *
-	 * @return the callbackmsgid
-	 */
-	public String getCallbackmsgid() {
-		return callbackmsgid;
+	public String getCallbackMsgId() {
+		return callbackMsgId;
 	}
 
-	/**
-	 * Sets the callbackmsgid.
-	 *
-	 * @param callbackmsgid the new callbackmsgid
-	 */
-	public void setCallbackmsgid(String callbackmsgid) {
-		this.callbackmsgid = callbackmsgid;
+	public void setCallbackMsgId(String callbackMsgId) {
+		this.callbackMsgId = callbackMsgId;
 	}
 
-	public boolean isAckresult() {
-		return ackresult;
+	public String getAckType() {
+		return ackType;
 	}
 
-	public void setAckresult(boolean ackresult) {
-		this.ackresult = ackresult;
+	public void setAckType(String ackType) {
+		this.ackType = ackType;
 	}
 
-	public String getAcktype() {
-		return acktype;
+	public String getAckTime() {
+		return ackTime;
 	}
 
-	public void setAcktype(String acktype) {
-		this.acktype = acktype;
+	public void setAckTime(String ackTime) {
+		this.ackTime = ackTime;
 	}
 
-	public String getAcktime() {
-		return acktime;
+	public boolean isAckResult() {
+		return ackResult;
 	}
 
-	public void setAcktime(String acktime) {
-		this.acktime = acktime;
+	public void setAckResult(boolean ackResult) {
+		this.ackResult = ackResult;
 	}
+
+	public String getUfmi() {
+		return ufmi;
+	}
+
+	public void setUfmi(String ufmi) {
+		this.ufmi = ufmi;
+	}
+
+	
+	
+
 
 
 

@@ -87,7 +87,10 @@
 		DELETE FROM pms.address
 		WHERE 
 		user_id = #{userId}
-		AND ufmi = #{ufmi}
+		AND ufmi  IN
+	 	 <foreach item="ufmi" index="index" collection="ufmiArray" open="(" separator="," close=")" >
+			#{ufmi}
+	  	 </foreach>
 	</delete>
 	
 	

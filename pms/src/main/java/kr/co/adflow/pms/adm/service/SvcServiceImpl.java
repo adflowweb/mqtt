@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import kr.co.adflow.pms.adm.request.AddressDelReq;
 import kr.co.adflow.pms.adm.request.AddressReq;
 import kr.co.adflow.pms.adm.request.ReservationCancelReq;
 import kr.co.adflow.pms.adm.request.TemplateReq;
@@ -442,13 +443,13 @@ public class SvcServiceImpl implements SvcService {
 	 * @see kr.co.adflow.pms.adm.service.SvcService#deleteAddress(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public int deleteAddress(String appKey, String ufmi) {
+	public int deleteAddress(String appKey, String[] ufmiArray) {
 
 		String issueId = interceptMapper.selectCashedUserId(appKey);
 
 		AddressParams addressParams = new AddressParams();
 		addressParams.setUserId(issueId);
-		addressParams.setUfmi(ufmi);
+		addressParams.setUfmiArray(ufmiArray);
 
 		return addressMapper.deleteAddress(addressParams);
 	}
