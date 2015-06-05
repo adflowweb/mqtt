@@ -17,8 +17,6 @@ public class CallbackReq {
 	
 	private String ackTime;
 	
-	/** The ackresult. */
-	private boolean ackResult;
 	
 	/** The ufmi. */
 	private String ufmi;
@@ -49,13 +47,7 @@ public class CallbackReq {
 		this.ackTime = ackTime;
 	}
 
-	public boolean isAckResult() {
-		return ackResult;
-	}
 
-	public void setAckResult(boolean ackResult) {
-		this.ackResult = ackResult;
-	}
 
 	public String getUfmi() {
 		return ufmi;

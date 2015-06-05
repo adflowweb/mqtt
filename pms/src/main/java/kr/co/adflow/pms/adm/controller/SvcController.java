@@ -5,6 +5,7 @@ package kr.co.adflow.pms.adm.controller;
 
 import java.io.BufferedWriter;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import kr.co.adflow.pms.adm.request.AccountReq;
 import kr.co.adflow.pms.adm.request.AddressDelReq;
+import kr.co.adflow.pms.domain.AddressMessage;
+import kr.co.adflow.pms.adm.request.AddressMessageReq;
 import kr.co.adflow.pms.adm.request.AddressReq;
 import kr.co.adflow.pms.adm.request.PasswordReq;
 import kr.co.adflow.pms.adm.request.ReservationCancelReq;
@@ -417,6 +420,55 @@ public class SvcController extends BaseController {
 		return res;
 
 	}
+	
+	
+	
+	/**
+	 * Send message.
+	 *
+	 * @param appKey the app key
+	 * @param msg the msg
+	 * @return the response
+	 * @throws Exception the exception
+	 */
+	@RequestMapping(value = "/address/messages", method = RequestMethod.POST, consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
+	@ResponseBody
+	public Response<Result<List<Map<String, String>>>> sendAddressMessage(
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey,
+			@RequestBody AddressMessageReq addressMsg) throws Exception {
+		logger.debug("sendMessage");
+		
+		if (addressMsg.getAddressMessageArray() == null || addressMsg.getAddressMessageArray().length == 0) {
+			//
+			throw new PmsRuntimeException("getAddressMessageArray is null");
+		} else {
+
+			for (AddressMessage addressMessage : addressMsg.getAddressMessageArray()) {
+				//group topic check
+				if (!(addressMessage.getReceiver().subSequence(0, 5).equals("mms/P")&&addressMessage.getReceiver().indexOf("g") > 0)) {
+
+					if (!isValid(addressMessage.getReceiver())) {
+						throw new PmsRuntimeException("getReceivers not valid :"	+ addressMessage.getReceiver());
+					}
+
+				}
+			}
+		}
+		
+		
+		List<Map<String, String>> resultList = pushMessageService.sendAddressMessage(
+				appKey, addressMsg);
+
+		Result<List<Map<String, String>>> result = new Result<List<Map<String, String>>>();
+		result.setSuccess(true);
+
+		result.setData(resultList);
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		Response<Result<List<Map<String, String>>>> res = new Response(result);
+		return res;
+
+	}
+	
 
 	/**
 	 * Checks if is valid.
