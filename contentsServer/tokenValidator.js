@@ -40,8 +40,8 @@ var log = bunyan.createLogger(logOptions),
     };
 
 tokenValidator.prototype = {
-    validate: function (req, cb) {
-        var token = req.params.token;
+    validate: function (token, cb) {
+        //var token = req.params.token;
         //req.url.substring(req.url.lastIndexOf('/') + 1);
         log.debug({token: token});
         options.path = '/v1/validate/' + token;

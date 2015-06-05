@@ -12,7 +12,7 @@ var restify = require('restify'),
         src: false,
         level: "debug",
         serializers: {
-            req: bunyan.stdSerializers.req,
+            //req: bunyan.stdSerializers.req,
             err: bunyan.stdSerializers.err,
             res: bunyan.stdSerializers.res
         }
@@ -40,21 +40,18 @@ server.on('after', restify.auditLogger({
     })
 }));
 
-server.get('/v1/users/:token', download);
+/**
+ * 파일다운로드
+ */
+var routeDownload = server.get('/v1/users/:id/:hash', restify.serveStatic({
+    directory: './uploads'
+}));
 
-server.post('/v1/users/:token', upload);
+var routeUpload = server.post('/v1/users/:token', upload);
 
 server.listen(8080, function () {
     console.log('%s listening at %s', server.name, server.url);
 });
-
-/**
- * 파일다운로드
- */
-function download(req, res, next) {
-    res.send({hello: req.params.name});
-    next();
-}
 
 /**
  * 파일업로드
@@ -63,63 +60,71 @@ function upload(req, res, next) {
     var md5 = req.headers['md5'];
     log.debug({md5: md5}, "업로드파일해쉬값");
 
-    /**
-     * 파일이 이미 존재하면 리턴 아니면 업로드 진행
-     */
-    fs.exists(__dirname + '/uploads/' + req.params.token + '/' + md5, function (exists) {
-        if (exists) {
+    //파일업로드
+    var form = new formidable.IncomingForm(),
+        fileName, filePath;
+
+    //form.uploadDir = './upload';
+    //form.hash = 'md5';
+    //form.keepExtensions = true;
+
+    form.on('error', function (err) {
+        return next(err);
+    }).on('field', function (field, value) {
+        log.debug({field: field});
+        log.debug({value: value});
+    }).on('fileBegin', function (name, file) {
+        //log.debug({name: name});
+        //log.debug({file: file});
+        fileName = md5 + file.name.substr(file.name.lastIndexOf('.'));
+        log.debug({fileName: fileName});
+        if (fs.existsSync(__dirname + '/uploads/v1/users/'
+            + req.params.token + '/' + fileName)) {
             return next(new restify.InvalidArgumentError("파일이이미존재합니다"));
-        } else {
-            //파일업로드진행
-            var form = new formidable.IncomingForm(),
-                files = [],
-                fields = [];
-
-            //form.uploadDir = './upload';
-            //form.hash = 'md5';
-            //form.keepExtensions = true;
-
-            form.on('error', function (err) {
-                return next(err);
-            }).on('field', function (field, value) {
-                log.debug({field: field});
-                log.debug({value: value});
-                fields.push([field, value]);
-            }).on('file', function (field, file) {
-                log.debug({field: field});
-                log.debug({file: file});
-                files.push([field, file]);
-            }).on('end', function (fields, files) {
-                /* Temporary location of our uploaded file */
-                var tempPath = this.openedFiles[0].path;
-                log.debug({임시저장위치: tempPath});
-                /* The file name of the uploaded file */
-                var fileName = md5;
-                //this.openedFiles[0].name;
-                log.debug({파일명: fileName});
-                /* Location where we want to copy the uploaded file */
-                var location = __dirname + '/uploads/' + req.params.token + '/';
-                log.debug({저장위치: location});
-                fs.copy(tempPath, location + fileName, function (err) {
-                    if (err) {
-                        return next(err);
-                    } else {
-                        log.debug("파일카피가완료되었습니다.");
-                        res.send({message: "파일이업로드되었습니다"});
-                        return next();
-                    }
-                });
-            });
-            form.parse(req);
         }
+        filePath = file.path;
+        log.debug({filePath: filePath});
+    }).on('file', function (field, file) {
+        log.debug({field: field});
+        log.debug({file: file});
+    }).on('end', function () {
+        /* Location where we want to copy the uploaded file */
+        var location = __dirname + '/uploads/v1/users/' + req.params.token + '/';
+        log.debug({저장위치: location});
+        fs.copy(filePath, location + fileName, function (err) {
+            if (err) {
+                return next(err);
+            } else {
+                log.debug("파일카피가완료되었습니다");
+                res.send({message: "파일이업로드되었습니다"});
+                return next();
+            }
+        });
     });
+    form.parse(req);
 }
 
 /**
  * 토큰유효성체크
  */
 function ckeckToken(req, res, next) {
-    tokenValidator.validate(req, function (err, validation) {
+
+    //log.debug({headers: req.headers}, "req.headers");
+    //log.debug({params: req.params}, "req.params");
+    //log.debug({path: req.route.name}, "req");
+    //log.debug({routeUpload: routeUpload});
+    //log.debug('토큰=' + req.params.token);
+    var token;
+
+    if (req.route.name == routeUpload) {
+        //upload
+        token = req.params.token;
+    } else if (req.route.name == routeDownload) {
+        //download
+        token = req.headers.token;
+    }
+
+    tokenValidator.validate(token, function (err, validation) {
         next.ifError(err);
         log.debug({validation: validation}, "토큰유효성체크결과");
 
