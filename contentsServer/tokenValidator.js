@@ -18,11 +18,11 @@ var bunyan = require('bunyan'),
     };
 
 // Activate this logger only for development and leave the original for production
-if (process.env.NODE_ENV === 'development') {
-    spawn = require('child_process').spawn;
-    bunyanCLI = spawn('bunyan', ['--color'], { stdio: ['pipe', process.stdout] });
-    logOptions.stream = bunyanCLI.stdin;
-}
+//if (process.env.NODE_ENV === 'development') {
+//    spawn = require('child_process').spawn;
+//    bunyanCLI = spawn('bunyan', ['--color'], { stdio: ['pipe', process.stdout] });
+//    logOptions.stream = bunyanCLI.stdin;
+//}
 
 var log = bunyan.createLogger(logOptions),
     https = require('https'),
