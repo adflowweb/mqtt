@@ -580,7 +580,7 @@ private String getKeyMon(String string) {
 		req.setCallbackMsgId(ack.getMsgId());
 		req.setAckType(ack.getAckType());
 		req.setAckTime(DateUtil.getDate(ack.getAckTime()));
-		req.setAckResult(true);
+//		req.setAckResult(true);
 		req.setUfmi(ack.getUfmi());
 		HttpEntity entity = new HttpEntity(req, headers);
 

@@ -6,6 +6,7 @@ package kr.co.adflow.pms.svc.service;
 import java.util.List;
 import java.util.Map;
 
+import kr.co.adflow.pms.adm.request.AddressMessageReq;
 import kr.co.adflow.pms.adm.response.MessagesRes;
 import kr.co.adflow.pms.domain.MessageResult;
 import kr.co.adflow.pms.svc.request.MessageIdsReq;
@@ -25,6 +26,16 @@ public interface PushMessageService {
 	 * @return the list
 	 */
 	public List<Map<String, String>> sendMessage(String appKey, MessageReq msg) throws Exception;
+	
+	/**
+	 * Send message.
+	 *
+	 * @param appKey the app key
+	 * @param msg the msg
+	 * @return the list
+	 */
+	public List<Map<String, String>> sendAddressMessage(String appKey, AddressMessageReq addressMsg) throws Exception;
+	
 
 	/**
 	 * Gets the message result.
