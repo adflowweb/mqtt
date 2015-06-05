@@ -9,7 +9,8 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 var bunyan = require('bunyan'),
     logOptions = {
         name: 'tokenValidator',
-        src: false, level: "debug",
+        src: false,
+        level: "debug",
         serializers: {
             req: bunyan.stdSerializers.req,
             err: bunyan.stdSerializers.err,
@@ -18,11 +19,11 @@ var bunyan = require('bunyan'),
     };
 
 // Activate this logger only for development and leave the original for production
-//if (process.env.NODE_ENV === 'development') {
-//    spawn = require('child_process').spawn;
-//    bunyanCLI = spawn('bunyan', ['--color'], { stdio: ['pipe', process.stdout] });
-//    logOptions.stream = bunyanCLI.stdin;
-//}
+if (process.env.NODE_ENV === 'development') {
+    spawn = require('child_process').spawn;
+    bunyanCLI = spawn('bunyan', ['--color'], { stdio: ['pipe', process.stdout] });
+    logOptions.stream = bunyanCLI.stdin;
+}
 
 var log = bunyan.createLogger(logOptions),
     https = require('https'),
@@ -40,18 +41,21 @@ var log = bunyan.createLogger(logOptions),
     };
 
 tokenValidator.prototype = {
-    validate: function (token, cb) {
-        //var token = req.params.token;
+    validate: function (req, cb) {
+        var token = req.headers.token;
         //req.url.substring(req.url.lastIndexOf('/') + 1);
         log.debug({token: token});
         options.path = '/v1/validate/' + token;
+
+        //userAgent별로 분기필요 PCS, PMS
+
         https.get(options, function (res) {
             var str = '';
             res.on('data', function (chunk) {
                 str += chunk;
             });
             res.on('end', function () {
-                console.log(str);
+                log.debug({response: str}, '토큰체크응답메시지');
                 var obj = JSON.parse(str);
                 if (obj.result.data.validation == true) {
                     cb(null, true);
