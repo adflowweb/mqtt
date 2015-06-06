@@ -19,5 +19,14 @@ public interface CommonService {
 	 * @return the auth res
 	 */
 	AuthRes authUser(AuthReq auth) throws Exception;
+	
+	
+	/**
+	 * Auth token.
+	 *
+	 * @param auth the token
+	 * @return the boolean
+	 */
+	boolean authToken(String token) throws Exception;
 
 }

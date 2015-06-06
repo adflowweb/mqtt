@@ -3,6 +3,11 @@
  */
 package kr.co.adflow.pms.adm.service;
 
+
+import java.util.Date;
+
+import javax.servlet.http.HttpServletResponse;
+
 import kr.co.adflow.pms.adm.request.AuthReq;
 import kr.co.adflow.pms.adm.response.AuthRes;
 import kr.co.adflow.pms.core.config.PmsConfig;
@@ -10,8 +15,10 @@ import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.exception.PmsRuntimeException;
 import kr.co.adflow.pms.core.util.DateUtil;
 import kr.co.adflow.pms.core.util.KeyGenerator;
+import kr.co.adflow.pms.domain.AppKey;
 import kr.co.adflow.pms.domain.Token;
 import kr.co.adflow.pms.domain.User;
+import kr.co.adflow.pms.domain.mapper.InterceptMapper;
 import kr.co.adflow.pms.domain.mapper.TokenMapper;
 import kr.co.adflow.pms.domain.mapper.UserMapper;
 
@@ -42,6 +49,10 @@ public class CommonServiceImpl implements CommonService {
 	/** The pms config. */
 	@Autowired
 	private PmsConfig pmsConfig;
+	
+	/** The intercept mapper. */
+	@Autowired
+	private InterceptMapper interceptMapper;
 
 	/* (non-Javadoc)
 	 * @see kr.co.adflow.pms.adm.service.CommonService#authUser(kr.co.adflow.pms.adm.request.AuthReq)
@@ -103,6 +114,29 @@ public class CommonServiceImpl implements CommonService {
 		
 
 		return res;
+	}
+	
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.pms.adm.service.CommonService#authUser(kr.co.adflow.pms.adm.request.AuthReq)
+	 */
+	@Override
+	public boolean authToken(String token) throws Exception {
+
+		boolean result = false;
+
+		AppKey tokenKey = new AppKey();
+
+		tokenKey.setApplicationKey(token);
+		tokenKey.setRole(StaticConfig.USER_ROLE_SERVICE);
+		
+		Date expiredTime = interceptMapper.selectCashedApplicationToken(tokenKey);
+
+		if (expiredTime != null) {
+			result = true;
+		}
+		
+
+		return result;
 	}
 
 	/**

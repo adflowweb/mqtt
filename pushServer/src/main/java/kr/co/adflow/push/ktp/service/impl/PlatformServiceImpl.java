@@ -3,6 +3,8 @@
  */
 package kr.co.adflow.push.ktp.service.impl;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import javax.annotation.Resource;
@@ -124,10 +126,21 @@ public class PlatformServiceImpl implements PlatformService {
 			topicName, TIME_TO_LIVE));
 
 //		jmsTemplate.execute(topicName, new PreCheckHandler(TIME_TO_LIVE));
+	
+//	String thread = Thread.currentThread().getName();
+//	long time = System.currentTimeMillis(); 
+//	SimpleDateFormat dayTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
+//	String str = dayTime.format(new Date(time));
+//		System.out.println(str+"-[START]["+thread+"]topicName::"+topicName);
+		
 		
 		jmsTemplate.execute(new PreCheckHandlerBySessionCallback(jmsTemplate,
 				topicName, TIME_TO_LIVE));
-
+		
+//		time = System.currentTimeMillis(); 
+//		 dayTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
+//		 str = dayTime.format(new Date(time));
+//		System.out.println(str+"-[END  ]["+thread+"]topicName::"+topicName);
 	}
 
 	/*

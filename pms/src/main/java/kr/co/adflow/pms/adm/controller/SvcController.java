@@ -36,6 +36,7 @@ import kr.co.adflow.pms.response.Response;
 import kr.co.adflow.pms.response.Result;
 import kr.co.adflow.pms.svc.request.MessageReq;
 import kr.co.adflow.pms.svc.service.PushMessageService;
+import kr.co.adflow.pms.users.service.UserMessageService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,6 +78,10 @@ public class SvcController extends BaseController {
 	/** The user validator. */
 	@Autowired
 	private UserValidator userValidator;
+	
+	/** The svc service. */
+	@Autowired
+	private UserMessageService userMessageService;
 	
 	@Autowired
 	private PmsConfig pmsConfig;
@@ -792,6 +797,34 @@ public class SvcController extends BaseController {
 
 	}
 	
+	
+	/**
+	 * group topic subscribe list count.
+	 *
+	 * @param toipc the topic
+	 * @return the response
+	 * @throws Exception the exception
+	 */
+	@RequestMapping(value = "/subscribe/count", method = RequestMethod.GET, produces = StaticConfig.HEADER_CONTENT_TYPE)
+	@ResponseBody
+	public Response<Result<Integer>> getgroupsListCnt(
+			@RequestParam("topic") String topic) throws Exception {
+
+		logger.debug("=== topic ::"+ topic);
+
+		Integer resultCnt = userMessageService.groupListCnt (topic);
+
+		Result<Integer> result = new Result<Integer>();
+		result.setSuccess(true);
+
+		result.setData(resultCnt);
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		Response<Result<Integer>> res = new Response(result);
+		
+		logger.debug("=== resultCnt :{}", resultCnt);
+		return res;
+
+	}
 	
 
 }

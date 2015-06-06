@@ -123,7 +123,7 @@ public class UserMessageController extends BaseController {
 	 */
 	@RequestMapping(value = "/groups/listCnt", method = RequestMethod.GET, params = "groupTopic", consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
 	@ResponseBody
-	public Response<Result<Boolean>> groupsListCnt(
+	public Response<Result<Integer>> groupsListCnt(
 			@RequestParam("groupTopic") String groupTopic) throws Exception {
 
 		logger.debug("=== group Topic :{}", groupTopic);
@@ -139,7 +139,7 @@ public class UserMessageController extends BaseController {
 
 		result.setData(resultCnt);
 		@SuppressWarnings({ "unchecked", "rawtypes" })
-		Response<Result<Boolean>> res = new Response(result);
+		Response<Result<Integer>> res = new Response(result);
 		
 		logger.debug("=== resultCnt :{}", resultCnt);
 		return res;
