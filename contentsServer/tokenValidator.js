@@ -28,16 +28,6 @@ if (process.env.NODE_ENV === 'development') {
 var log = bunyan.createLogger(logOptions),
     https = require('https'),
     tokenValidator = function () {
-    },
-    options = {
-        hostname: 'push4.ktp.co.kr',
-        port: 8080,
-        path: '',
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-ApiKey': 'KTPJAAS'
-        }
     };
 
 tokenValidator.prototype = {
@@ -45,9 +35,31 @@ tokenValidator.prototype = {
         var token = req.headers.token;
         //req.url.substring(req.url.lastIndexOf('/') + 1);
         log.debug({token: token});
-        options.path = '/v1/validate/' + token;
 
+        log.debug({useragent: req.headers['user-agent']});
         //userAgent별로 분기필요 PCS, PMS
+        if (req.headers['user-agent'] == 'test') {
+            options = {
+                hostname: '14.63.217.141',
+                port: 8081,
+                path: '/v1/pms/adm/cmm/auth',
+                method: 'GET',
+                headers: {
+                    'X-Application-Token': token
+                }
+            };
+        } else {
+            options = {
+                hostname: 'push4.ktp.co.kr',
+                port: 8080,
+                path: '/v1/validate/' + token,
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-ApiKey': 'KTPJAAS'
+                }
+            }
+        }
 
         https.get(options, function (res) {
             var str = '';
@@ -68,6 +80,26 @@ tokenValidator.prototype = {
             log.error({err: e}, '토큰체크중에러발생');
             cb(e);
         });
+//
+//        ##  컨텐츠 서버 토큰 인증 API 추가
+//        Call
+//        ----
+//        > *[GET] /v1/pms/adm/cmm/auth*
+//        >
+//        ex) https://14.63.217.141:8081/v1/pms/adm/cmm/auth
+//            >
+//        Request Headers
+//        *{
+//            "X-Application-Token": "b5a95e05b728a5bb91d87d91b328a7b3"
+//        }*
+//        >
+//        Response BodySelect body
+//        {"result": {
+//            "success": true,
+//                "data": {"validation": true}
+//        }}
+
+
     }//,
 //    put: function (req, res, client) {
 //        try {
