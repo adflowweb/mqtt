@@ -533,14 +533,20 @@ private String getKeyMon(String string) {
 								ack.getCallbackUrl(), this.getRequest(ack),
 								String.class);
 						logger.debug("{}", result);
-						ack.setCallbackStatus(1);
-						ack.setCallbackCount(1);
+						
+						ack.setCallbackCount(ack.getCallbackCount() + 1);
+						if (ack.getCallbackCountLimit() < 1 || ack.getCallbackCountLimit() <= ack.getCallbackCount()) {
+							ack.setCallbackStatus(1);
+						}
 					} catch (Exception e) {
 						logger.error("callback Error. issueID::{} , CallbackUrl::{}", ack.getIssueId(), ack.getCallbackUrl());
 						e.printStackTrace();
 						// error
-						ack.setCallbackStatus(-1);
-						ack.setCallbackCount(1);
+						
+						ack.setCallbackCount(ack.getCallbackCount() + 1);
+						if (ack.getCallbackCountLimit() < 1 || ack.getCallbackCountLimit() <= ack.getCallbackCount()) {
+							ack.setCallbackStatus(-1);
+						}
 
 					}
 				}
