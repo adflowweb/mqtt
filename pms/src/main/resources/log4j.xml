@@ -17,10 +17,11 @@
 	</logger>
 
 	<!-- Application Loggers -->
-	<logger name="kr.co.adflow.pms.domain">
-		<level value="info" />
+<!--   	<logger name="kr.co.adflow.pms.core.handler.DirectMsgHandlerBySessionCallback">
+		<level value="debug" />
 		<appender-ref ref="console" />
-	</logger>
+	</logger> -->
+
 
 	<!-- 3rdparty Loggers -->
 	<logger name="org.springframework.core">
