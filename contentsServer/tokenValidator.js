@@ -38,7 +38,8 @@ tokenValidator.prototype = {
 
         log.debug({useragent: req.headers['user-agent']});
         //userAgent별로 분기필요 PCS, PMS
-        if (req.headers['user-agent'] == 'test') {
+        if (req.headers['user-agent'].indexOf('Android') == 0) {
+            //for PMS
             options = {
                 hostname: '14.63.217.141',
                 port: 8081,
@@ -49,6 +50,7 @@ tokenValidator.prototype = {
                 }
             };
         } else {
+            //for PCS
             options = {
                 hostname: 'push4.ktp.co.kr',
                 port: 8080,

@@ -72,8 +72,8 @@ function upload(req, res, next) {
     form.on('error', function (err) {
         return next(err);
     }).on('field', function (field, value) {
-        log.debug({field: field});
-        log.debug({value: value});
+        //log.debug({field: field});
+        //log.debug({value: value});
     }).on('fileBegin', function (name, file) {
         //log.debug({name: name});
         //log.debug({file: file});
