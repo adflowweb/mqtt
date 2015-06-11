@@ -81,6 +81,7 @@ function checkExists(req, res, next) {
     fileName = md5 + req.headers['file'].substr(req.headers['file'].lastIndexOf('.'));
     //file.name.substr(file.name.lastIndexOf('.'));
     log.debug({fileName: fileName});
+    res.setHeader('Access-Control-Allow-Origin', '*');
     if (fs.existsSync(__dirname + '/uploads/v1/users/'
         + req.params.userid + '/' + fileName)) {
         return next(new restify.InvalidArgumentError("파일이이미존재합니다"));
@@ -116,6 +117,7 @@ function upload(req, res, next) {
         log.debug({fileName: fileName});
         if (fs.existsSync(__dirname + '/uploads/v1/users/'
             + req.params.userid + '/' + fileName)) {
+            res.setHeader('Access-Control-Allow-Origin', '*');
             return next(new restify.InvalidArgumentError("파일이이미존재합니다"));
         }
         filePath = file.path;
@@ -133,13 +135,7 @@ function upload(req, res, next) {
             } else {
                 log.debug("파일카피가완료되었습니다");
                 res.setHeader('Access-Control-Allow-Origin', '*');
-                res.setHeader('test', 'test');
                 res.send({message: "파일이업로드되었습니다"});
-
-//                res.setHeader('Content-Type', 'text/html');
-//                res.writeHead(200);
-//                res.end();end
-
                 return next();
             }
         });
@@ -177,14 +173,17 @@ function ckeckToken(req, res, next) {
             next.ifError(err);
             log.debug({validation: validation}, "토큰유효성체크결과");
             if (validation) {
+                res.setHeader('Access-Control-Allow-Origin', '*');
                 return next();
             } else {
                 //토큰이 유효하지 않음
+                res.setHeader('Access-Control-Allow-Origin', '*');
                 return next(new restify.UnauthorizedError("토큰이유효하지않습니다"));
             }
         });
     } else {
         //토큰이 유효하지 않음
+        res.setHeader('Access-Control-Allow-Origin', '*');
         return next(new restify.UnauthorizedError("토큰이유효하지않습니다."));
     }
 }
