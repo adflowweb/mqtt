@@ -34,7 +34,10 @@ public class MyReceiver extends BroadcastReceiver {
 
             }
 
-            MainActivity.mainActivity.txtView.setText(receivedMsg);
+            if (MainActivity.mainActivity != null) {
+                MainActivity.mainActivity.txtView.setText(receivedMsg);
+            }
+
 
 //            if (bundle.getBoolean("ack")) {
 //                Log.d(TAG, "MainActivity.mainActivity.mBinder=" + MainActivity.mainActivity.mBinder);

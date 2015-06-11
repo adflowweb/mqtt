@@ -48,11 +48,46 @@ var routeDownload = server.get('/v1/users/:userid/:hash', restify.serveStatic({
     directory: './uploads'
 }));
 
+/**
+ * 파일업로드
+ * @type {*|Request}
+ */
 var routeUpload = server.post('/v1/users/:userid', upload);
 
+/**
+ *
+ * @type {*|Request}
+ */
+var routeCheckContent = server.head('/v1/users/:userid', checkExists);
+
+/**
+ *
+ */
 server.listen(8080, function () {
     console.log('%s listening at %s', server.name, server.url);
 });
+
+/**
+ *
+ * @param req
+ * @param res
+ * @param next
+ * @returns {*}
+ */
+function checkExists(req, res, next) {
+    var md5 = req.headers['md5'];
+    log.debug({md5: md5}, "업로드파일해쉬값");
+
+    fileName = md5 + req.headers['file'].substr(req.headers['file'].lastIndexOf('.'));
+    //file.name.substr(file.name.lastIndexOf('.'));
+    log.debug({fileName: fileName});
+    if (fs.existsSync(__dirname + '/uploads/v1/users/'
+        + req.params.userid + '/' + fileName)) {
+        return next(new restify.InvalidArgumentError("파일이이미존재합니다"));
+    } else {
+        return next(new restify.NotFoundError("파일이존재하지않습니다"));
+    }
+}
 
 /**
  * 파일업로드
@@ -97,7 +132,14 @@ function upload(req, res, next) {
                 return next(err);
             } else {
                 log.debug("파일카피가완료되었습니다");
+                res.setHeader('Access-Control-Allow-Origin', '*');
+                res.setHeader('test', 'test');
                 res.send({message: "파일이업로드되었습니다"});
+
+//                res.setHeader('Content-Type', 'text/html');
+//                res.writeHead(200);
+//                res.end();end
+
                 return next();
             }
         });
@@ -123,6 +165,9 @@ function ckeckToken(req, res, next) {
         //upload
         token = req.headers.token;
     } else if (req.route.name == routeDownload) {
+        //download
+        token = req.headers.token;
+    } else if (req.route.name == routeCheckContent) {
         //download
         token = req.headers.token;
     }

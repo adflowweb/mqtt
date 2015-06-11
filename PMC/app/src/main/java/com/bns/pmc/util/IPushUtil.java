@@ -262,4 +262,29 @@ public class IPushUtil {
 
         return strResult;
     }
+
+    /**
+     * @param binder
+     * @return
+     */
+    public static String getToken(IPushService binder) {
+        Log.i(PMCType.TAG, "binder=" + binder);
+        String strResult = null;
+        if (binder != null) {
+            try {
+                long start = System.currentTimeMillis();
+                strResult = binder.getToken();
+                long stop = System.currentTimeMillis();
+                Log.d(PMCType.TAG, "[Result]" + strResult +
+                        " [Time]" + (stop - start) + "ms");
+            } catch (RemoteException e) {
+                Log.e(PMCType.TAG, "[Error]" + e.getMessage());
+                e.printStackTrace();
+            }
+        } else {
+            Log.d(PMCType.TAG, "Disconnected Push Service");
+        }
+
+        return strResult;
+    }
 }

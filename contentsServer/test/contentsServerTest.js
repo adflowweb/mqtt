@@ -28,18 +28,18 @@ describe('컨텐츠서버\n\t\tenv : http://127.0.0.1:13532\n\t\tfile : contentS
                 .set('token', 'fffbd697e5354b42a9f6628')
                 //.set('filename', 'app-debug.apk')
                 .attach('file', __dirname + '/resource/app-debug.apk')
-                .expect(200)
+                .expect(409)
                 // end handles the response
                 .end(function (err, res) {
                     if (err) {
                         console.error(err);
                         //throw err;
                     }
-                    console.log({response: res.text});
+                    console.log({response: res.headers});
 //                    // this is should.js syntax, very clear
 //                    //res.should.have.status(200);
 //                    //res.should.have.property('status', 200);
-                    res.status.should.be.equal(200);
+                    res.status.should.be.equal(409);
                     done();
                 });
         });
@@ -58,7 +58,7 @@ describe('컨텐츠서버\n\t\tenv : http://127.0.0.1:13532\n\t\tfile : contentS
                         console.error(err);
                         //throw err;
                     }
-                    //console.log({response: res.text});
+                    //console.log({response: res});
 //                    // this is should.js syntax, very clear
 //                    //res.should.have.status(200);
 //                    //res.should.have.property('status', 200);

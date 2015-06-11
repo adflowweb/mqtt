@@ -48,7 +48,7 @@ import kr.co.adflow.push.IPushService;
 
 public class PMCService extends Service {
     public static IPushService m_Binder = null;
-    public static boolean loginStatus = false;
+    public static boolean loginStatus = true; //기본이 true 문제가 있음
     private static boolean m_bPttCall = false;
 
     private Context m_context;
@@ -913,7 +913,7 @@ public class PMCService extends Service {
             JSonItem item = null;
             if (TextUtils.isEmpty(strContent) == false) {
                 String strDecode = CommonUtil.decodeBase64ToString(strContent);
-                //Log.i(PMCType.TAG, "== " + strDecode);
+                Log.i(PMCType.TAG, "== " + strDecode);
                 item = JSonUtil.decodeJSONStringToData(strDecode);
 
                 if (item != null) {
@@ -988,11 +988,23 @@ public class PMCService extends Service {
                         values.put(MessageColumn.DB_COLUMN_MSG, strItemMsg);
                         values.put(MessageColumn.DB_COLUMN_URL, strItemURL);
 
+
+                        //testCode
+                        strItemDataName = "test.jpg";
+                        //testEnd
+                        Log.i(PMCType.TAG, "strItemDataName=" + strItemDataName);
+
                         if (TextUtils.isEmpty(strItemDataName) == false) {
                             // 메시지에 Data가 들어 있는 경우.
                             int nDataType = DataColumn.COLUMN_DATA_TYPE_NONE;
                             String strItemDataFormat = item.m_strDataFormat;
 
+                            //testCode
+                            strItemDataFormat = "jpg";
+                            //testEnd
+
+
+                            Log.i(PMCType.TAG, "itemDataFormat=" + strItemDataFormat);
                             if (strItemDataFormat.equalsIgnoreCase("jpg"))
                                 nDataType = DataColumn.COLUMN_DATA_TYPE_JPG;
                             else if (strItemDataFormat.equalsIgnoreCase("bmp"))
@@ -1279,7 +1291,7 @@ public class PMCService extends Service {
                             // 메시지에 Data가 들어 있는 경우.
                             int nDataType = DataColumn.COLUMN_DATA_TYPE_NONE;
                             String strItemDataFormat = item.m_strDataFormat;
-
+                            Log.i(PMCType.TAG, "itemDataFormat=" + strItemDataFormat);
                             if (strItemDataFormat.equalsIgnoreCase("jpg"))
                                 nDataType = DataColumn.COLUMN_DATA_TYPE_JPG;
                             else if (strItemDataFormat.equalsIgnoreCase("bmp"))

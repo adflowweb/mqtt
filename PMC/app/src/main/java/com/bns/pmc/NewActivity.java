@@ -11,13 +11,19 @@ import android.content.DialogInterface.OnKeyListener;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.provider.ContactsContract;
+import android.provider.MediaStore;
+import android.telephony.TelephonyManager;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -31,6 +37,7 @@ import android.view.View.OnFocusChangeListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -48,14 +55,29 @@ import com.bns.pmc.util.IPushUtil;
 import com.bns.pmc.util.JSonUtil;
 import com.bns.pmc.util.Log;
 import com.bns.pmc.util.PMCType;
+import com.github.kevinsawicki.http.HttpRequest;
 
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 
 import kr.co.adflow.push.IPushService;
 
 public class NewActivity extends Activity implements OnFocusChangeListener, TextWatcher, OnClickListener {
+
+    private static final int PICK_IMAGE = 1;
+    //public static final String CONTENT_UPLOAD_URL = "http://14.63.224.160:8080/v1/users/";
+    //public static final String CONTENT_UPLOAD_URL = "http://172.30.1.18:8080/v1/users/";
+    public static final String CONTENT_UPLOAD_URL = "http://192.168.43.25:8080/v1/users/";
+
+
     public class ItemNew {
         String strName;
         String strNumber;
@@ -83,6 +105,8 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
     private EditText m_etPreFocusEditText;
     private EditText m_etCurrFocusEditText;
 
+    private ImageView imageView;
+
     private TextView m_tvBtLeft;
     private TextView m_tvBtRight;
 
@@ -98,7 +122,11 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
     private boolean m_bSend = false;
     private Intent m_intentResult = new Intent();
     private boolean enablePTT = false; //메시지 전송가능 상태체크용
+    private boolean imageSend = false;
     private boolean vibration = false;
+    private Bitmap bitmap;
+    private String imageFileName;
+    private String filePath;
 
 
     @Override
@@ -110,6 +138,10 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
         m_tvBtLeft = (TextView) findViewById(R.id.bottom_button_left);
         m_tvBtRight = (TextView) findViewById(R.id.bottom_button_right);
         m_etNewMsg = (EditText) findViewById(R.id.editText_new_msg);
+
+        imageView = (ImageView) findViewById(R.id.image);
+
+
         m_tvBtLeft.setText(R.string.send);
         m_tvBtLeft.setVisibility(View.GONE);
         enablePTT = false;
@@ -299,6 +331,7 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d(PMCType.TAG, "onActivityResult시작(requestCode=" + requestCode + " resultCode= " + resultCode + ", data=" + data + ")");
         switch (requestCode) {
             case GET_CONTACT_PPT:
                 if (resultCode == RESULT_OK) {
@@ -364,6 +397,22 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                     }
                 }
                 break;
+            case PICK_IMAGE:
+                if (requestCode == PICK_IMAGE && resultCode == RESULT_OK
+                        && null != data) {
+                    Uri selectedImage = data.getData();
+                    String[] filePathColumn = {MediaStore.Images.Media.DATA};
+
+                    Cursor cursor = getContentResolver().query(selectedImage,
+                            filePathColumn, null, null, null);
+                    cursor.moveToFirst();
+
+                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                    String picturePath = cursor.getString(columnIndex);
+                    cursor.close();
+                    decodeFile(picturePath);
+                }
+                break;
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -386,7 +435,10 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(0, MENU_CONTACT_ATTACH, 0, R.string.contact_attach);
-/*		menu.add(0, MENU_TEST_0, 0, "Test 서브스크라이브해제");*/
+        menu.add(0, 1, 0, "사진촬영");
+        menu.add(0, 2, 0, "앨범");
+        menu.add(0, 3, 0, "파일");
+        //menu.add(0, MENU_TEST_0, 0, "Test 서브스크라이브해제");
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -399,8 +451,17 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
             case MENU_CONTACT_ATTACH:
                 optionContact_Attach();
                 break;
-            case MENU_TEST_0:
-                unsubscribe();
+            case 1:
+                //unsubscribe();
+                //selectImageFromGallery();
+                break;
+            case 2:
+                //unsubscribe();
+                selectImageFromGallery();
+                break;
+            case 3:
+                //unsubscribe();
+                selectFile();
                 break;
             default:
                 break;
@@ -408,11 +469,15 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
         return true;
     }
 
+
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
+        Log.d(PMCType.TAG, "onFocusChange시작(v=" + v + ", hasFocus=" + hasFocus + ")");
         EditText etFocusText = (EditText) v;
         if (hasFocus) {
             selTagNumber tagNumber = (selTagNumber) etFocusText.getTag();
+            Log.d(PMCType.TAG, "tagNumber=" + tagNumber);
+            Log.d(PMCType.TAG, "etFocusText.getText().length()=" + etFocusText.getText().length());
 
             if (etFocusText.getText().length() != 0) {
                 // LeftBottom button 조건시작
@@ -448,6 +513,7 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                 m_tvBtRight.setText(R.string.delete);
             } else {
                 // LeftBottom button 조건시작
+                Log.d(PMCType.TAG, "tagNumber.nSelIdx===================================" + tagNumber.nSelIdx);
                 if (tagNumber.nSelIdx == IDX_NEW_MSG_EDIT_TEXT) {
                     m_tvBtLeft.setVisibility(View.GONE);
                     enablePTT = false;
@@ -749,14 +815,32 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
         //if (m_tvBtLeft.isShown() == false)
         //    return;
 
-        if (enablePTT == false) {
-            return;
-        }
-
         //ptt 로그아웃시 메시지전송하지 않음
         if (PMCService.loginStatus == false) {
             Toast.makeText(m_context, "PTT로그아웃상태입니다.", Toast.LENGTH_SHORT).show();
             return;
+        }
+
+        Log.i(PMCType.TAG, "enablePTT=" + enablePTT);
+        if (enablePTT == false) {
+
+            //이미지 전송일경우
+            if (imageSend) {
+                boolean bIsEmpty = true;
+                for (int i = 0; i < m_listNumberLayout.size(); i++) {
+                    EditText etText = (EditText) m_listNumberLayout.get(i).findViewById(R.id.editText_new_number);
+                    if (TextUtils.isEmpty(etText.getText().toString()) == false) {
+                        bIsEmpty = false;
+                        break;
+                    }
+                }
+
+                if (bIsEmpty == true) {
+                    return;
+                }
+            } else {
+                return;
+            }
         }
 
         //modified by nadir
@@ -1169,6 +1253,7 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
         private final int RESULT_MSG_NO_CONNECT = -3;
         private final int RESULT_MSG_NO_UFMI = -4;
         private final int RESULT_MSG_NO_EXIST = -5;
+        private final int RESULT_FAIL_SENDING_IMAGE = -6;
 
         private ProgressDialog progressDialog;
 
@@ -1219,6 +1304,102 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
             String strSender = strUFMI;
             if (TextUtils.equals(strSender, Configure.UFMI_INIT))
                 return RESULT_MSG_NO_UFMI;
+
+
+            //이미지 전송이면 컨텐츠서버에 이미지 전송
+            if (imageSend) {
+                try {
+                    TelephonyManager tMgr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+                    String phoneNum = tMgr.getLine1Number();
+                    Log.d(PMCType.TAG, "전화번호=" + phoneNum);
+
+                    //ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                    //bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+                    //byte[] data = bos.toByteArray();
+                    //String file = Base64.encodeBytes(data, 0, data.length);
+                    //entity.addPart("uploaded", new StringBody(file));
+                    File imgFile = new File(filePath);
+
+//                    MessageDigest md = null;
+//                    StringBuffer sb = new StringBuffer();
+//
+//                    md = MessageDigest.getInstance("MD5");
+//                    InputStream is = new FileInputStream(imgFile);
+//                    DigestInputStream dis = new DigestInputStream(is, md);
+//                    byte[] digest = md.digest();
+//                    //convert the byte to hex format method 1
+//                    for (int i = 0; i < digest.length; i++) {
+//                        sb.append(Integer.toString((digest[i] & 0xff) + 0x100, 16).substring(1));
+//                    }
+
+                    String md5 = checkSum(filePath);
+                    Log.d(PMCType.TAG, "md5=" + md5);
+
+                    String token = IPushUtil.getToken(binder);
+                    Log.d(PMCType.TAG, "token=" + token);
+
+
+                    //create thumbnail
+                    final int THUMBSIZE = 32;
+
+                    Bitmap ThumbImage = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(filePath),
+                            THUMBSIZE, THUMBSIZE);
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1) {
+                        Log.d(PMCType.TAG, "썸네일싸이즈=" + ThumbImage.getRowBytes() * ThumbImage.getHeight());
+                    } else {
+                        Log.d(PMCType.TAG, "썸네일싸이즈=" + ThumbImage.getByteCount());
+                    }
+
+                    FileOutputStream out = null;
+                    try {
+                        out = new FileOutputStream("/mnt/sdcard/test.png");
+                        ThumbImage.compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
+                        // PNG is a lossless format, the compression factor (100) is ignored
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    } finally {
+                        try {
+                            if (out != null) {
+                                out.close();
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    //end
+
+
+                    int responseCode = HttpRequest.head(CONTENT_UPLOAD_URL + phoneNum)
+                            .header("md5", md5)
+                            .header("token", token)
+                            .header("file", imageFileName)
+                            .code();
+                    Log.d(PMCType.TAG, "이미지존재유무응답코드=" + responseCode);
+                    if (responseCode == 409) {
+                        //이미업로드됨
+                        Log.d(PMCType.TAG, "이미지가컨텐츠서버에이미존재합니다");
+                    } else if (responseCode == 404) {
+                        responseCode = HttpRequest.post(CONTENT_UPLOAD_URL + phoneNum)
+                                //.trustAllCerts() //Accept all certificates
+                                //.trustAllHosts() //Accept all hostnames
+                                .header("md5", md5)
+                                .header("token", token)
+                                .part("file", imageFileName, imgFile)
+                                .code();
+                        Log.d(PMCType.TAG, "이미지업로드응답코드=" + responseCode);
+                        if (responseCode != 200 && responseCode != 409/*이미업로드됨*/) {
+                            return RESULT_FAIL_SENDING_IMAGE;
+                        } else {
+                            Log.d(PMCType.TAG, "이미지전송에성공하였습니다.");
+                        }
+                    } else {
+                        return RESULT_FAIL_SENDING_IMAGE;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return RESULT_FAIL_SENDING_IMAGE;
+                }
+            }
 
             // start send.
             nResultFail = 0;
@@ -1288,15 +1469,17 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                         item.m_strReceiver = strReceiver;
                         item.m_strText = strMsg;
                         // test
-                        /*item.m_strDataName = "test.jpg";
+                        item.m_strDataName = "test001.jpg";
                         item.m_strDataFormat = "jpg";
-						Bitmap bitmap = BitmapFactory.decodeResource(m_context.getResources(), R.raw.penguins);
-						ByteArrayOutputStream stream = new ByteArrayOutputStream(); 
-	 					bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-	 					item.m_strDataByteArr = stream.toByteArray();*/
+                        Bitmap bitmap = BitmapFactory.decodeResource(m_context.getResources(), R.raw.android);
+                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                        item.m_strDataByteArr = stream.toByteArray();
+                        //testEnd
 
                     }
                     String strJson = JSonUtil.encodeDataToJSONString(item);
+                    Log.d(PMCType.TAG, "strJson=" + strJson);
                     String strContent = CommonUtil.encodeStringToBase64(strJson);
                     // Send Msg.
                     boolean bResultSuccess = false;
@@ -1349,15 +1532,16 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                         else
                             values.put(MessageColumn.DB_COLUMN_STATE, DataColumn.COLUMN_STATE_FAIL);
 
-                        // test
-                         /*{
-                             Bitmap bitmap = BitmapFactory.decodeResource(m_context.getResources(), R.raw.penguins);
+                        // testCode
+                         {
+                             Bitmap bitmap = BitmapFactory.decodeResource(m_context.getResources(), R.raw.android);
 		 					ByteArrayOutputStream stream = new ByteArrayOutputStream(); 
 		 					bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
 		 					byte[] imageInByte = stream.toByteArray();
 		 					values.put(MessageColumn.DB_COLUMN_DATA, imageInByte);
 		 					values.put(MessageColumn.DB_COLUMN_DATA_TYPE, DataColumn.DB_COLUMN_DATA_TYPE_JPG);
-		 				}*/
+		 				}
+                        //testEnd
                         getContentResolver().insert(DataColumn.CONTENT_URI_INSERT_MSG, values);
                     }
 
@@ -1417,6 +1601,8 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                 Toast.makeText(m_context, R.string.disconnect_push_service, Toast.LENGTH_LONG).show();
             } else if (result == RESULT_MSG_NO_UFMI) {
                 Toast.makeText(m_context, R.string.disconnect_init_account, Toast.LENGTH_LONG).show();
+            } else if (result == RESULT_FAIL_SENDING_IMAGE) {
+                Toast.makeText(m_context, "이미지전송에 실패하였습니다.", Toast.LENGTH_LONG).show();
             } else {
                 m_alertDialog = PMCAlertDialog.createDialog(m_context, getString(R.string.exist_input_ptt));
                 m_alertDialog.show();
@@ -1424,4 +1610,130 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
             }
         }
     }
+
+    /**
+     * Opens dialog picker, so the user can select image from the gallery. The
+     * result is returned in the method <code>onActivityResult()</code>
+     */
+    public void selectImageFromGallery() {
+//        Intent intent = new Intent();
+//        intent.setType("image/*");
+//        intent.setAction(Intent.ACTION_GET_CONTENT);
+
+        Intent i = new Intent(
+                Intent.ACTION_PICK,
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+
+        startActivityForResult(Intent.createChooser(i, "Select Picture"),
+                PICK_IMAGE);
+    }
+
+    private void selectFile() {
+//        Intent intent = new Intent();
+//        intent.setType("image/*");
+//        intent.setAction(Intent.ACTION_GET_CONTENT);
+//        startActivityForResult(intent, 2);
+
+        //com.android.qrdfileexplorer
+
+
+//        Intent i = this.getPackageManager().getLaunchIntentForPackage("com.android.qrdfileexplorer");
+//        i.setType("file/*");
+//        i.setAction(Intent.ACTION_GET_CONTENT);
+//        startActivityForResult(i, 2);
+
+    }
+
+//    /**
+//     * Retrives the result returned from selecting image, by invoking the method
+//     * <code>selectImageFromGallery()</code>
+//     */
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//
+//        android.util.Log.d("imageUpload", "onActivityResult시작(requestCode=" + requestCode + ", resultCode=" + resultCode + ", data=" + data + ")");
+//
+//
+//        if (requestCode == PICK_IMAGE && resultCode == RESULT_OK
+//                && null != data) {
+//            Uri selectedImage = data.getData();
+//            String[] filePathColumn = {MediaStore.Images.Media.DATA};
+//
+//            Cursor cursor = getContentResolver().query(selectedImage,
+//                    filePathColumn, null, null, null);
+//            cursor.moveToFirst();
+//
+//            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+//            String picturePath = cursor.getString(columnIndex);
+//            cursor.close();
+//
+//            decodeFile(picturePath);
+//
+//        }
+//    }
+
+    /**
+     * The method decodes the image file to avoid out of memory issues. Sets the
+     * selected image in to the ImageView.
+     *
+     * @param filePath
+     */
+    public void decodeFile(String filePath) {
+        Log.d(PMCType.TAG, "decodeFile시작(filePath=" + filePath + ")");
+
+        this.filePath = filePath;
+        imageFileName = filePath.substring(filePath.lastIndexOf("/") + 1);
+
+        // Decode image size
+        BitmapFactory.Options o = new BitmapFactory.Options();
+        o.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(filePath, o);
+
+        // The new size we want to scale to
+        final int REQUIRED_SIZE = 350;
+
+        // Find the correct scale value. It should be the power of 2.
+        int width_tmp = o.outWidth, height_tmp = o.outHeight;
+        int scale = 1;
+        while (true) {
+            if (width_tmp < REQUIRED_SIZE && height_tmp < REQUIRED_SIZE)
+                break;
+            width_tmp /= 2;
+            height_tmp /= 2;
+            scale *= 2;
+        }
+
+        // Decode with inSampleSize
+        BitmapFactory.Options o2 = new BitmapFactory.Options();
+        o2.inSampleSize = scale;
+        bitmap = BitmapFactory.decodeFile(filePath, o2);
+
+        imageView.setImageBitmap(bitmap);
+        imageView.bringToFront();
+        m_etNewMsg.setVisibility(View.GONE);
+        imageSend = true;
+    }
+
+    /**
+     * @param path
+     * @return
+     */
+    public static String checkSum(String path) throws Exception {
+        String checksum = null;
+        FileInputStream fis = new FileInputStream(path);
+        MessageDigest md = MessageDigest.getInstance("MD5");
+
+        //Using MessageDigest update() method to provide input
+        byte[] buffer = new byte[8192];
+        int numOfBytesRead;
+        while ((numOfBytesRead = fis.read(buffer)) > 0) {
+            md.update(buffer, 0, numOfBytesRead);
+        }
+        byte[] hash = md.digest();
+        checksum = new BigInteger(1, hash).toString(16); //don't use this, truncates leading zero
+        return checksum;
+    }
+
 }

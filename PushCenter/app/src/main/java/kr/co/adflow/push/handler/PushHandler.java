@@ -271,6 +271,7 @@ public class PushHandler implements MqttCallback {
         Log.d(TAG, "expireMsg종료()");
     }
 
+
     /**
      *
      */
@@ -738,6 +739,8 @@ public class PushHandler implements MqttCallback {
             } else {
                 sendBroadcast(MQTT_CONNECTED_MESSAGE, MQTT_CONNECTED);
             }
+
+            CONN_LOST_COUNT = 0;
         } catch (Exception e) {
             Log.e(TAG, "예외상황발생", e);
         }
@@ -1082,6 +1085,12 @@ public class PushHandler implements MqttCallback {
         return response;
     }
 
+    /**
+     * @param phoneNum
+     * @param ufmi
+     * @return
+     * @throws Exception
+     */
     public String updateUFMI(String phoneNum, String ufmi) throws Exception {
         Log.d(TAG, "updateUFMI시작(phoneNum=" + phoneNum + ", ufmi=" + ufmi + ")");
 
@@ -1114,6 +1123,15 @@ public class PushHandler implements MqttCallback {
         String response = request.body();
         Log.d(TAG, "updateUFMI종료(response=" + response + ")");
         return response;
+    }
+
+    /**
+     * @return
+     */
+    public String getToken() {
+        Log.d(TAG, "getToken시작()");
+        Log.d(TAG, "getToken종료(token=" + currentToken + ")");
+        return currentToken;
     }
 
     /**

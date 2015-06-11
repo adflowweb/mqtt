@@ -11,8 +11,6 @@ import android.os.PowerManager.WakeLock;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
-import java.util.Calendar;
-
 import kr.co.adflow.push.PushPreference;
 import kr.co.adflow.push.handler.PushHandler;
 import kr.co.adflow.push.service.impl.PushServiceImpl;
@@ -58,16 +56,6 @@ public class PushReceiver extends BroadcastReceiver {
             if (intent.getAction().equals(
                     "android.intent.action.BOOT_COMPLETED")) {
                 Log.d(TAG, "부팅완료작업을시작합니다.");
-
-//				// testCode
-//				PushPreference preference = new PushPreference(context);
-//				// 토큰저장
-//				preference.put(PushPreference.TOKEN, "ADF_CLIENT_NADIR");
-//				Log.d(TAG, "토큰저장 token=ADF_CLIENT_NADIR");
-//				// server url 저장
-//				preference.put(PushPreference.SERVERURL, "ssl://14.63.216.249");
-//				Log.d(TAG, "서버주소저장 server=ssl://14.63.216.249");
-//				// testCodeEnd
 
                 PushPreference preference = new PushPreference(context);
                 //부팅후 첫커넥션 표시
@@ -115,24 +103,24 @@ public class PushReceiver extends BroadcastReceiver {
                 //set cleanSession
                 preference.put(PushPreference.CLEANSESSION, PushHandler.CLEAN_SESSION);
 
-//알람설정
-//                Log.d(TAG, "keepAlive알람을설정합니다.");
-//                AlarmManager service = (AlarmManager) context
-//                        .getSystemService(Context.ALARM_SERVICE);
-//                Intent i = new Intent(context, PushReceiver.class);
-//                i.setAction("kr.co.adflow.push.service.KEEPALIVE");
-//                PendingIntent pending = PendingIntent.getBroadcast(context, 0,
-//                        i, PendingIntent.FLAG_UPDATE_CURRENT);
-//                service.setRepeating(AlarmManager.RTC_WAKEUP,
-//                        System.currentTimeMillis() + 1000,
-//                        1000 * PushHandler.ALARM_INTERVAL, pending);
-//                Log.d(TAG, "keepAlive알람이설정되었습니다");
+                //알람설정
+                Log.d(TAG, "keepAlive알람을설정합니다.");
+                AlarmManager service = (AlarmManager) context
+                        .getSystemService(Context.ALARM_SERVICE);
+                Intent i = new Intent(context, PushReceiver.class);
+                i.setAction("kr.co.adflow.push.service.KEEPALIVE");
+                PendingIntent pending = PendingIntent.getBroadcast(context, 0,
+                        i, PendingIntent.FLAG_UPDATE_CURRENT);
+                service.setRepeating(AlarmManager.RTC_WAKEUP,
+                        System.currentTimeMillis() + 1000,
+                        1000 * PushHandler.ALARM_INTERVAL, pending);
+                Log.d(TAG, "keepAlive알람이설정되었습니다");
                 Log.d(TAG, "부팅완료작업을종료합니다.");
             } else if (intent.getAction().equals(
                     "kr.co.adflow.push.service.KEEPALIVE")) {
                 // keepalive
                 Log.d(TAG, "keepAlive체크를시작합니다.");
-                PushPreference preference = new PushPreference(context);
+                //PushPreference preference = new PushPreference(context);
                 //boolean pttLogin = preference.getValue(PushPreference.PTT_LOGIN, false);
                 //Log.d(TAG, "pttLogin=" + pttLogin);
                 //if (pttLogin) {
@@ -160,62 +148,65 @@ public class PushReceiver extends BroadcastReceiver {
                 }
                 //}
                 Log.d(TAG, "keepAlive체크를종료합니다.");
-            } else if (intent.getAction().equals("com.bns.pw.action.REG_STATE")) {
-                Log.d(TAG, "PTT로그인상태처리");
-                boolean login = intent.getBooleanExtra("reg", false);
-                Log.d(TAG, "login=" + login);
-
-                //PushPreference preference = new PushPreference(context);
-                AlarmManager service = (AlarmManager) context
-                        .getSystemService(Context.ALARM_SERVICE);
-
-                if (login) {
-
-                    Log.d(TAG, "keepAlive알람을설정합니다.");
-
-                    Intent i = new Intent(context, PushReceiver.class);
-                    i.setAction("kr.co.adflow.push.service.KEEPALIVE");
-                    PendingIntent pending = PendingIntent.getBroadcast(context, 0,
-                            i, PendingIntent.FLAG_UPDATE_CURRENT);
-                    Calendar now = Calendar.getInstance();
-                    service.setRepeating(AlarmManager.RTC_WAKEUP, now.getTimeInMillis(), 1000 * PushHandler.ALARM_INTERVAL, pending);
-                    Log.d(TAG, "keepAlive알람이설정되었습니다");
-
-
-//                    //preference.put(PushPreference.PTT_LOGIN, true);
-//                    // get wakelock
-//                    PowerManager pm = (PowerManager) context
-//                            .getSystemService(Context.POWER_SERVICE);
-//                    WakeLock wakeLock = pm.newWakeLock(
-//                            PowerManager.PARTIAL_WAKE_LOCK, "KTPWakeLock");
-//                    PushServiceImpl.setWakeLock(wakeLock);
-//                    Log.d(TAG, "웨이크락상태=" + wakeLock.isHeld());
-//                    if (!wakeLock.isHeld()) {
-//                        wakeLock.acquire(wakeLockHoldTime);
-//                        // ..screen will stay on during this section..
-//                        Log.d(TAG, "웨이크락=" + wakeLock);
-//                        Intent keepAliveIntent = new Intent(context, PushServiceImpl.class);
-//                        keepAliveIntent.setAction("kr.co.adflow.push.service.KEEPALIVE");
-//                        context.startService(keepAliveIntent);
-//                        // wakeLock.release();
-//                    }
-                } else {
-                    //PTT 로그인 정보
-                    //preference.put(PushPreference.PTT_LOGIN, false);
-
-                    //알람제거
-                    Intent keepAliveIntent = new Intent(context, PushReceiver.class);
-                    keepAliveIntent.setAction("kr.co.adflow.push.service.KEEPALIVE");
-                    PendingIntent pending = PendingIntent.getBroadcast(context, 0,
-                            keepAliveIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-                    service.cancel(pending);
-
-                    //stop service
-                    Intent i = new Intent(context, PushServiceImpl.class);
-                    i.setAction("kr.co.adflow.push.service.STOP");
-                    context.startService(i);
-                }
-            } else {
+            }
+//            else if (intent.getAction().equals("com.bns.pw.action.REG_STATE")) {
+//                Log.d(TAG, "PTT로그인상태처리");
+//                boolean login = intent.getBooleanExtra("reg", false);
+//                Log.d(TAG, "login=" + login);
+//
+//                //PushPreference preference = new PushPreference(context);
+//                AlarmManager service = (AlarmManager) context
+//                        .getSystemService(Context.ALARM_SERVICE);
+//
+//                if (login) {
+//
+//                    Log.d(TAG, "keepAlive알람을설정합니다.");
+//
+//                    Intent i = new Intent(context, PushReceiver.class);
+//                    i.setAction("kr.co.adflow.push.service.KEEPALIVE");
+//                    PendingIntent pending = PendingIntent.getBroadcast(context, 0,
+//                            i, PendingIntent.FLAG_UPDATE_CURRENT);
+//                    Calendar now = Calendar.getInstance();
+//                    service.setRepeating(AlarmManager.RTC_WAKEUP, now.getTimeInMillis(), 1000 * PushHandler.ALARM_INTERVAL, pending);
+//                    Log.d(TAG, "keepAlive알람이설정되었습니다");
+//
+//
+////                    //preference.put(PushPreference.PTT_LOGIN, true);
+////                    // get wakelock
+////                    PowerManager pm = (PowerManager) context
+////                            .getSystemService(Context.POWER_SERVICE);
+////                    WakeLock wakeLock = pm.newWakeLock(
+////                            PowerManager.PARTIAL_WAKE_LOCK, "KTPWakeLock");
+////                    PushServiceImpl.setWakeLock(wakeLock);
+////                    Log.d(TAG, "웨이크락상태=" + wakeLock.isHeld());
+////                    if (!wakeLock.isHeld()) {
+////                        wakeLock.acquire(wakeLockHoldTime);
+////                        // ..screen will stay on during this section..
+////                        Log.d(TAG, "웨이크락=" + wakeLock);
+////                        Intent keepAliveIntent = new Intent(context, PushServiceImpl.class);
+////                        keepAliveIntent.setAction("kr.co.adflow.push.service.KEEPALIVE");
+////                        context.startService(keepAliveIntent);
+////                        // wakeLock.release();
+////                    }
+//                }
+//                else {
+//                    //PTT 로그인 정보
+//                    //preference.put(PushPreference.PTT_LOGIN, false);
+//
+//                    //알람제거
+//                    Intent keepAliveIntent = new Intent(context, PushReceiver.class);
+//                    keepAliveIntent.setAction("kr.co.adflow.push.service.KEEPALIVE");
+//                    PendingIntent pending = PendingIntent.getBroadcast(context, 0,
+//                            keepAliveIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+//                    service.cancel(pending);
+//
+//                    //stop service
+//                    Intent i = new Intent(context, PushServiceImpl.class);
+//                    i.setAction("kr.co.adflow.push.service.STOP");
+//                    context.startService(i);
+//                }
+//            }
+            else {
                 Log.e(TAG, "적절한처리핸들러가없습니다.");
             }
         } catch (Exception e) {

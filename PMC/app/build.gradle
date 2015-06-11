@@ -22,6 +22,7 @@ android {
 
 dependencies {
     compile 'com.android.support:support-v4:19.1.0'
+    compile 'com.github.kevinsawicki:http-request:6.0'
 
     //compile fileTree(dir: 'libs', include: ['*.jar'])
     //testCompile 'junit:junit:4.12'

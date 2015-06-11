@@ -21,6 +21,7 @@ import com.bns.pmc.provider.DataColumn;
 import com.bns.pmc.provider.DataColumn.MessageColumn;
 import com.bns.pmc.util.CommonUtil;
 import com.bns.pmc.util.Configure;
+import com.bns.pmc.util.Log;
 import com.bns.pmc.util.PMCType;
 
 import java.util.regex.Pattern;
@@ -62,6 +63,7 @@ public class TalkAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, Context context, Cursor c) {
+        Log.i(PMCType.TAG, "bindView시작(view=" + view + ", context=" + context + ", cursor=" + c);
         int nNumberType = c.getInt(c.getColumnIndex(MessageColumn.DB_COLUMN_NUMBER_TYPE));
         int nRecv = c.getInt(c.getColumnIndex(MessageColumn.DB_COLUMN_RECV));
         String strGroupMember = c.getString(c.getColumnIndex(MessageColumn.DB_COLUMN_GROUP_MEMBER));
@@ -130,14 +132,29 @@ public class TalkAdapter extends CursorAdapter {
             Linkify.addLinks(tvMsg, patternGroup_Ptt, res.getString(R.string.pattern_ptt_group));
             tvMsg.setMovementMethod(null);
         }
+
+        Log.i(PMCType.TAG, "nDataType=" + nDataType);
         // Data
         if (nDataType == DataColumn.COLUMN_DATA_TYPE_JPG) {
+            Log.i(PMCType.TAG, "byteData=" + byteData);
+            //testCode
+            byteData = new byte[10];
+            //testEnd
             if (byteData != null) {
-                Bitmap Image = BitmapFactory.decodeByteArray(byteData, 0, byteData.length);
-                Bitmap resizeImg = createThumbnail(Image);
-                Drawable drawable = (Drawable) (new BitmapDrawable(m_context.getResources(), resizeImg));
+//                Bitmap Image = BitmapFactory.decodeByteArray(byteData, 0, byteData.length);
+//                Bitmap resizeImg = createThumbnail(Image);
+//                Drawable drawable = (Drawable) (new BitmapDrawable(m_context.getResources(), resizeImg));
+//                tvMsg.setCompoundDrawablePadding(10);
+//                tvMsg.setCompoundDrawablesWithIntrinsicBounds(null, null, null, drawable);
+                //testCode
+                Bitmap bitmap = BitmapFactory.decodeResource(m_context.getResources(), R.raw.android);
+                //ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                //bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                //Bitmap resizeImg = createThumbnail(bitmap);
+                Drawable drawable = (Drawable) (new BitmapDrawable(m_context.getResources(), bitmap));
                 tvMsg.setCompoundDrawablePadding(10);
                 tvMsg.setCompoundDrawablesWithIntrinsicBounds(null, null, null, drawable);
+                //testEnd
             }
         } else if (nDataType == DataColumn.COLUMN_DATA_TYPE_MP3) {
             // 구현필요

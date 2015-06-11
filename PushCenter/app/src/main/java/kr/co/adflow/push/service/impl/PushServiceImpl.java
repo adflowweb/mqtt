@@ -230,6 +230,14 @@ public class PushServiceImpl extends Service implements PushService {
             }
         }
 
+        @Override
+        public String getToken() throws RemoteException {
+            Log.d(TAG, "getToken시작()");
+            String result = PushServiceImpl.getInstance().getToken();
+            Log.d(TAG, "getToken종료(result=" + result + ")");
+            return result;
+        }
+
 //        @Override
 //        public void registerPMC() throws RemoteException {
 //            Log.d(TAG, "registerPMC시작()");
@@ -549,6 +557,13 @@ public class PushServiceImpl extends Service implements PushService {
 //            }
 //        }
     };
+
+    private String getToken() {
+        Log.d(TAG, "getToken시작()");
+        String result = pushHandler.getToken();
+        Log.d(TAG, "getToken종료(result=" + result + ")");
+        return result;
+    }
 
     /**
      * @param topic

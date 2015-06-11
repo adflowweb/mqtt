@@ -2,14 +2,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="${relativePackage}.${activityClass}" >
+    tools:context="${relativePackage}.${activityClass}">
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/linearLayout_new_msg"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:orientation="vertical" >
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/image"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
 
         <EditText
             android:id="@+id/editText_new_msg"
@@ -21,34 +26,36 @@
             android:inputType="textMultiLine"
             android:maxHeight="146.67dp"
             android:minHeight="146.67dp"
-            android:textSize="@dimen/new_msg_text_size"
             android:minLines="4"
-            android:scrollbars="vertical" >
+            android:scrollbars="vertical"
+            android:textSize="@dimen/new_msg_text_size">
 
             <requestFocus />
         </EditText>
-    </LinearLayout>
+
+
+    </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/linearLayout_new_msg"
-        android:layout_above="@+id/start_bottom" >
+        android:layout_above="@+id/start_bottom"
+        android:layout_below="@+id/linearLayout_new_msg">
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content">
 
             <LinearLayout
                 android:id="@+id/linearLayout_new_number"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical" >
-                	            
+                android:orientation="vertical">
+
             </LinearLayout>
         </ScrollView>
     </RelativeLayout>
-    
+
     <include layout="@layout/item_foot" />
 
 </RelativeLayout>
