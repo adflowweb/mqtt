@@ -25,10 +25,10 @@ describe('컨텐츠서버\n\t\tenv : http://127.0.0.1:13532\n\t\tfile : contentS
             request(url)
                 .post('/v1/users/+821099969797')
                 .set('md5', '7ae54aaf426a7483e2ae54cc17d9880f')
-                .set('token', 'fffbd697e5354b42a9f6628`')
+                .set('token', 'fffbd697e5354b42a9f6628')
                 //.set('filename', 'app-debug.apk')
                 .attach('file', __dirname + '/resource/app-debug.apk')
-                .expect(409)
+                .expect(200)
                 // end handles the response
                 .end(function (err, res) {
                     if (err) {
@@ -39,7 +39,7 @@ describe('컨텐츠서버\n\t\tenv : http://127.0.0.1:13532\n\t\tfile : contentS
 //                    // this is should.js syntax, very clear
 //                    //res.should.have.status(200);
 //                    //res.should.have.property('status', 200);
-                    res.status.should.be.equal(409);
+                    res.status.should.be.equal(200);
                     done();
                 });
         });

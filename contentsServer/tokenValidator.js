@@ -37,8 +37,9 @@ tokenValidator.prototype = {
         log.debug({token: token});
 
         log.debug({useragent: req.headers['user-agent']});
+        log.debug({value: req.headers['user-agent'].indexOf('Android')});
         //userAgent별로 분기필요 PCS, PMS
-        if (req.headers['user-agent'].indexOf('Android') == 0) {
+        if (req.headers['user-agent'].indexOf('Android') == -1) {
             //for PMS
             options = {
                 hostname: '14.63.217.141',
@@ -49,6 +50,7 @@ tokenValidator.prototype = {
                     'X-Application-Token': token
                 }
             };
+            log.debug({options: options});
         } else {
             //for PCS
             options = {
@@ -61,6 +63,7 @@ tokenValidator.prototype = {
                     'X-ApiKey': 'KTPJAAS'
                 }
             }
+            log.debug({options: options});
         }
 
         https.get(options, function (res) {

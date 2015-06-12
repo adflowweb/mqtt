@@ -30,6 +30,30 @@ var log = bunyan.createLogger(logOptions),
     });
 server.name = 'contentsServer';
 
+//server.use(
+//    function crossOrigin(req, res, next) {
+//        res.header("Access-Control-Allow-Origin", "*");
+//        res.header("Access-Control-Allow-Headers", "X-Requested-With");
+//        return next();
+//    }
+//);
+
+// This is a simplified example just to give you an idea
+// You will probably need more allowed headers
+function unknownMethodHandler(req, res) {
+    if (req.method.toLowerCase() === 'options') {
+        var allowHeaders = ['Accept', 'Accept-Version', 'Content-Type', 'Api-Version'];
+        if (res.methods.indexOf('OPTIONS') === -1) res.methods.push('OPTIONS');
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header("Access-Control-Allow-Headers", "content-type, md5, token, file");
+        return res.send(200);
+    }
+    else {
+        return res.send(new restify.MethodNotAllowedError());
+    }
+}
+
+server.on('MethodNotAllowed', unknownMethodHandler);
 server.use(ckeckToken);
 
 server.on('after', restify.auditLogger({
@@ -55,10 +79,22 @@ var routeDownload = server.get('/v1/users/:userid/:hash', restify.serveStatic({
 var routeUpload = server.post('/v1/users/:userid', upload);
 
 /**
- *
+ * 썸네일업로드
+ * @type {*|Request}
+ */
+var routeUploadThumb = server.post('/v1/users/:userid/thumb', upload);
+
+/**
+ * 이미지존재유무체크
  * @type {*|Request}
  */
 var routeCheckContent = server.head('/v1/users/:userid', checkExists);
+
+/**
+ * 썸네일존재유무체크
+ * @type {*|Request}
+ */
+var routeCheckThumb = server.head('/v1/users/:userid/thumb', checkExists);
 
 /**
  *
@@ -78,12 +114,23 @@ function checkExists(req, res, next) {
     var md5 = req.headers['md5'];
     log.debug({md5: md5}, "업로드파일해쉬값");
 
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "content-type, md5, token, file");
+
     fileName = md5 + req.headers['file'].substr(req.headers['file'].lastIndexOf('.'));
     //file.name.substr(file.name.lastIndexOf('.'));
     log.debug({fileName: fileName});
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    if (fs.existsSync(__dirname + '/uploads/v1/users/'
-        + req.params.userid + '/' + fileName)) {
+
+    var fullPath;
+    if (req.route.name == routeCheckThumb) {
+        fullPath = __dirname + '/uploads/v1/users/'
+            + req.params.userid + '/thumb/' + fileName;
+    } else {
+        fullPath = __dirname + '/uploads/v1/users/'
+            + req.params.userid + '/' + fileName;
+    }
+
+    if (fs.existsSync(fullPath)) {
         return next(new restify.InvalidArgumentError("파일이이미존재합니다"));
     } else {
         return next(new restify.NotFoundError("파일이존재하지않습니다"));
@@ -96,10 +143,11 @@ function checkExists(req, res, next) {
 function upload(req, res, next) {
     var md5 = req.headers['md5'];
     log.debug({md5: md5}, "업로드파일해쉬값");
+    //log.debug({headers: req.headers});
 
     //파일업로드
     var form = new formidable.IncomingForm(),
-        fileName, filePath;
+        fileName, filePath, fullPath;
 
     //form.uploadDir = './upload';
     //form.hash = 'md5';
@@ -113,11 +161,19 @@ function upload(req, res, next) {
     }).on('fileBegin', function (name, file) {
         //log.debug({name: name});
         //log.debug({file: file});
-        fileName = md5 + file.name.substr(file.name.lastIndexOf('.'));
+        fileName = md5 + req.headers['file'].substr(req.headers['file'].lastIndexOf('.'));
+        //fileName = md5 + file.name.substr(file.name.lastIndexOf('.'));
         log.debug({fileName: fileName});
-        if (fs.existsSync(__dirname + '/uploads/v1/users/'
-            + req.params.userid + '/' + fileName)) {
-            res.setHeader('Access-Control-Allow-Origin', '*');
+
+        if (req.route.name == routeUploadThumb) {
+            fullPath = __dirname + '/uploads/v1/users/'
+                + req.params.userid + '/thumb/' + fileName;
+        } else {
+            fullPath = __dirname + '/uploads/v1/users/'
+                + req.params.userid + '/' + fileName;
+        }
+
+        if (fs.existsSync(fullPath)) {
             return next(new restify.InvalidArgumentError("파일이이미존재합니다"));
         }
         filePath = file.path;
@@ -128,13 +184,21 @@ function upload(req, res, next) {
     }).on('end', function () {
         /* Location where we want to copy the uploaded file */
         var location = __dirname + '/uploads/v1/users/' + req.params.userid + '/';
+
+        if (req.route.name == routeUploadThumb) {
+            location = __dirname + '/uploads/v1/users/'
+                + req.params.userid + '/thumb/';
+        } else {
+            location = __dirname + '/uploads/v1/users/'
+                + req.params.userid + '/';
+        }
+
         log.debug({저장위치: location});
         fs.copy(filePath, location + fileName, function (err) {
             if (err) {
                 return next(err);
             } else {
                 log.debug("파일카피가완료되었습니다");
-                res.setHeader('Access-Control-Allow-Origin', '*');
                 res.send({message: "파일이업로드되었습니다"});
                 return next();
             }
@@ -160,10 +224,15 @@ function ckeckToken(req, res, next) {
     if (req.route.name == routeUpload) {
         //upload
         token = req.headers.token;
+    } else if (req.route.name == routeUploadThumb) {
+        token = req.headers.token;
     } else if (req.route.name == routeDownload) {
         //download
         token = req.headers.token;
     } else if (req.route.name == routeCheckContent) {
+        //download
+        token = req.headers.token;
+    } else if (req.route.name == routeCheckThumb) {
         //download
         token = req.headers.token;
     }
@@ -173,17 +242,14 @@ function ckeckToken(req, res, next) {
             next.ifError(err);
             log.debug({validation: validation}, "토큰유효성체크결과");
             if (validation) {
-                res.setHeader('Access-Control-Allow-Origin', '*');
                 return next();
             } else {
                 //토큰이 유효하지 않음
-                res.setHeader('Access-Control-Allow-Origin', '*');
                 return next(new restify.UnauthorizedError("토큰이유효하지않습니다"));
             }
         });
     } else {
         //토큰이 유효하지 않음
-        res.setHeader('Access-Control-Allow-Origin', '*');
         return next(new restify.UnauthorizedError("토큰이유효하지않습니다."));
     }
 }
