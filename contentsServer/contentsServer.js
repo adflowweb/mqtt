@@ -143,7 +143,7 @@ function checkExists(req, res, next) {
 function upload(req, res, next) {
     var md5 = req.headers['md5'];
     log.debug({md5: md5}, "업로드파일해쉬값");
-    //log.debug({headers: req.headers});
+    log.debug({headers: req.headers});
 
     //파일업로드
     var form = new formidable.IncomingForm(),
