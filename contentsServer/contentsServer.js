@@ -68,7 +68,7 @@ server.on('after', restify.auditLogger({
 /**
  * 파일다운로드
  */
-var routeDownload = server.get('/v1/users/:userid/:hash', restify.serveStatic({
+var routeDownload = server.get('/cts/v1/users/:userid/:hash', restify.serveStatic({
     directory: './uploads'
 }));
 
@@ -76,25 +76,25 @@ var routeDownload = server.get('/v1/users/:userid/:hash', restify.serveStatic({
  * 파일업로드
  * @type {*|Request}
  */
-var routeUpload = server.post('/v1/users/:userid', upload);
+var routeUpload = server.post('/cts/v1/users/:userid', upload);
 
 /**
  * 썸네일업로드
  * @type {*|Request}
  */
-var routeUploadThumb = server.post('/v1/users/:userid/thumb', upload);
+var routeUploadThumb = server.post('/cts/v1/users/:userid/thumb', upload);
 
 /**
  * 이미지존재유무체크
  * @type {*|Request}
  */
-var routeCheckContent = server.head('/v1/users/:userid', checkExists);
+var routeCheckContent = server.head('/cts/v1/users/:userid', checkExists);
 
 /**
  * 썸네일존재유무체크
  * @type {*|Request}
  */
-var routeCheckThumb = server.head('/v1/users/:userid/thumb', checkExists);
+var routeCheckThumb = server.head('/cts/v1/users/:userid/thumb', checkExists);
 
 /**
  *
