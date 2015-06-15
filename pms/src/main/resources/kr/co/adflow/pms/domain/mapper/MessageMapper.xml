@@ -38,6 +38,8 @@
 		<result property="appAckTime" column="app_ack_time" />
 		<result property="issueName" column="issue_name" />
 		<result property="ufmi" column="ufmi" />
+		<result property="fileName" column="file_name" />
+		<result property="fileFormat" column="file_format" />
 	</resultMap>
 
 
@@ -70,6 +72,8 @@
 		, a.update_id
 		, b.content_type
 		, b.content
+		, b.file_name
+		, b.file_format
 		, c.user_name AS issue_name
 		FROM pms.message${keyMon} a, pms.content${keyMon} b, pms.user c
 		WHERE a.msg_id = b.msg_id
@@ -107,6 +111,8 @@
 		, a.update_id
 		, b.content_type
 		, b.content
+		, b.file_name
+		, b.file_format
 		, c.user_name AS issue_name
 		FROM pms.message${keyMon} a, pms.content${keyMon} b, pms.user c
 		WHERE a.msg_id = b.msg_id
@@ -148,6 +154,8 @@
 		, a.update_id
 		, a.content_type
 		, a.content
+		, a.file_name
+		, a.file_format
 		, c.user_name AS issue_name
 		FROM pms.reservation_msg a, pms.user c
 		WHERE a.msg_type=10
@@ -242,6 +250,8 @@
 		, a.update_id
 		, e.content_type
 		, e.content
+		, e.file_name
+		, e.file_format
 		, h.user_name AS issue_name
 		FROM
         pms.message${keyMon} a left join pms.user h on a.issue_id = h.user_id,
@@ -425,6 +435,8 @@
         ,d.ack_time as app_ack_time		
 		, e.content_type
 		, e.content
+		, e.file_name
+		, e.file_format
 		, h.user_name AS issue_name
 		FROM
         pms.message${keyMon} a left outer join pms.ack${keyMon} b on a.msg_id = b.msg_id and b.ack_type = 'pma',
@@ -530,6 +542,8 @@
 		, a.update_id
 		, a.content_type
 		, a.content
+		, a.file_name
+		, a.file_format
 		, h.user_name AS issue_name
 		FROM
         pms.reservation_msg a left join pms.user h on a.issue_id = h.user_id
@@ -627,11 +641,15 @@
 		(msg_id
 		,content_type
 		,content
+		,file_name
+		,file_format
 		)
 		values(
 		 #{msgId}
 		,#{contentType}
 		,#{content}
+		,#{fileName}
+		,#{fileFormat}
 		)
 	</insert>
 	
@@ -801,6 +819,8 @@
 		,update_id
 		,content_type
 		,content
+		,file_name
+		,file_format
 		)
 		values(
 		 #{groupId}
@@ -830,6 +850,8 @@
 		,#{updateId}
 		,#{contentType}
 		,#{content}
+		,#{fileName}
+		,#{fileFormat}
 		)
 	</insert>
 	
@@ -949,6 +971,8 @@
 		,issue_id
 		,content_type
 		,content
+		,file_name
+		,file_format
 		FROM pms.reservation_msg
 		WHERE msg_id = #{msgId}
 	</select>

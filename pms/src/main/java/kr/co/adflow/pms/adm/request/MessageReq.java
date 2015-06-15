@@ -58,6 +58,42 @@ public class MessageReq {
 	/** The content length. */
 	private Integer contentLength;
 	
+	/** The file Name. */
+	private String fileName;
+	
+	/** The file Format. */
+	private String fileFormat;
+	
+	/** The mms. */
+	private  boolean mms;
+
+
+	
+	public boolean isMms() {
+		return mms;
+	}
+
+	public void setMms(boolean mms) {
+		this.mms = mms;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+	
+
+	public String getFileFormat() {
+		return fileFormat;
+	}
+
+	public void setFileFormat(String fileFormat) {
+		this.fileFormat = fileFormat;
+	}
+	
 
 	/**
 	 * Gets the content Length.

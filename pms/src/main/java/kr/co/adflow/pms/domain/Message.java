@@ -113,6 +113,30 @@ public class Message {
 	private String ufmi;
 	
 	
+	/** The file Name. */
+	private String fileName;
+	
+	/** The file Format. */
+	private String fileFormat;
+
+	
+	
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+	
+
+	public String getFileFormat() {
+		return fileFormat;
+	}
+
+	public void setFileFormat(String fileFormat) {
+		this.fileFormat = fileFormat;
+	}
 
 	public String getUfmi() {
 		return ufmi;

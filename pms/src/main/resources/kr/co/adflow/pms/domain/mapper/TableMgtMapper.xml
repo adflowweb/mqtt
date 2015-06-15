@@ -52,6 +52,8 @@
 		   msg_id varchar(50) NOT NULL ,
 		  content mediumtext,
 		  content_type varchar(50) DEFAULT NULL,
+		  file_name varchar(200) DEFAULT NULL,
+		  file_format varchar(50) DEFAULT NULL,
 		  PRIMARY KEY (msg_id)
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8
 	</update>

@@ -150,12 +150,15 @@ public class UserMessageServiceImpl implements UserMessageService {
 //		logger.info(" ========= getMsgSize ::{}",msg.getMsgSize());
 		
 		// TMS:0, MMS:1
-		if (msg.getMsgSize() > 140) {
-			//MMS
+		if (message.isMms()) {
 			msg.setMediaType(1);
 		} else {
-			//TMS
-			msg.setMediaType(0);
+			if (msg.getMsgSize() > 140) {
+				msg.setMediaType(1);
+			} else {
+				msg.setMediaType(0);
+			}
+
 		}
 		
 		

@@ -7,6 +7,7 @@ import java.util.Date;
 
 import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.Range;
+
 import javax.validation.constraints.NotNull;
 
 // TODO: Auto-generated Javadoc
@@ -50,6 +51,44 @@ public class MessageReq {
 	
 	/** The content length. */
 	private Integer contentLength;
+	
+	/** The file Name. */
+	private String fileName;
+	
+	/** The file Format. */
+	private String fileFormat;
+	
+	/** The mms. */
+	private  boolean mms;
+
+
+	
+	public boolean isMms() {
+		return mms;
+	}
+
+	public void setMms(boolean mms) {
+		this.mms = mms;
+	}	
+
+	
+	
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+	
+
+	public String getFileFormat() {
+		return fileFormat;
+	}
+
+	public void setFileFormat(String fileFormat) {
+		this.fileFormat = fileFormat;
+	}
 	
 
 	/**

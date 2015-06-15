@@ -61,7 +61,9 @@ public class DirectMsgHandlerBySessionCallback implements
 			
 			msgObject.put("msgType", msg.getMsgType());
 			msgObject.put("msgId", msg.getMsgId());
-			//msgObject.put("sender", msg.getIssueId());
+			msgObject.put("issueId", msg.getIssueId());
+			msgObject.put("fileFormat", msg.getFileFormat());
+			msgObject.put("fileName", msg.getFileName());
 			msgObject.put("sender", msg.getIssueName());
 			msgObject.put("receiver", msg.getReceiverTopic());
 			if (msg.isAck()) {
