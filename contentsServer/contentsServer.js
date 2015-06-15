@@ -56,7 +56,7 @@ function unknownMethodHandler(req, res) {
 
 server.on('MethodNotAllowed', unknownMethodHandler);
 server.use(ckeckToken);
-server.use(restify.bodyParser({ maxBodySize : 5242880 })); /* Limit POST to 5 MB */
+//server.use(restify.bodyParser({ maxBodySize : 5242880 })); /* Limit POST to 5 MB */
 
 server.on('after', restify.auditLogger({
     log: log
