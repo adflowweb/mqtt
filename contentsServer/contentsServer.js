@@ -20,11 +20,11 @@ var restify = require('restify'),
     contextRoot = '/cts/v1/users';
 
 // Activate this logger only for development and leave the original for production
-if (process.env.NODE_ENV === 'development') {
-    spawn = require('child_process').spawn;
-    bunyanCLI = spawn('bunyan', ['--color'], { stdio: ['pipe', process.stdout] });
-    logOptions.stream = bunyanCLI.stdin;
-}
+//if (process.env.NODE_ENV === 'development') {
+//    spawn = require('child_process').spawn;
+//    bunyanCLI = spawn('bunyan', ['--color'], { stdio: ['pipe', process.stdout] });
+//    logOptions.stream = bunyanCLI.stdin;
+//}
 var log = bunyan.createLogger(logOptions),
     server = restify.createServer({
         log: log
@@ -41,20 +41,20 @@ server.name = 'contentsServer';
 
 // This is a simplified example just to give you an idea
 // You will probably need more allowed headers
-function unknownMethodHandler(req, res) {
-    if (req.method.toLowerCase() === 'options') {
-        var allowHeaders = ['Accept', 'Accept-Version', 'Content-Type', 'Api-Version'];
-        if (res.methods.indexOf('OPTIONS') === -1) res.methods.push('OPTIONS');
-        res.header("Access-Control-Allow-Origin", "*");
-        res.header("Access-Control-Allow-Headers", "content-type, md5, token, file");
-        return res.send(200);
-    }
-    else {
-        return res.send(new restify.MethodNotAllowedError());
-    }
-}
+//function unknownMethodHandler(req, res) {
+//    if (req.method.toLowerCase() === 'options') {
+//        var allowHeaders = ['Accept', 'Accept-Version', 'Content-Type', 'Api-Version'];
+//        if (res.methods.indexOf('OPTIONS') === -1) res.methods.push('OPTIONS');
+//        res.header("Access-Control-Allow-Origin", "*");
+//        res.header("Access-Control-Allow-Headers", "content-type, md5, token, file");
+//        return res.send(200);
+//    }
+//    else {
+//        return res.send(new restify.MethodNotAllowedError());
+//    }
+//}
 
-server.on('MethodNotAllowed', unknownMethodHandler);
+//server.on('MethodNotAllowed', unknownMethodHandler);
 server.use(ckeckToken);
 //server.use(restify.bodyParser({ maxBodySize : 5242880 })); /* Limit POST to 5 MB */
 
