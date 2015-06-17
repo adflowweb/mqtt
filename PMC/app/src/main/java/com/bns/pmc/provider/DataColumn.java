@@ -61,6 +61,7 @@ public final class DataColumn implements BaseColumns {
     public static final int COLUMN_DATA_TYPE_BMP = 2;
     public static final int COLUMN_DATA_TYPE_PNG = 3;
     public static final int COLUMN_DATA_TYPE_MP3 = 4;
+    public static final int COLUMN_DATA_TYPE_UNKNOWN = 5;
 
     public static final int COLUMN_RECV_SEND = 0;
     public static final int COLUMN_RECV_RECV = 1;

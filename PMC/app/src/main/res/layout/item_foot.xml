@@ -13,9 +13,10 @@
         android:layout_marginLeft="5dip"
         android:layout_marginBottom="5dip"
         android:layout_alignParentLeft="true"
-        android:focusable="true"
+
         android:textColor="#fff"
         android:textSize="21.33dp"/>
+    <!--  android:focusable="true" -->
 
     <ImageView
         android:id="@+id/bottom_button_center"
@@ -33,7 +34,8 @@
         android:layout_marginRight="5dip"
         android:layout_marginBottom="5dip"
         android:layout_alignParentRight="true"
-        android:focusable="true"
+
         android:textColor="#fff"
         android:textSize="21.33dp"/>
+    <!--  android:focusable="true" -->
 </RelativeLayout>

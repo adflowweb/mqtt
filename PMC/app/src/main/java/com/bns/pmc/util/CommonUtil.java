@@ -2,6 +2,7 @@ package com.bns.pmc.util;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
@@ -28,6 +29,28 @@ public class CommonUtil {
         public String m_strDataName = null;
         public String m_strDataFormat = null;
         public byte[] m_strDataByteArr;
+
+        //added by nadir
+        public String fileName = null;
+        public String fileFormat = null;
+        public String issueId = null;
+        //end
+
+        @Override
+        public String toString() {
+            return "JSonItem{" +
+                    "m_strSender='" + m_strSender + '\'' +
+                    ", m_strReceiver='" + m_strReceiver + '\'' +
+                    ", m_strText='" + m_strText + '\'' +
+                    ", m_strURL='" + m_strURL + '\'' +
+                    ", m_strDataName='" + m_strDataName + '\'' +
+                    ", m_strDataFormat='" + m_strDataFormat + '\'' +
+                    ", m_strDataByteArr=" + Arrays.toString(m_strDataByteArr) +
+                    ", fileName='" + fileName + '\'' +
+                    ", fileFormat='" + fileFormat + '\'' +
+                    ", issueId='" + issueId + '\'' +
+                    '}';
+        }
     }
 
     /**

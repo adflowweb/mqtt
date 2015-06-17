@@ -185,8 +185,8 @@ public class IPushUtil {
      * @return
      */
     public static String sendMsg(IPushService binder, String sender, String receiver,
-                                 String contentType, String content, int contentLength) {
-        Log.i(PMCType.TAG, "sendMsg시작(binder=" + binder + ", sender=" + sender + ", receiver=" + receiver + ", contentType=" + contentType + ", content=" + content + ", contentLength=" + contentLength + ")");
+                                 String contentType, String content, int contentLength, boolean mms) {
+        Log.i(PMCType.TAG, "sendMsg시작(binder=" + binder + ", sender=" + sender + ", receiver=" + receiver + ", contentType=" + contentType + ", content=" + content + ", contentLength=" + contentLength + ", mms=" + mms + ")");
 
         String strResult = null;
         if (binder != null) {
@@ -194,7 +194,7 @@ public class IPushUtil {
                 long start = System.currentTimeMillis();
                 // mq publish를 rest로 변경
                 //strResult = binder.sendMsg(sender, receiver, contentType, content);
-                strResult = binder.sendMsgWithOpts(sender, receiver, QOS, contentType, content, contentLength, EXPIRY);
+                strResult = binder.sendMsgWithOpts(sender, receiver, QOS, contentType, content, contentLength, EXPIRY, mms);
 
 
                 long stop = System.currentTimeMillis();

@@ -41,6 +41,9 @@ import com.bns.pmc.util.Log;
 import com.bns.pmc.util.PMCType;
 import com.bns.pmc.util.PttWakeUpUtil;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -552,13 +555,12 @@ public class PMCService extends Service {
                 Log.d(PMCType.TAG, "새로운bunchid=" + strBunchid);
                 Log.d(PMCType.TAG, "기존PttVersion=" + nSavedPttVersion);
                 Log.d(PMCType.TAG, "새로운PttVersion=" + nPttVersion);
-
                 //testCodeEnd
 
                 // 계정 정보 변경.
-                if (strSavedUFMI.compareToIgnoreCase(strFullUfmi) != 0 ||
+                if (strSavedUFMI != null && strSavedUFMI.compareToIgnoreCase(strFullUfmi) != 0 ||
                         CommonUtil.comp_GroupList(strSavedGroupList, strGroupList) == false ||
-                        strBunchid.compareToIgnoreCase(strSavedBunchid) != 0 ||
+                        strBunchid != null && strBunchid.compareToIgnoreCase(strSavedBunchid) != 0 ||
                         nPttVersion != nSavedPttVersion) {
                     Log.d(PMCType.TAG, "PTT계정정보가변경되었습니다.");
                     // Valid DB 초기화.
@@ -913,8 +915,9 @@ public class PMCService extends Service {
             JSonItem item = null;
             if (TextUtils.isEmpty(strContent) == false) {
                 String strDecode = CommonUtil.decodeBase64ToString(strContent);
-                Log.i(PMCType.TAG, "== " + strDecode);
+                Log.i(PMCType.TAG, "메시지=" + strDecode);
                 item = JSonUtil.decodeJSONStringToData(strDecode);
+                Log.i(PMCType.TAG, "item=" + item);
 
                 if (item != null) {
                     String strItemSender = item.m_strSender;
@@ -961,6 +964,7 @@ public class PMCService extends Service {
                         String strItemMsg = item.m_strText;
                         String strItemURL = item.m_strURL;
                         String strItemDataName = item.m_strDataName;
+                        Log.i(PMCType.TAG, "strItemDataName=" + strItemDataName);
 
                         ContentValues values = new ContentValues();
                         values.put(MessageColumn.DB_COLUMN_MSG_ID, strMsgID);
@@ -989,20 +993,12 @@ public class PMCService extends Service {
                         values.put(MessageColumn.DB_COLUMN_URL, strItemURL);
 
 
-                        //testCode
-                        strItemDataName = "test.jpg";
-                        //testEnd
-                        Log.i(PMCType.TAG, "strItemDataName=" + strItemDataName);
-
+                        //유저메시지 이미지처리
                         if (TextUtils.isEmpty(strItemDataName) == false) {
+                            Log.i(PMCType.TAG, "유저메시지컨텐트처리");
                             // 메시지에 Data가 들어 있는 경우.
                             int nDataType = DataColumn.COLUMN_DATA_TYPE_NONE;
                             String strItemDataFormat = item.m_strDataFormat;
-
-                            //testCode
-                            strItemDataFormat = "jpg";
-                            //testEnd
-
 
                             Log.i(PMCType.TAG, "itemDataFormat=" + strItemDataFormat);
                             if (strItemDataFormat.equalsIgnoreCase("jpg"))
@@ -1014,7 +1010,7 @@ public class PMCService extends Service {
                             else if (strItemDataFormat.equalsIgnoreCase("mp3"))
                                 nDataType = DataColumn.COLUMN_DATA_TYPE_MP3;
                             else
-                                nDataType = DataColumn.COLUMN_DATA_TYPE_NONE;
+                                nDataType = 5;//DataColumn.COLUMN_DATA_TYPE_NONE;
 
                             values.put(MessageColumn.DB_COLUMN_DATA_TYPE, nDataType);
                             values.put(MessageColumn.DB_COLUMN_DATA, item.m_strDataByteArr);
@@ -1221,6 +1217,13 @@ public class PMCService extends Service {
             String strContent = intent.getStringExtra(PMCType.BNS_PMC_MMS_RECV_CONTENT);
             int nResendCount = intent.getIntExtra(PMCType.BNS_PMC_MMS_RECV_RESEND_COUNT, 0);
 
+            String fileName = intent.getStringExtra("fileName");
+            Log.i(PMCType.TAG, "fileName=" + fileName);
+            String fileFormat = intent.getStringExtra("fileFormat");
+            Log.i(PMCType.TAG, "fileFormat=" + fileFormat);
+            String issueId = intent.getStringExtra("issueId");
+            Log.i(PMCType.TAG, "issueId=" + issueId);
+
             Log.i(PMCType.TAG, "[MsgID]" + strMsgID + " [Token]" + strToken +
                     " [Ack]" + nAck + " [resendCnt]" + nResendCount);
             Log.i(PMCType.TAG, "[Send]" + strSender + " [Recv]" + strReceiver + " [ContentType]"
@@ -1305,6 +1308,33 @@ public class PMCService extends Service {
 
                             values.put(MessageColumn.DB_COLUMN_DATA_TYPE, nDataType);
                             values.put(MessageColumn.DB_COLUMN_DATA, item.m_strDataByteArr);
+                        } else if (TextUtils.isEmpty(fileName) == false) {
+                            //관제메시지 이미지처리
+                            Log.i(PMCType.TAG, "관제메시지이미지처리");
+                            int nDataType = DataColumn.COLUMN_DATA_TYPE_NONE;
+                            if (fileFormat.equalsIgnoreCase("jpg"))
+                                nDataType = DataColumn.COLUMN_DATA_TYPE_JPG;
+                            else if (fileFormat.equalsIgnoreCase("bmp"))
+                                nDataType = DataColumn.COLUMN_DATA_TYPE_BMP;
+                            else if (fileFormat.equalsIgnoreCase("png"))
+                                nDataType = DataColumn.COLUMN_DATA_TYPE_PNG;
+                            else if (fileFormat.equalsIgnoreCase("mp3"))
+                                nDataType = DataColumn.COLUMN_DATA_TYPE_MP3;
+                            else
+                                nDataType = DataColumn.COLUMN_DATA_TYPE_NONE;
+
+                            JSONObject imgJson = new JSONObject();
+                            try {
+                                imgJson.put("name", fileName);
+                                imgJson.put("format", fileFormat);
+                                imgJson.put("user", issueId);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                Log.e(PMCType.TAG, "에러발생" + e);
+                            }
+
+                            values.put(MessageColumn.DB_COLUMN_DATA_TYPE, nDataType);
+                            values.put(MessageColumn.DB_COLUMN_DATA, imgJson.toString().getBytes());
                         }
                         values.put(MessageColumn.DB_COLUMN_CREATETIME, System.currentTimeMillis());
 

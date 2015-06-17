@@ -8,11 +8,17 @@ android {
         applicationId "com.bns.pmc"
         minSdkVersion 19
         targetSdkVersion 19
-        versionCode 17
-        versionName "2.5.17"
+        versionCode 18
+        versionName "2.5.18"
     }
 
     buildTypes {
+        debug {
+            buildConfigField "String", "CONTENT_UPLOAD_URL", "\"http://14.63.224.160:8080/cts/v1/users/\"";
+            //"http://14.63.224.160:8080/cts/v1/users/";
+            //public static final String CONTENT_UPLOAD_URL = "http://172.30.1.31:8080/cts/v1/users/";
+            //public static final String CONTENT_UPLOAD_URL = "http://192.168.43.25:8080/cts/v1/users/";
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'

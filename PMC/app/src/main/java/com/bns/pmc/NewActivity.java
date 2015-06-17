@@ -19,6 +19,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.provider.ContactsContract;
@@ -57,14 +58,15 @@ import com.bns.pmc.util.Log;
 import com.bns.pmc.util.PMCType;
 import com.github.kevinsawicki.http.HttpRequest;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.net.URISyntaxException;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 
@@ -73,9 +75,10 @@ import kr.co.adflow.push.IPushService;
 public class NewActivity extends Activity implements OnFocusChangeListener, TextWatcher, OnClickListener {
 
     private static final int PICK_IMAGE = 1;
-    //public static final String CONTENT_UPLOAD_URL = "http://14.63.224.160:8080/v1/users/";
-    //public static final String CONTENT_UPLOAD_URL = "http://172.30.1.18:8080/v1/users/";
-    public static final String CONTENT_UPLOAD_URL = "http://192.168.43.25:8080/v1/users/";
+    private static final int TAKE_CAMERA = 2;
+    private static final int FILE_SELECT_CODE = 3;
+    public static final String CONTENT_UPLOAD_URL = BuildConfig.CONTENT_UPLOAD_URL;
+    private android.net.Uri mImageUri;
 
 
     public class ItemNew {
@@ -122,11 +125,11 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
     private boolean m_bSend = false;
     private Intent m_intentResult = new Intent();
     private boolean enablePTT = false; //메시지 전송가능 상태체크용
-    private boolean imageSend = false;
+    private boolean sendingContent = false;
     private boolean vibration = false;
-    private Bitmap bitmap;
-    private String imageFileName;
-    private String filePath;
+
+    private String contentFileName;
+    private String contentFilePath;
 
 
     @Override
@@ -144,6 +147,8 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
 
         m_tvBtLeft.setText(R.string.send);
         m_tvBtLeft.setVisibility(View.GONE);
+        //m_tvBtLeft.setEnabled(false);
+        //m_tvBtLeft.setFocusable(false);
         enablePTT = false;
         m_tvBtRight.setText(R.string.back);
 
@@ -243,8 +248,15 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                 etNumber.setSelection(etNumber.length());
             } else {
                 m_nExtraID = intent.getIntExtra(PMCType.BNS_PMC_INTENT_EXTRA_ID, -1);
+                Log.d(PMCType.TAG, "m_nExtraID=" + m_nExtraID);
                 m_strExtraMsg = intent.getStringExtra(PMCType.BNS_PMC_INTENT_EXTRA_CONTENT);
+                Log.d(PMCType.TAG, "m_strExtraMsg=" + m_strExtraMsg);
                 String strExtraNumber = intent.getStringExtra(PMCType.BNS_PMC_INTENT_EXTRA_NUMBER);
+                Log.d(PMCType.TAG, "strExtraNumber=" + strExtraNumber);
+                byte[] data = intent.getByteArrayExtra("data");
+                Log.d(PMCType.TAG, "data=" + data);
+                int dataType = intent.getIntExtra("dataType", 0);
+                Log.d(PMCType.TAG, "dataType=" + dataType);
 
                 if (m_nExtraID != -1) {
                     m_intentResult.putExtra(PMCType.BNS_PMC_INTENT_EXTRA_IDX, 0);
@@ -266,6 +278,35 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                         //m_strExtraNumber = strFleetMemberNum;
 
                         m_strExtraNumber = strExtraNumber;
+                    }
+                }
+
+                if (data != null) {
+                    //파일첨부일경우
+                    //클립이미지 보이기
+                    imageView.setVisibility(View.VISIBLE);
+                    sendingContent = true;
+                    String title = getResources().getString(R.string.title_new_activity);
+                    this.setTitle(title + "(MMS)");
+                    //진동
+                    Vibrator vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                    vibe.vibrate(500);
+                    try {
+                        JSONObject obj = new JSONObject(new String(data));
+                        String root = Environment.getExternalStorageDirectory().toString();
+                        File storageDir;
+                        if (dataType != 5) {
+                            storageDir = new File(root + "/pmc/images/");
+                        } else {
+                            storageDir = new File(root + "/pmc/files/");
+                        }
+                        this.contentFilePath = storageDir + "/" + obj.getString("name") + "." + obj.getString("format");  ///storage/emulated/0/pmc/images/thumb/12c816a2ff01d12ffed2d1787ec2c60.png
+                        Log.d(PMCType.TAG, "contentFilePath=" + contentFilePath);
+                        contentFileName = obj.getString("name") + "." + obj.getString("format");
+                        Log.d(PMCType.TAG, "contentFileName=" + contentFileName);
+                        //filePath.substring(filePath.lastIndexOf("/") + 1);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
                 }
                 Log.d(PMCType.TAG, "m_strExtraNumber=" + m_strExtraNumber);
@@ -397,6 +438,38 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                     }
                 }
                 break;
+            case TAKE_CAMERA:
+                if (requestCode == TAKE_CAMERA && resultCode == RESULT_OK) {
+                    //Bundle b = (Bundle) data;
+//                    Bundle b = data.getExtras();
+//                    for (String key : b.keySet()) {
+//                        Object value = b.get(key);
+//                        Log.d(PMCType.TAG, String.format("%s %s (%s)", key,
+//                                value.toString(), value.getClass().getName()));
+//                    }
+
+                    Log.d(PMCType.TAG, "mImageUri=" + mImageUri.getPath());
+                    decodeFile(mImageUri.getPath());
+//                    this.getContentResolver().notifyChange(mImageUri, null);
+//                    ContentResolver cr = this.getContentResolver();
+//                    Bitmap bitmap;
+//                    try
+//                    {
+//                        bitmap = android.provider.MediaStore.Images.Media.getBitmap(cr, mImageUri);
+//                        //imageView.setImageBitmap(bitmap);
+//                    }
+//                    catch (Exception e)
+//                    {
+//                        Toast.makeText(this, "Failed to load", Toast.LENGTH_SHORT).show();
+//                        Log.d(TAG, "Failed to load", e);
+//                    }
+
+
+//                    Uri currImageURI = data.getData();
+//                    Log.d(PMCType.TAG, "currImageURI=" + currImageURI);
+//                    Log.d(PMCType.TAG, "CAMERA=" + getLastCaptureImageUri());
+                }
+                break;
             case PICK_IMAGE:
                 if (requestCode == PICK_IMAGE && resultCode == RESULT_OK
                         && null != data) {
@@ -413,8 +486,37 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                     decodeFile(picturePath);
                 }
                 break;
+
+            case FILE_SELECT_CODE:
+                if (resultCode == RESULT_OK) {
+                    // Get the Uri of the selected file
+                    Uri uri = data.getData();
+                    Log.d(PMCType.TAG, "File Uri: " + uri.toString());
+                    // Get the path
+                    String path = null;
+                    try {
+                        path = getPath(this, uri);
+                    } catch (URISyntaxException e) {
+                        e.printStackTrace();
+                    }
+                    Log.d(PMCType.TAG, "File Path: " + path);
+                    // Get the file instance
+                    // File file = new File(path);
+                    // Initiate the upload
+                    decodeFile(path);
+                }
+                break;
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private File createTemporaryFile(String part, String ext) throws Exception {
+        File tempDir = Environment.getExternalStorageDirectory();
+        tempDir = new File(tempDir.getAbsolutePath() + "/.temp/");
+        if (!tempDir.exists()) {
+            tempDir.mkdir();
+        }
+        return File.createTempFile(part, ext, tempDir);
     }
 
     @Override
@@ -435,9 +537,9 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(0, MENU_CONTACT_ATTACH, 0, R.string.contact_attach);
-        menu.add(0, 1, 0, "사진촬영");
-        menu.add(0, 2, 0, "앨범");
-        menu.add(0, 3, 0, "파일");
+        menu.add(0, 1, 0, "사진 촬영");
+        menu.add(0, 2, 0, "사진 첨부");
+        menu.add(0, 3, 0, "파일 첨부");
         //menu.add(0, MENU_TEST_0, 0, "Test 서브스크라이브해제");
 
         return super.onCreateOptionsMenu(menu);
@@ -452,16 +554,33 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                 optionContact_Attach();
                 break;
             case 1:
-                //unsubscribe();
-                //selectImageFromGallery();
+//                Intent intent = new Intent();
+//                intent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
+//                startActivityForResult(intent, TAKE_CAMERA);
+
+
+                Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+                File photo;
+                try {
+                    // place where to store camera taken picture
+                    photo = this.createTemporaryFile("picture", ".jpg");
+                    photo.delete();
+                } catch (Exception e) {
+                    //Log.v(TAG, "Can't create file to take picture!");
+                    //Toast.makeText(activity, "Please check SD card! Image shot is impossible!", 10000);
+                    return false;
+                }
+                mImageUri = Uri.fromFile(photo);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri);
+                //start camera intent
+                startActivityForResult(intent, TAKE_CAMERA);
                 break;
             case 2:
-                //unsubscribe();
                 selectImageFromGallery();
                 break;
             case 3:
-                //unsubscribe();
-                selectFile();
+                //selectFile();
+                showFileChooser();
                 break;
             default:
                 break;
@@ -563,38 +682,44 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
     public void onTextChanged(CharSequence s, int start, int before, int count) {
         Log.d(PMCType.TAG, "onTextChanged시작(CharSequence=" + s + ", start=" + start + ", before=" + before + ", count=" + count + ")");
 
-        //메시지 카운팅
-        Log.d(PMCType.TAG, "에디터포커스=" + m_etNewMsg.isFocused());
-        if (m_etNewMsg.isFocused()) {
-            Log.d(PMCType.TAG, "문자열=" + s);
-            String title = getResources().getString(R.string.title_new_activity);
-            String str = s.toString();
-            int msgCnt = 0;
-            for (int i = 0; i < str.length(); i++) {
-                if (Character.getType(str.charAt(i)) == 5) {
-                    msgCnt = msgCnt + 2;
-                } else {
-                    msgCnt++;
-                }
-            }
+        String title = getResources().getString(R.string.title_new_activity);
+        if (sendingContent) {
+            this.setTitle(title + "(MMS)");
+        } else {
+            //메시지 카운팅
+            Log.d(PMCType.TAG, "에디터포커스=" + m_etNewMsg.isFocused());
+            if (m_etNewMsg.isFocused()) {
+                Log.d(PMCType.TAG, "문자열=" + s);
 
-            if (msgCnt > 140) {
-                this.setTitle(title + "(MMS)");
-                //진동
-                if (!vibration) {
-                    // Java Source Code
-                    Vibrator vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-                    vibe.vibrate(500);
-                    vibration = true;
+                String str = s.toString();
+                int msgCnt = 0;
+                for (int i = 0; i < str.length(); i++) {
+                    if (Character.getType(str.charAt(i)) == 5) {
+                        msgCnt = msgCnt + 2;
+                    } else {
+                        msgCnt++;
+                    }
                 }
-            } else if (msgCnt == 0) {
-                this.setTitle(title);
-                vibration = false;
-            } else {
-                this.setTitle(title + "(" + msgCnt + "/140)");
-                vibration = false;
+
+                if (msgCnt > 140) {
+                    this.setTitle(title + "(MMS)");
+                    //진동
+                    if (!vibration) {
+                        // Java Source Code
+                        Vibrator vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                        vibe.vibrate(500);
+                        vibration = true;
+                    }
+                } else if (msgCnt == 0) {
+                    this.setTitle(title);
+                    vibration = false;
+                } else {
+                    this.setTitle(title + "(" + msgCnt + "/140)");
+                    vibration = false;
+                }
             }
         }
+
 
         EditText etCurrFocusEditText = m_etCurrFocusEditText;
         EditText etNumber = (EditText) m_listNumberLayout.get(m_nIdxNumber - 1).findViewById(R.id.editText_new_number);
@@ -823,9 +948,8 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
 
         Log.i(PMCType.TAG, "enablePTT=" + enablePTT);
         if (enablePTT == false) {
-
-            //이미지 전송일경우
-            if (imageSend) {
+            //컨텐트 전송일경우
+            if (sendingContent) {
                 boolean bIsEmpty = true;
                 for (int i = 0; i < m_listNumberLayout.size(); i++) {
                     EditText etText = (EditText) m_listNumberLayout.get(i).findViewById(R.id.editText_new_number);
@@ -834,7 +958,6 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                         break;
                     }
                 }
-
                 if (bIsEmpty == true) {
                     return;
                 }
@@ -1282,133 +1405,57 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
         @Override
         protected Integer doInBackground(ItemNew... params) {
             Log.d(PMCType.TAG, "doInBackground start");
-
-            IPushService binder = PMCService.m_Binder;
             int nResultFail = RESULT_MSG_INIT;
-            m_bSend = true;
+            try {
+                IPushService binder = PMCService.m_Binder;
+                m_bSend = true;
+                String strUFMI = m_configure.getUFMI();
+                String strBunchID = m_configure.getBunchID();
+                int nVersion = m_configure.getVersion();
 
-            String strUFMI = m_configure.getUFMI();
-            String strBunchID = m_configure.getBunchID();
-            int nVersion = m_configure.getVersion();
-
-            // Binder 연결 상태 확인.
-            if (binder == null)
-                return RESULT_MSG_NO_BINDER;
-
-            // MqttSession 연결상태 확인.
-            boolean bIsConnected = IPushUtil.isConnectedMqttSession(binder);
-            if (bIsConnected == false)
-                return RESULT_MSG_NO_CONNECT;
-
-            // UFMI가 초기 상태인지 확인.
-            String strSender = strUFMI;
-            if (TextUtils.equals(strSender, Configure.UFMI_INIT))
-                return RESULT_MSG_NO_UFMI;
+                Log.d(PMCType.TAG, "binder=" + binder);
+                // Binder 연결 상태 확인.
+                if (binder == null)
+                    return RESULT_MSG_NO_BINDER;
 
 
-            //이미지 전송이면 컨텐츠서버에 이미지 전송
-            if (imageSend) {
-                try {
-                    TelephonyManager tMgr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-                    String phoneNum = tMgr.getLine1Number();
-                    Log.d(PMCType.TAG, "전화번호=" + phoneNum);
+                // MqttSession 연결상태 확인.
+                boolean bIsConnected = IPushUtil.isConnectedMqttSession(binder);
+                Log.d(PMCType.TAG, "bIsConnected=" + bIsConnected);
+                if (bIsConnected == false)
+                    return RESULT_MSG_NO_CONNECT;
 
-                    //ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                    //bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
-                    //byte[] data = bos.toByteArray();
-                    //String file = Base64.encodeBytes(data, 0, data.length);
-                    //entity.addPart("uploaded", new StringBody(file));
-                    File imgFile = new File(filePath);
+                // UFMI가 초기 상태인지 확인.
+                String strSender = strUFMI;
+                Log.d(PMCType.TAG, "strSender=" + strSender);
+                if (TextUtils.equals(strSender, Configure.UFMI_INIT))
+                    return RESULT_MSG_NO_UFMI;
 
-//                    MessageDigest md = null;
-//                    StringBuffer sb = new StringBuffer();
-//
-//                    md = MessageDigest.getInstance("MD5");
-//                    InputStream is = new FileInputStream(imgFile);
-//                    DigestInputStream dis = new DigestInputStream(is, md);
-//                    byte[] digest = md.digest();
-//                    //convert the byte to hex format method 1
-//                    for (int i = 0; i < digest.length; i++) {
-//                        sb.append(Integer.toString((digest[i] & 0xff) + 0x100, 16).substring(1));
-//                    }
+                TelephonyManager tMgr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+                String phoneNum = tMgr.getLine1Number();
+                Log.d(PMCType.TAG, "전화번호=" + phoneNum);
 
-                    String md5 = checkSum(filePath);
-                    Log.d(PMCType.TAG, "md5=" + md5);
-
-                    String token = IPushUtil.getToken(binder);
-                    Log.d(PMCType.TAG, "token=" + token);
-
-
-                    //create thumbnail
-                    final int THUMBSIZE = 32;
-
-                    Bitmap ThumbImage = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(filePath),
-                            THUMBSIZE, THUMBSIZE);
-                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1) {
-                        Log.d(PMCType.TAG, "썸네일싸이즈=" + ThumbImage.getRowBytes() * ThumbImage.getHeight());
-                    } else {
-                        Log.d(PMCType.TAG, "썸네일싸이즈=" + ThumbImage.getByteCount());
-                    }
-
-                    FileOutputStream out = null;
+                String md5 = null;
+                Log.d(PMCType.TAG, "sendingContent=" + sendingContent);
+                //컨텐트 전송이면 컨텐츠서버에 컨텐트업로드
+                if (sendingContent) {
                     try {
-                        out = new FileOutputStream("/mnt/sdcard/test.png");
-                        ThumbImage.compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
-                        // PNG is a lossless format, the compression factor (100) is ignored
+                        md5 = checkSum(contentFilePath);
+                        Log.d(PMCType.TAG, "md5=" + md5);
+                        uploadContent(binder, phoneNum, md5);
                     } catch (Exception e) {
-                        e.printStackTrace();
-                    } finally {
-                        try {
-                            if (out != null) {
-                                out.close();
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    //end
-
-
-                    int responseCode = HttpRequest.head(CONTENT_UPLOAD_URL + phoneNum)
-                            .header("md5", md5)
-                            .header("token", token)
-                            .header("file", imageFileName)
-                            .code();
-                    Log.d(PMCType.TAG, "이미지존재유무응답코드=" + responseCode);
-                    if (responseCode == 409) {
-                        //이미업로드됨
-                        Log.d(PMCType.TAG, "이미지가컨텐츠서버에이미존재합니다");
-                    } else if (responseCode == 404) {
-                        responseCode = HttpRequest.post(CONTENT_UPLOAD_URL + phoneNum)
-                                //.trustAllCerts() //Accept all certificates
-                                //.trustAllHosts() //Accept all hostnames
-                                .header("md5", md5)
-                                .header("token", token)
-                                .part("file", imageFileName, imgFile)
-                                .code();
-                        Log.d(PMCType.TAG, "이미지업로드응답코드=" + responseCode);
-                        if (responseCode != 200 && responseCode != 409/*이미업로드됨*/) {
-                            return RESULT_FAIL_SENDING_IMAGE;
-                        } else {
-                            Log.d(PMCType.TAG, "이미지전송에성공하였습니다.");
-                        }
-                    } else {
+                        Log.e(PMCType.TAG, "에러발생" + e);
                         return RESULT_FAIL_SENDING_IMAGE;
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    return RESULT_FAIL_SENDING_IMAGE;
                 }
-            }
 
-            // start send.
-            nResultFail = 0;
-            String strSenderMMS = CommonUtil.conv_UFMIToMMS(strSender, nVersion);
-            String strMsg = m_etNewMsg.getText().toString();
+                // start send.
+                nResultFail = 0;
+                String strSenderMMS = CommonUtil.conv_UFMIToMMS(strSender, nVersion);
+                String strMsg = m_etNewMsg.getText().toString();
 
-            int numberOfParams = params.length;
-            Log.d(PMCType.TAG, "numberOfParams=" + params.length);
-
+                int numberOfParams = params.length;
+                Log.d(PMCType.TAG, "numberOfParams=" + params.length);
 
 //            // exist검사
 //            for (int i = 0; i < numberOfParams; i++) {
@@ -1420,141 +1467,259 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
 //                }
 //            }
 
-            for (int i = 0; i < numberOfParams; i++) {
-                long start = System.currentTimeMillis();
-                String strNumber = params[i].strNumber;
-                Log.d(PMCType.TAG, "입력무전번호=" + strNumber);
+                for (int i = 0; i < numberOfParams; i++) {
+                    long start = System.currentTimeMillis();
+                    String strNumber = params[i].strNumber;
+                    Log.d(PMCType.TAG, "입력무전번호=" + strNumber);
 
-                int nNumberType = DataColumn.COLUMN_NUMBER_TYPE_PTT;
-                if (TextUtils.isEmpty(strNumber) == false) {
-                    // Receiver UFMI가 있는 경우.
-                    String strReceiverMMS = null;
-                    String strReceiver = null;
+                    int nNumberType = DataColumn.COLUMN_NUMBER_TYPE_PTT;
+                    if (TextUtils.isEmpty(strNumber) == false) {
+                        // Receiver UFMI가 있는 경우.
+                        String strReceiverMMS = null;
+                        String strReceiver = null;
 
-                    if (CommonUtil.checkPttGroupNumFormat(strNumber)) {
-                        // Group Number인 경우
-                        nNumberType = DataColumn.COLUMN_NUMBER_TYPE_GROUP;
-                        strReceiver = strNumber;
-                        Log.i(PMCType.TAG, "Receiver=" + strReceiver);
-
-                        String strGroup = strReceiver.substring(1);
-                        strReceiverMMS = CommonUtil.conv_GroupToMMS(strGroup, strUFMI, strBunchID, nVersion);
-
-                    } /*else if (CommonUtil.checkNormalNumFormat(strNumber)) {
+                        if (CommonUtil.checkPttGroupNumFormat(strNumber)) {
+                            // Group Number인 경우
+                            nNumberType = DataColumn.COLUMN_NUMBER_TYPE_GROUP;
+                            strReceiver = strNumber;
+                            Log.i(PMCType.TAG, "Receiver=" + strReceiver);
+                            String strGroup = strReceiver.substring(1);
+                            strReceiverMMS = CommonUtil.conv_GroupToMMS(strGroup, strUFMI, strBunchID, nVersion);
+                        } /*else if (CommonUtil.checkNormalNumFormat(strNumber)) {
                         // 일반번호.
 					}*/ else {
-                        nNumberType = DataColumn.COLUMN_NUMBER_TYPE_PTT;
-                        // 개인 PTT 번호만 넣은경우 FleetNumber를 자동으로 붙여준다.
-                        String strFleetUser = addFleetNumber_Auto(strNumber);
-                        // Urban번호 추가
-                        String strUrban = m_configure.getUrbanNumber();
-                        strReceiver = CommonUtil.addToUrbanNumber(strUrban, strFleetUser);
-                        Log.i(PMCType.TAG, "Receiver=" + strReceiver);
-
-
-                        //82*로시작할경우 무전기버전은 P1 아니면 P2
-                        if (strReceiver.startsWith("82*")) {
-                            strReceiverMMS = CommonUtil.conv_UFMIToMMS(strReceiver, 1);
-                        } else {
-                            strReceiverMMS = CommonUtil.conv_UFMIToMMS(strReceiver, 2);
-                        }
-                    }
-
-                    Log.i(PMCType.TAG, "Receiver MMS= " + strReceiverMMS);
-
-                    // convert JSON
-                    JSonItem item = new JSonItem();
-                    {
-                        item.m_strSender = strSender;
-                        item.m_strReceiver = strReceiver;
-                        item.m_strText = strMsg;
-                        // test
-                        item.m_strDataName = "test001.jpg";
-                        item.m_strDataFormat = "jpg";
-                        Bitmap bitmap = BitmapFactory.decodeResource(m_context.getResources(), R.raw.android);
-                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-                        item.m_strDataByteArr = stream.toByteArray();
-                        //testEnd
-
-                    }
-                    String strJson = JSonUtil.encodeDataToJSONString(item);
-                    Log.d(PMCType.TAG, "strJson=" + strJson);
-                    String strContent = CommonUtil.encodeStringToBase64(strJson);
-                    // Send Msg.
-                    boolean bResultSuccess = false;
-                    String contentType = "application/base64";
-
-                    //testCode
-                    int contentLength = 0;
-                    for (int j = 0; j < strMsg.length(); j++) {
-                        if (Character.getType(strMsg.charAt(j)) == 5) {
-                            contentLength = contentLength + 2;
-                        } else {
-                            contentLength++;
-                        }
-                    }
-                    Log.d(PMCType.TAG, "입력문자크기=" + contentLength + "문자");
-                    //testCodeEnd
-
-                    String strResult = IPushUtil.sendMsg(binder, strSenderMMS, strReceiverMMS, contentType, strContent, contentLength);
-                    if (TextUtils.isEmpty(strResult) == false) {
-                        bResultSuccess = JSonUtil.responeSendMessageResultSuccess(strResult);
-                    }
-                    // insert DB
-                    {
-                        ContentValues values = new ContentValues();
-                        switch (nNumberType) {
-                            case DataColumn.COLUMN_NUMBER_TYPE_PTT: {
-                                values.put(MessageColumn.DB_COLUMN_NUMBER, strReceiver);
+                            nNumberType = DataColumn.COLUMN_NUMBER_TYPE_PTT;
+                            // 개인 PTT 번호만 넣은경우 FleetNumber를 자동으로 붙여준다.
+                            String strFleetUser = addFleetNumber_Auto(strNumber);
+                            // Urban번호 추가
+                            String strUrban = m_configure.getUrbanNumber();
+                            strReceiver = CommonUtil.addToUrbanNumber(strUrban, strFleetUser);
+                            Log.i(PMCType.TAG, "Receiver=" + strReceiver);
+                            //82*로시작할경우 무전기버전은 P1 아니면 P2
+                            if (strReceiver.startsWith("82*")) {
+                                strReceiverMMS = CommonUtil.conv_UFMIToMMS(strReceiver, 1);
+                            } else {
+                                strReceiverMMS = CommonUtil.conv_UFMIToMMS(strReceiver, 2);
                             }
-                            break;
-                            case DataColumn.COLUMN_NUMBER_TYPE_GROUP: {
-                                values.put(MessageColumn.DB_COLUMN_NUMBER, strReceiver);
-                                values.put(MessageColumn.DB_COLUMN_GROUP_MEMBER, strSender);
-                            }
-                            break;
-                            case DataColumn.COLUMN_NUMBER_TYPE_NORMAL: {
-
-                            }
-                            break;
-                            default:
-                                break;
                         }
 
-                        values.put(MessageColumn.DB_COLUMN_NUMBER_TYPE, nNumberType);
-                        values.put(MessageColumn.DB_COLUMN_MSG, strMsg);
-                        values.put(MessageColumn.DB_COLUMN_CREATETIME, System.currentTimeMillis());
-                        values.put(MessageColumn.DB_COLUMN_RECV, DataColumn.COLUMN_RECV_SEND);
-                        values.put(MessageColumn.DB_COLUMN_DONT_READ, DataColumn.COLUMN_DONT_READ_READ);
-                        if (bResultSuccess)
-                            values.put(MessageColumn.DB_COLUMN_STATE, DataColumn.COLUMN_STATE_SUCCESS);
-                        else
-                            values.put(MessageColumn.DB_COLUMN_STATE, DataColumn.COLUMN_STATE_FAIL);
+                        Log.i(PMCType.TAG, "Receiver MMS= " + strReceiverMMS);
+                        JSONObject imgJson = null;
+                        // convert JSON
+                        JSonItem item = new JSonItem();
+                        {
+                            item.m_strSender = strSender;
+                            item.m_strReceiver = strReceiver;
+                            item.m_strText = strMsg;
 
-                        // testCode
-                         {
-                             Bitmap bitmap = BitmapFactory.decodeResource(m_context.getResources(), R.raw.android);
-		 					ByteArrayOutputStream stream = new ByteArrayOutputStream(); 
-		 					bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-		 					byte[] imageInByte = stream.toByteArray();
-		 					values.put(MessageColumn.DB_COLUMN_DATA, imageInByte);
-		 					values.put(MessageColumn.DB_COLUMN_DATA_TYPE, DataColumn.DB_COLUMN_DATA_TYPE_JPG);
-		 				}
-                        //testEnd
-                        getContentResolver().insert(DataColumn.CONTENT_URI_INSERT_MSG, values);
+                            //컨텐트 전송이면 메시지에 컨텐트메타데이타전송
+                            if (sendingContent) {
+                                item.m_strDataName = md5;
+                                Log.d(PMCType.TAG, "dataName=" + item.m_strDataName);
+                                String format = contentFileName.substring(contentFileName.lastIndexOf(".") + 1);
+                                item.m_strDataFormat = format;
+                                Log.d(PMCType.TAG, "format=" + item.m_strDataFormat);
+                                imgJson = new JSONObject();
+                                imgJson.put("name", md5);
+                                imgJson.put("format", format);
+                                imgJson.put("user", phoneNum);
+                                item.m_strDataByteArr = imgJson.toString().getBytes();//stream.toByteArray();
+                                Log.d(PMCType.TAG, "dataByteArr=" + imgJson);
+                            }
+                        }
+                        String strJson = JSonUtil.encodeDataToJSONString(item);
+                        //Log.d(PMCType.TAG, "strJson=" + strJson);
+                        String strContent = CommonUtil.encodeStringToBase64(strJson);
+                        // Send Msg.
+                        boolean bResultSuccess = false;
+                        String contentType = "application/base64";
+
+                        //메시지문자크기 계산
+                        int contentLength = 0;
+                        for (int j = 0; j < strMsg.length(); j++) {
+                            if (Character.getType(strMsg.charAt(j)) == 5) {
+                                contentLength = contentLength + 2;
+                            } else {
+                                contentLength++;
+                            }
+                        }
+                        Log.d(PMCType.TAG, "입력문자크기=" + contentLength + "문자");
+
+                        boolean mms = false;
+
+                        if (sendingContent || contentLength > 140) {
+                            mms = true;
+                        }
+
+                        String strResult = IPushUtil.sendMsg(binder, strSenderMMS, strReceiverMMS, contentType, strContent, contentLength, mms);
+                        if (TextUtils.isEmpty(strResult) == false) {
+                            bResultSuccess = JSonUtil.responeSendMessageResultSuccess(strResult);
+                        }
+                        // insert DB
+                        {
+                            ContentValues values = new ContentValues();
+                            switch (nNumberType) {
+                                case DataColumn.COLUMN_NUMBER_TYPE_PTT:
+                                    values.put(MessageColumn.DB_COLUMN_NUMBER, strReceiver);
+                                    break;
+                                case DataColumn.COLUMN_NUMBER_TYPE_GROUP:
+                                    values.put(MessageColumn.DB_COLUMN_NUMBER, strReceiver);
+                                    values.put(MessageColumn.DB_COLUMN_GROUP_MEMBER, strSender);
+                                    break;
+                                case DataColumn.COLUMN_NUMBER_TYPE_NORMAL:
+                                    break;
+                                default:
+                                    break;
+                            }
+
+                            values.put(MessageColumn.DB_COLUMN_NUMBER_TYPE, nNumberType);
+                            values.put(MessageColumn.DB_COLUMN_MSG, strMsg);
+                            values.put(MessageColumn.DB_COLUMN_CREATETIME, System.currentTimeMillis());
+                            values.put(MessageColumn.DB_COLUMN_RECV, DataColumn.COLUMN_RECV_SEND);
+                            values.put(MessageColumn.DB_COLUMN_DONT_READ, DataColumn.COLUMN_DONT_READ_READ);
+                            if (bResultSuccess)
+                                values.put(MessageColumn.DB_COLUMN_STATE, DataColumn.COLUMN_STATE_SUCCESS);
+                            else
+                                values.put(MessageColumn.DB_COLUMN_STATE, DataColumn.COLUMN_STATE_FAIL);
+
+                            //컨텐트전송이면 로컬디비저장
+                            if (sendingContent) {
+                                {
+                                    values.put(MessageColumn.DB_COLUMN_DATA, imgJson.toString().getBytes());
+                                    //DataColumn.COLUMN_DATA_TYPE_JPG
+                                    String format = contentFileName.substring(contentFileName.lastIndexOf(".") + 1);
+                                    Integer dataType = 0;
+                                    if (format.equalsIgnoreCase("jpg"))
+                                        dataType = DataColumn.COLUMN_DATA_TYPE_JPG;
+                                    else if (format.equalsIgnoreCase("bmp"))
+                                        dataType = DataColumn.COLUMN_DATA_TYPE_BMP;
+                                    else if (format.equalsIgnoreCase("png"))
+                                        dataType = DataColumn.COLUMN_DATA_TYPE_PNG;
+                                    else {
+                                        //5
+                                        dataType = DataColumn.COLUMN_DATA_TYPE_UNKNOWN;
+                                    }
+                                    values.put(MessageColumn.DB_COLUMN_DATA_TYPE, dataType);
+                                }
+                            }
+                            getContentResolver().insert(DataColumn.CONTENT_URI_INSERT_MSG, values);
+                        }
+                        if (bResultSuccess == false)
+                            nResultFail++;
+                        sendingContent = false;
+                        long stop = System.currentTimeMillis();
+                        Log.d(PMCType.TAG, "[Send Success]" + bResultSuccess + " [time]" + (stop - start) + "ms");
                     }
-
-                    if (bResultSuccess == false)
-                        nResultFail++;
-
-                    long stop = System.currentTimeMillis();
-                    Log.d(PMCType.TAG, "[Send Success]" + bResultSuccess + " [time]" + (stop - start) + "ms");
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return -7;
             }
-
             Log.d(PMCType.TAG, "doInBackground end");
             return nResultFail;
+        }
+
+        private void uploadContent(IPushService binder, String phoneNum, String md5) throws Exception {
+            String token = IPushUtil.getToken(binder);
+            Log.d(PMCType.TAG, "token=" + token);
+
+            //upload
+            int responseCode = HttpRequest.head(CONTENT_UPLOAD_URL + phoneNum)
+                    .header("md5", md5)
+                    .header("token", token)
+                    .header("file", contentFileName)
+                    .code();
+            Log.d(PMCType.TAG, "컨텐트존재유무응답코드=" + responseCode);
+            if (responseCode == 409) {
+                //이미업로드됨
+                Log.d(PMCType.TAG, "컨텐트가컨텐츠서버에이미존재합니다");
+            } else if (responseCode == 404) {
+                File content = new File(contentFilePath);
+                responseCode = HttpRequest.post(CONTENT_UPLOAD_URL + phoneNum)
+                        //.trustAllCerts() //Accept all certificates
+                        //.trustAllHosts() //Accept all hostnames
+                        .header("md5", md5)
+                        .header("token", token)
+                        .header("file", contentFileName)
+                        .part("file", contentFileName, content)
+                        .code();
+                Log.d(PMCType.TAG, "컨텐트업로드응답코드=" + responseCode);
+                if (responseCode != 200 && responseCode != 409/*이미업로드됨*/) {
+                    throw new Exception("컨텐츠서버오류발생. responseCode=" + responseCode);
+                } else {
+                    Log.d(PMCType.TAG, "컨텐트업로드에성공하였습니다.");
+                }
+            } else {
+                throw new Exception("컨텐츠서버오류발생. responseCode=" + responseCode);
+            }
+            String extenstion = contentFileName.substring(contentFileName.lastIndexOf(".") + 1);
+            //이미지일경우만 썸네일을만든다.
+            //썸네일 만들어서 로컬에저장
+            if (extenstion.equals("jpg") || extenstion.equals("bmp") || extenstion.equals("png")) {
+                final int THUMBSIZE = 128;
+                Bitmap ThumbImage = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(contentFilePath),
+                        THUMBSIZE, THUMBSIZE);
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1) {
+                    Log.d(PMCType.TAG, "썸네일싸이즈=" + ThumbImage.getRowBytes() * ThumbImage.getHeight());
+                } else {
+                    Log.d(PMCType.TAG, "썸네일싸이즈=" + ThumbImage.getByteCount());
+                }
+                String root = Environment.getExternalStorageDirectory().toString();
+                File storageDir = new File(root + "/pmc/images/thumb/");
+                //create storage directories, if they don't exist
+                storageDir.mkdirs();
+                //File thumbFile = new File(root + "/pmc/images/thumb/" + md5 + ".png");
+                FileOutputStream out = null;
+                try {
+                    Log.d(PMCType.TAG, "저장위치=" + storageDir.toString() + "/" + md5 + ".png");
+                    out = new FileOutputStream(storageDir.toString() + "/" + md5 + ".png");
+                    ThumbImage.compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
+                    // PNG is a lossless format, the compression factor (100) is ignored
+                } finally {
+                    try {
+                        if (out != null) {
+                            out.close();
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                //upload thumbnail
+                responseCode = HttpRequest.head(CONTENT_UPLOAD_URL + phoneNum + "/thumb")
+                        .header("md5", md5)
+                        .header("token", token)
+                        .header("file", md5 + ".png")
+                        .code();
+                Log.d(PMCType.TAG, "썸네일이미지존재유무응답코드=" + responseCode);
+                if (responseCode == 409) {
+                    //이미업로드됨
+                    Log.d(PMCType.TAG, "썸네일이미지가컨텐츠서버에이미존재합니다");
+                } else if (responseCode == 404) {
+                    //이미지가존재하지않음
+                    File thumbFile = new File(root + "/pmc/images/thumb/" + md5 + ".png");
+                    responseCode = HttpRequest.post(CONTENT_UPLOAD_URL + phoneNum + "/thumb")
+                            //.trustAllCerts() //Accept all certificates
+                            //.trustAllHosts() //Accept all hostnames
+                            .header("md5", md5)
+                            .header("token", token)
+                            .header("file", md5 + ".png")
+                            .part("file", md5 + ".png", thumbFile)
+                            .code();
+                    Log.d(PMCType.TAG, "썸네일이미지업로드응답코드=" + responseCode);
+                    if (responseCode != 200 && responseCode != 409/*이미업로드됨*/) {
+                        throw new Exception("컨텐츠서버오류발생. responseCode=" + responseCode);
+                    } else {
+                        Log.d(PMCType.TAG, "이미지(썸네일)전송에성공하였습니다");
+                    }
+                } else {
+                    throw new Exception("컨텐츠서버오류발생. responseCode=" + responseCode);
+                }
+
+            } else {
+                //이미지가 아님
+                Log.d(PMCType.TAG, "이미지가아니라썸네일을만들지않습니다.");
+            }
         }
 
         @Override
@@ -1602,7 +1767,9 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
             } else if (result == RESULT_MSG_NO_UFMI) {
                 Toast.makeText(m_context, R.string.disconnect_init_account, Toast.LENGTH_LONG).show();
             } else if (result == RESULT_FAIL_SENDING_IMAGE) {
-                Toast.makeText(m_context, "이미지전송에 실패하였습니다.", Toast.LENGTH_LONG).show();
+                Toast.makeText(m_context, "이미지전송에 실패하였습니다", Toast.LENGTH_LONG).show();
+            } else if (result == -7) {
+                Toast.makeText(m_context, "메시지전송에 실패하였습니다", Toast.LENGTH_LONG).show();
             } else {
                 m_alertDialog = PMCAlertDialog.createDialog(m_context, getString(R.string.exist_input_ptt));
                 m_alertDialog.show();
@@ -1623,10 +1790,44 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
         Intent i = new Intent(
                 Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-
-
         startActivityForResult(Intent.createChooser(i, "Select Picture"),
                 PICK_IMAGE);
+    }
+
+    private void showFileChooser() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("*/*");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+        try {
+            startActivityForResult(
+                    Intent.createChooser(intent, "Select a File to Upload"),
+                    FILE_SELECT_CODE);
+        } catch (android.content.ActivityNotFoundException ex) {
+            // Potentially direct the user to the Market with a Dialog
+            Toast.makeText(this, "Please install a File Manager.",
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private String getPath(Context context, Uri uri) throws URISyntaxException {
+        if ("content".equalsIgnoreCase(uri.getScheme())) {
+            String[] projection = {"_data"};
+            Cursor cursor = null;
+
+            try {
+                cursor = context.getContentResolver().query(uri, projection, null, null, null);
+                int column_index = cursor.getColumnIndexOrThrow("_data");
+                if (cursor.moveToFirst()) {
+                    return cursor.getString(column_index);
+                }
+            } catch (Exception e) {
+                // Eat it
+            }
+        } else if ("file".equalsIgnoreCase(uri.getScheme())) {
+            return uri.getPath();
+        }
+        return null;
     }
 
     private void selectFile() {
@@ -1634,45 +1835,13 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
 //        intent.setType("image/*");
 //        intent.setAction(Intent.ACTION_GET_CONTENT);
 //        startActivityForResult(intent, 2);
-
         //com.android.qrdfileexplorer
-
-
 //        Intent i = this.getPackageManager().getLaunchIntentForPackage("com.android.qrdfileexplorer");
 //        i.setType("file/*");
 //        i.setAction(Intent.ACTION_GET_CONTENT);
 //        startActivityForResult(i, 2);
 
     }
-
-//    /**
-//     * Retrives the result returned from selecting image, by invoking the method
-//     * <code>selectImageFromGallery()</code>
-//     */
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//
-//        android.util.Log.d("imageUpload", "onActivityResult시작(requestCode=" + requestCode + ", resultCode=" + resultCode + ", data=" + data + ")");
-//
-//
-//        if (requestCode == PICK_IMAGE && resultCode == RESULT_OK
-//                && null != data) {
-//            Uri selectedImage = data.getData();
-//            String[] filePathColumn = {MediaStore.Images.Media.DATA};
-//
-//            Cursor cursor = getContentResolver().query(selectedImage,
-//                    filePathColumn, null, null, null);
-//            cursor.moveToFirst();
-//
-//            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-//            String picturePath = cursor.getString(columnIndex);
-//            cursor.close();
-//
-//            decodeFile(picturePath);
-//
-//        }
-//    }
 
     /**
      * The method decodes the image file to avoid out of memory issues. Sets the
@@ -1683,37 +1852,17 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
     public void decodeFile(String filePath) {
         Log.d(PMCType.TAG, "decodeFile시작(filePath=" + filePath + ")");
 
-        this.filePath = filePath;
-        imageFileName = filePath.substring(filePath.lastIndexOf("/") + 1);
+        this.contentFilePath = filePath;
+        contentFileName = filePath.substring(filePath.lastIndexOf("/") + 1);
 
-        // Decode image size
-        BitmapFactory.Options o = new BitmapFactory.Options();
-        o.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(filePath, o);
-
-        // The new size we want to scale to
-        final int REQUIRED_SIZE = 350;
-
-        // Find the correct scale value. It should be the power of 2.
-        int width_tmp = o.outWidth, height_tmp = o.outHeight;
-        int scale = 1;
-        while (true) {
-            if (width_tmp < REQUIRED_SIZE && height_tmp < REQUIRED_SIZE)
-                break;
-            width_tmp /= 2;
-            height_tmp /= 2;
-            scale *= 2;
-        }
-
-        // Decode with inSampleSize
-        BitmapFactory.Options o2 = new BitmapFactory.Options();
-        o2.inSampleSize = scale;
-        bitmap = BitmapFactory.decodeFile(filePath, o2);
-
-        imageView.setImageBitmap(bitmap);
-        imageView.bringToFront();
-        m_etNewMsg.setVisibility(View.GONE);
-        imageSend = true;
+        //클립이미지
+        imageView.setVisibility(View.VISIBLE);
+        sendingContent = true;
+        String title = getResources().getString(R.string.title_new_activity);
+        this.setTitle(title + "(MMS)");
+        Vibrator vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        vibe.vibrate(500);
+        Log.d(PMCType.TAG, "decodeFile종료()");
     }
 
     /**

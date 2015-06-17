@@ -2,9 +2,11 @@ package com.bns.pmc;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.LoaderManager;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.app.NotificationManager;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
@@ -18,6 +20,9 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.StrictMode;
+import android.os.SystemClock;
 import android.text.TextUtils;
 import android.text.style.URLSpan;
 import android.view.KeyEvent;
@@ -41,7 +46,11 @@ import com.bns.pmc.util.Configure;
 import com.bns.pmc.util.IPushUtil;
 import com.bns.pmc.util.Log;
 import com.bns.pmc.util.PMCType;
+import com.github.kevinsawicki.http.HttpRequest;
 
+import org.json.JSONObject;
+
+import java.io.File;
 import java.util.ArrayList;
 
 import kr.co.adflow.push.IPushService;
@@ -50,6 +59,10 @@ public class TalkActivity extends Activity implements LoaderCallbacks<Cursor> {
     // Static
     public static String s_strCurrNumber = null;
     public static boolean s_bNew = false;
+    // Progress Dialog Object
+    private ProgressDialog prgDialog;
+    // Progress Dialog type (0 - for Horizontal progress bar)
+    public static final int progress_bar_type = 0;
 
     private Context m_context = this;
     private Configure m_configure;
@@ -130,6 +143,7 @@ public class TalkActivity extends Activity implements LoaderCallbacks<Cursor> {
         processAck(m_strNumber);
 
         m_listView = (ListView) findViewById(R.id.listView_talk);
+
         TextView tvBtLeft = (TextView) findViewById(R.id.bottom_button_left);
         TextView tvBtRight = (TextView) findViewById(R.id.bottom_button_right);
         tvBtLeft.setText(R.string.reply);
@@ -163,6 +177,7 @@ public class TalkActivity extends Activity implements LoaderCallbacks<Cursor> {
 
 
         tvBtRight.setText(R.string.back);
+        //tvBtRight.setFocusable(false);
         tvBtRight.setTextColor(list);
         //tvBtLeft.setClickable(true);
         //tvBtLeft.setFocusableInTouchMode(true);
@@ -180,8 +195,11 @@ public class TalkActivity extends Activity implements LoaderCallbacks<Cursor> {
 
 
         // 관제 메시지일 때 reply가 표시되지 않도록 설정.
-        if (m_bControl)
+        if (m_bControl) {
+            tvBtLeft.setFocusable(false);
+            tvBtLeft.setEnabled(false);
             tvBtLeft.setText("");
+        }
 
         // notiNew
         m_tvNotiNew = (TextView) findViewById(R.id.textView_notiNewMsg);
@@ -225,6 +243,147 @@ public class TalkActivity extends Activity implements LoaderCallbacks<Cursor> {
                 } else {
                     textView = (TextView) view.findViewById(R.id.textView_talk_yourmsg);
                 }
+
+                //testCode
+                byte[] data = cursor.getBlob((cursor.getColumnIndex(MessageColumn.DB_COLUMN_DATA)));
+                if (data != null) {
+                    String obj = new String(data);
+                    Log.i(PMCType.TAG, "data=" + obj);
+                    int dataFormat = cursor.getInt((cursor.getColumnIndex(MessageColumn.DB_COLUMN_DATA_TYPE)));
+
+                    //이미지일경우 뷰어로 보여준다.
+                    if (dataFormat == DataColumn.COLUMN_DATA_TYPE_JPG
+                            || dataFormat == DataColumn.COLUMN_DATA_TYPE_BMP
+                            || dataFormat == DataColumn.COLUMN_DATA_TYPE_PNG) {
+                        try {
+                            //파일존재유무체크하고
+                            String root = Environment.getExternalStorageDirectory().toString();
+                            File storageDir = new File(root + "/pmc/images/");
+                            JSONObject json = new JSONObject(obj);
+                            File file = new File(storageDir, json.getString("name") + "." + json.getString("format"));
+                            if (!file.exists()) {
+                                Log.d(PMCType.TAG, "로컬에파일존재하지않습니다");
+                                //없으면 다운로드후 viewing
+                                String token = IPushUtil.getToken(PMCService.m_Binder);
+                                Log.d(PMCType.TAG, "token=" + token);
+                                setStrictMode();
+                                //download
+                                JSONObject jsonData = new JSONObject();
+                                jsonData.put("url", NewActivity.CONTENT_UPLOAD_URL + json.getString("user") + "/" + json.getString("name") + "." + json.getString("format"));
+                                jsonData.put("path", root + "/pmc/images/" + json.getString("name") + "." + json.getString("format"));
+                                jsonData.put("file", "file://" + storageDir + "/" + json.getString("name") + "." + json.getString("format"));
+                                jsonData.put("format", json.getString("format"));
+                                jsonData.put("token", token);
+                                new DownloadFromCTS().execute(jsonData);
+//                                HttpRequest request = HttpRequest.get(NewActivity.CONTENT_UPLOAD_URL + json.getString("user") + "/" + json.getString("name") + "." + json.getString("format"))
+//                                        .header("token", token);
+//                                Log.d(PMCType.TAG, "이미지다운로드응답코드=" + request.code());
+//
+//                                if (request.ok()) {
+//                                    File output = new File(root + "/pmc/images/" + json.getString("name") + "." + json.getString("format"));
+//                                    request.receive(output);
+//                                }
+                            } else {
+                                //존재하면 바로 viewing
+                                Log.d(PMCType.TAG, "로컬에파일존재합니다");
+                                Intent intent = new Intent();
+                                intent.setAction(Intent.ACTION_VIEW);
+                                intent.setDataAndType(Uri.parse("file://" + storageDir + "/" + json.getString("name") + "." + json.getString("format")), "image/*");
+                                startActivity(intent);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Log.e(PMCType.TAG, "에러발생" + e);
+                        }
+                    } else {
+                        //이미지가아니지만 첨부파일이 있는경우
+                        //로컬 다운로드
+                        try {
+                            String root = Environment.getExternalStorageDirectory().toString();
+                            File storageDir = new File(root + "/pmc/files/");
+                            JSONObject json = new JSONObject(obj);
+                            File file = new File(storageDir, json.getString("name") + "." + json.getString("format"));
+                            if (!file.exists()) {
+                                Log.d(PMCType.TAG, "로컬에파일존재하지않습니다");
+                                //없으면 다운로드
+                                String token = IPushUtil.getToken(PMCService.m_Binder);
+                                Log.d(PMCType.TAG, "token=" + token);
+                                setStrictMode();
+                                //download
+                                //download
+                                JSONObject jsonData = new JSONObject();
+                                jsonData.put("url", NewActivity.CONTENT_UPLOAD_URL + json.getString("user") + "/" + json.getString("name") + "." + json.getString("format"));
+                                jsonData.put("path", root + "/pmc/files/" + json.getString("name") + "." + json.getString("format"));
+                                jsonData.put("file", "file://" + storageDir + "/" + json.getString("name") + "." + json.getString("format"));
+                                jsonData.put("format", json.getString("format"));
+                                jsonData.put("token", token);
+                                new DownloadFromCTS().execute(jsonData);
+
+//                                HttpRequest request = HttpRequest.get(NewActivity.CONTENT_UPLOAD_URL + json.getString("user") + "/" + json.getString("name") + "." + json.getString("format"))
+//                                        .header("token", token);
+//                                Log.d(PMCType.TAG, "이미지다운로드응답코드=" + request.code());
+//
+//                                if (request.ok()) {
+//                                    File output = new File(root + "/pmc/files/" + json.getString("name") + "." + json.getString("format"));
+//                                    request.receive(output);
+//                                    m_adapter.notifyDataSetChanged();
+//                                }
+                            } else {
+                                Log.d(PMCType.TAG, "로컬에파일존재합니다");
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+
+//                        String root = Environment.getExternalStorageDirectory().toString();
+//                        File storageDir = new File(root + "/pmc/images/");
+//                        JSONObject json = null;
+//
+//
+//                        try {
+//                            //Uri uri = Uri.fromFile(file);
+//                            json = new JSONObject(obj);
+//                            Intent intent = new Intent(Intent.ACTION_VIEW);
+//                            intent.setClassName("com.android.htmlviewer", "com.android.htmlviewer.HTMLViewerActivity");
+//                            intent.setDataAndType(Uri.parse("file://" + storageDir + "/" + json.getString("name") + "." + json.getString("format")), "text/plain");
+//                            startActivity(intent);
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                        }
+
+//                        Intent explicitIntent = null;
+//                        // Package 설치여부 확인
+//                        PackageManager pm = getPackageManager();
+//                        try {
+//                            json = new JSONObject(obj);
+//                            ApplicationInfo appInfo = pm.getApplicationInfo("com.android.htmlviewer", PackageManager.GET_META_DATA);
+//                            Log.d(PMCType.TAG, "appInfo=" + appInfo);
+//
+//                            Intent implicitIntent = new Intent("com.android.htmlviewer.HTMLViewerActivity");
+//                            List<ResolveInfo> resolveInfos = pm.queryIntentServices(implicitIntent, 0);
+//
+//                            Log.d(PMCType.TAG, "resolveInfos=" + resolveInfos);
+//
+//                            ResolveInfo resolveInfo = resolveInfos.get(0);
+//                            String packageName = resolveInfo.serviceInfo.packageName;
+//                            Log.d(PMCType.TAG, "packageName=" + packageName);
+//                            String className = resolveInfo.serviceInfo.name;
+//                            Log.d(PMCType.TAG, "className=" + className);
+//                            ComponentName component = new ComponentName(packageName, className);
+//                            explicitIntent = new Intent();
+//                            explicitIntent.setComponent(component);
+//                            explicitIntent.setAction(Intent.ACTION_VIEW);
+//                            explicitIntent.setDataAndType(Uri.parse("file://" + storageDir + "/" + json.getString("name") + "." + json.getString("format")), "text/plain");
+//                            Log.d(PMCType.TAG, "explicitIntent=" + explicitIntent);
+//                            startActivity(explicitIntent);
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                        }
+                    }
+                }
+                //MessageColumn.DB_COLUMN_DATA, imgJson.toString().getBytes()
+                //testCodeEnd
 
                 URLSpan[] uriSpan = textView.getUrls();
                 if (uriSpan.length != 0) {
@@ -359,7 +518,6 @@ public class TalkActivity extends Activity implements LoaderCallbacks<Cursor> {
         // and will report this new data back to the 'mCallbacks' object.
         LoaderManager lm = getLoaderManager();
         lm.initLoader(LOADER_ID, null, m_Callbacks);
-
     }
 
     @Override
@@ -428,6 +586,24 @@ public class TalkActivity extends Activity implements LoaderCallbacks<Cursor> {
             }
         }
         return super.dispatchKeyEvent(event);
+    }
+
+    // Show Dialog Box with Progress bar
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        switch (id) {
+            case progress_bar_type:
+                prgDialog = new ProgressDialog(this);
+                prgDialog.setMessage("다운로드 중...");
+                prgDialog.setIndeterminate(false);
+                prgDialog.setMax(100);
+                prgDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                prgDialog.setCancelable(false);
+                prgDialog.show();
+                return prgDialog;
+            default:
+                return null;
+        }
     }
 
     @Override
@@ -502,8 +678,6 @@ public class TalkActivity extends Activity implements LoaderCallbacks<Cursor> {
                 } else {
                     m_tvNotiNew.setVisibility(View.GONE);
                 }
-
-
                 break;
         }
         // The listview now displays the queried data.
@@ -648,6 +822,13 @@ public class TalkActivity extends Activity implements LoaderCallbacks<Cursor> {
             Intent i = new Intent(m_context, NewActivity.class);
             i.setAction(PMCType.BNS_PMC_ACTION_NEWMSG_FORWARDING);
             i.putExtra(PMCType.BNS_PMC_INTENT_EXTRA_CONTENT, strMsg);
+            //첨부파일일경우 데이타 넣어줘야함
+            byte[] data = c.getBlob(c.getColumnIndex(MessageColumn.DB_COLUMN_DATA));
+            if (data != null) {
+                i.putExtra("data", data);
+                int type = c.getInt(c.getColumnIndex(MessageColumn.DB_COLUMN_DATA_TYPE));
+                i.putExtra("dataType", type);
+            }
             startActivityForResult(i, 101);
         }
         Log.d(PMCType.TAG, "optionForwarding종료()");
@@ -705,6 +886,108 @@ public class TalkActivity extends Activity implements LoaderCallbacks<Cursor> {
         protected void onPostExecute(Integer result) {
             Toast.makeText(m_context, R.string.delete_popup_result_true, Toast.LENGTH_SHORT).show();
             TalkActivity.this.finish();
+        }
+    }
+
+    /**
+     *
+     */
+    private void setStrictMode() {
+        //android.util.Log.d(TAG, "setStrictMode시작()");
+        if (android.os.Build.VERSION.SDK_INT > 9) {
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+        }
+        // android.util.Log.d(TAG, "setStrictMode종료()");
+    }
+
+    // Async Task Class
+    class DownloadFromCTS extends AsyncTask<JSONObject, String, JSONObject> {
+
+        // Show Progress bar before downloading Music
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            // Shows Progress Bar Dialog and then call doInBackground method
+            showDialog(progress_bar_type);
+        }
+
+        // Download Music File from Internet
+        @Override
+        protected JSONObject doInBackground(JSONObject... data) {
+            try {
+                Log.d(PMCType.TAG, "doInBackground시작(data=" + data + ")");
+                Log.d(PMCType.TAG, "url=" + data[0].getString("url"));
+                Log.d(PMCType.TAG, "token=" + data[0].getString("token"));
+                Log.d(PMCType.TAG, "path=" + data[0].getString("path"));
+                final HttpRequest request = HttpRequest.get(data[0].getString("url")).header("token", data[0].getString("token"));
+                final File file = new File(data[0].getString("path"));
+
+                //root + "/pmc/images/" + json.getString("name") + "." + json.getString("format"));
+                Log.d(PMCType.TAG, "responseCode=" + request.ok());
+                if (request.ok()) {
+                    new Thread() {
+                        @Override
+                        public void run() {
+                            while (request.getConnection().getContentLength() != file.length()) {
+                                double totallength = request.getConnection().getContentLength();
+                                double downloadLength = file.length();
+                                Log.d(PMCType.TAG, "실제파일크기=" + totallength);
+                                Log.d(PMCType.TAG, "받은파일크기=" + downloadLength);
+                                //Log.d(PMCType.TAG, "다운로드퍼센트=" + Math.round((downloadLength / totallength * 100)));
+                                publishProgress("" + Math.round((downloadLength / totallength * 100)));
+                                SystemClock.sleep(800);
+                            }
+                        }
+                    }.start();
+                    request.receive(file);
+                    Log.d(PMCType.TAG, "컨텐트다운로드완료");
+                }
+                //"file://" + storageDir + "/" + json.getString("name") + "." + json.getString("format")
+                Log.d(PMCType.TAG, "doInBackground종료(return=" + data[0] + ")");
+                return data[0];
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        // While Downloading Music File
+        protected void onProgressUpdate(String... progress) {
+            // Set progress percentage
+            prgDialog.setProgress(Integer.parseInt(progress[0]));
+        }
+
+        // Once Music File is downloaded
+        @Override
+        protected void onPostExecute(JSONObject data) {
+            Log.d(PMCType.TAG, "onPostExecute시작(data=" + data + ")");
+            // Dismiss the dialog after the Music file was downloaded
+            dismissDialog(progress_bar_type);
+            //Toast.makeText(getApplicationContext(), "Download complete, playing Music", Toast.LENGTH_LONG).show();
+            // Play the music
+            //playMusic();
+            if (data != null) {
+                try {
+                    if (data.getString("format").equals("jpg")
+                            || data.getString("format").equals("bmp")
+                            || data.getString("format").equals("png")) {
+                        Intent intent = new Intent();
+                        intent.setAction(Intent.ACTION_VIEW);
+                        //"file://" + storageDir + "/" + json.getString("name") + "." + json.getString("format")
+                        intent.setDataAndType(Uri.parse(data.getString("file")), "image/*");
+                        Log.d(PMCType.TAG, "이미지뷰어호출");
+                        startActivity(intent);
+                    } else {
+                        //각종파일뷰어처리의 시작점..
+                    }
+                    Log.d(PMCType.TAG, "어댑터노티호출");
+                    m_adapter.notifyDataSetChanged();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            Log.d(PMCType.TAG, "onPostExecute종료()");
         }
     }
 }

@@ -7,6 +7,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Environment;
+import android.os.StrictMode;
 import android.text.TextUtils;
 import android.text.util.Linkify;
 import android.view.LayoutInflater;
@@ -16,14 +18,22 @@ import android.widget.CursorAdapter;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bns.pmc.NewActivity;
 import com.bns.pmc.R;
 import com.bns.pmc.provider.DataColumn;
 import com.bns.pmc.provider.DataColumn.MessageColumn;
+import com.bns.pmc.receiver.PMCService;
 import com.bns.pmc.util.CommonUtil;
 import com.bns.pmc.util.Configure;
+import com.bns.pmc.util.IPushUtil;
 import com.bns.pmc.util.Log;
 import com.bns.pmc.util.PMCType;
+import com.github.kevinsawicki.http.HttpRequest;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
 import java.util.regex.Pattern;
 
 public class TalkAdapter extends CursorAdapter {
@@ -42,6 +52,7 @@ public class TalkAdapter extends CursorAdapter {
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
+        Log.i(PMCType.TAG, "newView시작(context=" + context + ", cursor=" + cursor + ", parent=" + parent);
         LayoutInflater layInflater = LayoutInflater.from(context);
         View v = layInflater.inflate(R.layout.item_talk_layout, parent, false);
 
@@ -56,21 +67,52 @@ public class TalkAdapter extends CursorAdapter {
         holder.tvMytime = (TextView) v.findViewById(R.id.textView_talk_mytime);
         holder.tvYourtime = (TextView) v.findViewById(R.id.textView_talk_yourtime);
 
-        v.setTag(holder);
+        //testCode
+//        int nRecv = cursor.getInt(cursor.getColumnIndex(MessageColumn.DB_COLUMN_RECV));
+//        Log.i(PMCType.TAG, "nRecv=" + nRecv);
+//
+//        TextView tvName, tvMsg, tvTime;
+//        if (nRecv == DataColumn.COLUMN_RECV_SEND) {
+//            holder.lyout_mymsg.setVisibility(View.VISIBLE);
+//            holder.lyout_yourmsg.setVisibility(View.GONE);
+//            tvName = holder.tvMyname;
+//            tvMsg = holder.tvMymsg;
+//            tvTime = holder.tvMytime;
+//        } else {
+//            holder.lyout_mymsg.setVisibility(View.GONE);
+//            holder.lyout_yourmsg.setVisibility(View.VISIBLE);
+//            tvName = holder.tvYourname;
+//            tvMsg = holder.tvYourmsg;
+//            tvTime = holder.tvYourtime;
+//
+//        }
+//
+//        String message = cursor.getString(cursor.getColumnIndex(MessageColumn.DB_COLUMN_MSG));
+//        tvMsg.setText(message);
+        //testCodeEnd
 
+        v.setTag(holder);
+        Log.i(PMCType.TAG, "newView종료(view=" + v + ")");
         return v;
     }
 
     @Override
     public void bindView(View view, Context context, Cursor c) {
-        Log.i(PMCType.TAG, "bindView시작(view=" + view + ", context=" + context + ", cursor=" + c);
+        Log.i(PMCType.TAG, "bindView시작(view=" + view + ", context=" + context + ", cursor=" + c + ")");
         int nNumberType = c.getInt(c.getColumnIndex(MessageColumn.DB_COLUMN_NUMBER_TYPE));
+        Log.i(PMCType.TAG, "nNumberType=" + nNumberType);
         int nRecv = c.getInt(c.getColumnIndex(MessageColumn.DB_COLUMN_RECV));
+        Log.i(PMCType.TAG, "nRecv=" + nRecv);
         String strGroupMember = c.getString(c.getColumnIndex(MessageColumn.DB_COLUMN_GROUP_MEMBER));
+        Log.i(PMCType.TAG, "strGroupMember=" + strGroupMember);
         String strMsg = c.getString(c.getColumnIndex(MessageColumn.DB_COLUMN_MSG));
+        Log.i(PMCType.TAG, "strMsg=" + strMsg);
         byte[] byteData = c.getBlob(c.getColumnIndex(MessageColumn.DB_COLUMN_DATA));
+        Log.i(PMCType.TAG, "byteData=" + byteData);
         int nDataType = c.getInt(c.getColumnIndex(MessageColumn.DB_COLUMN_DATA_TYPE));
+        Log.i(PMCType.TAG, "nDataType=" + nDataType);
         int nState = c.getInt(c.getColumnIndex(MessageColumn.DB_COLUMN_STATE));
+        Log.i(PMCType.TAG, "nState=" + nState);
 
         ViewHolder holder = (ViewHolder) view.getTag();
 
@@ -120,7 +162,7 @@ public class TalkAdapter extends CursorAdapter {
             tvMsg.setTextColor(m_context.getResources().getColor(R.color.color_talk_msg));
 
         tvMsg.setText(strMsg);
-
+        Log.i(PMCType.TAG, "메시지=" + strMsg);
         tvMsg.setTextSize(CommonUtil.conv_Size(pxTextSizef, nFontpercent));
         // Message Pattern
         {
@@ -133,36 +175,122 @@ public class TalkAdapter extends CursorAdapter {
             tvMsg.setMovementMethod(null);
         }
 
-        Log.i(PMCType.TAG, "nDataType=" + nDataType);
+        Log.i(PMCType.TAG, "데이터타입=" + nDataType);
+
+        // 테스트뷰 리셋
+        tvMsg.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+
         // Data
-        if (nDataType == DataColumn.COLUMN_DATA_TYPE_JPG) {
-            Log.i(PMCType.TAG, "byteData=" + byteData);
-            //testCode
-            byteData = new byte[10];
-            //testEnd
+        if (nDataType == DataColumn.COLUMN_DATA_TYPE_JPG
+                || nDataType == DataColumn.COLUMN_DATA_TYPE_PNG
+                || nDataType == DataColumn.COLUMN_DATA_TYPE_BMP) {
             if (byteData != null) {
+                Log.i(PMCType.TAG, "데이타=" + new String(byteData));
+            }
+
+            if (byteData != null) {
+                //testCode
+                String root = Environment.getExternalStorageDirectory().toString();
+                File storageDir = new File(root + "/pmc/images/thumb/");
+                //create storage directories, if they don't exist
+                storageDir.mkdirs();
+                JSONObject obj = null;
+                String fileName = null;
+                String user = null;
+                try {
+                    obj = new JSONObject(new String(byteData));
+                    fileName = obj.getString("name");
+                    user = obj.getString("user");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                File file = new File(storageDir, fileName + ".png"); //썸네일은 PNG로 고정
+                if (file.exists()) {
+                    Log.d(PMCType.TAG, "로컬에파일이존재합니다");
+                    Bitmap bitmap = BitmapFactory.decodeFile(file.toString());
+                    Drawable drawable = (Drawable) (new BitmapDrawable(m_context.getResources(), bitmap));
+                    tvMsg.setCompoundDrawablePadding(10);
+                    tvMsg.setCompoundDrawablesWithIntrinsicBounds(null, null, null, drawable);
+                } else {
+                    Log.d(PMCType.TAG, "파일이존재하지않아컨텐츠서버에서다운로드합니다");
+                    //썸네일이 없으므로 컨텐츠서버에서 다운로드함
+                    try {
+                        String token = IPushUtil.getToken(PMCService.m_Binder);
+                        Log.d(PMCType.TAG, "token=" + token);
+                        setStrictMode();
+                        //download
+                        HttpRequest request = HttpRequest.get(NewActivity.CONTENT_UPLOAD_URL + user + "/thumb/" + fileName + ".png")
+                                .header("token", token);
+                        Log.d(PMCType.TAG, "이미지다운로드응답코드=" + request.code());
+
+                        if (request.ok()) {
+                            File output = new File(root + "/pmc/images/thumb/" + fileName + ".png");
+                            request.receive(output);
+                            Bitmap bitmap = BitmapFactory.decodeFile(output.toString());
+                            Drawable drawable = (Drawable) (new BitmapDrawable(m_context.getResources(), bitmap));
+                            tvMsg.setCompoundDrawablePadding(10);
+                            tvMsg.setCompoundDrawablesWithIntrinsicBounds(null, null, null, drawable);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.e(PMCType.TAG, "에러발생=" + e);
+                    }
+                }
+                //testCodeEnd
+
+
 //                Bitmap Image = BitmapFactory.decodeByteArray(byteData, 0, byteData.length);
 //                Bitmap resizeImg = createThumbnail(Image);
 //                Drawable drawable = (Drawable) (new BitmapDrawable(m_context.getResources(), resizeImg));
 //                tvMsg.setCompoundDrawablePadding(10);
 //                tvMsg.setCompoundDrawablesWithIntrinsicBounds(null, null, null, drawable);
-                //testCode
-                Bitmap bitmap = BitmapFactory.decodeResource(m_context.getResources(), R.raw.android);
-                //ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                //bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-                //Bitmap resizeImg = createThumbnail(bitmap);
-                Drawable drawable = (Drawable) (new BitmapDrawable(m_context.getResources(), bitmap));
-                tvMsg.setCompoundDrawablePadding(10);
-                tvMsg.setCompoundDrawablesWithIntrinsicBounds(null, null, null, drawable);
+//                //testCode
+//                Bitmap bitmap = BitmapFactory.decodeResource(m_context.getResources(), R.raw.android);
+//                //ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//                //bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+//                //Bitmap resizeImg = createThumbnail(bitmap);
+//                Drawable drawable = (Drawable) (new BitmapDrawable(m_context.getResources(), bitmap));
+//                tvMsg.setCompoundDrawablePadding(10);
+//                tvMsg.setCompoundDrawablesWithIntrinsicBounds(null, null, null, drawable);
                 //testEnd
             }
-        } else if (nDataType == DataColumn.COLUMN_DATA_TYPE_MP3) {
-            // 구현필요
+        } else {
+            if (byteData != null) {
+                Log.i(PMCType.TAG, "데이타=" + new String(byteData));
+                //로컬파일이 존재하면 파일아이콘으로
+                //아니면 다운로드 아이콘으로
+                String root = Environment.getExternalStorageDirectory().toString();
+                File storageDir = new File(root + "/pmc/files/");
+                //create storage directories, if they don't exist
+                storageDir.mkdirs();
+
+                JSONObject obj = null;
+                String fileName = null;
+                String format = null;
+                try {
+                    obj = new JSONObject(new String(byteData));
+                    fileName = obj.getString("name");
+                    format = obj.getString("format");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                File file = new File(storageDir, fileName + "." + format);
+                if (file.exists()) {
+                    tvMsg.setCompoundDrawablePadding(10);
+                    tvMsg.setCompoundDrawablesWithIntrinsicBounds(null, null, null, m_context.getResources().getDrawable(R.drawable.ic_description_white_48dp));
+                } else {
+                    tvMsg.setCompoundDrawablePadding(10);
+                    tvMsg.setCompoundDrawablesWithIntrinsicBounds(null, null, null, m_context.getResources().getDrawable(R.drawable.ic_get_app_white_48dp));
+                }
+
+            }
         }
         // create Time
         long createTimel = c.getLong(c.getColumnIndex(MessageColumn.DB_COLUMN_CREATETIME));
         String strTime = CommonUtil.conv_DateTime(m_context, createTimel);
         tvTime.setText(strTime);
+
+        Log.i(PMCType.TAG, "bindView종료()");
     }
 
     public Bitmap createThumbnail(Bitmap bitmap) {
@@ -184,5 +312,17 @@ public class TalkAdapter extends CursorAdapter {
         public TextView tvYourmsg;
         public TextView tvMytime;
         public TextView tvYourtime;
+    }
+
+    /**
+     *
+     */
+    private void setStrictMode() {
+        //android.util.Log.d(TAG, "setStrictMode시작()");
+        if (android.os.Build.VERSION.SDK_INT > 9) {
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+        }
+        // android.util.Log.d(TAG, "setStrictMode종료()");
     }
 }

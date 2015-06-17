@@ -4,17 +4,28 @@
     android:layout_height="match_parent"
     tools:context="${relativePackage}.${activityClass}">
 
-    <RelativeLayout
+    <FrameLayout
         android:id="@+id/linearLayout_new_msg"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
+        <!--android:layout_centerHorizontal="true"
+        android:orientation="vertical"-->
+
+        <!-- <ImageView
+                    android:id="@+id/image"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content" /> -->
         <ImageView
             android:id="@+id/image"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|bottom"
+            android:layout_marginBottom="12dp"
+            android:layout_marginRight="2dp"
+            android:visibility="gone"
+            android:background="@drawable/ic_attach_file_white_24dp" />
+        <!--android:layout_margin="5dp,10dp,15dp,20dp"-->
 
         <EditText
             android:id="@+id/editText_new_msg"
@@ -34,7 +45,7 @@
         </EditText>
 
 
-    </RelativeLayout>
+    </FrameLayout>
 
     <RelativeLayout
         android:layout_width="fill_parent"
