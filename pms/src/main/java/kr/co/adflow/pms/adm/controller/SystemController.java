@@ -264,6 +264,36 @@ public class SystemController extends BaseController {
 		return res;
 
 	}
+	
+	
+	/**
+	 * Update user password reset.
+	 *
+	 * @param userId the user id
+	 * @param user the user
+	 * @param appKey the app key
+	 * @return the response
+	 */
+	@RequestMapping(value = "/users/{userId}/resetpw", method = RequestMethod.PUT, consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
+	@ResponseBody
+	public Response<Result<List<String>>> passwordReset(
+			@PathVariable("userId") String userId,
+			@RequestBody PasswordReq req,
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey) throws Exception {
+
+		int resultCnt = systemService.resetPassword(req, userId, appKey);
+
+		List<String> messages = new ArrayList<String>();
+		messages.add("resetPassword SUCCESS :" + resultCnt);
+
+		Result<List<String>> result = new Result<List<String>>();
+		result.setSuccess(true);
+		result.setInfo(messages);
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		Response<Result<List<String>>> res = new Response(result);
+		return res;
+
+	}
 
 	/**
 	 * Delete user.

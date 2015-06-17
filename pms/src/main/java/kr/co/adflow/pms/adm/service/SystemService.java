@@ -6,6 +6,7 @@ package kr.co.adflow.pms.adm.service;
 import java.util.List;
 import java.util.Map;
 
+import kr.co.adflow.pms.adm.request.PasswordReq;
 import kr.co.adflow.pms.adm.request.ReservationCancelReq;
 import kr.co.adflow.pms.adm.request.UserReq;
 import kr.co.adflow.pms.adm.request.UserUpdateReq;
@@ -113,6 +114,17 @@ public interface SystemService {
 			String appKey,
 			String keyMon, 
 			String issueId) throws Exception;
+
+	
+	/**
+	 * User password reset.
+	 *
+	 * @param appKey the app key
+	 * @param PasswordReq the req
+	 * @param String the userId
+	 * @return the int
+	 */
+	public int resetPassword(PasswordReq req,String userId, String appKey)  throws Exception;
 	
 	/**
 	 * Test.

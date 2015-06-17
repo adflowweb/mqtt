@@ -147,6 +147,12 @@
 		AND a.password = #{password}
 		AND a.status = 0
 	</select>
+	
+	<select id="selectUser" parameterType="String" resultType="String">
+		SELECT user_id
+		FROM pms.user a
+		WHERE a.user_id = #{userId}
+	</select>
 
 	<update id="updateUserStatus" parameterType="kr.co.adflow.pms.domain.User">
 		UPDATE pms.user

@@ -43,7 +43,7 @@
 		<result property="ufmi" column="ufmi" />
 	</resultMap>
 	
-	<select id="getCallbackList" parameterType="Map"
+<!-- 	<select id="getCallbackList" parameterType="Map"
 		resultMap="AckCallbackResult">
 		SELECT a.msg_id 
 		, a.ack_type
@@ -72,6 +72,35 @@
 		AND d.token_type = 'A'
 		AND a.token_id = i.tokenid 
 		AND i.userid = j.userid
+		ORDER BY a.issue_time ASC 
+		limit #{limit}
+	</select> -->
+	
+	
+	<select id="getCallbackList" parameterType="Map"
+		resultMap="AckCallbackResult">
+		SELECT a.msg_id 
+		, a.ack_type
+		, a.ack_time
+		, a.token_id
+		, a.callback_status
+		, a.callback_count
+		, b.receiver
+		, b.issue_id
+		, c.callback_url
+		, c.callback_method
+		, c.callback_count_limit
+		, d.token_id AS app_key
+		FROM pms.ack${keyMon} a
+			,pms.message${keyMon} b
+			,user c
+			,token d
+		WHERE a.msg_id = b.msg_id 
+		AND b.issue_id = c.user_id
+		AND a.callback_status = 0
+		AND a.server_id = #{serverId}
+		AND c.user_id = d.user_id
+		AND d.token_type = 'A'
 		ORDER BY a.issue_time ASC 
 		limit #{limit}
 	</select>

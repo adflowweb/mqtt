@@ -61,6 +61,14 @@ public interface UserMapper {
 	 * @return the user
 	 */
 	User selectAuth(User user);
+	
+	/**
+	 * Select user.
+	 *
+	 * @param userid the user id
+	 * @return the user id
+	 */
+	String selectUser(String userId);
 
 	/**
 	 * List all.
