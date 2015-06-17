@@ -131,15 +131,15 @@ public class PushServiceImpl extends Service implements PushService {
         }
 
         @Override
-        public String sendMsgWithOpts(String sender, String receiver, int qos, String contentType, String content, int contentLength, int expiry) throws RemoteException {
+        public String sendMsgWithOpts(String sender, String receiver, int qos, String contentType, String content, int contentLength, int expiry, boolean mms) throws RemoteException {
             Log.d(TAG, "sendMsgWithOpts시작(sender=" + sender + ", receiver=" + receiver + ", qos="
-                    + qos + ", contentType=" + contentType + ", content=" + content + ", contentLength=" + contentLength + ", expiry=" + expiry + ")");
+                    + qos + ", contentType=" + contentType + ", content=" + content + ", contentLength=" + contentLength + ", expiry=" + expiry + ", mms=" + mms + ")");
 
             long start = System.currentTimeMillis();
             JSONObject returnData = new JSONObject();
             JSONObject res = new JSONObject();
             try {
-                String result = PushServiceImpl.getInstance().sendMsgWithOpts(sender, receiver, qos, contentType, content, contentLength, expiry);
+                String result = PushServiceImpl.getInstance().sendMsgWithOpts(sender, receiver, qos, contentType, content, contentLength, expiry, mms);
                 Log.d(TAG, "sendMsgWithOpts종료(result=" + result + ")");
                 long stop = System.currentTimeMillis();
                 Log.d(TAG, "걸린시간=" + (stop - start) + "ms");
@@ -979,10 +979,10 @@ public class PushServiceImpl extends Service implements PushService {
         return ret;
     }
 
-    public String sendMsgWithOpts(String sender, String receiver, int qos, String contentType, String content, int contentLength, int expiry) throws Exception {
+    public String sendMsgWithOpts(String sender, String receiver, int qos, String contentType, String content, int contentLength, int expiry, boolean mms) throws Exception {
         Log.d(TAG, "sendMsgWithOpts시작(sender=" + sender + ", receiver=" + receiver + ", qos="
-                + qos + ", contentType=" + contentType + ", content=" + content + ", contentLength=" + contentLength + ", expiry=" + expiry + ")");
-        String ret = pushHandler.sendMsgWithOpts(sender, receiver, qos, contentType, content, contentLength, expiry);
+                + qos + ", contentType=" + contentType + ", content=" + content + ", contentLength=" + contentLength + ", expiry=" + expiry + ", mms=" + mms + ")");
+        String ret = pushHandler.sendMsgWithOpts(sender, receiver, qos, contentType, content, contentLength, expiry, mms);
         Log.d(TAG, "sendMsgWithOpts종료(return=" + ret + ")");
         return ret;
     }

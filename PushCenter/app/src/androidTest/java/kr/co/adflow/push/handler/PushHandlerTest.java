@@ -275,7 +275,7 @@ public class PushHandlerTest extends AndroidTestCase {
     @Test
     public void testSendMsgWithOpts() throws Exception {
         Log.d("PushHandlerTest", "testSendMsgWithOpts시작()");
-        String response = handler.sendMsgWithOpts("mms/P1/82/50/p1206", "mms/P1/82/50/p1212", 2, "application/base64", "eyJzdHIiOiLqsIAiLCJyY3YiOiI4Mio1MCoxMjEyIiwic25kIjoiODIqNTAqMTIxMiJ9", 100 /*contentLength*/, 600);
+        String response = handler.sendMsgWithOpts("mms/P1/82/50/p1206", "mms/P1/82/50/p1212", 2, "application/base64", "eyJzdHIiOiLqsIAiLCJyY3YiOiI4Mio1MCoxMjEyIiwic25kIjoiODIqNTAqMTIxMiJ9", 100 /*contentLength*/, 600, false);
         System.out.println("response=" + response);
         JSONAssert.assertEquals("{\"result\":{\"success\":true,\"info\":[\"receiver=mms/P1/82/50/p1212\",\"content=eyJzdHIiOiLqsIAiLCJyY3YiOiI4Mio1MCoxMjEyIiwic25kIjoiODIqNTAqMTIxMiJ9\"]}}", response, true);
         Log.d("PushHandlerTest", "testSendMsgWithOpts종료()");

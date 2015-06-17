@@ -637,6 +637,18 @@ public class PushHandler implements MqttCallback {
         i.putExtra("contentType", data.getString("contentType"));
         i.putExtra("content", data.getString("content"));
 
+        if (data.has("fileName")) {
+            i.putExtra("fileName", data.getString("fileName"));
+        }
+
+        if (data.has("fileFormat")) {
+            i.putExtra("fileFormat", data.getString("fileFormat"));
+        }
+
+        if (data.has("issueId")) {
+            i.putExtra("issueId", data.getString("issueId"));
+        }
+
         if (data.has("ack")) {
             i.putExtra("ack", data.getInt("ack"));
         } else {
@@ -1045,9 +1057,9 @@ public class PushHandler implements MqttCallback {
 
 
     public String sendMsgWithOpts(String sender, String receiver, int qos, String contentType, String
-            content, int contentLength, int expiry) throws Exception {
+            content, int contentLength, int expiry, boolean mms) throws Exception {
         Log.d(TAG, "sendMsgWithOpts시작(sender=" + sender + ", receiver=" + receiver + ", qos="
-                + qos + ", contentType=" + contentType + ", content=" + content + ", contentLength=" + contentLength + ", expiry=" + expiry + ", thread=" + Thread.currentThread() + ")");
+                + qos + ", contentType=" + contentType + ", content=" + content + ", contentLength=" + contentLength + ", expiry=" + expiry + ", thread=" + Thread.currentThread() + ", mms=" + mms + ")");
 
         //setMode
         setStrictMode();
@@ -1065,6 +1077,9 @@ public class PushHandler implements MqttCallback {
         data.put("content", content);
         data.put("contentLength", contentLength);
         data.put("expiry", expiry);
+        if (mms) {
+            data.put("mms", mms);
+        }
         Log.d(TAG, "data=" + data);
 
         Log.d(TAG, "X-Application-Key=" + currentToken);
