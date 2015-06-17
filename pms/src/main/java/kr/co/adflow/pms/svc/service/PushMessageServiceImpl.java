@@ -129,6 +129,8 @@ public class PushMessageServiceImpl implements PushMessageService {
 		msg.setAck(pmsConfig.MESSAGE_ACK_DEFAULT);
 		msg.setContentType(message.getContentType());
 		msg.setContent(message.getContent());
+		msg.setFileFormat(message.getFileFormat());
+		msg.setFileName(message.getFileName());
 		
 		if (message.getReservationTime() != null) {
 			msg.setReservationTime(message.getReservationTime());
@@ -149,10 +151,15 @@ public class PushMessageServiceImpl implements PushMessageService {
 		msg.setMsgSize(message.getContentLength());
 		
 		// TMS:0, MMS:1
-		if (msg.getMsgSize() > 140) {
+		if (message.isMms()) {
 			msg.setMediaType(1);
 		} else {
-			msg.setMediaType(0);
+			if (msg.getMsgSize() > 140) {
+				msg.setMediaType(1);
+			} else {
+				msg.setMediaType(0);
+			}
+
 		}
 				
 
@@ -257,6 +264,8 @@ public class PushMessageServiceImpl implements PushMessageService {
 		msg.setServiceId(pmsConfig.MESSAGE_SERVICE_ID_DEFAULT);
 		msg.setAck(pmsConfig.MESSAGE_ACK_DEFAULT);
 		msg.setContentType(addressMsg.getContentType());
+		msg.setFileFormat(addressMsg.getFileFormat());
+		msg.setFileName(addressMsg.getFileName());
 		
 		
 		if (addressMsg.getReservationTime() != null) {
@@ -303,10 +312,15 @@ public class PushMessageServiceImpl implements PushMessageService {
 			msg.setMsgSize(adressMessage.getContentLength());
 			
 			// TMS:0, MMS:1
-			if (msg.getMsgSize() > 140) {
+			if (addressMsg.isMms()) {
 				msg.setMediaType(1);
 			} else {
-				msg.setMediaType(0);
+				if (msg.getMsgSize() > 140) {
+					msg.setMediaType(1);
+				} else {
+					msg.setMediaType(0);
+				}
+
 			}
 
 			

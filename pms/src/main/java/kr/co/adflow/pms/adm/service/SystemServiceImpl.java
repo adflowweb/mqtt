@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.io.*;
 
+import kr.co.adflow.pms.adm.request.PasswordReq;
 import kr.co.adflow.pms.adm.request.ReservationCancelReq;
 import kr.co.adflow.pms.adm.request.UserReq;
 import kr.co.adflow.pms.adm.request.UserUpdateReq;
@@ -246,6 +247,45 @@ public class SystemServiceImpl implements SystemService {
 		userMapper.logUserHistory(paramUser);
 
 		return userMapper.updateUser(paramUser);
+	}
+	
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.pms.adm.service.AccountService#modifyPassword(kr.co.adflow.pms.adm.request.PasswordReq, java.lang.String)
+	 */
+	@Override
+	public int resetPassword(PasswordReq req,String userId, String appKey)  throws Exception{
+
+		if (!req.getNewPassword().trim().equals(req.getRePassword().trim())) {
+//			throw new RuntimeException("패스워드 변경 실패1");
+			throw new PmsRuntimeException("패스워드 리셋 실패1");
+		}
+
+		// TODO OLD <> NEW 확인 필요?
+
+		String issueId = interceptMapper.selectCashedUserId(appKey);
+
+		User paramUser = new User();
+		paramUser.setUserId(userId);
+
+		String user = userMapper.selectUser(userId);
+		if (user == null) {
+			throw new PmsRuntimeException("user not valid");
+		}
+
+		paramUser.setAction("resetPassword");
+		paramUser.setPassword(this.getPassword(userId, req.getNewPassword()));
+		paramUser.setIssueId(issueId);
+
+		int cnt = userMapper.logUserHistory(paramUser);
+
+		if (cnt > 0) {
+			cnt = userMapper.updatePassword(paramUser);
+		} else {
+//			throw new RuntimeException("패스워드 변경 실패3");
+			throw new PmsRuntimeException("패스워드 리셋 실패3");
+		}
+
+		return cnt;
 	}
 
 	/* (non-Javadoc)
@@ -555,5 +595,18 @@ public class SystemServiceImpl implements SystemService {
 		
 		return re;
 	}
+	
+	/**
+	 * Gets the password.
+	 *
+	 * @param userId the user id
+	 * @param password the password
+	 * @return the password
+	 */
+	private String getPassword(String userId, String password) {
+
+		return KeyGenerator.createPw(userId, password);
+	}
+
 
 }

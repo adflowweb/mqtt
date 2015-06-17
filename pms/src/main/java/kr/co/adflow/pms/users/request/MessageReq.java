@@ -40,6 +40,19 @@ public class MessageReq {
 	/** The content length. */
 	private Integer contentLength;
 	
+	/** The mms. */
+	private  boolean mms;
+
+
+	
+	public boolean isMms() {
+		return mms;
+	}
+
+	public void setMms(boolean mms) {
+		this.mms = mms;
+	}	
+	
 
 	/**
 	 * Gets the content Length.

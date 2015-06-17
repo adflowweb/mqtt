@@ -114,6 +114,8 @@ public class SvcAdmServiceImpl implements SvcAdmService {
 
 		msg.setContentType(message.getContentType());
 		msg.setContent(message.getContent());
+		msg.setFileFormat(message.getFileFormat());
+		msg.setFileName(message.getFileName());
 
 		if (message.getReservationTime() != null) {
 			msg.setReservationTime(message.getReservationTime());
@@ -133,13 +135,20 @@ public class SvcAdmServiceImpl implements SvcAdmService {
 			message.setContentLength(0);
 		}
 		msg.setMsgSize(message.getContentLength());
-				
+		
 		// TMS:0, MMS:1
-		if (msg.getMsgSize() > 140) {
+		if (message.isMms()) {
 			msg.setMediaType(1);
 		} else {
-			msg.setMediaType(0);
+			if (msg.getMsgSize() > 140) {
+				msg.setMediaType(1);
+			} else {
+				msg.setMediaType(0);
+			}
+
 		}
+		
+		
 
 		String[] receivers = message.getReceivers();
 
