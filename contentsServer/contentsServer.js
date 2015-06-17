@@ -123,8 +123,8 @@ function checkExists(req, res, next) {
     var md5 = req.headers['md5'];
     log.debug({md5: md5}, "업로드파일해쉬값");
 
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "content-type, md5, token, file");
+    //res.header("Access-Control-Allow-Origin", "*");
+    //res.header("Access-Control-Allow-Headers", "content-type, md5, token, file");
 
     fileName = md5 + req.headers['file'].substr(req.headers['file'].lastIndexOf('.'));
     //file.name.substr(file.name.lastIndexOf('.'));

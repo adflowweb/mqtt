@@ -40,28 +40,55 @@ tokenValidator.prototype = {
         log.debug({value: req.headers['user-agent'].indexOf('Android')});
         //userAgent별로 분기필요 PCS, PMS
         if (req.headers['user-agent'].indexOf('Android') == -1) {
-            //for PMS
-            options = {
-                hostname: '14.63.217.141',
-                port: 8081,
-                path: '/v1/pms/adm/cmm/auth',
-                method: 'GET',
-                headers: {
-                    'X-Application-Token': token
-                }
-            };
+            if (process.env.NODE_ENV === 'development') {
+                //for 개발PMS
+                options = {
+                    hostname: '14.63.217.141',
+                    port: 8081,
+                    path: '/v1/pms/adm/cmm/auth',
+                    method: 'GET',
+                    headers: {
+                        'X-Application-Token': token
+                    }
+                };
+            } else {
+                //for 운영PMS
+                options = {
+                    hostname: '14.63.218.229',
+                    port: 8081,
+                    path: '/v1/pms/adm/cmm/auth',
+                    method: 'GET',
+                    headers: {
+                        'X-Application-Token': token
+                    }
+                };
+            }
             log.debug({options: options});
         } else {
-            //for PCS
-            options = {
-                hostname: 'push4.ktp.co.kr',
-                port: 8080,
-                path: '/v1/validate/' + token,
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-ApiKey': 'KTPJAAS'
-                }
+            if (process.env.NODE_ENV === 'development') {
+                //for 개발PCS
+                options = {
+                    hostname: 'push4.ktp.co.kr',
+                    port: 8080,
+                    path: '/v1/validate/' + token,
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-ApiKey': 'KTPJAAS'
+                    }
+                };
+            } else {
+                //for 운영PCS
+                options = {
+                    hostname: 'push2.ktp.co.kr',
+                    port: 8080,
+                    path: '/v1/validate/' + token,
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-ApiKey': 'KTPJAAS'
+                    }
+                };
             }
             log.debug({options: options});
         }
