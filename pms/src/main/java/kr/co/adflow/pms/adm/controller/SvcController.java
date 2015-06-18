@@ -785,7 +785,6 @@ public class SvcController extends BaseController {
 			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey) throws Exception {
 
 		logger.debug("=== appKey ::{}", appKey);
-		System.out.println("templateName ::" + req.getTemplateName());
 
 		List<Template> resultList = svcService.serchTemplateName(req.getTemplateName(), appKey);
 
