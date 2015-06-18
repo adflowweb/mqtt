@@ -41,6 +41,14 @@ public interface TemplateMapper {
 	 */
 	Template selectTemplate(TemplateParams templateParams);
 	
+	/**
+	 * Select Template.
+	 *
+	 * @param TemplateParams the templateParams
+	 * @return the Template
+	 */
+	List<Template> searchTemplateName(TemplateParams templateParams);
+	
 	
 	/**
 	 * delete Template.

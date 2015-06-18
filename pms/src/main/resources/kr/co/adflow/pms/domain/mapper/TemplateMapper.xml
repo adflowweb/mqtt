@@ -46,6 +46,20 @@
 		AND template_id = #{templateId}
 	</select>
 	
+	<select id="searchTemplateName" parameterType="kr.co.adflow.pms.domain.TemplateParams" resultMap="TemplateResult">
+		SELECT
+		user_id
+		,template_id
+		,template_name
+		,template_msg
+		,issue_time
+		,issue_id
+		FROM pms.template
+		WHERE
+		user_id = #{userId}
+		AND template_name = #{templateName}
+	</select>
+	
 	<select id="selectTemplateList" parameterType="String" resultMap="TemplateResult">
 		SELECT
 		user_id

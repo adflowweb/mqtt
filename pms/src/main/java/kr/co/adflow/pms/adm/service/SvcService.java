@@ -146,6 +146,13 @@ public interface SvcService {
 	 */
 	public int deleteTemplate(String appKey, String templateId);
 	
-	
+	/**
+	 * get Template List.
+	 *
+	 * @param appKey the app key
+	 * @param TemplateReq the TemplateReq
+	 * @return the update count
+	 */
+	public List<Template> serchTemplateName(String templateName, String appKey);
 
 }
