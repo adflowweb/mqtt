@@ -70,14 +70,14 @@ server.on('after', restify.auditLogger({
 /**
  * 파일다운로드
  */
-var routeDownload = server.get(contextRoot+'/:userid/:hash', restify.serveStatic({
+var routeDownload = server.get(contextRoot + '/:userid/:hash', restify.serveStatic({
     directory: './uploads'
 }));
 
 /**
  * 파일다운로드
  */
-var routeThumbDownload = server.get(contextRoot+'/:userid/thumb/:hash', restify.serveStatic({
+var routeThumbDownload = server.get(contextRoot + '/:userid/thumb/:hash', restify.serveStatic({
     directory: './uploads'
 }));
 
@@ -85,32 +85,37 @@ var routeThumbDownload = server.get(contextRoot+'/:userid/thumb/:hash', restify.
  * 파일업로드
  * @type {*|Request}
  */
-var routeUpload = server.post(contextRoot+'/:userid', upload);
+var routeUpload = server.post(contextRoot + '/:userid', upload);
 
 /**
  * 썸네일업로드
  * @type {*|Request}
  */
-var routeUploadThumb = server.post(contextRoot+'/:userid/thumb', upload);
+var routeUploadThumb = server.post(contextRoot + '/:userid/thumb', upload);
 
 /**
  * 이미지존재유무체크
  * @type {*|Request}
  */
-var routeCheckContent = server.head(contextRoot+'/:userid', checkExists);
+var routeCheckContent = server.head(contextRoot + '/:userid', checkExists);
 
 /**
  * 썸네일존재유무체크
  * @type {*|Request}
  */
-var routeCheckThumb = server.head(contextRoot+'/:userid/thumb', checkExists);
+var routeCheckThumb = server.head(contextRoot + '/:userid/thumb', checkExists);
 
-/**
- *
- */
-server.listen(8080, function () {
-    console.log('%s listening at %s', server.name, server.url);
-});
+
+if (process.env.NODE_ENV === 'development') {
+    server.listen(9329, function () {
+        console.log('%s listening at %s', server.name, server.url);
+    });
+} else {
+    server.listen(8080, function () {
+        console.log('%s listening at %s', server.name, server.url);
+    });
+}
+
 
 /**
  *
@@ -132,10 +137,10 @@ function checkExists(req, res, next) {
 
     var fullPath;
     if (req.route.name == routeCheckThumb) {
-        fullPath = __dirname + '/uploads'+contextRoot+'/'
+        fullPath = __dirname + '/uploads' + contextRoot + '/'
             + req.params.userid + '/thumb/' + fileName;
     } else {
-        fullPath = __dirname + '/uploads'+contextRoot+'/'
+        fullPath = __dirname + '/uploads' + contextRoot + '/'
             + req.params.userid + '/' + fileName;
     }
 
@@ -175,10 +180,10 @@ function upload(req, res, next) {
         log.debug({fileName: fileName});
 
         if (req.route.name == routeUploadThumb) {
-            fullPath = __dirname + '/uploads'+contextRoot+'/'
+            fullPath = __dirname + '/uploads' + contextRoot + '/'
                 + req.params.userid + '/thumb/' + fileName;
         } else {
-            fullPath = __dirname + '/uploads'+contextRoot+'/'
+            fullPath = __dirname + '/uploads' + contextRoot + '/'
                 + req.params.userid + '/' + fileName;
         }
 
@@ -196,10 +201,10 @@ function upload(req, res, next) {
         // = __dirname + '/uploads/v1/users/' + req.params.userid + '/';
 
         if (req.route.name == routeUploadThumb) {
-            location = __dirname + '/uploads'+contextRoot+'/'
+            location = __dirname + '/uploads' + contextRoot + '/'
                 + req.params.userid + '/thumb/';
         } else {
-            location = __dirname + '/uploads'+contextRoot+'/'
+            location = __dirname + '/uploads' + contextRoot + '/'
                 + req.params.userid + '/';
         }
 
