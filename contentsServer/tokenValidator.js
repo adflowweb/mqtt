@@ -55,7 +55,7 @@ tokenValidator.prototype = {
                 //for 운영PMS
                 options = {
                     hostname: '14.63.218.228',
-                    port: 8081,
+                    port: 80,
                     path: '/v1/pms/adm/cmm/auth',
                     method: 'GET',
                     headers: {
