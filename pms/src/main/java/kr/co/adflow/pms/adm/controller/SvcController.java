@@ -769,6 +769,35 @@ public class SvcController extends BaseController {
 
 	}
 	
+	
+	/**
+	 * get Template search. 
+	 *
+	 * @param appKey the app key
+	 * @param TemplateReq the req
+	 * @return the response
+	 * @throws Exception the exception
+	 */
+	@RequestMapping(value = "/template/searchTemplateName", method = RequestMethod.POST, produces = StaticConfig.HEADER_CONTENT_TYPE)
+	@ResponseBody
+	public Response<Result<List<Template>>> searchTemplateName(
+			@RequestBody TemplateReq req,
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey) throws Exception {
+
+		logger.debug("=== appKey ::{}", appKey);
+		System.out.println("templateName ::" + req.getTemplateName());
+
+		List<Template> resultList = svcService.serchTemplateName(req.getTemplateName(), appKey);
+
+		Result<List<Template>> result = new Result<List<Template>>();
+		result.setSuccess(true);
+		result.setData(resultList);
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		Response<Result<List<Template>>> res = new Response(result);
+		return res;
+
+	}
+	
 	/**
 	 * delete Template.
 	 *

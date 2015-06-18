@@ -17,9 +17,20 @@ public class TemplateParams {
 	/** The template id. */
 	private String templateId;
 	
+	/** The template name. */
+	private String templateName;
+	
 
 	
 	
+
+	public String getTemplateName() {
+		return templateName;
+	}
+
+	public void setTemplateName(String templateName) {
+		this.templateName = templateName;
+	}
 
 	/**
 	 * Gets the user id.
@@ -38,8 +49,6 @@ public class TemplateParams {
 	public void setUserId(String userId) {
 		this.userId = userId;
 	}
-
-
 	
 
 	/**
@@ -63,7 +72,7 @@ public class TemplateParams {
 	@Override
 	public String toString() {
 		return "TemplateParams [userId=" + userId + ", templateId="
-				+ templateId + "]";
+				+ templateId + ", templateName=" + templateName + "]";
 	}
 
 

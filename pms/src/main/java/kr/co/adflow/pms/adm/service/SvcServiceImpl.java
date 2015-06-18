@@ -548,5 +548,22 @@ public class SvcServiceImpl implements SvcService {
 
 		return resultTemplate;
 	}
+	
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.pms.adm.service.SvcService#getTemplateList()
+	 */
+	@Override
+	public List<Template> serchTemplateName(String templateName, String appKey) {
+
+		String issueId = interceptMapper.selectCashedUserId(appKey);
+		List<Template> resultTemplate = null;
+		TemplateParams templateParams = new TemplateParams();
+		templateParams.setUserId(issueId);
+		templateParams.setTemplateName(templateName);
+		
+		resultTemplate = templateMapper.searchTemplateName(templateParams);
+
+		return resultTemplate;
+	}
 
 }
