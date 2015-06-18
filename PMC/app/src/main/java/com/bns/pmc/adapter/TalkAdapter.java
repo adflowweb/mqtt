@@ -30,7 +30,6 @@ import com.bns.pmc.util.Log;
 import com.bns.pmc.util.PMCType;
 import com.github.kevinsawicki.http.HttpRequest;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -180,41 +179,38 @@ public class TalkAdapter extends CursorAdapter {
         // 테스트뷰 리셋
         tvMsg.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
 
-        // Data
-        if (nDataType == DataColumn.COLUMN_DATA_TYPE_JPG
-                || nDataType == DataColumn.COLUMN_DATA_TYPE_PNG
-                || nDataType == DataColumn.COLUMN_DATA_TYPE_BMP) {
+        /**
+         * 바이너리데이타가 존재하는경우 처리
+         */
+        try {
             if (byteData != null) {
                 Log.i(PMCType.TAG, "데이타=" + new String(byteData));
-            }
+                if (nDataType == DataColumn.COLUMN_DATA_TYPE_JPG
+                        || nDataType == DataColumn.COLUMN_DATA_TYPE_PNG
+                        || nDataType == DataColumn.COLUMN_DATA_TYPE_BMP) {
+                    //이미지인경우
+                    String root = Environment.getExternalStorageDirectory().toString();
+                    File storageDir = new File(root + "/pmc/images/thumb/");
+                    //create storage directories, if they don't exist
+                    storageDir.mkdirs();
+                    JSONObject obj = null;
+                    String fileName = null;
+                    String user = null;
 
-            if (byteData != null) {
-                //testCode
-                String root = Environment.getExternalStorageDirectory().toString();
-                File storageDir = new File(root + "/pmc/images/thumb/");
-                //create storage directories, if they don't exist
-                storageDir.mkdirs();
-                JSONObject obj = null;
-                String fileName = null;
-                String user = null;
-                try {
                     obj = new JSONObject(new String(byteData));
                     fileName = obj.getString("name");
                     user = obj.getString("user");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                File file = new File(storageDir, fileName + ".png"); //썸네일은 PNG로 고정
-                if (file.exists()) {
-                    Log.d(PMCType.TAG, "로컬에파일이존재합니다");
-                    Bitmap bitmap = BitmapFactory.decodeFile(file.toString());
-                    Drawable drawable = (Drawable) (new BitmapDrawable(m_context.getResources(), bitmap));
-                    tvMsg.setCompoundDrawablePadding(10);
-                    tvMsg.setCompoundDrawablesWithIntrinsicBounds(null, null, null, drawable);
-                } else {
-                    Log.d(PMCType.TAG, "파일이존재하지않아컨텐츠서버에서다운로드합니다");
-                    //썸네일이 없으므로 컨텐츠서버에서 다운로드함
-                    try {
+
+                    File file = new File(storageDir, fileName + ".png"); //썸네일은 PNG로 고정
+                    if (file.exists()) {
+                        Log.d(PMCType.TAG, "로컬에파일이존재합니다");
+                        Bitmap bitmap = BitmapFactory.decodeFile(file.toString());
+                        Drawable drawable = (Drawable) (new BitmapDrawable(m_context.getResources(), bitmap));
+                        tvMsg.setCompoundDrawablePadding(10);
+                        tvMsg.setCompoundDrawablesWithIntrinsicBounds(null, null, null, drawable);
+                    } else {
+                        Log.d(PMCType.TAG, "파일이존재하지않아컨텐츠서버에서다운로드합니다");
+                        //썸네일이 없으므로 컨텐츠서버에서 다운로드함
                         String token = IPushUtil.getToken(PMCService.m_Binder);
                         Log.d(PMCType.TAG, "token=" + token);
                         setStrictMode();
@@ -231,65 +227,42 @@ public class TalkAdapter extends CursorAdapter {
                             tvMsg.setCompoundDrawablePadding(10);
                             tvMsg.setCompoundDrawablesWithIntrinsicBounds(null, null, null, drawable);
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Log.e(PMCType.TAG, "에러발생=" + e);
                     }
-                }
-                //testCodeEnd
+                } else {
+                    //이미지가아닌경우
+                    //로컬파일이 존재하면 파일아이콘으로
+                    //아니면 다운로드 아이콘으로
+                    String root = Environment.getExternalStorageDirectory().toString();
+                    File storageDir = new File(root + "/pmc/files/");
+                    //create storage directories, if they don't exist
+                    storageDir.mkdirs();
 
-
-//                Bitmap Image = BitmapFactory.decodeByteArray(byteData, 0, byteData.length);
-//                Bitmap resizeImg = createThumbnail(Image);
-//                Drawable drawable = (Drawable) (new BitmapDrawable(m_context.getResources(), resizeImg));
-//                tvMsg.setCompoundDrawablePadding(10);
-//                tvMsg.setCompoundDrawablesWithIntrinsicBounds(null, null, null, drawable);
-//                //testCode
-//                Bitmap bitmap = BitmapFactory.decodeResource(m_context.getResources(), R.raw.android);
-//                //ByteArrayOutputStream stream = new ByteArrayOutputStream();
-//                //bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-//                //Bitmap resizeImg = createThumbnail(bitmap);
-//                Drawable drawable = (Drawable) (new BitmapDrawable(m_context.getResources(), bitmap));
-//                tvMsg.setCompoundDrawablePadding(10);
-//                tvMsg.setCompoundDrawablesWithIntrinsicBounds(null, null, null, drawable);
-                //testEnd
-            }
-        } else {
-            if (byteData != null) {
-                Log.i(PMCType.TAG, "데이타=" + new String(byteData));
-                //로컬파일이 존재하면 파일아이콘으로
-                //아니면 다운로드 아이콘으로
-                String root = Environment.getExternalStorageDirectory().toString();
-                File storageDir = new File(root + "/pmc/files/");
-                //create storage directories, if they don't exist
-                storageDir.mkdirs();
-
-                JSONObject obj = null;
-                String fileName = null;
-                String format = null;
-                try {
+                    JSONObject obj = null;
+                    String fileName = null;
+                    String format = null;
                     obj = new JSONObject(new String(byteData));
                     fileName = obj.getString("name");
                     format = obj.getString("format");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                File file = new File(storageDir, fileName + "." + format);
-                if (file.exists()) {
-                    tvMsg.setCompoundDrawablePadding(10);
-                    tvMsg.setCompoundDrawablesWithIntrinsicBounds(null, null, null, m_context.getResources().getDrawable(R.drawable.ic_description_white_48dp));
-                } else {
-                    tvMsg.setCompoundDrawablePadding(10);
-                    tvMsg.setCompoundDrawablesWithIntrinsicBounds(null, null, null, m_context.getResources().getDrawable(R.drawable.ic_get_app_white_48dp));
-                }
 
+                    File file = new File(storageDir, fileName + "." + format);
+                    if (file.exists()) {
+                        tvMsg.setCompoundDrawablePadding(10);
+                        tvMsg.setCompoundDrawablesWithIntrinsicBounds(null, null, null, m_context.getResources().getDrawable(R.drawable.ic_description_white_48dp));
+                    } else {
+                        tvMsg.setCompoundDrawablePadding(10);
+                        tvMsg.setCompoundDrawablesWithIntrinsicBounds(null, null, null, m_context.getResources().getDrawable(R.drawable.ic_get_app_white_48dp));
+                    }
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e(PMCType.TAG, "에러발생=" + e);
         }
+
         // create Time
         long createTimel = c.getLong(c.getColumnIndex(MessageColumn.DB_COLUMN_CREATETIME));
         String strTime = CommonUtil.conv_DateTime(m_context, createTimel);
         tvTime.setText(strTime);
-
         Log.i(PMCType.TAG, "bindView종료()");
     }
 

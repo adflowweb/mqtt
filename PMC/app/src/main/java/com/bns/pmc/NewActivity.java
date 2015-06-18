@@ -99,7 +99,7 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
 
     private final int GET_CONTACT = 11;
     private final int GET_CONTACT_PPT = 12;
-    private final int IDX_ITEM_NEW_MAX = 10;
+    private final int IDX_ITEM_NEW_MAX = 100;
     private final int IDX_NEW_MSG_EDIT_TEXT = -1;
     private int m_nIdxNumber = 1;
     private int m_nSelectedID = IDX_NEW_MSG_EDIT_TEXT;
@@ -684,6 +684,7 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
 
         String title = getResources().getString(R.string.title_new_activity);
         if (sendingContent) {
+            //컨텐트가포함된 메시지
             this.setTitle(title + "(MMS)");
         } else {
             //메시지 카운팅
@@ -969,7 +970,7 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
         //modified by nadir
         // validataionCheck
         // exist검사
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < m_listItemNew.length; i++) {
             if (TextUtils.isEmpty(m_listItemNew[i].strNumber) == false &&
                     validNumber(m_listItemNew[i].strNumber) == false) {
                 String str = "[" + m_listItemNew[i].strNumber + "]\n" +
@@ -988,7 +989,7 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
         //메시지 수신자 확인
         int receiversCnt = 0;
         boolean success = true;
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < m_listItemNew.length; i++) {
             if (TextUtils.isEmpty(m_listItemNew[i].strNumber) == false) {
                 if (CommonUtil.checkPttGroupNumFormat(m_listItemNew[i].strNumber)) {
                     try {
@@ -1037,8 +1038,7 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                                         // Close dialog
                                         dialogInterface.dismiss();
                                         //발송
-                                        new asyncSendMsg().execute(m_listItemNew[0], m_listItemNew[1], m_listItemNew[2], m_listItemNew[3], m_listItemNew[4],
-                                                m_listItemNew[5], m_listItemNew[6], m_listItemNew[7], m_listItemNew[8], m_listItemNew[9]);
+                                        new asyncSendMsg().execute(m_listItemNew);
                                     }
                                 })
                         .setNegativeButton(R.string.do_not_accect,
@@ -1066,8 +1066,7 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                                 dialogInterface.dismiss();
                                 if (focusedBtn == ad.getButton(DialogInterface.BUTTON_POSITIVE)) {
                                     //발송
-                                    new asyncSendMsg().execute(m_listItemNew[0], m_listItemNew[1], m_listItemNew[2], m_listItemNew[3], m_listItemNew[4],
-                                            m_listItemNew[5], m_listItemNew[6], m_listItemNew[7], m_listItemNew[8], m_listItemNew[9]);
+                                    new asyncSendMsg().execute(m_listItemNew);
                                 }
                                 return true;
                             }
@@ -1078,17 +1077,13 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                 ad.show();
             } else {
                 //단일메시지 발송
-                new asyncSendMsg().execute(m_listItemNew[0], m_listItemNew[1], m_listItemNew[2], m_listItemNew[3], m_listItemNew[4],
-                        m_listItemNew[5], m_listItemNew[6], m_listItemNew[7], m_listItemNew[8], m_listItemNew[9]);
+                new asyncSendMsg().execute(m_listItemNew);
             }
         } else {
             //실패시
             //단일메시지 발송 여부 문의바람 !!!!
-            new asyncSendMsg().execute(m_listItemNew[0], m_listItemNew[1], m_listItemNew[2], m_listItemNew[3], m_listItemNew[4],
-                    m_listItemNew[5], m_listItemNew[6], m_listItemNew[7], m_listItemNew[8], m_listItemNew[9]);
+            new asyncSendMsg().execute(m_listItemNew);
         }
-
-
         //modifiedEnd
     }
 
@@ -1167,7 +1162,7 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
 				} else {
 					strExistNumber = strNumber;
 				}
-			} else 
+			} else
 			*/
             {
                 // Ptt 번호.
@@ -1383,28 +1378,22 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            Log.d(PMCType.TAG, "onPreExecute start");
-
+            Log.d(PMCType.TAG, "onPreExecute시작()");
             progressDialog = ProgressDialog
                     .show(m_context, m_context.getResources().getString(R.string.send_popup_title),
                             m_context.getResources().getString(R.string.send_popup_context_progress));
             progressDialog.setOnKeyListener(new OnKeyListener() {
-
                 @Override
                 public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
                     return true;
                 }
             });
-
-            //progressDialog.setTitle("메시지");
-            //progressDialog.setMessage("메시지 전송중");
-            //progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            //progressDialog.show();
+            Log.d(PMCType.TAG, "onPreExecute종료()");
         }
 
         @Override
         protected Integer doInBackground(ItemNew... params) {
-            Log.d(PMCType.TAG, "doInBackground start");
+            Log.d(PMCType.TAG, "doInBackground시작(params=" + params + ")");
             int nResultFail = RESULT_MSG_INIT;
             try {
                 IPushService binder = PMCService.m_Binder;
@@ -1455,7 +1444,7 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                 String strMsg = m_etNewMsg.getText().toString();
 
                 int numberOfParams = params.length;
-                Log.d(PMCType.TAG, "numberOfParams=" + params.length);
+                Log.d(PMCType.TAG, "메시지수신자명수=" + params.length);
 
 //            // exist검사
 //            for (int i = 0; i < numberOfParams; i++) {
@@ -1507,26 +1496,25 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                         JSONObject imgJson = null;
                         // convert JSON
                         JSonItem item = new JSonItem();
-                        {
-                            item.m_strSender = strSender;
-                            item.m_strReceiver = strReceiver;
-                            item.m_strText = strMsg;
+                        item.m_strSender = strSender;
+                        item.m_strReceiver = strReceiver;
+                        item.m_strText = strMsg;
 
-                            //컨텐트 전송이면 메시지에 컨텐트메타데이타전송
-                            if (sendingContent) {
-                                item.m_strDataName = md5;
-                                Log.d(PMCType.TAG, "dataName=" + item.m_strDataName);
-                                String format = contentFileName.substring(contentFileName.lastIndexOf(".") + 1);
-                                item.m_strDataFormat = format;
-                                Log.d(PMCType.TAG, "format=" + item.m_strDataFormat);
-                                imgJson = new JSONObject();
-                                imgJson.put("name", md5);
-                                imgJson.put("format", format);
-                                imgJson.put("user", phoneNum);
-                                item.m_strDataByteArr = imgJson.toString().getBytes();//stream.toByteArray();
-                                Log.d(PMCType.TAG, "dataByteArr=" + imgJson);
-                            }
+                        //컨텐트 전송이면 메시지에 컨텐트메타데이타전송
+                        if (sendingContent) {
+                            item.m_strDataName = md5;
+                            Log.d(PMCType.TAG, "dataName=" + item.m_strDataName);
+                            String format = contentFileName.substring(contentFileName.lastIndexOf(".") + 1);
+                            item.m_strDataFormat = format;
+                            Log.d(PMCType.TAG, "format=" + item.m_strDataFormat);
+                            imgJson = new JSONObject();
+                            imgJson.put("name", md5);
+                            imgJson.put("format", format);
+                            imgJson.put("user", phoneNum);
+                            item.m_strDataByteArr = imgJson.toString().getBytes();//stream.toByteArray();
+                            Log.d(PMCType.TAG, "dataByteArr=" + imgJson);
                         }
+
                         String strJson = JSonUtil.encodeDataToJSONString(item);
                         //Log.d(PMCType.TAG, "strJson=" + strJson);
                         String strContent = CommonUtil.encodeStringToBase64(strJson);
@@ -1555,55 +1543,9 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                         if (TextUtils.isEmpty(strResult) == false) {
                             bResultSuccess = JSonUtil.responeSendMessageResultSuccess(strResult);
                         }
-                        // insert DB
-                        {
-                            ContentValues values = new ContentValues();
-                            switch (nNumberType) {
-                                case DataColumn.COLUMN_NUMBER_TYPE_PTT:
-                                    values.put(MessageColumn.DB_COLUMN_NUMBER, strReceiver);
-                                    break;
-                                case DataColumn.COLUMN_NUMBER_TYPE_GROUP:
-                                    values.put(MessageColumn.DB_COLUMN_NUMBER, strReceiver);
-                                    values.put(MessageColumn.DB_COLUMN_GROUP_MEMBER, strSender);
-                                    break;
-                                case DataColumn.COLUMN_NUMBER_TYPE_NORMAL:
-                                    break;
-                                default:
-                                    break;
-                            }
+                        //로컬디비저장
+                        storeMessage(strSender, strMsg, nNumberType, strReceiver, imgJson, bResultSuccess);
 
-                            values.put(MessageColumn.DB_COLUMN_NUMBER_TYPE, nNumberType);
-                            values.put(MessageColumn.DB_COLUMN_MSG, strMsg);
-                            values.put(MessageColumn.DB_COLUMN_CREATETIME, System.currentTimeMillis());
-                            values.put(MessageColumn.DB_COLUMN_RECV, DataColumn.COLUMN_RECV_SEND);
-                            values.put(MessageColumn.DB_COLUMN_DONT_READ, DataColumn.COLUMN_DONT_READ_READ);
-                            if (bResultSuccess)
-                                values.put(MessageColumn.DB_COLUMN_STATE, DataColumn.COLUMN_STATE_SUCCESS);
-                            else
-                                values.put(MessageColumn.DB_COLUMN_STATE, DataColumn.COLUMN_STATE_FAIL);
-
-                            //컨텐트전송이면 로컬디비저장
-                            if (sendingContent) {
-                                {
-                                    values.put(MessageColumn.DB_COLUMN_DATA, imgJson.toString().getBytes());
-                                    //DataColumn.COLUMN_DATA_TYPE_JPG
-                                    String format = contentFileName.substring(contentFileName.lastIndexOf(".") + 1);
-                                    Integer dataType = 0;
-                                    if (format.equalsIgnoreCase("jpg"))
-                                        dataType = DataColumn.COLUMN_DATA_TYPE_JPG;
-                                    else if (format.equalsIgnoreCase("bmp"))
-                                        dataType = DataColumn.COLUMN_DATA_TYPE_BMP;
-                                    else if (format.equalsIgnoreCase("png"))
-                                        dataType = DataColumn.COLUMN_DATA_TYPE_PNG;
-                                    else {
-                                        //5
-                                        dataType = DataColumn.COLUMN_DATA_TYPE_UNKNOWN;
-                                    }
-                                    values.put(MessageColumn.DB_COLUMN_DATA_TYPE, dataType);
-                                }
-                            }
-                            getContentResolver().insert(DataColumn.CONTENT_URI_INSERT_MSG, values);
-                        }
                         if (bResultSuccess == false)
                             nResultFail++;
                         sendingContent = false;
@@ -1615,8 +1557,74 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                 e.printStackTrace();
                 return -7;
             }
-            Log.d(PMCType.TAG, "doInBackground end");
+            Log.d(PMCType.TAG, "doInBackground종료()");
             return nResultFail;
+        }
+
+        /**
+         * 메시지를 디비에 저장
+         *
+         * @param strSender
+         * @param strMsg
+         * @param nNumberType
+         * @param strReceiver
+         * @param imgJson
+         * @param bResultSuccess
+         */
+        private void storeMessage(String strSender,
+                                  String strMsg,
+                                  int nNumberType,
+                                  String strReceiver,
+                                  JSONObject imgJson,
+                                  boolean bResultSuccess) throws Exception {
+            // insert DB
+            ContentValues values = new ContentValues();
+            switch (nNumberType) {
+                case DataColumn.COLUMN_NUMBER_TYPE_PTT:
+                    values.put(MessageColumn.DB_COLUMN_NUMBER, strReceiver);
+                    break;
+                case DataColumn.COLUMN_NUMBER_TYPE_GROUP:
+                    values.put(MessageColumn.DB_COLUMN_NUMBER, strReceiver);
+                    values.put(MessageColumn.DB_COLUMN_GROUP_MEMBER, strSender);
+                    break;
+                case DataColumn.COLUMN_NUMBER_TYPE_NORMAL:
+                    break;
+                default:
+                    break;
+            }
+
+            values.put(MessageColumn.DB_COLUMN_NUMBER_TYPE, nNumberType);
+            values.put(MessageColumn.DB_COLUMN_MSG, strMsg);
+            values.put(MessageColumn.DB_COLUMN_CREATETIME, System.currentTimeMillis());
+            values.put(MessageColumn.DB_COLUMN_RECV, DataColumn.COLUMN_RECV_SEND);
+            values.put(MessageColumn.DB_COLUMN_DONT_READ, DataColumn.COLUMN_DONT_READ_READ);
+            if (bResultSuccess)
+                values.put(MessageColumn.DB_COLUMN_STATE, DataColumn.COLUMN_STATE_SUCCESS);
+            else
+                values.put(MessageColumn.DB_COLUMN_STATE, DataColumn.COLUMN_STATE_FAIL);
+
+            //컨텐트전송이면 로컬디비저장
+            if (sendingContent) {
+                {
+                    values.put(MessageColumn.DB_COLUMN_DATA, imgJson.toString().getBytes());
+                    //DataColumn.COLUMN_DATA_TYPE_JPG
+                    String format = contentFileName.substring(contentFileName.lastIndexOf(".") + 1);
+                    Integer dataType = 0;
+                    if (format.equalsIgnoreCase("jpg"))
+                        dataType = DataColumn.COLUMN_DATA_TYPE_JPG;
+                    else if (format.equalsIgnoreCase("bmp"))
+                        dataType = DataColumn.COLUMN_DATA_TYPE_BMP;
+                    else if (format.equalsIgnoreCase("png"))
+                        dataType = DataColumn.COLUMN_DATA_TYPE_PNG;
+                    else {
+                        //5
+                        dataType = DataColumn.COLUMN_DATA_TYPE_UNKNOWN;
+                    }
+                    values.put(MessageColumn.DB_COLUMN_DATA_TYPE, dataType);
+                }
+            }
+            getContentResolver().insert(DataColumn.CONTENT_URI_INSERT_MSG, values);
+
         }
 
         private void uploadContent(IPushService binder, String phoneNum, String md5) throws Exception {
@@ -1718,12 +1726,13 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
 
             } else {
                 //이미지가 아님
-                Log.d(PMCType.TAG, "이미지가아니라썸네일을만들지않습니다.");
+                Log.d(PMCType.TAG, "이미지가아니라썸네일을만들지않습니다");
             }
         }
 
         @Override
         protected void onPostExecute(Integer result) {
+            Log.d(PMCType.TAG, "onPostExecute시작(result=" + result + ")");
             progressDialog.dismiss();
 
             if (result > 0) {
@@ -1775,6 +1784,7 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                 m_alertDialog.show();
                 dismissDlg(DLG_DISMISS_TIME, m_alertDialog, false);
             }
+            Log.d(PMCType.TAG, "onPostExecute종료()");
         }
     }
 
@@ -1783,10 +1793,6 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
      * result is returned in the method <code>onActivityResult()</code>
      */
     public void selectImageFromGallery() {
-//        Intent intent = new Intent();
-//        intent.setType("image/*");
-//        intent.setAction(Intent.ACTION_GET_CONTENT);
-
         Intent i = new Intent(
                 Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -1828,19 +1834,6 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
             return uri.getPath();
         }
         return null;
-    }
-
-    private void selectFile() {
-//        Intent intent = new Intent();
-//        intent.setType("image/*");
-//        intent.setAction(Intent.ACTION_GET_CONTENT);
-//        startActivityForResult(intent, 2);
-        //com.android.qrdfileexplorer
-//        Intent i = this.getPackageManager().getLaunchIntentForPackage("com.android.qrdfileexplorer");
-//        i.setType("file/*");
-//        i.setAction(Intent.ACTION_GET_CONTENT);
-//        startActivityForResult(i, 2);
-
     }
 
     /**
