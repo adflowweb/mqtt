@@ -81,6 +81,7 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
     private static final int FILE_SELECT_CODE = 3;
     public static final String CONTENT_UPLOAD_URL = BuildConfig.CONTENT_UPLOAD_URL;
     private android.net.Uri mImageUri;
+    private AppEULA eula;
 
     public class ItemNew {
         String strName;
@@ -325,6 +326,15 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        Log.e(PMCType.TAG, "[onStart]");
+        // Show EULA
+        eula = new AppEULA(this);
+        eula.show();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         Log.e(PMCType.TAG, "[onResume]");
@@ -355,6 +365,10 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
     protected void onStop() {
         super.onStop();
         Log.e(PMCType.TAG, "[onStop]");
+        Log.i(PMCType.TAG, "eula=" + eula);
+        if (eula != null) {
+            eula.dismiss();
+        }
     }
 
     @Override
@@ -585,8 +599,6 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
 //                Intent intent = new Intent();
 //                intent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
 //                startActivityForResult(intent, TAKE_CAMERA);
-
-
                 Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
                 File photo;
                 try {
@@ -613,102 +625,15 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                 //callSTT();
                 //testCode daum
                 Intent i = new Intent(getApplicationContext(), VoiceRecoActivity.class);
-                i.putExtra(SpeechRecognizerActivity.EXTRA_KEY_API_KEY, "bbe81be26558baa1ac6af6a92b325506"); // apiKey는 신청과정을 통해     package와 매치되도록 발급받은 APIKey 문자열 값.
+                i.putExtra(SpeechRecognizerActivity.EXTRA_KEY_API_KEY, "c7cbe106dc63d916ea9c4f76ffdb537f"); // apiKey는 신청과정을 통해     package와 매치되도록 발급받은 APIKey 문자열 값.
                 startActivityForResult(i, 4);
                 //testCodeEnd
-//                Intent i = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-//                i.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-//                        RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-//                i.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-//                i.putExtra(RecognizerIntent.EXTRA_PROMPT, "테스트프롬프트"
-//                        /*getString(R.string.speech_prompt)*/);
-                //try {
-                //startActivityForResult(i, 4);
-                //} catch (ActivityNotFoundException a) {
-                //    a.printStackTrace();
-                //    Toast.makeText(getApplicationContext(),
-                //            "스피치가지원되지않습니다",
-                //            Toast.LENGTH_SHORT).show();
-                //}
                 break;
             default:
                 break;
         }
         return true;
     }
-
-//    private void callSTT() {
-//        Log.d(PMCType.TAG, "callSTT시작()");
-//        SpeechRecognizerClient.Builder builder = new SpeechRecognizerClient.Builder().
-//                setApiKey("bbe81be26558baa1ac6af6a92b325506").     // 발급받은 api key
-//                setServiceType(SpeechRecognizerClient.SERVICE_TYPE_WEB);
-//        SpeechRecognizerClient client = builder.build();
-//        client.setSpeechRecognizeListener(new SpeechRecognizeListener() {
-//            @Override
-//            public void onReady() {
-//                Log.d(PMCType.TAG, "onReady시작()");
-//                Log.d(PMCType.TAG, "onReady종료()");
-//            }
-//
-//            @Override
-//            public void onBeginningOfSpeech() {
-//                Log.d(PMCType.TAG, "onBeginningOfSpeech시작()");
-//                Log.d(PMCType.TAG, "onBeginningOfSpeech종료()");
-//            }
-//
-//            @Override
-//            public void onEndOfSpeech() {
-//                Log.d(PMCType.TAG, "onEndOfSpeech시작()");
-//                Log.d(PMCType.TAG, "onEndOfSpeech종료()");
-//            }
-//
-//            @Override
-//            public void onError(int i, String s) {
-//                Log.d(PMCType.TAG, "onError시작(i=" + i + ", s=" + s + ")");
-//                Log.d(PMCType.TAG, "onError종료()");
-//            }
-//
-//            @Override
-//            public void onPartialResult(String s) {
-//                Log.d(PMCType.TAG, "onPartialResult시작(s=" + s + ")");
-//                final String txt = s;
-//                new Thread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        runOnUiThread(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                m_etNewMsg.setText(txt);
-//                            }
-//                        });
-//                    }
-//                }).start();
-//
-//                Log.d(PMCType.TAG, "onPartialResult종료()");
-//            }
-//
-//            @Override
-//            public void onResults(Bundle bundle) {
-//                Log.d(PMCType.TAG, "onResults시작(bundle=" + bundle + ")");
-//                Log.d(PMCType.TAG, "onResults종료()");
-//            }
-//
-//            @Override
-//            public void onAudioLevel(float v) {
-//                Log.d(PMCType.TAG, "onAudioLevel시작(v=" + v + ")");
-//                Log.d(PMCType.TAG, "onAudioLevel종료()");
-//            }
-//
-//            @Override
-//            public void onFinished() {
-//                Log.d(PMCType.TAG, "onFinished시작()");
-//                Log.d(PMCType.TAG, "onFinished종료()");
-//            }
-//        });
-//        client.startRecording(true);
-//        Log.d(PMCType.TAG, "callSTT종료()");
-//    }
-
 
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
@@ -1070,22 +995,23 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
 
         Log.i(PMCType.TAG, "enablePTT=" + enablePTT);
         if (enablePTT == false) {
-            //컨텐트 전송일경우
-            if (sendingContent) {
-                boolean bIsEmpty = true;
-                for (int i = 0; i < m_listNumberLayout.size(); i++) {
-                    EditText etText = (EditText) m_listNumberLayout.get(i).findViewById(R.id.editText_new_number);
-                    if (TextUtils.isEmpty(etText.getText().toString()) == false) {
-                        bIsEmpty = false;
-                        break;
-                    }
-                }
-                if (bIsEmpty == true) {
-                    return;
-                }
-            } else {
-                return;
-            }
+//            //컨텐트 전송일경우
+//            if (sendingContent) {
+//                boolean bIsEmpty = true;
+//                for (int i = 0; i < m_listNumberLayout.size(); i++) {
+//                    EditText etText = (EditText) m_listNumberLayout.get(i).findViewById(R.id.editText_new_number);
+//                    if (TextUtils.isEmpty(etText.getText().toString()) == false) {
+//                        bIsEmpty = false;
+//                        break;
+//                    }
+//                }
+//                if (bIsEmpty == true) {
+//                    return;
+//                }
+//            } else {
+//                return;
+//            }
+            return;
         }
 
         //modified by nadir
@@ -1410,6 +1336,40 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                         values.put(MessageColumn.DB_COLUMN_RECV, DataColumn.COLUMN_RECV_SEND);
                         values.put(MessageColumn.DB_COLUMN_DONT_READ, DataColumn.COLUMN_DONT_READ_READ);
                         values.put(MessageColumn.DB_COLUMN_CREATETIME, System.currentTimeMillis());
+
+                        try {
+                            //컨텐트가존재하면 저장
+                            if (sendingContent) {
+                                TelephonyManager tMgr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+                                String phoneNum = tMgr.getLine1Number();
+                                Log.d(PMCType.TAG, "전화번호=" + phoneNum);
+                                String format = contentFileName.substring(contentFileName.lastIndexOf(".") + 1);
+                                String md5 = checkSum(contentFilePath);
+                                JSONObject data = new JSONObject();
+                                data.put("name", md5);
+                                data.put("format", format);
+                                data.put("user", phoneNum);
+                                Log.d(PMCType.TAG, "data=" + data);
+                                values.put(MessageColumn.DB_COLUMN_DATA, data.toString().getBytes());
+                                //DataColumn.COLUMN_DATA_TYPE_JPG
+
+                                Integer dataType = 0;
+                                if (format.equalsIgnoreCase("jpg"))
+                                    dataType = DataColumn.COLUMN_DATA_TYPE_JPG;
+                                else if (format.equalsIgnoreCase("bmp"))
+                                    dataType = DataColumn.COLUMN_DATA_TYPE_BMP;
+                                else if (format.equalsIgnoreCase("png"))
+                                    dataType = DataColumn.COLUMN_DATA_TYPE_PNG;
+                                else {
+                                    //5
+                                    dataType = DataColumn.COLUMN_DATA_TYPE_UNKNOWN;
+                                }
+                                values.put(MessageColumn.DB_COLUMN_DATA_TYPE, dataType);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
                         getContentResolver().insert(DataColumn.CONTENT_URI_INSERT_MSG, values);
                     }
                 }

@@ -796,9 +796,24 @@ public class TalkActivity extends Activity implements LoaderCallbacks<Cursor> {
             i.putExtra(PMCType.BNS_PMC_INTENT_EXTRA_NUMBER, strNumber);
             i.putExtra(PMCType.BNS_PMC_INTENT_EXTRA_CONTENT, strMsg);
             Log.d(PMCType.TAG, "[ID]" + nID + " [PttNumber]" + strNumber + " [msg]" + strMsg);
+            try {
+                //첨부파일
+                int type = c.getInt(c.getColumnIndex(MessageColumn.DB_COLUMN_DATA_TYPE));
+                if (type != 0) {
+                    byte[] data = c.getBlob(c.getColumnIndex(MessageColumn.DB_COLUMN_DATA));
+                    if (data != null) {
+                        i.putExtra("data", data);
+                        i.putExtra("dataType", type);
+                    }
+                }
 
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                c.close();
+            }
             startActivityForResult(i, 100);
-            c.close();
         }
     }
 

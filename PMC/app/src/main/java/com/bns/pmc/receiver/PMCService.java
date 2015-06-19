@@ -46,6 +46,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import kr.co.adflow.push.IPushService;
 
@@ -479,7 +480,42 @@ public class PMCService extends Service {
         } else {
             Log.d(PMCType.TAG, "getMMSSubscribes Mqtt Session connected False");
         }
+        return list;
+    }
 
+    private Vector<String> getMMSSubLists() {
+        Vector list = new Vector<String>();
+        IPushService binder = PMCService.m_Binder;
+        boolean bIsConnected = IPushUtil.isConnectedMqttSession(binder);
+
+        if (bIsConnected) {
+            String strSubscriptions_Json = IPushUtil.getSubscriptions(binder);
+            boolean bSubscriptions_Success = false;
+            ArrayList<String> listSubscriptions_Data = null;
+
+            if (TextUtils.isEmpty(strSubscriptions_Json) == false) {
+                // Subscriptions Result값이 Null이 아닌경우.
+                // Success값을 불러온다.
+                bSubscriptions_Success = JSonUtil.responeSubscriptionsResultSuccess(strSubscriptions_Json);
+            }
+
+            if (bSubscriptions_Success) {
+                // Subscriptions Result Success값이 true인 경우.
+                // Data list값을 불러온다.
+                listSubscriptions_Data = JSonUtil.responeSubscriptionsResultData(strSubscriptions_Json);
+
+                if (listSubscriptions_Data != null) {
+                    for (int i = 0; i < listSubscriptions_Data.size(); i++) {
+                        String strData = listSubscriptions_Data.get(i);
+                        if (strData.startsWith("mms", 0)) {
+                            list.add(strData);
+                        }
+                    }
+                }
+            }
+        } else {
+            Log.d(PMCType.TAG, "getMMSSubscribes Mqtt Session connected False");
+        }
         return list;
     }
 
@@ -504,232 +540,304 @@ public class PMCService extends Service {
         final String strSavedBunchid = m_configure.getBunchID();
         final int nSavedPttVersion = m_configure.getVersion();
 
-        if (m_accountThread != null && m_accountThread.isAlive()) {
-            Log.e(PMCType.TAG, "accountThread interrupt");
-            m_accountThread.interrupt();
-        }
+//        if (m_accountThread != null && m_accountThread.isAlive()) {
+//            Log.e(PMCType.TAG, "accountThread interrupt");
+//            m_accountThread.interrupt();
+//        }
 
         m_accountThread = new Thread(new Runnable() {
-
             @Override
             public void run() {
-
-// 비동기로 처리되어 필요가 없어짐 
-//                IPushService binder = null;
-//                boolean bIsBinder = true;
-//                boolean bIsConnected = false;
-//                try {
-//                    while (bIsBinder) {
-//                        binder = PMCService.m_Binder;
-//                        if (binder == null) {
-//                            Log.i(PMCType.TAG, "Binder Fail");
-//                            Thread.sleep(3000);
-//                        } else {
-//                            bIsBinder = false;
-//                        }
-//                    }
-//                } catch (InterruptedException e) {
-//                    Log.e(PMCType.TAG, "Error= " + e.getMessage());
-//                    e.printStackTrace();
-//                }
-
-//                try {
-//                    while (!bIsConnected) {
-//                        bIsConnected = IPushUtil.isConnectedMqttSession(binder);
-//                        if (bIsConnected == false) {
-//                            Log.i(PMCType.TAG, "Mqtt Connection Fail");
-//                            Thread.sleep(3000);
-//                        }
-//                    }
-//                } catch (InterruptedException e) {
-//                    Log.e(PMCType.TAG, "Error= " + e.getMessage());
-//                    e.printStackTrace();
-//                }
+                Log.d(PMCType.TAG, "기존ufmi=" + strSavedUFMI);
+                Log.d(PMCType.TAG, "ufmi=" + strFullUfmi);
+                Log.d(PMCType.TAG, "기존groupList=" + strSavedGroupList);
+                Log.d(PMCType.TAG, "groupList=" + strGroupList);
+                Log.d(PMCType.TAG, "기존bunchid=" + strSavedBunchid);
+                Log.d(PMCType.TAG, "bunchid=" + strBunchid);
+                Log.d(PMCType.TAG, "기존PttVersion=" + nSavedPttVersion);
+                Log.d(PMCType.TAG, "PttVersion=" + nPttVersion);
 
                 //testCode
-                Log.d(PMCType.TAG, "기존ufmi=" + strSavedUFMI);
-                Log.d(PMCType.TAG, "새로운ufmi=" + strFullUfmi);
-                Log.d(PMCType.TAG, "기존groupList=" + strSavedGroupList);
-                Log.d(PMCType.TAG, "새로운groupList=" + strGroupList);
-                Log.d(PMCType.TAG, "기존bunchid=" + strSavedBunchid);
-                Log.d(PMCType.TAG, "새로운bunchid=" + strBunchid);
-                Log.d(PMCType.TAG, "기존PttVersion=" + nSavedPttVersion);
-                Log.d(PMCType.TAG, "새로운PttVersion=" + nPttVersion);
+                Vector<String> subscribeLists = getMMSSubLists();
+                boolean statusChanged = false;
+                if (nPttVersion != PMCType.PMC_PTT_MODE_NONE) {
+                    // 단말모델 등록
+                    String str = getSubscribeString_BuildModel(nPttVersion);
+                    Log.d(PMCType.TAG, "단말기모델=" + str);
+                    if (TextUtils.isEmpty(str) == false) {
+                        if (subscribeLists.contains(str)) {
+                            subscribeLists.remove(str);
+                            Log.d(PMCType.TAG, "단말기모델이이미구독되어있습니다.");
+                        } else {
+                            //subscribe
+                            try {
+                                IPushUtil.subscribe(m_Binder, str);
+                                statusChanged = true;
+                                Log.d(PMCType.TAG, "토픽구독요청하였습니다, MODEL=" + str);
+                            } catch (Exception e) {
+                                Log.e(PMCType.TAG, "토픽구독요청에실패하였습니다." + e);
+                            }
+                        }
+                    } else {
+                        Log.e(PMCType.TAG, "단말기모델값이없으므로서브스크라이브할수없습니다");
+                    }
+
+                    //일반전화번호
+                    String strNormalNum = getSubscribeString_MyPhoneNumber();
+                    Log.d(PMCType.TAG, "전화번호=" + strNormalNum);
+                    if (TextUtils.isEmpty(strNormalNum) == false) {
+                        if (subscribeLists.contains(strNormalNum)) {
+                            subscribeLists.remove(strNormalNum);
+                            Log.d(PMCType.TAG, "전화번호토픽이이미구독되어있습니다.");
+                        } else {
+                            //subscribe
+                            try {
+                                IPushUtil.subscribe(m_Binder, strNormalNum);
+                                statusChanged = true;
+                                Log.d(PMCType.TAG, "토픽구독요청하였습니다,PHONE=" + strNormalNum);
+                            } catch (Exception e) {
+                                Log.e(PMCType.TAG, "토픽구독요청에실패하였습니다." + e);
+                            }
+                        }
+                    } else {
+                        Log.e(PMCType.TAG, "전화번호값이없으므로서브스크라이브할수없습니다");
+                    }
+
+                    // Urban or 확장번호.
+                    if (TextUtils.isEmpty(strFullUfmi) == false) {
+                        String strSubsUrban = getSubscribeString_Urban(strFullUfmi, nPttVersion);
+                        Log.d(PMCType.TAG, "URBAN=" + strSubsUrban);
+                        if (TextUtils.isEmpty(strSubsUrban) == false) {
+                            if (subscribeLists.contains(strSubsUrban)) {
+                                subscribeLists.remove(strSubsUrban);
+                                Log.d(PMCType.TAG, "URBAN토픽이이미구독되어있습니다.");
+                            } else {
+                                //subscribe
+                                try {
+                                    IPushUtil.subscribe(m_Binder, strSubsUrban);
+                                    statusChanged = true;
+                                    Log.d(PMCType.TAG, "토픽구독요청하였습니다, URBAN=" + strSubsUrban);
+                                } catch (Exception e) {
+                                    Log.e(PMCType.TAG, "토픽구독요청에실패하였습니다." + e);
+                                }
+                            }
+                        } else
+                            Log.e(PMCType.TAG, "Urban값이없으므로서브스크라이브할수없습니다");
+                    } else {
+                        Log.e(PMCType.TAG, "UFMI값이없으므로서브스크라이브할수없습니다");
+                    }
+
+                    // UFMI.
+                    if (TextUtils.isEmpty(strFullUfmi) == false) {
+                        String strSubsUFMI = getSubscribeString_UFMI(strFullUfmi, nPttVersion);
+                        Log.d(PMCType.TAG, "UFMI=" + strSubsUFMI);
+                        if (TextUtils.isEmpty(strSubsUFMI) == false) {
+                            if (subscribeLists.contains(strSubsUFMI)) {
+                                subscribeLists.remove(strSubsUFMI);
+                                Log.d(PMCType.TAG, "UFMI토픽이이미구독되어있습니다.");
+                            } else {
+                                //subscribe
+                                try {
+                                    IPushUtil.subscribe(m_Binder, strSubsUFMI);
+                                    statusChanged = true;
+                                    Log.d(PMCType.TAG, "토픽구독요청하였습니다, UFMI=" + strSubsUFMI);
+                                } catch (Exception e) {
+                                    Log.e(PMCType.TAG, "토픽구독요청에실패하였습니다." + e);
+                                }
+                            }
+                        } else {
+                            Log.e(PMCType.TAG, "UFMI값이없으므로서브스크라이브할수없습니다");
+                        }
+                    } else {
+                        Log.e(PMCType.TAG, "UFMI값이없으므로서브스크라이브할수없습니다");
+                    }
+
+                    // Group.
+                    if (TextUtils.isEmpty(strGroupList) == false) {
+                        if (strGroupList.compareToIgnoreCase("noGroupList") != 0) {
+                            ArrayList<String> groupList = getSubscribeString_Group(strGroupList, strFullUfmi, strBunchid, nPttVersion);
+                            for (int i = 0; i < groupList.size(); i++) {
+                                Log.d(PMCType.TAG, "groupTopic=" + groupList.get(i));
+                                if (subscribeLists.contains(groupList.get(i))) {
+                                    subscribeLists.remove(groupList.get(i));
+                                    Log.d(PMCType.TAG, "그룹토픽이이미구독되어있습니다.groupTopic=" + groupList.get(i));
+                                } else {
+                                    //subscribe
+                                    try {
+                                        IPushUtil.subscribe(m_Binder, groupList.get(i));
+                                        statusChanged = true;
+                                        Log.d(PMCType.TAG, "토픽구독요청하였습니다, groupTopic=" + groupList.get(i));
+                                    } catch (Exception e) {
+                                        Log.e(PMCType.TAG, "토픽구독요청에실패하였습니다." + e);
+                                    }
+                                }
+                            }
+                        } else {
+                            Log.e(PMCType.TAG, "그룹리스트가없으므로서브스크라이브할수없습니다");
+                        }
+                    } else {
+                        Log.e(PMCType.TAG, "그룹리스트가없으므로서브스크라이브할수없습니다");
+                    }
+                    //unsubscribe
+                    for (int i = 0; i < subscribeLists.size(); i++) {
+                        //unsubscribe
+                        try {
+                            IPushUtil.subscribe(m_Binder, subscribeLists.get(i));
+                            statusChanged = true;
+                            Log.d(PMCType.TAG, "토픽구독해재요청하였습니다, topic=" + subscribeLists.get(i));
+                        } catch (Exception e) {
+                            Log.e(PMCType.TAG, "토픽구독요청에실패하였습니다." + e);
+                        }
+                    }
+
+                    if (statusChanged) {
+                        Log.i(PMCType.TAG, "계정정보가변경되어validation정보를초기화합니다");
+                        getContentResolver().delete(DataColumn.CONTENT_URI_DEL_VALID_ALL, null, null);
+                    }
+                    // Configure.
+                    Log.d(PMCType.TAG, "PTT계정정보 ufmi=" + strFullUfmi + ", group=" + strGroupList +
+                            ", bunch=" + strBunchid + ", ver=" + nPttVersion);
+                    m_configure.setUFMI(strFullUfmi);
+                    m_configure.setGroupList(strGroupList);
+                    m_configure.setBunchID(strBunchid);
+                    m_configure.setVersion(nPttVersion);
+                    m_configure.saveSharedPreferences();
+                } else {
+                    Log.e(PMCType.TAG, "nPttVersion값오류로서브스크라이브할수없습니다");
+                }
                 //testCodeEnd
 
-                // 계정 정보 변경.
-                if (strSavedUFMI != null && strSavedUFMI.compareToIgnoreCase(strFullUfmi) != 0 ||
-                        CommonUtil.comp_GroupList(strSavedGroupList, strGroupList) == false ||
-                        strBunchid != null && strBunchid.compareToIgnoreCase(strSavedBunchid) != 0 ||
-                        nPttVersion != nSavedPttVersion) {
-                    Log.d(PMCType.TAG, "PTT계정정보가변경되었습니다.");
-                    // Valid DB 초기화.
-                    Log.i(PMCType.TAG, "== Valid DB Init ==");
-                    getContentResolver().delete(DataColumn.CONTENT_URI_DEL_VALID_ALL, null, null);
-                    // UnSubscribe.
-                    {
-                        // 15.04.02 일반번호는 Pass 시킴.
-                        {
-                            String strNormalNum = getSubscribeString_MyPhoneNumber();
-
-                            //testCode
-                            // 일단 트랜잭션처럼 하나의 array로 만들어서 PMA로 전달하면 PMA는 잡큐에 넣고 unsubscribe 하게 변경해야함 !!!
-                            //testCodeEnd
-
-                            // MMS로 Subscribe 된 목록 불러옴.
-                            Log.i(PMCType.TAG, "토픽구독해제작업을시작합니다.");
-                            ArrayList<String> listUnSubsc = getMMSSubscribes();
-                            for (int i = 0; i < listUnSubsc.size(); i++) {
-                                boolean bResult = false;
-                                String strUnSubscribe = listUnSubsc.get(i);
-                                if (strUnSubscribe.compareToIgnoreCase(strNormalNum) != 0) {
-                                    //testCode
-                                    try {
-                                        IPushUtil.unsubscribe(m_Binder, strUnSubscribe);
-                                    } catch (Exception e) {
-                                        Log.e(PMCType.TAG, "토픽구독해제에실패하였습니다." + e);
-                                        return;
-                                    }
-                                    //testCodeEnd
+//                // 계정 정보 변경.
+//                if (strSavedUFMI != null && strSavedUFMI.compareToIgnoreCase(strFullUfmi) != 0 ||
+//                        CommonUtil.comp_GroupList(strSavedGroupList, strGroupList) == false ||
+//                        strBunchid != null && strBunchid.compareToIgnoreCase(strSavedBunchid) != 0 ||
+//                        nPttVersion != nSavedPttVersion) {
+//                    Log.d(PMCType.TAG, "PTT계정정보가변경되었습니다.");
+//                    // Valid DB 초기화.
+//                    Log.i(PMCType.TAG, "== Valid DB Init ==");
+//                    getContentResolver().delete(DataColumn.CONTENT_URI_DEL_VALID_ALL, null, null);
+//                    // UnSubscribe.
+//                    {
+//                        // 15.04.02 일반번호는 Pass 시킴.
+//                        {
+//                            String strNormalNum = getSubscribeString_MyPhoneNumber();
+//                            // MMS로 Subscribe 된 목록 불러옴.
+//                            Log.i(PMCType.TAG, "토픽구독해제작업을시작합니다.");
+//                            ArrayList<String> listUnSubsc = getMMSSubscribes();
+//                            for (int i = 0; i < listUnSubsc.size(); i++) {
+//                                boolean bResult = false;
+//                                String strUnSubscribe = listUnSubsc.get(i);
+//                                if (strUnSubscribe.compareToIgnoreCase(strNormalNum) != 0) {
 //                                    try {
-//                                        while (!bResult) {
-//                                            bResult = unSubscribe(strUnSubscribe);
-//                                            if (bResult == false)
-//                                                Thread.sleep(3000);
-//                                        }
-//                                    } catch (InterruptedException e) {
-//                                        Log.e(PMCType.TAG, "Error= " + e.getMessage());
-//                                        e.printStackTrace();
+//                                        IPushUtil.unsubscribe(m_Binder, strUnSubscribe);
+//                                    } catch (Exception e) {
+//                                        Log.e(PMCType.TAG, "토픽구독해제에실패하였습니다." + e);
 //                                    }
-                                }
-                            }
-                            Log.i(PMCType.TAG, "토픽구독해제작업이완료되었습니다.");
-                        }
-                        /*{
-                            // MMS로 Subscribe 된 목록 불러옴.
-							Log.i(PMCType.TAG, "== unSubscribe Start ==");
-							ArrayList<String> listUnSubsc = getMMSSubscribes();								
-							for (int i=0; i<listUnSubsc.size(); i++) {
-								boolean bResult = false;
-								String strUnSubscribe = listUnSubsc.get(i);
-								try {
-									while (!bResult) {
-										bResult = unSubscribe(strUnSubscribe);
-										if (bResult == false)
-											Thread.sleep(3000);
-									}
-								} catch (InterruptedException e) {
-									Log.e(PMCType.TAG, "Error= "+e.getMessage());
-									e.printStackTrace();
-								}
-							}
-							Log.i(PMCType.TAG, "== unSubscribe End ==");
-						}*/
-                    }
-                    // Subscribe.
-                    {
-
-                        //testCode
-                        // 일단 트랜잭션처럼 하나의 array로 만들어서 PMA로 전달하면 PMA는 잡큐에 넣고 subscribe 하게 변경해야함 !!!
-                        //testCodeEnd
-
-
-                        ArrayList<String> listSubsc = new ArrayList<String>();
-                        if (nPttVersion != PMCType.PMC_PTT_MODE_NONE) {
-                            Log.i(PMCType.TAG, "== Subscribe Start ==");
-                            // 단말모델 등록.
-                            {
-                                String str = getSubscribeString_BuildModel(nPttVersion);
-                                if (TextUtils.isEmpty(str) == false)
-                                    listSubsc.add(str);
-                                else
-                                    Log.i(PMCType.TAG, "Subscribe BuildModel NULL");
-                            }
-                            // 15.04.02 일반번호는 Pass 시킴.
-                            /*// Phone 번호 등록.
-                            {
-								String str = getSubscribeString_MyPhoneNumber();
-								if (TextUtils.isEmpty(str) == false)
-									listSubsc.add(str);
-								else
-									Log.i(PMCType.TAG, "Subscribe MyPhoneNumber NULL");
-							}*/
-
-                            // Urban or 확장번호.
-                            if (TextUtils.isEmpty(strFullUfmi) == false) {
-                                String strSubsUrban = getSubscribeString_Urban(strFullUfmi, nPttVersion);
-                                if (TextUtils.isEmpty(strSubsUrban) == false)
-                                    listSubsc.add(strSubsUrban);
-                                else
-                                    Log.i(PMCType.TAG, "Subscribe Urban NULL");
-                            }
-                            // UFMI.
-                            if (TextUtils.isEmpty(strFullUfmi) == false) {
-                                String strSubsUFMI = getSubscribeString_UFMI(strFullUfmi, nPttVersion);
-                                if (TextUtils.isEmpty(strSubsUFMI) == false)
-                                    listSubsc.add(strSubsUFMI);
-                                else
-                                    Log.i(PMCType.TAG, "Subscribe UFMI NULL");
-                            }
-                            // Group.
-                            if (TextUtils.isEmpty(strGroupList) == false) {
-                                if (strGroupList.compareToIgnoreCase("noGroupList") != 0) {
-                                    ArrayList<String> groupList = getSubscribeString_Group(strGroupList, strFullUfmi, strBunchid, nPttVersion);
-                                    listSubsc.addAll(groupList);
-                                }
-                            }
-
-                            for (int i = 0; i < listSubsc.size(); i++) {
-                                boolean bResult = false;
-                                String strSubscribe = listSubsc.get(i);
-
-                                //testCode
-                                try {
-                                    IPushUtil.subscribe(m_Binder, strSubscribe);
-                                } catch (Exception e) {
-                                    Log.e(PMCType.TAG, "토픽구독에실패하였습니다." + e);
-                                    return;
-                                }
-                                //testCodeEnd
-
-
-//                                try {
-//                                    while (!bResult) {
-//                                        bResult = subscribe(strSubscribe);
-//                                        if (bResult == false)
-//                                            Thread.sleep(3000);
-//                                    }
-//                                } catch (InterruptedException e) {
-//                                    Log.d(PMCType.TAG, "Error= " + e.getMessage());
-//                                    e.printStackTrace();
 //                                }
-                            }
-                            Log.i(PMCType.TAG, "토픽구독작업이완료되었습니다.");
-                        }
-                    }
+//                            }
+//                            Log.i(PMCType.TAG, "토픽구독해제작업이완료되었습니다.");
+//                        }
+//                    }
+//                    // Subscribe.
+//                    {
+//                        //testCode
+//                        // 일단 트랜잭션처럼 하나의 array로 만들어서 PMA로 전달하면 PMA는 잡큐에 넣고 subscribe 하게 변경해야함 !!!
+//                        //testCodeEnd
+//
+//                        ArrayList<String> listSubsc = new ArrayList<String>();
+//                        if (nPttVersion != PMCType.PMC_PTT_MODE_NONE) {
+//                            Log.i(PMCType.TAG, "== Subscribe Start ==");
+//                            // 단말모델 등록.
+//                            {
+//                                String str = getSubscribeString_BuildModel(nPttVersion);
+//                                if (TextUtils.isEmpty(str) == false)
+//                                    listSubsc.add(str);
+//                                else
+//                                    Log.i(PMCType.TAG, "Subscribe BuildModel NULL");
+//                            }
+//                            // 15.04.02 일반번호는 Pass 시킴.
+//                            /*// Phone 번호 등록.
+//                            {
+//								String str = getSubscribeString_MyPhoneNumber();
+//								if (TextUtils.isEmpty(str) == false)
+//									listSubsc.add(str);
+//								else
+//									Log.i(PMCType.TAG, "Subscribe MyPhoneNumber NULL");
+//							}*/
+//
+//                            // Urban or 확장번호.
+//                            if (TextUtils.isEmpty(strFullUfmi) == false) {
+//                                String strSubsUrban = getSubscribeString_Urban(strFullUfmi, nPttVersion);
+//                                if (TextUtils.isEmpty(strSubsUrban) == false)
+//                                    listSubsc.add(strSubsUrban);
+//                                else
+//                                    Log.i(PMCType.TAG, "Subscribe Urban NULL");
+//                            }
+//                            // UFMI.
+//                            if (TextUtils.isEmpty(strFullUfmi) == false) {
+//                                String strSubsUFMI = getSubscribeString_UFMI(strFullUfmi, nPttVersion);
+//                                if (TextUtils.isEmpty(strSubsUFMI) == false)
+//                                    listSubsc.add(strSubsUFMI);
+//                                else
+//                                    Log.i(PMCType.TAG, "Subscribe UFMI NULL");
+//                            }
+//                            // Group.
+//                            if (TextUtils.isEmpty(strGroupList) == false) {
+//                                if (strGroupList.compareToIgnoreCase("noGroupList") != 0) {
+//                                    ArrayList<String> groupList = getSubscribeString_Group(strGroupList, strFullUfmi, strBunchid, nPttVersion);
+//                                    listSubsc.addAll(groupList);
+//                                }
+//                            }
+//
+//                            for (int i = 0; i < listSubsc.size(); i++) {
+//                                boolean bResult = false;
+//                                String strSubscribe = listSubsc.get(i);
+//
+//                                //testCode
+//                                try {
+//                                    IPushUtil.subscribe(m_Binder, strSubscribe);
+//                                } catch (Exception e) {
+//                                    Log.e(PMCType.TAG, "토픽구독에실패하였습니다." + e);
+//                                    return;
+//                                }
+//                                //testCodeEnd
+////                                try {
+////                                    while (!bResult) {
+////                                        bResult = subscribe(strSubscribe);
+////                                        if (bResult == false)
+////                                            Thread.sleep(3000);
+////                                    }
+////                                } catch (InterruptedException e) {
+////                                    Log.d(PMCType.TAG, "Error= " + e.getMessage());
+////                                    e.printStackTrace();
+////                                }
+//                            }
+//                            Log.i(PMCType.TAG, "토픽구독작업이완료되었습니다.");
+//                        }
+//                    }
 
-                    // Configure.
-                    {
-                        Log.d(PMCType.TAG, "변경된PTT계정정보 ufmi=" + strFullUfmi + ", group=" + strGroupList +
-                                ", bunch=" + strBunchid + ", ver=" + nPttVersion);
-                        m_configure.setUFMI(strFullUfmi);
-                        m_configure.setGroupList(strGroupList);
-                        m_configure.setBunchID(strBunchid);
-                        m_configure.setVersion(nPttVersion);
-                        m_configure.saveSharedPreferences();
-                    }
-                } else {
-                    Log.d(PMCType.TAG, "PTT계정정보가동일합니다. ufmi=" + m_configure.getUFMI() + ", group=" + m_configure.getGroupList() +
-                            ", bunch=" + m_configure.getBunchID() + ", ver=" + m_configure.getVersion());
-                }
-
-                //testCode ??
-                // 여기서 왜 서브스크립션을 가져오나 ???
-                //ArrayList<String> listMMS = getMMSSubscribes();
-                //for (int i = 0; i < listMMS.size(); i++)
-                //   Log.i(PMCType.TAG, listMMS.get(i));
-
-                Log.i(PMCType.TAG, "PTT계정동기화를완료였습니다.");
+//                    // Configure.
+//                    {
+//                        Log.d(PMCType.TAG, "변경된PTT계정정보 ufmi=" + strFullUfmi + ", group=" + strGroupList +
+//                                ", bunch=" + strBunchid + ", ver=" + nPttVersion);
+//                        m_configure.setUFMI(strFullUfmi);
+//                        m_configure.setGroupList(strGroupList);
+//                        m_configure.setBunchID(strBunchid);
+//                        m_configure.setVersion(nPttVersion);
+//                        m_configure.saveSharedPreferences();
+//                    }
+//                } else {
+//                    Log.d(PMCType.TAG, "PTT계정정보가동일합니다. ufmi=" + m_configure.getUFMI() + ", group=" + m_configure.getGroupList() +
+//                            ", bunch=" + m_configure.getBunchID() + ", ver=" + m_configure.getVersion());
+//                }
+//
+//                //testCode ??
+//                // 여기서 왜 서브스크립션을 가져오나 ???
+//                //ArrayList<String> listMMS = getMMSSubscribes();
+//                //for (int i = 0; i < listMMS.size(); i++)
+//                //   Log.i(PMCType.TAG, listMMS.get(i));
+//
+                Log.i(PMCType.TAG, "PTT계정동기화가수행되었습니다");
             }
         });
 
