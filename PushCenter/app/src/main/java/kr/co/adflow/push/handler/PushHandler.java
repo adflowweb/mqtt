@@ -131,9 +131,9 @@ public class PushHandler implements MqttCallback {
         }
         preference = new PushPreference(context);
         Log.d(TAG, "preference=" + preference);
-        dbworker = new DBWorker();
-        dbworker.start();
-        Log.d(TAG, "dbworker=" + dbworker);
+        //dbworker = new DBWorker();
+        //dbworker.start();
+        //Log.d(TAG, "dbworker=" + dbworker);
         Log.d(TAG, "PushHandler생성자종료()");
     }
 
@@ -164,13 +164,15 @@ public class PushHandler implements MqttCallback {
             try {
                 IMqttToken token = mqttClient.disconnect();
                 token.waitForCompletion();
-                //dbworker thread 종료
-                dbworker.discard();
-                dbworker = null;
             } catch (MqttException e) {
                 Log.e(TAG, "에러발생", e);
             }
             mqttClient = null;
+        }
+        if (dbworker != null) {
+            //dbworker thread 종료
+            dbworker.discard();
+            dbworker = null;
         }
         Log.d(TAG, "stop종료()");
     }
@@ -183,7 +185,6 @@ public class PushHandler implements MqttCallback {
         Log.d(TAG, "mqttClient=" + mqttClient);
 
         try {
-
             // 로밍체크
             // testCode
             ConnectivityManager connectivityManager;
@@ -246,6 +247,17 @@ public class PushHandler implements MqttCallback {
                     Log.d(TAG, "dbworker를깨웁니다.");
                     dbworker.notify();
                 }
+            }
+        } catch (MqttException e) {
+            Log.e(TAG, "mqttException발생", e);
+            e.printStackTrace();
+            /**
+             * 서버에서 토큰을 삭제하는 경우가 있음
+             * 인증실패로 인한 연결실패시 토큰을 지우고 다음턴에서 다시 인증을 받고 연결한다.
+             */
+            if (e.getReasonCode() == MqttException.REASON_CODE_NOT_AUTHORIZED) {
+                preference.put(PushPreference.TOKEN, null);
+                stop();
             }
         } catch (Exception e) {
             Log.e(TAG, "keepAlive처리시예외상황발생", e);
@@ -751,7 +763,6 @@ public class PushHandler implements MqttCallback {
             } else {
                 sendBroadcast(MQTT_CONNECTED_MESSAGE, MQTT_CONNECTED);
             }
-
             CONN_LOST_COUNT = 0;
         } catch (Exception e) {
             Log.e(TAG, "예외상황발생", e);
@@ -777,8 +788,6 @@ public class PushHandler implements MqttCallback {
         Log.d(TAG, "토픽구독을완료하였습니다.");
 
         //addSubscribeJob(topic);
-
-
         Log.d(TAG, "subscribe종료()");
     }
 
