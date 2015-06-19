@@ -58,6 +58,8 @@ import com.bns.pmc.util.Log;
 import com.bns.pmc.util.PMCType;
 import com.github.kevinsawicki.http.HttpRequest;
 
+import net.daum.mf.speech.api.SpeechRecognizerActivity;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -80,7 +82,6 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
     public static final String CONTENT_UPLOAD_URL = BuildConfig.CONTENT_UPLOAD_URL;
     private android.net.Uri mImageUri;
 
-
     public class ItemNew {
         String strName;
         String strNumber;
@@ -99,7 +100,7 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
 
     private final int GET_CONTACT = 11;
     private final int GET_CONTACT_PPT = 12;
-    private final int IDX_ITEM_NEW_MAX = 100;
+    private final int IDX_ITEM_NEW_MAX = 150;
     private final int IDX_NEW_MSG_EDIT_TEXT = -1;
     private int m_nIdxNumber = 1;
     private int m_nSelectedID = IDX_NEW_MSG_EDIT_TEXT;
@@ -188,10 +189,8 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
         });
         //testCodeEnd
 
-
         m_etNewMsg.setOnFocusChangeListener(this);
         m_etNewMsg.addTextChangedListener(this);
-
         m_configure = Configure.getInstance(m_context);
 
         int nfontpercent = m_configure.getFontPercent();
@@ -320,6 +319,9 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
 
             m_etNewMsg.requestFocus();
         }
+        //testCode STT
+        //SpeechRecognizerManager.getInstance().initializeLibrary(this);
+        //testCodeEnd
     }
 
     @Override
@@ -368,6 +370,7 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
             if (m_alertDialog.isShowing())
                 m_alertDialog.dismiss();
         }
+        //SpeechRecognizerManager.getInstance().finalizeLibrary();
     }
 
     @Override
@@ -408,7 +411,6 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                                 }
                             }
                             etFocusedEdit.requestFocus();
-
                         } catch (Exception e) {
                             Log.e(PMCType.TAG, e.getMessage());
                         }
@@ -421,7 +423,6 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                         Cursor c = getContentResolver().query(data.getData(),
                                 new String[]{ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
                                         ContactsContract.CommonDataKinds.Phone.NUMBER}, null, null, null);
-
                         String strText = null;
                         if (c != null) {
                             if (c.moveToFirst()) {
@@ -431,7 +432,6 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                                         getResources().getString(R.string.number) + ":" + strNumber + "]";
 
                                 m_etNewMsg.append(strText);
-
                             }
                             c.close();
                         }
@@ -439,7 +439,7 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                 }
                 break;
             case TAKE_CAMERA:
-                if (requestCode == TAKE_CAMERA && resultCode == RESULT_OK) {
+                if (resultCode == RESULT_OK) {
                     //Bundle b = (Bundle) data;
 //                    Bundle b = data.getExtras();
 //                    for (String key : b.keySet()) {
@@ -471,7 +471,7 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                 }
                 break;
             case PICK_IMAGE:
-                if (requestCode == PICK_IMAGE && resultCode == RESULT_OK
+                if (resultCode == RESULT_OK
                         && null != data) {
                     Uri selectedImage = data.getData();
                     String[] filePathColumn = {MediaStore.Images.Media.DATA};
@@ -486,7 +486,6 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                     decodeFile(picturePath);
                 }
                 break;
-
             case FILE_SELECT_CODE:
                 if (resultCode == RESULT_OK) {
                     // Get the Uri of the selected file
@@ -504,6 +503,34 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                     // File file = new File(path);
                     // Initiate the upload
                     decodeFile(path);
+                }
+                break;
+            case 4:
+                if (resultCode == RESULT_OK) {
+                    try {
+                        ArrayList<String> results = data.getStringArrayListExtra(VoiceRecoActivity.EXTRA_KEY_RESULT_ARRAY);
+                        for (int i = 0; i < results.size(); i++) {
+                            Log.d(PMCType.TAG, "문자열=" + results.get(i));
+                        }
+
+                        final String txt = results.get(0);
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        m_etNewMsg.setText(txt);
+                                    }
+                                });
+                            }
+                        }).start();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    //ArrayList<String> result = data
+                    //        .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+
                 }
                 break;
         }
@@ -540,6 +567,7 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
         menu.add(0, 1, 0, "사진 촬영");
         menu.add(0, 2, 0, "사진 첨부");
         menu.add(0, 3, 0, "파일 첨부");
+        menu.add(0, 4, 0, "음성 인식");
         //menu.add(0, MENU_TEST_0, 0, "Test 서브스크라이브해제");
 
         return super.onCreateOptionsMenu(menu);
@@ -579,14 +607,107 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                 selectImageFromGallery();
                 break;
             case 3:
-                //selectFile();
                 showFileChooser();
+                break;
+            case 4:
+                //callSTT();
+                //testCode daum
+                Intent i = new Intent(getApplicationContext(), VoiceRecoActivity.class);
+                i.putExtra(SpeechRecognizerActivity.EXTRA_KEY_API_KEY, "bbe81be26558baa1ac6af6a92b325506"); // apiKey는 신청과정을 통해     package와 매치되도록 발급받은 APIKey 문자열 값.
+                startActivityForResult(i, 4);
+                //testCodeEnd
+//                Intent i = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+//                i.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+//                        RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+//                i.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+//                i.putExtra(RecognizerIntent.EXTRA_PROMPT, "테스트프롬프트"
+//                        /*getString(R.string.speech_prompt)*/);
+                //try {
+                //startActivityForResult(i, 4);
+                //} catch (ActivityNotFoundException a) {
+                //    a.printStackTrace();
+                //    Toast.makeText(getApplicationContext(),
+                //            "스피치가지원되지않습니다",
+                //            Toast.LENGTH_SHORT).show();
+                //}
                 break;
             default:
                 break;
         }
         return true;
     }
+
+//    private void callSTT() {
+//        Log.d(PMCType.TAG, "callSTT시작()");
+//        SpeechRecognizerClient.Builder builder = new SpeechRecognizerClient.Builder().
+//                setApiKey("bbe81be26558baa1ac6af6a92b325506").     // 발급받은 api key
+//                setServiceType(SpeechRecognizerClient.SERVICE_TYPE_WEB);
+//        SpeechRecognizerClient client = builder.build();
+//        client.setSpeechRecognizeListener(new SpeechRecognizeListener() {
+//            @Override
+//            public void onReady() {
+//                Log.d(PMCType.TAG, "onReady시작()");
+//                Log.d(PMCType.TAG, "onReady종료()");
+//            }
+//
+//            @Override
+//            public void onBeginningOfSpeech() {
+//                Log.d(PMCType.TAG, "onBeginningOfSpeech시작()");
+//                Log.d(PMCType.TAG, "onBeginningOfSpeech종료()");
+//            }
+//
+//            @Override
+//            public void onEndOfSpeech() {
+//                Log.d(PMCType.TAG, "onEndOfSpeech시작()");
+//                Log.d(PMCType.TAG, "onEndOfSpeech종료()");
+//            }
+//
+//            @Override
+//            public void onError(int i, String s) {
+//                Log.d(PMCType.TAG, "onError시작(i=" + i + ", s=" + s + ")");
+//                Log.d(PMCType.TAG, "onError종료()");
+//            }
+//
+//            @Override
+//            public void onPartialResult(String s) {
+//                Log.d(PMCType.TAG, "onPartialResult시작(s=" + s + ")");
+//                final String txt = s;
+//                new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                m_etNewMsg.setText(txt);
+//                            }
+//                        });
+//                    }
+//                }).start();
+//
+//                Log.d(PMCType.TAG, "onPartialResult종료()");
+//            }
+//
+//            @Override
+//            public void onResults(Bundle bundle) {
+//                Log.d(PMCType.TAG, "onResults시작(bundle=" + bundle + ")");
+//                Log.d(PMCType.TAG, "onResults종료()");
+//            }
+//
+//            @Override
+//            public void onAudioLevel(float v) {
+//                Log.d(PMCType.TAG, "onAudioLevel시작(v=" + v + ")");
+//                Log.d(PMCType.TAG, "onAudioLevel종료()");
+//            }
+//
+//            @Override
+//            public void onFinished() {
+//                Log.d(PMCType.TAG, "onFinished시작()");
+//                Log.d(PMCType.TAG, "onFinished종료()");
+//            }
+//        });
+//        client.startRecording(true);
+//        Log.d(PMCType.TAG, "callSTT종료()");
+//    }
 
 
     @Override
@@ -1329,7 +1450,6 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                         Log.i(PMCType.TAG, "[onPause]Delete Temp PttNumber= " + strSaveNumber + " Result= " + nRet);
                     }
                 }
-
             }
         }).start();
     }
@@ -1407,7 +1527,6 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                 if (binder == null)
                     return RESULT_MSG_NO_BINDER;
 
-
                 // MqttSession 연결상태 확인.
                 boolean bIsConnected = IPushUtil.isConnectedMqttSession(binder);
                 Log.d(PMCType.TAG, "bIsConnected=" + bIsConnected);
@@ -1442,7 +1561,6 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                 nResultFail = 0;
                 String strSenderMMS = CommonUtil.conv_UFMIToMMS(strSender, nVersion);
                 String strMsg = m_etNewMsg.getText().toString();
-
                 int numberOfParams = params.length;
                 Log.d(PMCType.TAG, "메시지수신자명수=" + params.length);
 
@@ -1548,11 +1666,11 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
 
                         if (bResultSuccess == false)
                             nResultFail++;
-                        sendingContent = false;
                         long stop = System.currentTimeMillis();
                         Log.d(PMCType.TAG, "[Send Success]" + bResultSuccess + " [time]" + (stop - start) + "ms");
                     }
                 }
+                sendingContent = false;
             } catch (Exception e) {
                 e.printStackTrace();
                 return -7;
@@ -1605,26 +1723,23 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
 
             //컨텐트전송이면 로컬디비저장
             if (sendingContent) {
-                {
-                    values.put(MessageColumn.DB_COLUMN_DATA, imgJson.toString().getBytes());
-                    //DataColumn.COLUMN_DATA_TYPE_JPG
-                    String format = contentFileName.substring(contentFileName.lastIndexOf(".") + 1);
-                    Integer dataType = 0;
-                    if (format.equalsIgnoreCase("jpg"))
-                        dataType = DataColumn.COLUMN_DATA_TYPE_JPG;
-                    else if (format.equalsIgnoreCase("bmp"))
-                        dataType = DataColumn.COLUMN_DATA_TYPE_BMP;
-                    else if (format.equalsIgnoreCase("png"))
-                        dataType = DataColumn.COLUMN_DATA_TYPE_PNG;
-                    else {
-                        //5
-                        dataType = DataColumn.COLUMN_DATA_TYPE_UNKNOWN;
-                    }
-                    values.put(MessageColumn.DB_COLUMN_DATA_TYPE, dataType);
+                values.put(MessageColumn.DB_COLUMN_DATA, imgJson.toString().getBytes());
+                //DataColumn.COLUMN_DATA_TYPE_JPG
+                String format = contentFileName.substring(contentFileName.lastIndexOf(".") + 1);
+                Integer dataType = 0;
+                if (format.equalsIgnoreCase("jpg"))
+                    dataType = DataColumn.COLUMN_DATA_TYPE_JPG;
+                else if (format.equalsIgnoreCase("bmp"))
+                    dataType = DataColumn.COLUMN_DATA_TYPE_BMP;
+                else if (format.equalsIgnoreCase("png"))
+                    dataType = DataColumn.COLUMN_DATA_TYPE_PNG;
+                else {
+                    //5
+                    dataType = DataColumn.COLUMN_DATA_TYPE_UNKNOWN;
                 }
+                values.put(MessageColumn.DB_COLUMN_DATA_TYPE, dataType);
             }
             getContentResolver().insert(DataColumn.CONTENT_URI_INSERT_MSG, values);
-
         }
 
         private void uploadContent(IPushService binder, String phoneNum, String md5) throws Exception {
@@ -1723,7 +1838,6 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                 } else {
                     throw new Exception("컨텐츠서버오류발생. responseCode=" + responseCode);
                 }
-
             } else {
                 //이미지가 아님
                 Log.d(PMCType.TAG, "이미지가아니라썸네일을만들지않습니다");
@@ -1750,14 +1864,12 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                     }
                 });
                 m_alertDialog.show();
-
                 dismissSendResultDlg(DLG_DISMISS_TIME, m_alertDialog, false);
             } else if (result == 0) {
                 //final AlertDialog alertDialog;
                 AlertDialog.Builder ab = new AlertDialog.Builder(m_context);
                 ab.setTitle(R.string.send_popup_title);
                 ab.setMessage(R.string.send_popup_context_success);
-
                 m_alertDialog = ab.create();
                 m_alertDialog.setOnKeyListener(new OnKeyListener() {
 

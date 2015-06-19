@@ -8,8 +8,8 @@ android {
         applicationId "com.bns.pmc"
         minSdkVersion 19
         targetSdkVersion 19
-        versionCode 18
-        versionName "2.5.18"
+        versionCode 19
+        versionName "2.5.19"
     }
 
     buildTypes {
@@ -27,14 +27,18 @@ android {
 }
 
 dependencies {
+    //compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:support-v4:19.1.0'
     compile 'com.github.kevinsawicki:http-request:6.0'
+    compile files('libs/daum-speech-openapi-2.1.jar')
 
-    //compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(dir: "$buildDir/native-libs", include: 'native-libs.jar')
+
     //testCompile 'junit:junit:4.12'
     //compile 'io.appium:java-client:2.2.0'
     //androidTestCompile 'io.appium:java-client:2.2.0'
     //compile 'junit:junit:4.12'
     //testCompile 'org.skyscreamer:jsonassert:1.2.3'
     //testCompile 'org.apache.httpcomponents:httpclient:4.3.4'
+
 }

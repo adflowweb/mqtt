@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/net_daum_mf_asr_main_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top">
+
+        <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|center_horizontal">
+
+            <FrameLayout
+                    android:id="@+id/net_daum_mf_asr_top_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="275dp">
+
+                <net.daum.mf.speech.api.SpeechRecognizerSurfaceView
+                        android:id="@+id/net_daum_mf_asr_progress_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"/>
+
+                <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                    <View
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="166.5"/>
+
+                    <FrameLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal">
+
+                        <ImageButton
+                                android:id="@+id/net_daum_mf_asr_button_voice"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:padding="5dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/net_daum_mf_asr_bt_voice_record_selector"
+                                android:background="@drawable/net_daum_mf_asr_bg_focus_selector"
+                                android:contentDescription="@string/net_daum_mf_asr_voice_button_description"/>
+
+                        <ImageButton
+                                android:id="@+id/net_daum_mf_asr_button_retry"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:padding="5dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/net_daum_mf_asr_bt_refresh_selector"
+                                android:background="@drawable/net_daum_mf_asr_bg_focus_selector"
+                                android:contentDescription="@string/net_daum_mf_asr_refresh_button_description"/>
+
+                        <ProgressBar
+                                android:id="@+id/net_daum_mf_asr_progress_analysis"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"/>
+
+                    </FrameLayout>
+
+                    <View
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="70.5"/>
+
+                    <FrameLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="150">
+
+                        <TextView
+                                android:id="@+id/net_daum_mf_asr_text_message"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:textColor="#FF222222"
+                                android:textSize="18sp"
+                                android:includeFontPadding="false"
+                                android:text="@string/net_daum_mf_asr_voice_search_please_speak"/>
+
+
+                        <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal">
+
+                            <View
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="87"/>
+
+
+                            <TextView
+                                    android:id="@+id/net_daum_mf_asr_text_intermediate_message"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="547"
+                                    android:textColor="#A6A6A6"
+                                    android:textSize="18sp"
+                                    android:lines="2"
+                                    android:lineSpacingExtra="9dp"
+                                    android:includeFontPadding="false"
+                                    android:text="@string/net_daum_mf_asr_voice_search_please_speak"/>
+
+                            <View
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="86"/>
+
+                        </LinearLayout>
+
+                    </FrameLayout>
+
+                </LinearLayout>
+
+            </FrameLayout>
+
+            <FrameLayout
+                    android:id="@+id/net_daum_mf_asr_bottom_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                <TextView
+                        android:id="@+id/net_daum_mf_asr_text_tip"
+                        android:layout_width="match_parent"
+                        android:layout_height="37.5dp"
+                        android:layout_gravity="top"
+                        android:gravity="center"
+                        android:textColor="#6C6C6C"
+                        android:textSize="12sp"
+                        android:background="@drawable/net_daum_mf_asr_bg_listview_tip"/>
+
+                <ListView
+                        android:id="@+id/net_daum_mf_asr_list_suggest_portrait"
+                        android:layout_width="match_parent"
+                        android:layout_height="175dp"
+                        android:paddingLeft="36dp"
+                        android:paddingTop="25dp"
+                        android:paddingRight="36dp"
+                        android:paddingBottom="25dp"
+                        android:visibility="invisible"
+                        android:divider="@null"
+                        android:dividerHeight="5.75dp"
+                        android:background="@drawable/net_daum_mf_asr_bg_listview_tip"/>
+
+            </FrameLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+                android:id="@+id/net_daum_mf_asr_layout_suggest_landscape"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone">
+
+            <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="251"
+                    android:background="#FFFFFFFF">
+
+                <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="149"/>
+
+                <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textSize="18sp"
+                        android:textColor="#FF222222"
+                        android:text="@string/net_daum_mf_asr_voice_search_suggest_guide"
+                        android:includeFontPadding="false"/>
+
+                <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="66"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="419"
+                    android:background="@drawable/net_daum_mf_asr_bg_listview_tip">
+
+                <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="66"/>
+
+                <ListView
+                        android:id="@+id/net_daum_mf_asr_list_suggest_landscape"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:paddingLeft="36dp"
+                        android:paddingRight="36dp"
+                        android:layout_weight="353"
+                        android:divider="@null"
+                        android:dividerHeight="5.75dp"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <ImageButton
+                android:id="@+id/net_daum_mf_asr_button_top_daum"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_margin="5dp"
+                android:padding="5dp"
+                android:layout_gravity="left|top"
+                android:src="@drawable/net_daum_mf_asr_bt_top_daum_selector"
+                android:background="@drawable/net_daum_mf_asr_bg_focus_selector"
+                android:contentDescription="@string/net_daum_mf_asr_daum_button_description"/>
+
+        <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="8dp"
+                android:layout_gravity="top|right">
+
+            <ImageButton
+                    android:id="@+id/net_daum_mf_asr_button_top_retry"
+                    android:layout_width="29.5dp"
+                    android:layout_height="29.5dp"
+                    android:layout_marginRight="6dp"
+                    android:src="@drawable/net_daum_mf_asr_bt_top_refresh_selector"
+                    android:background="@drawable/net_daum_mf_asr_bg_focus_selector"
+                    android:contentDescription="@string/net_daum_mf_asr_refresh_button_description"/>
+
+            <ImageButton
+                    android:id="@+id/net_daum_mf_asr_button_top_close"
+                    android:layout_width="29.5dp"
+                    android:layout_height="29.5dp"
+                    android:layout_marginLeft="6dp"
+                    android:src="@drawable/net_daum_mf_asr_bt_top_close_selector"
+                    android:background="@drawable/net_daum_mf_asr_bg_focus_selector"
+                    android:contentDescription="@string/net_daum_mf_asr_close_button_description"/>
+
+        </LinearLayout>
+
+    </FrameLayout>
