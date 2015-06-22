@@ -1,7 +1,6 @@
 package com.bns.pmc.view;
 
 import android.content.Context;
-import android.text.TextUtils.TruncateAt;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.CheckBox;
@@ -10,21 +9,22 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.bns.pmc.R;
+import com.bns.pmc.SettingsActivity;
 import com.bns.pmc.util.CommonUtil;
 
 public class SettingsListitemView extends RelativeLayout {
 
     public static class MenuItem {
-    	public static final int MENU_FONTSIZE = 0;
-    	public static final int MENU_SOUND_NOTI = 1;
-    	public static final int MENU_ALARM = 2;
-    	public static final int MENU_VIBRATION = 3;
-    	public static final int MENU_POPUP = 4;
-    	public static final int MENU_MSG_SAVECOUNT = 5;
-    	public static final int MENU_MSG_DELETE_ALL = 6;
-    	public static final int MENU_PTT_NUMBER = 7;
-    	public static final int MENU_PTT_GROUP = 8;
-    	
+        public static final int MENU_FONTSIZE = 0;
+        public static final int MENU_SOUND_NOTI = 1;
+        public static final int MENU_ALARM = 2;
+        public static final int MENU_VIBRATION = 3;
+        public static final int MENU_POPUP = 4;
+        public static final int MENU_MSG_SAVECOUNT = 5;
+        public static final int MENU_MSG_DELETE_ALL = 6;
+        public static final int MENU_PTT_NUMBER = 7;
+        public static final int MENU_PTT_GROUP = 8;
+
         public static final int TYPE_CATEGORY = 0;
         public static final int TYPE_NORMAL = 1;
         public static final int TYPE_SEEK_BAR = 2;
@@ -42,44 +42,44 @@ public class SettingsListitemView extends RelativeLayout {
         public MenuItem(Context context, int type, int menu) {
             m_nType = type;
             m_nMenu = menu;
-            
+
             switch (m_nMenu) {
-            	case MENU_FONTSIZE:            		
-            		m_strTitle = context.getResources().getString(R.string.settings_menu_fontsize);
-            		break;
-            	case MENU_SOUND_NOTI:
-            		m_strTitle = context.getResources().getString(R.string.settings_menu_sound_noti);
-            		break;
-            	case MENU_ALARM:
-            		m_strTitle = context.getResources().getString(R.string.settings_menu_alam);
-            		break;
-            	case MENU_VIBRATION:
-            		m_strTitle = context.getResources().getString(R.string.settings_menu_vibration);
-            		break;
-            	case MENU_POPUP:
-            		m_strTitle = context.getResources().getString(R.string.settings_menu_popup);
-            		break;
-            	case MENU_MSG_SAVECOUNT:
-            		m_strTitle = context.getResources().getString(R.string.settings_menu_msg_save_count);
-            		break;
-            	case MENU_MSG_DELETE_ALL:
-            		m_strTitle = context.getResources().getString(R.string.settings_menu_msg_delete_all);
-            		break;
-            	case MENU_PTT_NUMBER :
-            		m_strTitle = "Ptt: ";//context.getResources().getString(R.string.settings_menu_ptt_number);
-            		break;
-            	case MENU_PTT_GROUP :
-            		m_strTitle = "Grp: ";//context.getResources().getString(R.string.settings_menu_ptt_group);
-            		break;
-            	default:
-            		break;
+                case MENU_FONTSIZE:
+                    m_strTitle = context.getResources().getString(R.string.settings_menu_fontsize);
+                    break;
+                case MENU_SOUND_NOTI:
+                    m_strTitle = context.getResources().getString(R.string.settings_menu_sound_noti);
+                    break;
+                case MENU_ALARM:
+                    m_strTitle = context.getResources().getString(R.string.settings_menu_alam);
+                    break;
+                case MENU_VIBRATION:
+                    m_strTitle = context.getResources().getString(R.string.settings_menu_vibration);
+                    break;
+                case MENU_POPUP:
+                    m_strTitle = context.getResources().getString(R.string.settings_menu_popup);
+                    break;
+                case MENU_MSG_SAVECOUNT:
+                    m_strTitle = context.getResources().getString(R.string.settings_menu_msg_save_count);
+                    break;
+                case MENU_MSG_DELETE_ALL:
+                    m_strTitle = context.getResources().getString(R.string.settings_menu_msg_delete_all);
+                    break;
+                case MENU_PTT_NUMBER:
+                    m_strTitle = "Ptt: ";//context.getResources().getString(R.string.settings_menu_ptt_number);
+                    break;
+                case MENU_PTT_GROUP:
+                    m_strTitle = "Grp: ";//context.getResources().getString(R.string.settings_menu_ptt_group);
+                    break;
+                default:
+                    break;
             }
         }
 
         public int getType() {
             return m_nType;
         }
-        
+
         public int getMenu() {
             return m_nMenu;
         }
@@ -87,32 +87,32 @@ public class SettingsListitemView extends RelativeLayout {
         public String getTitle() {
             return m_strTitle;
         }
-        
+
         public String getText() {
-        	return m_strText;
+            return m_strText;
         }
-        
+
         public void setText(String text) {
-        	m_strText = text;
+            m_strText = text;
         }
-        
+
         public boolean getCheck() {
-        	return m_bCheck;
+            return m_bCheck;
         }
-        
+
         public void setCheck(boolean value) {
-        	m_bCheck = value;
+            m_bCheck = value;
         }
-        
+
         public int getProgress() {
-        	return m_nProgress;
+            return m_nProgress;
         }
-        
+
         public void setProgress(int progress) {
-        	m_nProgress = progress;
+            m_nProgress = progress;
         }
     }
-    
+
     private Context m_context;
     private RelativeLayout m_layNormal;
     private SeekBar m_seekBar_fontsize;
@@ -134,7 +134,7 @@ public class SettingsListitemView extends RelativeLayout {
     }
 
     public SettingsListitemView(Context context, AttributeSet attrs,
-            int defStyle) {
+                                int defStyle) {
         super(context, attrs, defStyle);
         m_context = context;
         init();
@@ -146,24 +146,29 @@ public class SettingsListitemView extends RelativeLayout {
         inflater.inflate(R.layout.item_settings_layout, this, true);
 
         m_layNormal = (RelativeLayout) findViewById(R.id.relativelayout_settings_normal);
+        m_layNormal.setOnClickListener(((SettingsActivity) m_context).onClickListener);
 
         m_separate_text = (TextView) findViewById(R.id.separate_settings_text);
         m_textview_title = (TextView) findViewById(R.id.textView_settings_title);
+        //m_textview_title.setOnClickListener(((SettingsActivity) m_context).onClickListener);
 
         m_textview_sub = (TextView) findViewById(R.id.textView_settings_normal_sub);
         m_seekBar_fontsize = (SeekBar) findViewById(R.id.seekBar_settings_fontSize);
+        m_seekBar_fontsize.setOnSeekBarChangeListener(((SettingsActivity) m_context).onSeekBarChangeListener);
         m_checkbox_set = (CheckBox) findViewById(R.id.checkBox_settings);
+        //m_checkbox_set.setOnCheckedChangeListener(((SettingsActivity) m_context).onCheckedChangeListener);
+        m_checkbox_set.setOnClickListener(((SettingsActivity) m_context).onClickListener);
     }
-    
+
     public void setFontPercent(int percent) {
-    	float px_titleSize = getResources().getDimension(R.dimen.settings_title_text_size);
-    	float px_subSize = getResources().getDimension(R.dimen.settings_title_text_size);
-    	
-    	m_textview_title.setTextSize(CommonUtil.conv_Size(px_titleSize, percent));
-    	m_textview_sub.setTextSize(CommonUtil.conv_Size(px_subSize, percent));
-    	//m_checkbox_set.setTextSize(size);
+        float px_titleSize = getResources().getDimension(R.dimen.settings_title_text_size);
+        float px_subSize = getResources().getDimension(R.dimen.settings_title_text_size);
+
+        m_textview_title.setTextSize(CommonUtil.conv_Size(px_titleSize, percent));
+        m_textview_sub.setTextSize(CommonUtil.conv_Size(px_subSize, percent));
+        //m_checkbox_set.setTextSize(size);
     }
-    
+
     public int getProgress() {
         return m_seekBar_fontsize.getProgress();
     }
@@ -182,7 +187,7 @@ public class SettingsListitemView extends RelativeLayout {
                 m_checkbox_set.setVisibility(GONE);
                 break;
             case MenuItem.TYPE_NORMAL:
-            	m_layNormal.setVisibility(VISIBLE);
+                m_layNormal.setVisibility(VISIBLE);
                 m_separate_text.setVisibility(GONE);
                 m_textview_sub.setVisibility(VISIBLE);
                 m_seekBar_fontsize.setVisibility(GONE);
@@ -203,12 +208,12 @@ public class SettingsListitemView extends RelativeLayout {
                 m_checkbox_set.setVisibility(VISIBLE);
                 break;
             case MenuItem.TYPE_TITLE:
-            	m_layNormal.setVisibility(VISIBLE);
+                m_layNormal.setVisibility(VISIBLE);
                 m_separate_text.setVisibility(GONE);
                 m_textview_sub.setVisibility(GONE);
                 m_seekBar_fontsize.setVisibility(GONE);
                 m_checkbox_set.setVisibility(GONE);
-            	break;
+                break;
             default:
                 m_layNormal.setVisibility(VISIBLE);
                 m_separate_text.setVisibility(GONE);
@@ -219,54 +224,53 @@ public class SettingsListitemView extends RelativeLayout {
         }
     }
 
-    public void setItem(MenuItem item) {
+    public void setItem(MenuItem item, int position) {
         int type = item.getType();
         setType(type);
-       
-        switch (type) {
-            case MenuItem.TYPE_CATEGORY:
-            	{
-            		m_separate_text.setText(item.getTitle());
-            	}
-                break;
-            case MenuItem.TYPE_SEEK_BAR:
-            	{
-	            	m_textview_title.setText(item.getTitle());
-	            	//m_textview_title.getLayoutParams().height = (int) getResources().getDimension(R.dimen.Settings_title_height);
-	            	m_textview_sub.setText(item.getText() + "%");
-	            	//m_textview_sub.getLayoutParams().height = (int) getResources().getDimension(R.dimen.Settings_sub_height);
-	            	m_seekBar_fontsize.setProgress(item.getProgress());
-	            	//m_seekBar_fontsize.getLayoutParams().height = (int) getResources().getDimension(R.dimen.Settings_seekbar_height);
-            	}
-            	break;
-            case MenuItem.TYPE_CHECK_BOX:
-            	{
-            		RelativeLayout.LayoutParams params;
-	            	m_textview_title.setText(item.getTitle());
-	            	params = (LayoutParams) m_textview_title.getLayoutParams();
-	            	params.addRule(RelativeLayout.CENTER_VERTICAL, RelativeLayout.TRUE);
-	            	
-	            	m_checkbox_set.setChecked(item.getCheck());
-            	}
-            	break;
-            case MenuItem.TYPE_NORMAL:
-            	{
-	            	m_textview_title.setText(item.getTitle());
-	            	
-	            	if (item.getMenu() == MenuItem.MENU_ALARM) {
-	            		RelativeLayout.LayoutParams params = (LayoutParams) m_textview_title.getLayoutParams();
-	            		params.leftMargin = 30;
-	            	} 
 
-	            	m_textview_sub.setText(item.getText());
-            	}
-            	break;
-            default:
-            	{
-            		m_textview_title.setText(item.getTitle());
-            	}
-                break;
+        m_layNormal.setTag(position);
+
+        switch (type) {
+            case MenuItem.TYPE_CATEGORY: {
+                m_separate_text.setText(item.getTitle());
+            }
+            break;
+            case MenuItem.TYPE_SEEK_BAR: {
+                m_textview_title.setText(item.getTitle());
+                //m_textview_title.getLayoutParams().height = (int) getResources().getDimension(R.dimen.Settings_title_height);
+                m_textview_sub.setText(item.getText() + "%");
+                //m_textview_sub.getLayoutParams().height = (int) getResources().getDimension(R.dimen.Settings_sub_height);
+                m_seekBar_fontsize.setProgress(item.getProgress());
+                //m_seekBar_fontsize.getLayoutParams().height = (int) getResources().getDimension(R.dimen.Settings_seekbar_height);
+            }
+            break;
+            case MenuItem.TYPE_CHECK_BOX: {
+                RelativeLayout.LayoutParams params;
+                m_textview_title.setText(item.getTitle());
+                params = (LayoutParams) m_textview_title.getLayoutParams();
+                params.addRule(RelativeLayout.CENTER_VERTICAL, RelativeLayout.TRUE);
+
+                m_checkbox_set.setChecked(item.getCheck());
+                m_checkbox_set.setTag(position);
+
+            }
+            break;
+            case MenuItem.TYPE_NORMAL: {
+                m_textview_title.setText(item.getTitle());
+
+                if (item.getMenu() == MenuItem.MENU_ALARM) {
+                    RelativeLayout.LayoutParams params = (LayoutParams) m_textview_title.getLayoutParams();
+                    params.leftMargin = 30;
+                }
+
+                m_textview_sub.setText(item.getText());
+            }
+            break;
+            default: {
+                m_textview_title.setText(item.getTitle());
+            }
+            break;
         }
-        setFontPercent((item.getProgress()+10)*10);
+        setFontPercent((item.getProgress() + 10) * 10);
     }
 }

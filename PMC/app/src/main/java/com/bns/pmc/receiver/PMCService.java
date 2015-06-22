@@ -514,7 +514,7 @@ public class PMCService extends Service {
                 }
             }
         } else {
-            Log.d(PMCType.TAG, "getMMSSubscribes Mqtt Session connected False");
+            Log.e(PMCType.TAG, "MMS구독정보가져오기에실패하였습니다");
         }
         return list;
     }
@@ -559,6 +559,7 @@ public class PMCService extends Service {
 
                 //testCode
                 Vector<String> subscribeLists = getMMSSubLists();
+                Log.d(PMCType.TAG, "subscribeLists갯수=" + subscribeLists.size());
                 boolean statusChanged = false;
                 if (nPttVersion != PMCType.PMC_PTT_MODE_NONE) {
                     // 단말모델 등록
@@ -682,7 +683,7 @@ public class PMCService extends Service {
                     for (int i = 0; i < subscribeLists.size(); i++) {
                         //unsubscribe
                         try {
-                            IPushUtil.subscribe(m_Binder, subscribeLists.get(i));
+                            IPushUtil.unsubscribe(m_Binder, subscribeLists.get(i));
                             statusChanged = true;
                             Log.d(PMCType.TAG, "토픽구독해재요청하였습니다, topic=" + subscribeLists.get(i));
                         } catch (Exception e) {

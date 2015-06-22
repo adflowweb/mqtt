@@ -312,14 +312,20 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
             menu.findItem(R.id.menu_main_delete).setVisible(false);
         } else {
             Cursor c = (Cursor) m_listView.getSelectedItem();
+            Log.d(PMCType.TAG, "cursor=" + c);
             if (c != null) {
-                int nType = c.getInt(c.getColumnIndex(MessageColumn.DB_COLUMN_NUMBER_TYPE));
-                if (nType == DataColumn.COLUMN_NUMBER_TYPE_CONTROL)
-                    menu.findItem(R.id.menu_main_reply).setVisible(false);
-                else
-                    menu.findItem(R.id.menu_main_reply).setVisible(true);
-
-                menu.findItem(R.id.menu_main_delete).setVisible(true);
+                try {
+                    int nType = c.getInt(c.getColumnIndex(MessageColumn.DB_COLUMN_NUMBER_TYPE));
+                    Log.d(PMCType.TAG, "nType=" + nType);
+                    if (nType == DataColumn.COLUMN_NUMBER_TYPE_CONTROL) {
+                        menu.findItem(R.id.menu_main_reply).setVisible(false);
+                    } else {
+                        menu.findItem(R.id.menu_main_reply).setVisible(true);
+                    }
+                    menu.findItem(R.id.menu_main_delete).setVisible(true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
         menu.findItem(R.id.menu_main_set).setVisible(true);

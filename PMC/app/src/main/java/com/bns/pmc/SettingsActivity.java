@@ -26,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.NumberPicker.OnValueChangeListener;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,6 +43,8 @@ import java.util.List;
 public class SettingsActivity extends Activity {
     private Context m_context = this;
     private SettingsAdapter m_adapter;
+    public SeekBar.OnSeekBarChangeListener onSeekBarChangeListener;
+    public View.OnClickListener onClickListener;
 
     ListView m_listView;
     TextView m_tvValue;
@@ -98,7 +101,7 @@ public class SettingsActivity extends Activity {
         //m_listview.setScaleY(1.1f);
 
 /*		List<Header> objects = new ArrayList<PreferenceActivity.Header>();
-		objects.add(new Header());
+        objects.add(new Header());
 		Header a = new Header();
 		a.intent = new Intent();
 		objects.add(a);
@@ -133,18 +136,70 @@ public class SettingsActivity extends Activity {
 
         m_adapter = new SettingsAdapter(m_context, getMenuObjectList());
         m_listView.setAdapter(m_adapter);
-		/*m_Listview.setOnItemClickListener(new OnItemClickListener() {
 
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
-				Log.i(PMCType.TAG, "onItemClick = " + view);
-				optionSaveCount();
-			}
-		});*/
+        onSeekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                Log.i(PMCType.TAG, "실제진행바값= " + progress);
+                int size = m_adapter.getFontPercent();
+                Log.i(PMCType.TAG, "싸이즈= " + size);
+                m_adapter.setFontPercent((progress * 10) + 100);
+            }
+
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                m_adapter.notifyDataSetChanged();
+            }
+        };
+
+        onClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i(PMCType.TAG, "onClick시작(View=" + v + ")");
+                Object obj = v.getTag();
+                Log.i(PMCType.TAG, "obj=" + obj);
+                if (obj != null) {
+                    int pos = (Integer) obj;
+                    Log.i(PMCType.TAG, "pos=" + pos);
+                    switch (pos) {
+                        case MenuItem.MENU_SOUND_NOTI:
+                            m_adapter.changeSoundNoti();
+                            m_adapter.notifyDataSetChanged();
+                            break;
+                        case MenuItem.MENU_VIBRATION:
+                            m_adapter.changeVibrationNoti();
+                            m_adapter.notifyDataSetChanged();
+                            break;
+                        case MenuItem.MENU_POPUP:
+                            m_adapter.changePopupNoti();
+                            m_adapter.notifyDataSetChanged();
+                            break;
+                        case MenuItem.MENU_ALARM:
+                            optionRingTone();
+                            break;
+                        case MenuItem.MENU_MSG_SAVECOUNT:
+                            optionSaveCount();
+                            break;
+                        case MenuItem.MENU_MSG_DELETE_ALL:
+                            optionDelete();
+                            break;
+                    }
+                }
+            }
+        };
+
+//		m_Listview.setOnItemClickListener(new OnItemClickListener() {
+//
+//			@Override
+//			public void onItemClick(AdapterView<?> parent, View view,
+//					int position, long id) {
+//				Log.i(PMCType.TAG, "onItemClick = " + view);
+//				optionSaveCount();
+//			}
+//		});
 
         m_listView.setOnKeyListener(new OnKeyListener() {
-
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
@@ -162,12 +217,14 @@ public class SettingsActivity extends Activity {
                             if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
                                 size += 10;
                                 if (size <= m_adapter.getProgress_Max()) {
+                                    Log.i(PMCType.TAG, "size=" + size);
                                     m_adapter.setFontPercent(size);
                                     m_adapter.notifyDataSetChanged();
                                 }
                             } else if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
                                 size -= 10;
                                 if (size >= 100) {
+                                    Log.i(PMCType.TAG, "size=" + size);
                                     m_adapter.setFontPercent(size);
                                     m_adapter.notifyDataSetChanged();
                                 }
@@ -338,6 +395,14 @@ public class SettingsActivity extends Activity {
         np.setDisplayedValues(displayedValues);
         np.setValue(nValue);
         np.setFocusableInTouchMode(true);
+        np.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i(PMCType.TAG, "view=" + view);
+                np.clearFocus();
+            }
+        });
+
         //np.setFocusable(true);
         np.setWrapSelectorWheel(false);
         np.setLongClickable(true);
@@ -345,7 +410,7 @@ public class SettingsActivity extends Activity {
         final EditText input = findInput(np);
         //input.setFocusable(true);
 /*       input.addTextChangedListener(new TextWatcher() {
-			
+
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
 				// TODO Auto-generated method stub
@@ -389,7 +454,7 @@ public class SettingsActivity extends Activity {
 
 
 /*        np.setOnKeyListener(new OnKeyListener() {
-			
+
 			@Override
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
 				if (event.getAction() == KeyEvent.ACTION_DOWN) {
@@ -422,21 +487,20 @@ public class SettingsActivity extends Activity {
                         d.dismiss();
                         return false;
                     } /*else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN || event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
-						//np.setFocusable(true);
+                        //np.setFocusable(true);
 						Log.i(PMCType.TAG, "down up");
 						//np.clearFocus();
 						return np.dispatchKeyEvent(event);
 					}*/
                 }/* else {
-					input.setFocusable(true);
+                    input.setFocusable(true);
 					return input.dispatchKeyEvent(event);
 				}*/
 /*				Log.i(PMCType.TAG, "dd1 " + input.isFocusable());
-				Log.i(PMCType.TAG, "ddd " + np.isFocusable());*/
+                Log.i(PMCType.TAG, "ddd " + np.isFocusable());*/
                 return false;
             }
         };
-
         d.setOnKeyListener(keylistener);
         d.show();
     }
