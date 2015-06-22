@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Environment;
 import android.os.StrictMode;
 import android.text.TextUtils;
@@ -245,12 +246,22 @@ public class TalkAdapter extends CursorAdapter {
                     format = obj.getString("format");
 
                     File file = new File(storageDir, fileName + "." + format);
+                    String buildModel = Build.MODEL;
+                    Log.i(PMCType.TAG, "buildModel=" + buildModel);
                     if (file.exists()) {
                         tvMsg.setCompoundDrawablePadding(10);
-                        tvMsg.setCompoundDrawablesWithIntrinsicBounds(null, null, null, m_context.getResources().getDrawable(R.drawable.ic_description_white_48dp));
+                        if (buildModel.equals("DH-A101K")) {
+                            tvMsg.setCompoundDrawablesWithIntrinsicBounds(null, null, null, m_context.getResources().getDrawable(R.drawable.ic_description_black_48dp));
+                        } else {
+                            tvMsg.setCompoundDrawablesWithIntrinsicBounds(null, null, null, m_context.getResources().getDrawable(R.drawable.ic_description_white_48dp));
+                        }
                     } else {
                         tvMsg.setCompoundDrawablePadding(10);
-                        tvMsg.setCompoundDrawablesWithIntrinsicBounds(null, null, null, m_context.getResources().getDrawable(R.drawable.ic_get_app_white_48dp));
+                        if (buildModel.equals("DH-A101K")) {
+                            tvMsg.setCompoundDrawablesWithIntrinsicBounds(null, null, null, m_context.getResources().getDrawable(R.drawable.ic_get_app_black_48dp));
+                        } else {
+                            tvMsg.setCompoundDrawablesWithIntrinsicBounds(null, null, null, m_context.getResources().getDrawable(R.drawable.ic_get_app_white_48dp));
+                        }
                     }
                 }
             }

@@ -577,13 +577,17 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        String buildModel = Build.MODEL;
+        Log.i(PMCType.TAG, "buildModel=" + buildModel);
+
         menu.add(0, MENU_CONTACT_ATTACH, 0, R.string.contact_attach);
-        menu.add(0, 1, 0, "사진 촬영");
+        if (!buildModel.equals("DH-A101K")) {
+            menu.add(0, 1, 0, "사진 촬영");  //radger1은 카메라가 없슴
+            menu.add(0, 4, 0, "음성 인식"); //radger1은 데이터요금제가 없슴
+        }
         menu.add(0, 2, 0, "사진 첨부");
         menu.add(0, 3, 0, "파일 첨부");
-        menu.add(0, 4, 0, "음성 인식");
         //menu.add(0, MENU_TEST_0, 0, "Test 서브스크라이브해제");
-
         return super.onCreateOptionsMenu(menu);
     }
 
