@@ -21,6 +21,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -386,6 +387,29 @@ public class SettingsActivity extends Activity {
         d.setTitle(R.string.settings_menu_msg_save_count);
         d.setContentView(R.layout.item_picker_layout);
         final NumberPicker np = (NumberPicker) d.findViewById(R.id.numberPicker);
+        Button cancel = (Button) d.findViewById(R.id.Cancel);
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i(PMCType.TAG, "메시지제한설정을취소합니다");
+                d.dismiss();
+            }
+        });
+
+        Button confirm = (Button) d.findViewById(R.id.Confirm);
+
+        confirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i(PMCType.TAG, "numberPicker값=" + np.getValue() * 10 + 100);
+                m_adapter.setMessageSaveCount(np.getValue() * 10 + 100);
+                m_adapter.notifyDataSetChanged();
+                d.dismiss();
+            }
+        });
+
+
         String[] displayedValues = new String[41];
         for (int i = 0; i < 41; i++) {
             displayedValues[i] = Integer.toString(i * 10 + 100);
@@ -395,13 +419,13 @@ public class SettingsActivity extends Activity {
         np.setDisplayedValues(displayedValues);
         np.setValue(nValue);
         np.setFocusableInTouchMode(true);
-        np.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.i(PMCType.TAG, "view=" + view);
-                np.clearFocus();
-            }
-        });
+//        np.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Log.i(PMCType.TAG, "view=" + view);
+//                np.clearFocus();
+//            }
+//        });
 
         //np.setFocusable(true);
         np.setWrapSelectorWheel(false);

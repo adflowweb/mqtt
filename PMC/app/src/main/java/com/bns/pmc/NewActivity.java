@@ -76,9 +76,12 @@ import kr.co.adflow.push.IPushService;
 
 public class NewActivity extends Activity implements OnFocusChangeListener, TextWatcher, OnClickListener {
 
-    private static final int PICK_IMAGE = 1;
-    private static final int TAKE_CAMERA = 2;
-    private static final int FILE_SELECT_CODE = 3;
+    private static final int TAKE_CAMERA = 1;
+    private static final int PICK_IMAGE = 2;
+    private static final int SELECT_FILE = 3;
+    private static final int VOICE_RECOGNITION = 4;
+
+
     public static final String CONTENT_UPLOAD_URL = BuildConfig.CONTENT_UPLOAD_URL;
     private android.net.Uri mImageUri;
     private AppEULA eula;
@@ -454,34 +457,21 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                 break;
             case TAKE_CAMERA:
                 if (resultCode == RESULT_OK) {
-                    //Bundle b = (Bundle) data;
-//                    Bundle b = data.getExtras();
-//                    for (String key : b.keySet()) {
-//                        Object value = b.get(key);
-//                        Log.d(PMCType.TAG, String.format("%s %s (%s)", key,
-//                                value.toString(), value.getClass().getName()));
+
+//                    Bundle bundle = data.getExtras();
+//                    if (bundle != null) {
+//                        Set<String> keys = bundle.keySet();
+//                        Iterator<String> it = keys.iterator();
+//                        Log.d(PMCType.TAG, "Dumping Intent start");
+//                        while (it.hasNext()) {
+//                            String key = it.next();
+//                            Log.d(PMCType.TAG, "[" + key + "=" + bundle.get(key) + "]");
+//                        }
+//                        Log.d(PMCType.TAG, "Dumping Intent end");
 //                    }
 
                     Log.d(PMCType.TAG, "mImageUri=" + mImageUri.getPath());
                     decodeFile(mImageUri.getPath());
-//                    this.getContentResolver().notifyChange(mImageUri, null);
-//                    ContentResolver cr = this.getContentResolver();
-//                    Bitmap bitmap;
-//                    try
-//                    {
-//                        bitmap = android.provider.MediaStore.Images.Media.getBitmap(cr, mImageUri);
-//                        //imageView.setImageBitmap(bitmap);
-//                    }
-//                    catch (Exception e)
-//                    {
-//                        Toast.makeText(this, "Failed to load", Toast.LENGTH_SHORT).show();
-//                        Log.d(TAG, "Failed to load", e);
-//                    }
-
-
-//                    Uri currImageURI = data.getData();
-//                    Log.d(PMCType.TAG, "currImageURI=" + currImageURI);
-//                    Log.d(PMCType.TAG, "CAMERA=" + getLastCaptureImageUri());
                 }
                 break;
             case PICK_IMAGE:
@@ -500,7 +490,7 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                     decodeFile(picturePath);
                 }
                 break;
-            case FILE_SELECT_CODE:
+            case SELECT_FILE:
                 if (resultCode == RESULT_OK) {
                     // Get the Uri of the selected file
                     Uri uri = data.getData();
@@ -519,7 +509,7 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                     decodeFile(path);
                 }
                 break;
-            case 4:
+            case VOICE_RECOGNITION:
                 if (resultCode == RESULT_OK) {
                     try {
                         ArrayList<String> results = data.getStringArrayListExtra(VoiceRecoActivity.EXTRA_KEY_RESULT_ARRAY);
@@ -553,7 +543,8 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
 
     private File createTemporaryFile(String part, String ext) throws Exception {
         File tempDir = Environment.getExternalStorageDirectory();
-        tempDir = new File(tempDir.getAbsolutePath() + "/.temp/");
+        //tempDir = new File(tempDir.getAbsolutePath() + "/.temp/");
+        tempDir = new File(tempDir.getAbsolutePath() + "/DCIM/Camera");
         if (!tempDir.exists()) {
             tempDir.mkdir();
         }
@@ -582,11 +573,11 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
 
         menu.add(0, MENU_CONTACT_ATTACH, 0, R.string.contact_attach);
         if (!buildModel.equals("DH-A101K")) {
-            menu.add(0, 1, 0, "사진 촬영");  //radger1은 카메라가 없슴
-            menu.add(0, 4, 0, "음성 인식"); //radger1은 데이터요금제가 없슴
+            menu.add(0, TAKE_CAMERA, 0, "사진 촬영");  //radger1은 카메라가 없슴
+            menu.add(0, VOICE_RECOGNITION, 0, "음성 인식"); //radger1은 데이터요금제가 없슴
         }
-        menu.add(0, 2, 0, "사진 첨부");
-        menu.add(0, 3, 0, "파일 첨부");
+        menu.add(0, PICK_IMAGE, 0, "사진 첨부");
+        menu.add(0, SELECT_FILE, 0, "파일 첨부");
         //menu.add(0, MENU_TEST_0, 0, "Test 서브스크라이브해제");
         return super.onCreateOptionsMenu(menu);
     }
@@ -599,10 +590,7 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
             case MENU_CONTACT_ATTACH:
                 optionContact_Attach();
                 break;
-            case 1:
-//                Intent intent = new Intent();
-//                intent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
-//                startActivityForResult(intent, TAKE_CAMERA);
+            case TAKE_CAMERA:
                 Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
                 File photo;
                 try {
@@ -610,8 +598,8 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                     photo = this.createTemporaryFile("picture", ".jpg");
                     photo.delete();
                 } catch (Exception e) {
-                    //Log.v(TAG, "Can't create file to take picture!");
-                    //Toast.makeText(activity, "Please check SD card! Image shot is impossible!", 10000);
+                    Log.d(PMCType.TAG, "Can't create file to take picture!");
+                    Toast.makeText(this, "Please check SD card! Image shot is impossible!", Toast.LENGTH_SHORT);
                     return false;
                 }
                 mImageUri = Uri.fromFile(photo);
@@ -619,19 +607,16 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                 //start camera intent
                 startActivityForResult(intent, TAKE_CAMERA);
                 break;
-            case 2:
+            case PICK_IMAGE:
                 selectImageFromGallery();
                 break;
-            case 3:
+            case SELECT_FILE:
                 showFileChooser();
                 break;
-            case 4:
-                //callSTT();
-                //testCode daum
+            case VOICE_RECOGNITION:
                 Intent i = new Intent(getApplicationContext(), VoiceRecoActivity.class);
-                i.putExtra(SpeechRecognizerActivity.EXTRA_KEY_API_KEY, "c7cbe106dc63d916ea9c4f76ffdb537f"); // apiKey는 신청과정을 통해     package와 매치되도록 발급받은 APIKey 문자열 값.
-                startActivityForResult(i, 4);
-                //testCodeEnd
+                i.putExtra(SpeechRecognizerActivity.EXTRA_KEY_API_KEY, "c7cbe106dc63d916ea9c4f76ffdb537f"); // api키값은 메일로 받았음
+                startActivityForResult(i, VOICE_RECOGNITION);
                 break;
             default:
                 break;
@@ -1884,10 +1869,10 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
         try {
             startActivityForResult(
                     Intent.createChooser(intent, "Select a File to Upload"),
-                    FILE_SELECT_CODE);
+                    SELECT_FILE);
         } catch (android.content.ActivityNotFoundException ex) {
             // Potentially direct the user to the Market with a Dialog
-            Toast.makeText(this, "Please install a File Manager.",
+            Toast.makeText(this, "파일매니져를설치해주세요",
                     Toast.LENGTH_SHORT).show();
         }
     }
