@@ -285,7 +285,7 @@
 		limit #{iDisplayStart} , #{iDisplayLength}
 	</select>
 	
-	<select id="getSvcMessageDetailList" parameterType="kr.co.adflow.pms.domain.MsgParams"
+<!-- 	<select id="getSvcMessageDetailList" parameterType="kr.co.adflow.pms.domain.MsgParams"
 		resultMap="MessageResult">
 		SELECT 
 			a.msg_id
@@ -300,10 +300,10 @@
 		WHERE 
 			a.ack_type = "pma" 
 			AND a.msg_id = #{msgId};
-	</select>
+	</select> -->
 	
 	
-<!-- 	<select id="getSvcMessageDetailList" parameterType="kr.co.adflow.pms.domain.MsgParams"
+ 	<select id="getSvcMessageDetailList" parameterType="kr.co.adflow.pms.domain.MsgParams"
 		resultMap="MessageResult">
 		SELECT 
 			a.msg_id
@@ -321,7 +321,7 @@
 			AND i.userid = j.userid 
 			AND a.ack_type = "pma" 
 			AND a.msg_id = #{msgId};
-	</select> -->
+	</select>
 
 
  	<select id="getSysMessageListCnt" parameterType="kr.co.adflow.pms.domain.MsgParams"
