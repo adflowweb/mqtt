@@ -99,6 +99,14 @@ public interface MessageMapper {
 	List<Message> getSvcMessageList(MsgParams params);
 	
 	/**
+	 * Gets the svc message list CVS.
+	 *
+	 * @param params the params
+	 * @return the svc message list CVS
+	 */
+	List<Message> getSvcMessageListCvs(MsgParams params);
+	
+	/**
 	 * Gets the sys message list.
 	 *
 	 * @param params the params

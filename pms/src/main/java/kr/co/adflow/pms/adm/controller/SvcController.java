@@ -284,7 +284,7 @@ public class SvcController extends BaseController {
 		//download cnt limit
 		params.put("iDisplayStart", "0");
 		params.put("iDisplayLength", pmsConfig.MESSAGE_CSV_LIMIT_DEFAULT+"");
-		MessagesRes messagesRes = svcService.getSvcMessageList(params);
+		MessagesRes messagesRes = svcService.getSvcMessageListCvs(params);
 
 		messagesRes.setsEcho(sEcho);
 		
@@ -320,6 +320,8 @@ public class SvcController extends BaseController {
 		.append("pmaAckTime").append(",")
 		.append("resendCount").append(",")
 		.append("resendInterval").append(",")
+		.append("ufmi").append(",")
+		.append("issueName").append(",")
 		.append("msgId").append("\n");
 
 		return result.toString();
@@ -338,6 +340,8 @@ public class SvcController extends BaseController {
 		.append(msg.getPmaAckTime()).append(",")
 		.append(msg.getResendCount()).append(",")
 		.append(msg.getResendInterval()).append(",")
+		.append(msg.getUfmi()).append(",")
+		.append(msg.getIssueName()).append(",")
 		.append(msg.getMsgId()).append("\n");
 		
 		return result.toString();

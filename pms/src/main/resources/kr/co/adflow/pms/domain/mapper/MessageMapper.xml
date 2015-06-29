@@ -285,6 +285,124 @@
 		limit #{iDisplayStart} , #{iDisplayLength}
 	</select>
 	
+	
+	<select id="getSvcMessageListCvs" parameterType="kr.co.adflow.pms.domain.MsgParams"
+		resultMap="MessageResult">
+		SELECT a.group_id
+		, a.msg_id
+		, a.msg_type
+		, a.receiver
+		, a.receiver_topic
+		, a.service_id
+		, a.is_ack
+		, a.status
+		, a.is_reservation
+		, a.reservation_time
+		, a.resend_count
+		, a.resend_max_count
+		, a.resend_interval
+		, a.resend_id
+		, a.server_id
+		, a.expiry
+		, a.qos
+		, a.retained
+		, a.send_terminal_type
+		, a.media_type
+		, a.msg_size
+		, a.issue_time
+		, a.issue_id
+		, a.update_time
+		, a.update_id
+		, e.content_type
+		, e.content
+		, e.file_name
+		, e.file_format
+		, h.user_name AS issue_name
+		, b.ufmi
+		, b.pma_ack_type
+        , b.pma_ack_time		
+        , b.app_ack_type
+        , b.app_ack_time
+	
+		FROM
+		pms.message${keyMon} a left outer join (
+			SELECT 
+				aa.msg_id, j.ufmi,aa.ack_type as pma_ack_type,aa.ack_time as pma_ack_time,bb.ack_type as app_ack_type,bb.ack_time as app_ack_time 
+			FROM 
+				pms.ack${keyMon} aa left outer join pms.ack${keyMon} bb on aa.token_id = bb.token_id AND aa.msg_id = bb.msg_id and bb.ack_type = 'app'
+				,push.token i
+				,push.user j 
+			WHERE 
+				aa.token_id = i.tokenid 
+				AND i.userid = j.userid 
+				AND aa.ack_type = "pma" 
+				AND aa.msg_id IN
+       			(
+       				SELECT rr.msg_id
+       				FROM pms.message${keyMon} rr
+       				WHERE 
+					rr.issue_id = #{issueId}
+			        <if test="msgType != null and msgType != 0">
+					AND rr.msg_type = #{msgType}
+					</if>
+					<if test="dateStart != null ">
+					AND rr.update_time <![CDATA[>]]>  #{dateStart}
+					</if>
+					<if test="dateEnd != null ">
+					AND rr.update_time <![CDATA[<]]> #{dateEnd}
+					</if>		
+					<if test="issueId != null and issueId != ''">
+					AND rr.issue_id = #{issueId}
+					</if>
+					<if test="receiver != null and receiver != ''">
+					AND rr.receiver = #{receiver}
+					</if>
+					<if test="msgId != null and msgId != ''">
+					AND rr.msg_id = #{msgId}
+					</if>		
+					<if test="statusArray != null and statusArray.length != 0">
+					AND rr.status IN
+				 	 <foreach item="status" index="index" collection="statusArray" open="(" separator="," close=")" >
+						#{status}
+				  	 </foreach>
+				  	</if>
+       			)
+		) b on a.msg_id = b.msg_id  ,
+		pms.content${keyMon} e, 
+		pms.message${keyMon} tt left join pms.user h on tt.issue_id = h.user_id  
+		
+		WHERE 
+		a.msg_id = e.msg_id 
+		AND a.msg_id = tt.msg_id
+        <if test="msgType != null and msgType != 0">
+		AND a.msg_type = #{msgType}
+		</if>
+		<if test="dateStart != null ">
+		AND a.update_time <![CDATA[>]]>  #{dateStart}
+		</if>
+		<if test="dateEnd != null ">
+		AND a.update_time <![CDATA[<]]> #{dateEnd}
+		</if>		
+		<if test="issueId != null and issueId != ''">
+		AND a.issue_id = #{issueId}
+		</if>
+		<if test="receiver != null and receiver != ''">
+		AND a.receiver = #{receiver}
+		</if>
+		<if test="msgId != null and msgId != ''">
+		AND a.msg_id = #{msgId}
+		</if>		
+		<if test="statusArray != null and statusArray.length != 0">
+		AND a.status IN
+	 	 <foreach item="status" index="index" collection="statusArray" open="(" separator="," close=")" >
+			#{status}
+	  	 </foreach>
+	  	</if>
+		ORDER BY a.update_time DESC,a.issue_time DESC
+		limit #{iDisplayStart} , #{iDisplayLength}
+	</select>
+	
+	
 <!-- 	<select id="getSvcMessageDetailList" parameterType="kr.co.adflow.pms.domain.MsgParams"
 		resultMap="MessageResult">
 		SELECT 
