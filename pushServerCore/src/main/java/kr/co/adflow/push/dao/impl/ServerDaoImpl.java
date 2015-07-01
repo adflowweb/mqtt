@@ -18,6 +18,7 @@ import kr.co.adflow.push.domain.Heap;
 import kr.co.adflow.push.domain.Memory;
 import kr.co.adflow.push.domain.ServerInfo;
 import kr.co.adflow.push.service.MqttService;
+import kr.co.adflow.push.executor.TpsExceutor;
 
 import org.hyperic.sigar.CpuPerc;
 import org.hyperic.sigar.FileSystem;
@@ -199,6 +200,14 @@ public class ServerDaoImpl implements ServerDao {
 		res.setIpAddress(InetAddress.getLocalHost().getHostAddress());
 
 		logger.debug("get종료()");
+		
+		//get digAcount, precheck TPS 
+		logger.debug("Dao digTps::"+TpsExceutor.digTps);
+		logger.debug("Dao preTps::"+TpsExceutor.preTps);
+		
+		res.setTpsDigAccount(TpsExceutor.digTps);
+		res.setTpsPreckeck(TpsExceutor.preTps);
+		
 		return res;
 	}
 

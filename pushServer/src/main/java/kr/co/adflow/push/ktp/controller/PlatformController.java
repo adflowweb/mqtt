@@ -20,6 +20,7 @@ import kr.co.adflow.push.domain.ktp.request.UpdateUfmi;
 import kr.co.adflow.push.domain.ktp.request.UserID;
 import kr.co.adflow.push.domain.ktp.request.UserMessage;
 import kr.co.adflow.push.exception.PushException;
+import kr.co.adflow.push.executor.TpsExceutor;
 import kr.co.adflow.push.ktp.service.PlatformService;
 import kr.co.adflow.push.service.UserService;
 
@@ -65,6 +66,9 @@ public class PlatformController {
 	@ResponseBody
 	public void sendPrecheck(@RequestBody Precheck precheck) throws Exception {
 		platformService.sendPrecheck(precheck.getReceiver());
+
+		TpsExceutor.preCnt++;
+		logger.debug("preCnt ++::"+TpsExceutor.preCnt);
 		
 	}
 	
@@ -171,6 +175,10 @@ public class PlatformController {
 		result.setInfo(messages);
 		Response res = new Response(result);
 		logger.info("response={}", res);
+		
+		TpsExceutor.digCnt++;
+		logger.debug("digCnt ++::"+TpsExceutor.digCnt);
+		
 		return res;
 	}
 	
