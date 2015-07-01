@@ -310,7 +310,6 @@ public class TalkActivity extends Activity implements LoaderCallbacks<Cursor> {
                                 Log.d(PMCType.TAG, "token=" + token);
                                 setStrictMode();
                                 //download
-                                //download
                                 JSONObject jsonData = new JSONObject();
                                 jsonData.put("url", NewActivity.CONTENT_UPLOAD_URL + json.getString("user") + "/" + json.getString("name") + "." + json.getString("format"));
                                 jsonData.put("path", root + "/pmc/files/" + json.getString("name") + "." + json.getString("format"));
@@ -330,6 +329,18 @@ public class TalkActivity extends Activity implements LoaderCallbacks<Cursor> {
 //                                }
                             } else {
                                 Log.d(PMCType.TAG, "로컬에파일존재합니다");
+                                //mp3 파일일 경우 바로 플레이
+                                if (json.getString("format").equalsIgnoreCase("mp3")) {
+                                    Intent intent = new Intent();
+                                    intent.setAction(android.content.Intent.ACTION_VIEW);
+                                    intent.setDataAndType(Uri.fromFile(file), "audio/*");
+                                    startActivity(intent);
+                                } else if (json.getString("format").equalsIgnoreCase("3gp")) {
+                                    Intent intent = new Intent();
+                                    intent.setAction(android.content.Intent.ACTION_VIEW);
+                                    intent.setDataAndType(Uri.fromFile(file), "video/3gpp");
+                                    startActivity(intent);
+                                }
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
