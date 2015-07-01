@@ -202,6 +202,64 @@ public class SvcServiceImpl implements SvcService {
 	 * @see kr.co.adflow.pms.adm.service.SvcService#getSvcMessageList(java.util.Map)
 	 */
 	@Override
+	public MessagesRes getSvcMessageListCvs(Map<String, String> params)  throws Exception {
+
+		MessagesRes res = null;
+
+		String issueId = interceptMapper.selectCashedUserId((String) params
+				.get("appKey"));
+
+		if (params.get("cSearchDate") == null) {
+			// error
+//			throw new RuntimeException("");
+			throw new PmsRuntimeException("Search Date is null");
+		}
+
+		MsgParams msgParams = new MsgParams();
+		
+		//관제 메세지 only msg_type : 10
+		msgParams.setMsgType(10);
+
+		msgParams.setKeyMon(params.get("cSearchDate"));
+		msgParams.setIssueId(issueId);
+		msgParams.setiDisplayStart(this.getInt(params.get("iDisplayStart")));
+		msgParams.setiDisplayLength(this.getInt(params.get("iDisplayLength")));
+
+		msgParams.setDateStart(this.getDate(params.get("cSearchDateStart")));
+		msgParams.setDateEnd(this.getDate(params.get("cSearchDateEnd")));
+
+		msgParams.setStatusArray(this.getStringArray(params
+				.get("cSearchStatus")));
+
+		String filter = params.get("cSearchFilter");
+		msgParams.setAckType(-1);
+		if ("receiver".equals(filter)) {
+			msgParams.setReceiver(params.get("cSearchContent"));
+		} else if ("msgId".equals(filter)) {
+			msgParams.setMsgId(params.get("cSearchContent"));
+		} else if ("ack".equals(filter)) {
+			msgParams.setAckType(this.getInt(params.get("cSearchContent")));
+		}
+
+		int cnt = messageMapper.getSvcMessageListCnt(msgParams);
+		logger.info("cnt :::::::{}", cnt);
+
+		List<Message> list = messageMapper.getSvcMessageListCvs(msgParams);
+		logger.info("list size :::::::{}", list.size());
+
+		res = new MessagesRes();
+		res.setRecordsFiltered(cnt);
+		res.setRecordsTotal(cnt);
+		res.setData(list);
+
+		return res;
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.pms.adm.service.SvcService#getSvcMessageList(java.util.Map)
+	 */
+	@Override
 	public MessagesRes getSvcMessageDetailList(String msgId, String keyMon)  throws Exception {
 
 		MessagesRes res = null;

@@ -43,7 +43,7 @@
 		<result property="ufmi" column="ufmi" />
 	</resultMap>
 	
-<!-- 	<select id="getCallbackList" parameterType="Map"
+ 	<select id="getCallbackList" parameterType="Map"
 		resultMap="AckCallbackResult">
 		SELECT a.msg_id 
 		, a.ack_type
@@ -74,10 +74,10 @@
 		AND i.userid = j.userid
 		ORDER BY a.issue_time ASC 
 		limit #{limit}
-	</select> -->
+	</select>
 	
 	
-	<select id="getCallbackList" parameterType="Map"
+<!-- 	<select id="getCallbackList" parameterType="Map"
 		resultMap="AckCallbackResult">
 		SELECT a.msg_id 
 		, a.ack_type
@@ -103,7 +103,7 @@
 		AND d.token_type = 'A'
 		ORDER BY a.issue_time ASC 
 		limit #{limit}
-	</select>
+	</select> -->
 	
 	
 	
