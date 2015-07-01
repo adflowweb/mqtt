@@ -555,10 +555,22 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
     public boolean dispatchKeyEvent(KeyEvent event) {
         Log.d(PMCType.TAG, "dispatchKeyEvent시작(event=" + event + ")");
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
-            if (event.getKeyCode() == PMCType.BNS_PMC_KEY_CODE_PTT_CALL &&
-                    event.getRepeatCount() == 0) {
-                optionSendMessage();
-                return true;
+
+            String buildModel = Build.MODEL;
+            Log.i(PMCType.TAG, "buildModel=" + buildModel);
+            Log.i(PMCType.TAG, "keyCode=" + event.getKeyCode());
+            if (buildModel.equals("A100")) {
+                if (event.getKeyCode() == 231 &&
+                        event.getRepeatCount() == 0) {
+                    optionSendMessage();
+                    return true;
+                }
+            } else {
+                if (event.getKeyCode() == PMCType.BNS_PMC_KEY_CODE_PTT_CALL &&
+                        event.getRepeatCount() == 0) {
+                    optionSendMessage();
+                    return true;
+                }
             }
         }
         boolean response = super.dispatchKeyEvent(event);

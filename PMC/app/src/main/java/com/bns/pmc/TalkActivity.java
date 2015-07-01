@@ -48,6 +48,7 @@ import com.bns.pmc.util.Log;
 import com.bns.pmc.util.PMCType;
 import com.github.kevinsawicki.http.HttpRequest;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -817,8 +818,6 @@ public class TalkActivity extends Activity implements LoaderCallbacks<Cursor> {
                         i.putExtra("dataType", type);
                     }
                 }
-
-
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
@@ -941,31 +940,23 @@ public class TalkActivity extends Activity implements LoaderCallbacks<Cursor> {
         // Download Music File from Internet
         @Override
         protected JSONObject doInBackground(JSONObject... data) {
+
+            ProgressBarThread progress = null;
             try {
                 Log.d(PMCType.TAG, "doInBackground시작(data=" + data + ")");
                 Log.d(PMCType.TAG, "url=" + data[0].getString("url"));
                 Log.d(PMCType.TAG, "token=" + data[0].getString("token"));
                 Log.d(PMCType.TAG, "path=" + data[0].getString("path"));
                 final HttpRequest request = HttpRequest.get(data[0].getString("url")).header("token", data[0].getString("token"));
+                request.getConnection().setReadTimeout(BuildConfig.HTTP_READ_TIMEOUT);
+                Log.d(PMCType.TAG, "httpReadTimeout=" + request.getConnection().getReadTimeout());
                 final File file = new File(data[0].getString("path"));
-
                 //root + "/pmc/images/" + json.getString("name") + "." + json.getString("format"));
                 Log.d(PMCType.TAG, "responseCode=" + request.ok());
                 if (request.ok()) {
-                    new Thread() {
-                        @Override
-                        public void run() {
-                            while (request.getConnection().getContentLength() != file.length()) {
-                                double totallength = request.getConnection().getContentLength();
-                                double downloadLength = file.length();
-                                Log.d(PMCType.TAG, "실제파일크기=" + totallength);
-                                Log.d(PMCType.TAG, "받은파일크기=" + downloadLength);
-                                //Log.d(PMCType.TAG, "다운로드퍼센트=" + Math.round((downloadLength / totallength * 100)));
-                                publishProgress("" + Math.round((downloadLength / totallength * 100)));
-                                SystemClock.sleep(800);
-                            }
-                        }
-                    }.start();
+                    //프로그레스바용 쓰레드
+                    progress = new ProgressBarThread(request, file);
+                    progress.start();
                     request.receive(file);
                     Log.d(PMCType.TAG, "컨텐트다운로드완료");
                 }
@@ -974,7 +965,44 @@ public class TalkActivity extends Activity implements LoaderCallbacks<Cursor> {
                 return data[0];
             } catch (Exception e) {
                 e.printStackTrace();
+                Log.e(PMCType.TAG, "컨텐트다운로드실패");
+                Toast.makeText(m_context, "컨텐츠다운로드에실패하였습니다", Toast.LENGTH_SHORT);
+                try {
+                    if (progress != null) {
+                        progress.running = false;
+                        Log.d(PMCType.TAG, "프로그레스바쓰레드종료");
+                    }
+                    File failedFile = new File(data[0].getString("path"));
+                    failedFile.delete();
+                    Log.d(PMCType.TAG, "다운로드파일삭제");
+                } catch (JSONException e1) {
+                    e1.printStackTrace();
+                }
                 return null;
+            }
+        }
+
+        class ProgressBarThread extends Thread {
+            HttpRequest request;
+            File file;
+            public boolean running = true;
+
+            public ProgressBarThread(HttpRequest request, File file) {
+                this.request = request;
+                this.file = file;
+            }
+
+            @Override
+            public void run() {
+                while (request.getConnection().getContentLength() != file.length() && running) {
+                    double totallength = request.getConnection().getContentLength();
+                    double downloadLength = file.length();
+                    Log.d(PMCType.TAG, "실제파일크기=" + totallength);
+                    Log.d(PMCType.TAG, "받은파일크기=" + downloadLength);
+                    //Log.d(PMCType.TAG, "다운로드퍼센트=" + Math.round((downloadLength / totallength * 100)));
+                    publishProgress("" + Math.round((downloadLength / totallength * 100)));
+                    SystemClock.sleep(800);
+                }
             }
         }
 
