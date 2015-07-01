@@ -582,16 +582,16 @@ public class SystemServiceImpl implements SystemService {
 	 */
 	public String testRun() {
 		String re = null;
-		
-		FileWriter write = null;
-		File file = null;
-		String fileNamePrefix = "EM";
-		String fileNameDate ="";
-		int fileNameSeq = 0;
-		
-		RecordFomatUtil rf = new RecordFomatUtil();
+//		
+//		FileWriter write = null;
+//		File file = null;
+//		String fileNamePrefix = "EM";
+//		String fileNameDate ="";
+//		int fileNameSeq = 0;
+//		
+//		RecordFomatUtil rf = new RecordFomatUtil();
 
-		
+		this.cDRCopyCommand();
 		
 		return re;
 	}
@@ -607,6 +607,52 @@ public class SystemServiceImpl implements SystemService {
 
 		return KeyGenerator.createPw(userId, password);
 	}
+	
+	public void cDRCopyCommand() {
+	
+//	String path = pmsConfig.CDR_FILE_PATH+this.fileDate;
+//	logger.info("path ::{}", path);
+//	
+//	String targetDir = pmsConfig.CDR_TARGETFILE_PATH;
+//	String shellDir = pmsConfig.CDR_FILE_PATH;
+	
+//	String command = "cat /Users/gwang/Desktop/siteDoc/KTP/150401/localhost_access_log.2015-06-29.txt|grep dig |wc -l";
+	String command = "/Users/gwang/Desktop/siteDoc/KTP/150401/test.sh";
+//	String command = shellDir + "copyCDRFile.sh"+ " 123 " + path +"/* " + targetDir;
+	
+	System.out.println("==== shell command ::{}"+ command);
+
+	java.lang.Runtime runTime = java.lang.Runtime.getRuntime();
+	java.lang.Process process;
+	try {
+		System.out.println("==== 11111");
+		process = runTime.exec(command);
+		System.out.println("==== 22222");
+		
+		process.waitFor();
+		StringBuffer output = new StringBuffer();
+		System.out.println("==== 33333");
+		BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+		System.out.println("==== 44444"); 
+        String line = "";           
+        while ((line = reader.readLine())!= null) {
+            output.append(line + "\n");
+        }
+        System.out.println("==== 55555");
+        System.out.println("==== command shell result  ::{}"+ output.toString());
+        
+
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} catch (InterruptedException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	
+	
+	
+}
 
 
 }

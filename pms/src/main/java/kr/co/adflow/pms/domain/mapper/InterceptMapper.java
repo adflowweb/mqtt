@@ -28,6 +28,14 @@ public interface InterceptMapper {
 	 * @return the date
 	 */
 	Date selectCashedApplicationToken(AppKey appKey);
+	
+	/**
+	 * Select cashed application token Common Auth.
+	 *
+	 * @param appKey the app key
+	 * @return the date
+	 */
+	Date selectCashedApplicationTokenCmm(AppKey appKey);
 
 	/**
 	 * Select cashed user id.
