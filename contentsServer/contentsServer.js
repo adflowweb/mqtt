@@ -169,6 +169,9 @@ function upload(req, res, next) {
 
     form.on('error', function (err) {
         return next(err);
+    }).on('progress', function(bytesReceived, bytesExpected) {
+        var percent_complete = (bytesReceived / bytesExpected) * 100;
+        console.log(percent_complete.toFixed(2));
     }).on('field', function (field, value) {
         //log.debug({field: field});
         //log.debug({value: value});
