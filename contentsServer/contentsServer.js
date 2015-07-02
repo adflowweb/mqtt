@@ -178,9 +178,8 @@ function upload(req, res, next) {
         fileName = md5 + req.headers['file'].substr(req.headers['file'].lastIndexOf('.'));
         //fileName = md5 + file.name.substr(file.name.lastIndexOf('.'));
         log.debug({fileName: fileName});
-
-        if(file.size > 1024000)
-        {
+        log.debug({size: file.size});
+        if (file.size > 1024000) {
             return next(new restify.InvalidArgumentError("파일용량이초과되었습니다"));
         }
 
