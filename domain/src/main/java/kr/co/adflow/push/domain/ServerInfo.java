@@ -43,6 +43,12 @@ public class ServerInfo {
 	
 	/** The message. */
 	private String message;
+	
+	/** The DigAccount tps. */
+	private double tpsDigAccount;
+	
+	/** The Preckeck tps. */
+	private double tpsPreckeck;
 
 	/**
 	 * Instantiates a new server info.
@@ -222,6 +228,24 @@ public class ServerInfo {
 	public void setTps(double tps) {
 		this.tps = tps;
 	}
+	
+	
+
+	public double getTpsDigAccount() {
+		return tpsDigAccount;
+	}
+
+	public void setTpsDigAccount(double tpsDigAccount) {
+		this.tpsDigAccount = tpsDigAccount;
+	}
+
+	public double getTpsPreckeck() {
+		return tpsPreckeck;
+	}
+
+	public void setTpsPreckeck(double tpsPreckeck) {
+		this.tpsPreckeck = tpsPreckeck;
+	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
@@ -231,6 +255,7 @@ public class ServerInfo {
 		return "ServerInfo [cpu=" + cpu + ", memory=" + memory + ", heap="
 				+ heap + ", disk=" + Arrays.toString(disk) + ", tps=" + tps
 				+ ", hostName=" + hostName + ", ipAddress=" + ipAddress
+				+ ", tpsDigAccount=" + tpsDigAccount + ", tpsPreckeck=" + tpsPreckeck
 				+ ", available=" + available + ", message=" + message + "]";
 	}
 

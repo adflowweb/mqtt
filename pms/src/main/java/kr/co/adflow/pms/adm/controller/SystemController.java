@@ -747,31 +747,32 @@ public class SystemController extends BaseController {
 //			System.out.println("==== 3::" + requestVal.substring(lastT+1, lastT+2));
 //		} 
 
-		try {
-			String en = "6rSA7KCcIOydvOuwmCDrqZTsi5zsp4A=";
-			byte[] decode = Base64.decodeBase64(en);
-			
-			System.out.println("decode::"+ decode.length);
-			
-			String aaa = new String(decode);
-			System.out.println("aaa::"+ aaa);
-			System.out.println("aaa.length::"+ aaa.length());
-			
-			int msgCnt = 0;
-			 for (int i = 0; i < aaa.length(); i++) {
-			 if (Character.getType(aaa.charAt(i)) == 5) {
-			 msgCnt = msgCnt + 2;
-			 } else {
-			 msgCnt++;
-			 }
-			 }
-			 System.out.println("msgCnt::"+ msgCnt);
-			
-		} catch (Exception e) {
-			throw e;
-		}
+//		try {
+//			String en = "6rSA7KCcIOydvOuwmCDrqZTsi5zsp4A=";
+//			byte[] decode = Base64.decodeBase64(en);
+//			
+//			System.out.println("decode::"+ decode.length);
+//			
+//			String aaa = new String(decode);
+//			System.out.println("aaa::"+ aaa);
+//			System.out.println("aaa.length::"+ aaa.length());
+//			
+//			int msgCnt = 0;
+//			 for (int i = 0; i < aaa.length(); i++) {
+//			 if (Character.getType(aaa.charAt(i)) == 5) {
+//			 msgCnt = msgCnt + 2;
+//			 } else {
+//			 msgCnt++;
+//			 }
+//			 }
+//			 System.out.println("msgCnt::"+ msgCnt);
+//			
+//		} catch (Exception e) {
+//			throw e;
+//		}
 		
-//		re = systemService.testRun();
+		System.out.println("start::");
+		re = systemService.testRun();
 //		PCFConnectionManagerHandler.PCFConnectionManager();
 //		cDRCreateExecutor.createCDR();
 

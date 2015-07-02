@@ -32,6 +32,8 @@ import com.ibm.mq.pcf.PCFMessageAgent;
  */
 @Service
 public class PCFServiceImpl implements PCFService {
+	
+
 
 	/** The Constant logger. */
 	private static final org.slf4j.Logger logger = LoggerFactory
