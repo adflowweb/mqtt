@@ -71,14 +71,14 @@ server.on('after', restify.auditLogger({
  * 파일다운로드
  */
 var routeDownload = server.get(contextRoot + '/:userid/:hash', restify.serveStatic({
-    directory: './uploads'
+    directory: '/data'
 }));
 
 /**
  * 파일다운로드
  */
 var routeThumbDownload = server.get(contextRoot + '/:userid/thumb/:hash', restify.serveStatic({
-    directory: './uploads'
+    directory: '/data'
 }));
 
 /**
@@ -137,10 +137,10 @@ function checkExists(req, res, next) {
 
     var fullPath;
     if (req.route.name == routeCheckThumb) {
-        fullPath = __dirname + '/uploads' + contextRoot + '/'
+        fullPath = '/data' + contextRoot + '/'
             + req.params.userid + '/thumb/' + fileName;
     } else {
-        fullPath = __dirname + '/uploads' + contextRoot + '/'
+        fullPath = '/data' + contextRoot + '/'
             + req.params.userid + '/' + fileName;
     }
 
@@ -180,10 +180,10 @@ function upload(req, res, next) {
         log.debug({fileName: fileName});
 
         if (req.route.name == routeUploadThumb) {
-            fullPath = __dirname + '/uploads' + contextRoot + '/'
+            fullPath = '/data' + contextRoot + '/'
                 + req.params.userid + '/thumb/' + fileName;
         } else {
-            fullPath = __dirname + '/uploads' + contextRoot + '/'
+            fullPath = '/data' + contextRoot + '/'
                 + req.params.userid + '/' + fileName;
         }
 
@@ -201,10 +201,10 @@ function upload(req, res, next) {
         // = __dirname + '/uploads/v1/users/' + req.params.userid + '/';
 
         if (req.route.name == routeUploadThumb) {
-            location = __dirname + '/uploads' + contextRoot + '/'
+            location = '/data' + contextRoot + '/'
                 + req.params.userid + '/thumb/';
         } else {
-            location = __dirname + '/uploads' + contextRoot + '/'
+            location = '/data' + contextRoot + '/'
                 + req.params.userid + '/';
         }
 

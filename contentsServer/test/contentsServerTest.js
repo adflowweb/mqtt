@@ -10,9 +10,9 @@ var request = require('supertest');
 //var winston = require('winston');
 //var config = require('../../config');
 //var url = 'http://127.0.0.1:13532';
-var url = 'http://127.0.0.1:8080';
+var url = 'http://14.63.224.160:8080';
 
-describe('컨텐츠서버\n\t\tenv : http://127.0.0.1:13532\n\t\tfile : contentServerTest.js', function () {
+describe('컨텐츠서버\n\t\tenv : http://14.63.224.160:8080\n\t\tfile : contentServerTest.js', function () {
 
     //테스트 수행전 선행작업
 //    before(function (done) {
@@ -23,12 +23,14 @@ describe('컨텐츠서버\n\t\tenv : http://127.0.0.1:13532\n\t\tfile : contentS
         it('파일업로드 테스트 : 응답코드 200', function (done) {
             this.timeout(5000);
             request(url)
-                .post('/v1/users/+821099969797')
+                .post('/cts/v1/users/+821099969797')
                 .set('md5', '7ae54aaf426a7483e2ae54cc17d9880f')
                 .set('token', 'fffbd697e5354b42a9f6628')
+                .set('user-agent','Android')
+                .set('file', 'app-debug.apk')
                 //.set('filename', 'app-debug.apk')
                 .attach('file', __dirname + '/resource/app-debug.apk')
-                .expect(200)
+                .expect(409)
                 // end handles the response
                 .end(function (err, res) {
                     if (err) {
@@ -39,7 +41,7 @@ describe('컨텐츠서버\n\t\tenv : http://127.0.0.1:13532\n\t\tfile : contentS
 //                    // this is should.js syntax, very clear
 //                    //res.should.have.status(200);
 //                    //res.should.have.property('status', 200);
-                    res.status.should.be.equal(200);
+                    res.status.should.be.equal(409);
                     done();
                 });
         });
