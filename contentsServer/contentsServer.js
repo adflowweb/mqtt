@@ -159,10 +159,10 @@ function upload(req, res, next) {
     log.debug({md5: md5}, "업로드파일해쉬값");
     log.debug({headers: req.headers});
 
-    var length = req.headers['content-length'];
-    if (length > 1024000) {
-        return next(new restify.WrongAcceptError("파일용량이초과되었습니다"));
-    }
+//    var length = req.headers['content-length'];
+//    if (length > 1024000) {
+//        return next(new restify.WrongAcceptError("파일용량이초과되었습니다"));
+//    }
 
     //파일업로드
     var form = new formidable.IncomingForm(),
