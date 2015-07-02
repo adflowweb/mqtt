@@ -4,6 +4,7 @@
 package kr.co.adflow.pms.adm.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +15,9 @@ import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.util.CheckUtil;
 import kr.co.adflow.pms.core.util.DateUtil;
 import kr.co.adflow.pms.core.util.KeyGenerator;
+import kr.co.adflow.pms.domain.CtlQ;
 import kr.co.adflow.pms.domain.Message;
+import kr.co.adflow.pms.domain.mapper.CtlQMapper;
 import kr.co.adflow.pms.domain.mapper.InterceptMapper;
 import kr.co.adflow.pms.domain.mapper.MessageMapper;
 
@@ -41,6 +44,11 @@ public class SvcAdmServiceImpl implements SvcAdmService {
 	/** The message mapper. */
 	@Autowired
 	private MessageMapper messageMapper;
+	
+	
+	/** The ctl q mapper. */
+	@Autowired
+	private CtlQMapper ctlQMapper;
 
 	/** The check util. */
 	@Autowired
@@ -194,8 +202,16 @@ public class SvcAdmServiceImpl implements SvcAdmService {
 			}
 
 			msg.setStatus(StaticConfig.MESSAGE_STATUS_SENDING);
-			messageMapper.insertMessage(msg);
-			messageMapper.insertContent(msg);
+			
+			//reservation message check
+			if (msg.isReservation()) {
+				messageMapper.insertReservationMessage(msg);
+			} else {
+				messageMapper.insertMessage(msg);
+				messageMapper.insertContent(msg);
+				ctlQMapper.insertQ(this.getCtlQ(msg));
+			}
+			
 			msgMap.put("msgId", msg.getMsgId());
 			msgMap.put("receiver", msg.getReceiver());
 
@@ -246,6 +262,30 @@ public class SvcAdmServiceImpl implements SvcAdmService {
 	 */
 	private String getMsgId() {
 		return KeyGenerator.generateMsgId();
+	}
+	
+	/**
+	 * Gets the ctl q.
+	 *
+	 * @param msg the msg
+	 * @return the ctl q
+	 */
+	private CtlQ getCtlQ(Message msg) {
+		CtlQ ctlQ = new CtlQ();
+
+		if (msg.isReservation()) {
+			ctlQ.setExeType(StaticConfig.CONTROL_QUEUE_EXECUTOR_TYPE_RESERVATION);
+			ctlQ.setIssueTime(msg.getReservationTime());
+		} else {
+			ctlQ.setExeType(StaticConfig.CONTROL_QUEUE_EXECUTOR_TYPE_MESSAGE);
+			ctlQ.setIssueTime(new Date());
+		}
+
+		ctlQ.setTableName(msg.getKeyMon());
+		ctlQ.setMsgId(msg.getMsgId());
+		ctlQ.setServerId(msg.getServerId());
+
+		return ctlQ;
 	}
 
 }
