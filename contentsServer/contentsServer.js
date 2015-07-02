@@ -179,6 +179,11 @@ function upload(req, res, next) {
         //fileName = md5 + file.name.substr(file.name.lastIndexOf('.'));
         log.debug({fileName: fileName});
 
+        if(file.size > 1024000)
+        {
+            return next(new restify.InvalidArgumentError("파일용량이초과되었습니다"));
+        }
+
         if (req.route.name == routeUploadThumb) {
             fullPath = '/data' + contextRoot + '/'
                 + req.params.userid + '/thumb/' + fileName;
