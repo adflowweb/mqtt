@@ -43,7 +43,7 @@ tokenValidator.prototype = {
             if (process.env.NODE_ENV === 'development') {
                 //for 개발PMS
                 options = {
-                    hostname: '14.63.217.141',
+                    hostname: 'push4.ktp.co.kr',
                     port: 8081,
                     path: '/v1/pms/adm/cmm/auth',
                     method: 'GET',
@@ -54,7 +54,7 @@ tokenValidator.prototype = {
             } else {
                 //for 운영PMS
                 options = {
-                    hostname: '14.63.218.228',
+                    hostname: 'PUSH-PMS', //PUSH-PMS
                     port: 443,
                     path: '/v1/pms/adm/cmm/auth',
                     method: 'GET',
@@ -80,7 +80,7 @@ tokenValidator.prototype = {
             } else {
                 //for 운영PCS
                 options = {
-                    hostname: 'push2.ktp.co.kr',
+                    hostname: 'PUSH-PCS', //PUSH-PCS
                     port: 8080,
                     path: '/v1/validate/' + token,
                     method: 'GET',
