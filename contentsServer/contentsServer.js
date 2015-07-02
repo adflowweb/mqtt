@@ -161,7 +161,7 @@ function upload(req, res, next) {
 
     var length = req.headers['content-length'];
     if (length > 1024000) {
-        return next(new restify.InvalidArgumentError("파일용량이초과되었습니다"));
+        return next(new restify.WrongAcceptError("파일용량이초과되었습니다"));
     }
 
     //파일업로드
