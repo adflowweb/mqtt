@@ -159,6 +159,11 @@ function upload(req, res, next) {
     log.debug({md5: md5}, "업로드파일해쉬값");
     log.debug({headers: req.headers});
 
+    var length = req.headers['content-length'];
+    if (length > 1024000) {
+        return next(new restify.InvalidArgumentError("파일용량이초과되었습니다"));
+    }
+
     //파일업로드
     var form = new formidable.IncomingForm(),
         fileName, filePath, fullPath;
@@ -167,11 +172,12 @@ function upload(req, res, next) {
     //form.hash = 'md5';
     //form.keepExtensions = true;
 
+//.on('progress', function (bytesReceived, bytesExpected) {
+//        var percent_complete = (bytesReceived / bytesExpected) * 100;
+//        console.log(percent_complete.toFixed(2));
+//    })
     form.on('error', function (err) {
         return next(err);
-    }).on('progress', function(bytesReceived, bytesExpected) {
-        var percent_complete = (bytesReceived / bytesExpected) * 100;
-        console.log(percent_complete.toFixed(2));
     }).on('field', function (field, value) {
         //log.debug({field: field});
         //log.debug({value: value});
@@ -181,10 +187,10 @@ function upload(req, res, next) {
         fileName = md5 + req.headers['file'].substr(req.headers['file'].lastIndexOf('.'));
         //fileName = md5 + file.name.substr(file.name.lastIndexOf('.'));
         log.debug({fileName: fileName});
-        log.debug({size: file.size});
-        if (file.size > 1024000) {
-            return next(new restify.InvalidArgumentError("파일용량이초과되었습니다"));
-        }
+        //log.debug({size: file.size});
+        //if (file.size > 1024000) {
+        //    return next(new restify.InvalidArgumentError("파일용량이초과되었습니다"));
+        //}
 
         if (req.route.name == routeUploadThumb) {
             fullPath = '/data' + contextRoot + '/'
