@@ -20,11 +20,11 @@ var restify = require('restify'),
     contextRoot = '/cts/v1/users';
 
 // Activate this logger only for development and leave the original for production
-//if (process.env.NODE_ENV === 'development') {
-//    spawn = require('child_process').spawn;
-//    bunyanCLI = spawn('bunyan', ['--color'], { stdio: ['pipe', process.stdout] });
-//    logOptions.stream = bunyanCLI.stdin;
-//}
+if (process.env.NODE_ENV === 'development') {
+    spawn = require('child_process').spawn;
+    bunyanCLI = spawn('bunyan', ['--color'], { stdio: ['pipe', process.stdout] });
+    logOptions.stream = bunyanCLI.stdin;
+}
 var log = bunyan.createLogger(logOptions),
     server = restify.createServer({
         log: log
@@ -67,18 +67,29 @@ server.on('after', restify.auditLogger({
 //    })
 }));
 
+var maxFileSize = 4096000;
+
+var uploadDir;
+
+if (process.env.NODE_ENV === 'development') {
+    uploadDir = './uploads';
+} else {
+    uploadDir = '/data';
+}
+log.debug({uploadDir: uploadDir});
+
 /**
  * 파일다운로드
  */
 var routeDownload = server.get(contextRoot + '/:userid/:hash', restify.serveStatic({
-    directory: '/data'
+    directory: uploadDir
 }));
 
 /**
  * 파일다운로드
  */
 var routeThumbDownload = server.get(contextRoot + '/:userid/thumb/:hash', restify.serveStatic({
-    directory: '/data'
+    directory: uploadDir
 }));
 
 /**
@@ -136,11 +147,20 @@ function checkExists(req, res, next) {
     log.debug({fileName: fileName});
 
     var fullPath;
+    var initDir;
+
+    if (process.env.NODE_ENV === 'development') {
+        initDir = __dirname + '/uploads';
+    } else {
+        initDir = '/data';
+    }
+    log.debug({initDir: initDir});
+
     if (req.route.name == routeCheckThumb) {
-        fullPath = '/data' + contextRoot + '/'
+        fullPath = initDir + contextRoot + '/'
             + req.params.userid + '/thumb/' + fileName;
     } else {
-        fullPath = '/data' + contextRoot + '/'
+        fullPath = initDir + contextRoot + '/'
             + req.params.userid + '/' + fileName;
     }
 
@@ -158,6 +178,15 @@ function upload(req, res, next) {
     var md5 = req.headers['md5'];
     log.debug({md5: md5}, "업로드파일해쉬값");
     log.debug({headers: req.headers});
+
+    var initDir;
+
+    if (process.env.NODE_ENV === 'development') {
+        initDir = __dirname + '/uploads';
+    } else {
+        initDir = '/data';
+    }
+    log.debug({initDir: initDir});
 
 //    var length = req.headers['content-length'];
 //    if (length > 1024000) {
@@ -188,15 +217,13 @@ function upload(req, res, next) {
         //fileName = md5 + file.name.substr(file.name.lastIndexOf('.'));
         log.debug({fileName: fileName});
         //log.debug({size: file.size});
-        //if (file.size > 1024000) {
-        //    return next(new restify.InvalidArgumentError("파일용량이초과되었습니다"));
-        //}
+
 
         if (req.route.name == routeUploadThumb) {
-            fullPath = '/data' + contextRoot + '/'
+            fullPath = initDir + contextRoot + '/'
                 + req.params.userid + '/thumb/' + fileName;
         } else {
-            fullPath = '/data' + contextRoot + '/'
+            fullPath = initDir + contextRoot + '/'
                 + req.params.userid + '/' + fileName;
         }
 
@@ -208,26 +235,38 @@ function upload(req, res, next) {
     }).on('file', function (field, file) {
         log.debug({field: field});
         log.debug({file: file});
+        if (file.size > maxFileSize) {
+            fs.remove(file.path, function (err) {
+                if (err) return log.error({err: err}, '파일삭제중에러발생');
+                log.debug("파일이삭제되었습니다 file=" + file.path);
+            });
+            return next(new restify.WrongAcceptError("파일용량이초과되었습니다"));
+        }
     }).on('end', function () {
         /* Location where we want to copy the uploaded file */
         var location;
         // = __dirname + '/uploads/v1/users/' + req.params.userid + '/';
 
         if (req.route.name == routeUploadThumb) {
-            location = '/data' + contextRoot + '/'
+            location = initDir + contextRoot + '/'
                 + req.params.userid + '/thumb/';
         } else {
-            location = '/data' + contextRoot + '/'
+            location = initDir + contextRoot + '/'
                 + req.params.userid + '/';
         }
 
         log.debug({저장위치: location});
         fs.copy(filePath, location + fileName, function (err) {
             if (err) {
+                log.error({err: err});
                 return next(err);
             } else {
                 log.debug("파일카피가완료되었습니다");
                 res.send({message: "파일이업로드되었습니다"});
+                fs.remove(filePath, function (error) {
+                    if (error) return log.error({err: error}, '파일삭제중에러발생 file=' + filePath);
+                    log.debug("파일이삭제되었습니다 file=" + filePath);
+                });
                 return next();
             }
         });

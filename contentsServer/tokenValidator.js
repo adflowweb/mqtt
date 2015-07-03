@@ -43,8 +43,10 @@ tokenValidator.prototype = {
             if (process.env.NODE_ENV === 'development') {
                 //for 개발PMS
                 options = {
-                    hostname: 'push4.ktp.co.kr',
-                    port: 8081,
+//                    hostname: 'push4.ktp.co.kr',
+//                    port: 8081,
+                    hostname: 'push3.ktp.co.kr',
+                    port: 443,
                     path: '/v1/pms/adm/cmm/auth',
                     method: 'GET',
                     headers: {
@@ -68,8 +70,10 @@ tokenValidator.prototype = {
             if (process.env.NODE_ENV === 'development') {
                 //for 개발PCS
                 options = {
-                    hostname: 'push4.ktp.co.kr',
+                    hostname: 'push2.ktp.co.kr',
                     port: 8080,
+//                    hostname: 'push4.ktp.co.kr',
+//                    port: 8080,
                     path: '/v1/validate/' + token,
                     method: 'GET',
                     headers: {
