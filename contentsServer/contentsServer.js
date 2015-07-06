@@ -31,6 +31,12 @@ var log = bunyan.createLogger(logOptions),
     });
 server.name = 'contentsServer';
 
+process.on('uncaughtException', function (err) {
+    console.error((new Date).toUTCString() + ' uncaughtException:', err.message)
+    console.error(err.stack)
+    process.exit(1)
+});
+
 //server.use(
 //    function crossOrigin(req, res, next) {
 //        res.header("Access-Control-Allow-Origin", "*");
