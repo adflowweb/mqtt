@@ -250,14 +250,14 @@ public class TalkAdapter extends CursorAdapter {
                     Log.i(PMCType.TAG, "buildModel=" + buildModel);
                     if (file.exists()) {
                         //파일이 존재하면 파일아이콘 표시
-                        if (format.equalsIgnoreCase("mp3")) {
+                        if (format.equalsIgnoreCase("mp3") || format.equalsIgnoreCase("amr") || format.equalsIgnoreCase("wav") || format.equalsIgnoreCase("mid") || format.equalsIgnoreCase("midi")) {
                             tvMsg.setCompoundDrawablePadding(10);
                             if (buildModel.equals("DH-A101K")) {
                                 tvMsg.setCompoundDrawablesWithIntrinsicBounds(null, null, null, m_context.getResources().getDrawable(R.drawable.ic_library_music_black_48dp));
                             } else {
                                 tvMsg.setCompoundDrawablesWithIntrinsicBounds(null, null, null, m_context.getResources().getDrawable(R.drawable.ic_library_music_white_48dp));
                             }
-                        } else if (format.equalsIgnoreCase("3gp")) {
+                        } else if (format.equalsIgnoreCase("3gp") || format.equalsIgnoreCase("mpeg")) {
                             tvMsg.setCompoundDrawablePadding(10);
                             if (buildModel.equals("DH-A101K")) {
                                 tvMsg.setCompoundDrawablesWithIntrinsicBounds(null, null, null, m_context.getResources().getDrawable(R.drawable.ic_video_library_black_48dp));

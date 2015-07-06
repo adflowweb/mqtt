@@ -331,15 +331,17 @@ public class TalkActivity extends Activity implements LoaderCallbacks<Cursor> {
                             } else {
                                 Log.d(PMCType.TAG, "로컬에파일존재합니다");
                                 //mp3 파일일 경우 바로 플레이
-                                if (json.getString("format").equalsIgnoreCase("mp3")) {
+                                if (json.getString("format").equalsIgnoreCase("mp3") || json.getString("format").equalsIgnoreCase("mp3")
+                                        || json.getString("format").equalsIgnoreCase("amr") || json.getString("format").equalsIgnoreCase("wav")
+                                        || json.getString("format").equalsIgnoreCase("mid") || json.getString("format").equalsIgnoreCase("midi")) {
                                     Intent intent = new Intent();
                                     intent.setAction(android.content.Intent.ACTION_VIEW);
                                     intent.setDataAndType(Uri.fromFile(file), "audio/*");
                                     startActivity(intent);
-                                } else if (json.getString("format").equalsIgnoreCase("3gp")) {
+                                } else if (json.getString("format").equalsIgnoreCase("3gp") || json.getString("format").equalsIgnoreCase("mpeg")) {
                                     Intent intent = new Intent();
                                     intent.setAction(android.content.Intent.ACTION_VIEW);
-                                    intent.setDataAndType(Uri.fromFile(file), "video/3gpp");
+                                    intent.setDataAndType(Uri.fromFile(file), "video/*");
                                     startActivity(intent);
                                 }
                             }
@@ -933,6 +935,7 @@ public class TalkActivity extends Activity implements LoaderCallbacks<Cursor> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            publishProgress("" + 0);
             // Shows Progress Bar Dialog and then call doInBackground method
             showDialog(progress_bar_type);
         }
@@ -948,17 +951,19 @@ public class TalkActivity extends Activity implements LoaderCallbacks<Cursor> {
                 Log.d(PMCType.TAG, "token=" + data[0].getString("token"));
                 Log.d(PMCType.TAG, "path=" + data[0].getString("path"));
                 final HttpRequest request = HttpRequest.get(data[0].getString("url")).header("token", data[0].getString("token"));
-                request.getConnection().setReadTimeout(BuildConfig.HTTP_READ_TIMEOUT);
-                Log.d(PMCType.TAG, "httpReadTimeout=" + request.getConnection().getReadTimeout());
+                //request.getConnection().setReadTimeout(BuildConfig.HTTP_READ_TIMEOUT);
+                //Log.d(PMCType.TAG, "httpReadTimeout=" + request.getConnection().getReadTimeout());
                 final File file = new File(data[0].getString("path"));
                 //root + "/pmc/images/" + json.getString("name") + "." + json.getString("format"));
-                Log.d(PMCType.TAG, "responseCode=" + request.ok());
+                Log.d(PMCType.TAG, "responseCode=" + request.code());
                 if (request.ok()) {
                     //프로그레스바용 쓰레드
                     progress = new ProgressBarThread(request, file);
                     progress.start();
                     request.receive(file);
                     Log.d(PMCType.TAG, "컨텐트다운로드완료");
+                } else {
+                    return null;
                 }
                 //"file://" + storageDir + "/" + json.getString("name") + "." + json.getString("format")
                 Log.d(PMCType.TAG, "doInBackground종료(return=" + data[0] + ")");
@@ -966,7 +971,7 @@ public class TalkActivity extends Activity implements LoaderCallbacks<Cursor> {
             } catch (Exception e) {
                 e.printStackTrace();
                 Log.e(PMCType.TAG, "컨텐트다운로드실패");
-                Toast.makeText(m_context, "컨텐츠다운로드에실패하였습니다", Toast.LENGTH_SHORT);
+
                 try {
                     if (progress != null) {
                         progress.running = false;
@@ -1040,6 +1045,8 @@ public class TalkActivity extends Activity implements LoaderCallbacks<Cursor> {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+            } else {
+                Toast.makeText(getApplicationContext(), "컨텐츠다운로드에실패하였습니다", Toast.LENGTH_SHORT).show();
             }
             Log.d(PMCType.TAG, "onPostExecute종료()");
         }

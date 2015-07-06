@@ -44,6 +44,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bns.pmc.exception.AuthFailException;
+import com.bns.pmc.exception.FileSizeLimitException;
 import com.bns.pmc.provider.DataColumn;
 import com.bns.pmc.provider.DataColumn.MessageColumn;
 import com.bns.pmc.provider.DataColumn.ValidationColumn;
@@ -1453,6 +1455,8 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
         private final int RESULT_MSG_NO_UFMI = -4;
         private final int RESULT_MSG_NO_EXIST = -5;
         private final int RESULT_FAIL_SENDING_IMAGE = -6;
+        private final int RESULT_FAIL_AUTHENTICATION = -7;
+        private final int RESULT_FAIL_FILESIZELIMIT = -8;
 
         private ProgressDialog progressDialog;
 
@@ -1512,6 +1516,12 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                         md5 = checkSum(contentFilePath);
                         Log.d(PMCType.TAG, "md5=" + md5);
                         uploadContent(binder, phoneNum, md5);
+                    } catch (FileSizeLimitException e) {
+                        Log.e(PMCType.TAG, "에러발생 " + e.errorMsg);
+                        return RESULT_FAIL_FILESIZELIMIT;
+                    } catch (AuthFailException e) {
+                        Log.e(PMCType.TAG, "에러발생 " + e.errorMsg);
+                        return RESULT_FAIL_AUTHENTICATION;
                     } catch (Exception e) {
                         Log.e(PMCType.TAG, "에러발생" + e);
                         return RESULT_FAIL_SENDING_IMAGE;
@@ -1634,7 +1644,7 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                 sendingContent = false;
             } catch (Exception e) {
                 e.printStackTrace();
-                return -7;
+                return -100;
             }
             Log.d(PMCType.TAG, "doInBackground종료()");
             return nResultFail;
@@ -1728,11 +1738,15 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                         .part("file", contentFileName, content)
                         .code();
                 Log.d(PMCType.TAG, "컨텐트업로드응답코드=" + responseCode);
-                if (responseCode != 200 && responseCode != 409/*이미업로드됨*/) {
-                    throw new Exception("컨텐츠서버오류발생. responseCode=" + responseCode);
-                } else {
+                if (responseCode == 406) {
+                    throw new FileSizeLimitException();
+                } else if (responseCode == 200 || responseCode == 409/*이미업로드됨*/) {
                     Log.d(PMCType.TAG, "컨텐트업로드에성공하였습니다.");
+                } else {
+                    throw new Exception("컨텐츠서버오류발생. responseCode=" + responseCode);
                 }
+            } else if (responseCode == 401) {
+                throw new AuthFailException("인증오류발생");
             } else {
                 throw new Exception("컨텐츠서버오류발생. responseCode=" + responseCode);
             }
@@ -1796,6 +1810,8 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                     } else {
                         Log.d(PMCType.TAG, "이미지(썸네일)전송에성공하였습니다");
                     }
+                } else if (responseCode == 401) {
+                    throw new AuthFailException("인증오류발생");
                 } else {
                     throw new Exception("컨텐츠서버오류발생. responseCode=" + responseCode);
                 }
@@ -1850,7 +1866,11 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                 Toast.makeText(m_context, R.string.disconnect_init_account, Toast.LENGTH_LONG).show();
             } else if (result == RESULT_FAIL_SENDING_IMAGE) {
                 Toast.makeText(m_context, "이미지전송에 실패하였습니다", Toast.LENGTH_LONG).show();
-            } else if (result == -7) {
+            } else if (result == RESULT_FAIL_AUTHENTICATION) {
+                Toast.makeText(m_context, "인증에 실패하였습니다", Toast.LENGTH_LONG).show();
+            } else if (result == RESULT_FAIL_FILESIZELIMIT) {
+                Toast.makeText(m_context, "최대전송파일크기(4Mbyte)를 초과하였습니다", Toast.LENGTH_LONG).show();
+            } else if (result == -100) {
                 Toast.makeText(m_context, "메시지전송에 실패하였습니다", Toast.LENGTH_LONG).show();
             } else {
                 m_alertDialog = PMCAlertDialog.createDialog(m_context, getString(R.string.exist_input_ptt));
@@ -1943,8 +1963,13 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
         //Using MessageDigest update() method to provide input
         byte[] buffer = new byte[8192];
         int numOfBytesRead;
+        int totalBytes = 0;
         while ((numOfBytesRead = fis.read(buffer)) > 0) {
             md.update(buffer, 0, numOfBytesRead);
+            totalBytes += numOfBytesRead;
+            if (totalBytes > BuildConfig.FILE_SIZE_LIMIT) {
+                throw new FileSizeLimitException();
+            }
         }
         byte[] hash = md.digest();
         checksum = new BigInteger(1, hash).toString(16); //don't use this, truncates leading zero

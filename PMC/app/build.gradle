@@ -8,19 +8,23 @@ android {
         applicationId "com.bns.pmc"
         minSdkVersion 19
         targetSdkVersion 19
-        versionCode 22
-        versionName "2.5.22"
+        versionCode 23
+        versionName "2.5.23"
     }
 
     buildTypes {
         debug {
-            buildConfigField "String", "CONTENT_UPLOAD_URL", "\"http://14.63.224.160:8080/cts/v1/users/\"";
+            buildConfigField "String", "CONTENT_UPLOAD_URL", "\"http://192.168.1.53:9329/cts/v1/users/\"";
             buildConfigField "int", "HTTP_READ_TIMEOUT", "60000";
+            buildConfigField "int", "FILE_SIZE_LIMIT", "4096000";
             //"http://14.63.224.160:8080/cts/v1/users/";
             //public static final String CONTENT_UPLOAD_URL = "http://172.30.1.31:8080/cts/v1/users/";
             //public static final String CONTENT_UPLOAD_URL = "http://192.168.43.25:8080/cts/v1/users/";
         }
         release {
+            buildConfigField "String", "CONTENT_UPLOAD_URL", "\"http://push5.ktp.co.kr:8080/cts/v1/users/\"";
+            buildConfigField "int", "HTTP_READ_TIMEOUT", "60000";
+            buildConfigField "int", "FILE_SIZE_LIMIT", "4096000";
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
