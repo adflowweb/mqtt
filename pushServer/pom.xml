@@ -369,7 +369,7 @@
 	      </executions>
 	    </plugin>	
 	    
-    <plugin>
+<!--     <plugin>
       <groupId>org.apache.maven.plugins</groupId>
       <artifactId>maven-javadoc-plugin</artifactId>
       <version>2.7</version>
@@ -381,7 +381,7 @@
           </goals>
         </execution>
       </executions>
-    </plugin>
+    </plugin> -->
 			
 		</plugins>
 	</build>
@@ -462,7 +462,7 @@
 				<clientid>${env.HOSTNAME}</clientid>
 
 				<!-- application log level 설정 -->
-				<log.level>debug</log.level>
+				<log.level>error</log.level>
 
 				<db.driverClass>com.mysql.jdbc.Driver</db.driverClass>
 				<db.connectionURL>jdbc:mysql://14.63.217.141:3306/push?useUnicode=true<![CDATA[&amp;]]>characterEncoding=utf8
@@ -611,7 +611,7 @@
 				<mq.server.ssl>false</mq.server.ssl>
 
 				<!-- ibm mq 서버주소 -->
-				<mq.server.url>tcp://14.63.216.249:1883</mq.server.url>
+				<mq.server.url>tcp://PUSH-MQ:1883</mq.server.url>
 
 				<!-- SMS 서버주소 -->
 				<sms.server.url>127.0.0.1</sms.server.url>
@@ -637,7 +637,7 @@
 				<health.check.interval>10</health.check.interval>
 
 				<!-- messageProcess enable/disable -->
-				<message.enable>true</message.enable>
+				<message.enable>false</message.enable>
 
 				<!-- messageProcess interval (second) -->
 				<message.process.interval>15</message.process.interval>
@@ -691,14 +691,14 @@
 				<mq.pcf.password>!ADFlow@</mq.pcf.password>
 				<mq.pcf.port>1414</mq.pcf.port>
 				<mq.pcf.channel>ADFlowPCF</mq.pcf.channel>
-				<mq.pcf.host>14.63.216.249</mq.pcf.host>
+				<mq.pcf.host>PUSH-MQ</mq.pcf.host>
 				<!-- mq jms info -->
 				<mq.jms.id>adflow</mq.jms.id>
 				<mq.jms.password>!ADFlow@</mq.jms.password>
 				<mq.jms.port>1414</mq.jms.port>
 				<mq.jms.queue.manager>MQTT</mq.jms.queue.manager>
 				<mq.jms.channel>ADFlowJMS</mq.jms.channel>
-				<mq.jms.host>14.63.216.249</mq.jms.host>
+				<mq.jms.host>PUSH-MQ</mq.jms.host>
 
 			</properties>
 		</profile>
