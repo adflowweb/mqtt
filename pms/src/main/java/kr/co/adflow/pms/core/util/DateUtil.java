@@ -149,6 +149,16 @@ public class DateUtil {
 		return DateUtil.getDate(date, "YYYYMMddHHmmss");
 	}
 	
+	/**
+	 * Gets the yyyymmddhhmmss.
+	 *
+	 * @param date the date
+	 * @return the yyyymmddhhmmss
+	 */
+	public static String getDateTimeSvc(Date date) {
+		return DateUtil.getDate(date, "YYYY.MM.dd. aa hh:mm:ss");
+	}
+	
 
 	/**
 	 * From iso date string.

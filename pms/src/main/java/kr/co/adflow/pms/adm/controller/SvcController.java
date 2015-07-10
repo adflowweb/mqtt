@@ -27,6 +27,7 @@ import kr.co.adflow.pms.core.config.PmsConfig;
 import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.controller.BaseController;
 import kr.co.adflow.pms.core.exception.PmsRuntimeException;
+import kr.co.adflow.pms.core.util.DateUtil;
 import kr.co.adflow.pms.domain.Address;
 import kr.co.adflow.pms.domain.Message;
 import kr.co.adflow.pms.domain.Template;
@@ -322,6 +323,7 @@ public class SvcController extends BaseController {
 		.append("수신확인시간").append(",")
 		.append("반복횟수").append(",")
 		.append("반복시간").append(",")
+		.append("내용").append(",")
 		.append("발송형태").append("\n");
 
 		return result.toString();
@@ -335,7 +337,7 @@ public class SvcController extends BaseController {
 		String pTalkVer="";
 		String topicTemp="";
 		StringBuffer receiver = new StringBuffer();
-		String ufmi = null;
+		String ufmi = "";
 		String sendType = "개인";
 		if (topic == null) {
 
@@ -396,32 +398,37 @@ public class SvcController extends BaseController {
 		}
 		
 		String appAck;
+		String appAckTime = "";
 		if (msg.getAppAckType() == null) {
 			appAck = "응답없음";
 		} else {
 			appAck = "수신확인";
+			appAckTime = DateUtil.getDateTimeSvc(msg.getAppAckTime());
 		}
 		
 		String pmaAck;
+		String pmaAckTime = "";
 		if (msg.getPmaAckType() == null) {
 			pmaAck = "응답없음";
 		} else {
 			pmaAck = "수신확인";
+			pmaAckTime = DateUtil.getDateTimeSvc(msg.getPmaAckTime());
 		}
 		
 		
 		StringBuffer result = new StringBuffer();
-		result.append(msg.getUpdateTime()).append(",")
+		result.append(DateUtil.getDateTimeSvc(msg.getUpdateTime())).append(",")
 		.append(pTalkVer).append(",")
 		.append(receiver.toString()).append(",")
 		.append(ufmi).append(",")
 		.append(status).append(",")
 		.append(appAck).append(",")
-		.append(msg.getAppAckTime()).append(",")
+		.append(appAckTime).append(",")
 		.append(pmaAck).append(",")
-		.append(msg.getPmaAckTime()).append(",")
+		.append(pmaAckTime).append(",")
 		.append(msg.getResendCount()).append(",")
 		.append(msg.getResendInterval()).append(",")
+		.append(content).append(",")
 		.append(sendType).append("\n");
 		
 		return result.toString();

@@ -409,17 +409,17 @@ public class SystemServiceImpl implements SystemService {
 		String issueId = interceptMapper.selectCashedUserId(params
 				.get("appKey"));
 
-		if (params.get("cSearchDate") == null) {
-			// error
-//			throw new RuntimeException("");
-			throw new PmsRuntimeException("SearchDate is null");
-		}
+//		if (params.get("cSearchDate") == null) {
+//			// error
+////			throw new RuntimeException("");
+//			throw new PmsRuntimeException("SearchDate is null");
+//		}
 
 		MsgParams msgParams = new MsgParams();
 		
 		msgParams.setMsgType(0);
 
-		msgParams.setKeyMon(params.get("cSearchDate"));
+//		msgParams.setKeyMon(params.get("cSearchDate"));
 
 		
 		msgParams.setIssueId(null);

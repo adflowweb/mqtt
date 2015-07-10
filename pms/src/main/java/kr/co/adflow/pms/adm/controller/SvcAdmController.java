@@ -23,12 +23,14 @@ import kr.co.adflow.pms.core.config.PmsConfig;
 import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.controller.BaseController;
 import kr.co.adflow.pms.core.exception.PmsRuntimeException;
+import kr.co.adflow.pms.core.util.DateUtil;
 import kr.co.adflow.pms.domain.Message;
 import kr.co.adflow.pms.domain.User;
 import kr.co.adflow.pms.domain.validator.UserValidator;
 import kr.co.adflow.pms.response.Response;
 import kr.co.adflow.pms.response.Result;
 
+import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -374,7 +376,7 @@ public class SvcAdmController extends BaseController {
 		//download cnt limit
 		params.put("iDisplayStart", "0");
 		params.put("iDisplayLength", pmsConfig.MESSAGE_CSV_LIMIT_DEFAULT+"");
-		MessagesRes messagesRes = svcService.getSvcMessageList(params);
+		MessagesRes messagesRes = svcService.getSvcMessageListCvs(params);
 
 		messagesRes.setsEcho(sEcho);
 		
@@ -400,35 +402,124 @@ public class SvcAdmController extends BaseController {
 
 	private String getCSVHeader() {
 		StringBuffer result = new StringBuffer();
-		result.append("updateTime").append(",")
-		.append("issueId").append(",")
-		.append("receiver").append(",")
-		.append("status").append(",")
-		.append("appAckType").append(",")
-		.append("appAckTime").append(",")
-		.append("pmaAckType").append(",")
-		.append("pmaAckTime").append(",")
-		.append("resendCount").append(",")
-		.append("resendInterval").append(",")
-		.append("msgId").append("\n");
+		result.append("발송시간").append(",")
+		.append("Ptalk유형").append(",")
+		.append("수신번호").append(",")
+		.append("상세수신번호").append(",")
+		.append("발송상태").append(",")
+		.append("메세지확인").append(",")
+		.append("메세지확인시간").append(",")
+		.append("수신확인").append(",")
+		.append("수신확인시간").append(",")
+		.append("반복횟수").append(",")
+		.append("반복시간").append(",")
+		.append("내용").append(",")
+		.append("발송형태").append("\n");
 
 		return result.toString();
 	}
 
 	private String getCSVData(Message msg) {
 		
+		byte[] decode = Base64.decodeBase64(msg.getContent());
+		String content = new String(decode);
+		String topic = msg.getReceiverTopic();
+		String pTalkVer="";
+		String topicTemp="";
+		StringBuffer receiver = new StringBuffer();
+		String ufmi = "";
+		String sendType = "개인";
+		if (topic == null) {
+
+			
+		} else {
+			pTalkVer = "Ptalk"+topic.substring(5, 6)+".0";
+			topicTemp = topic.substring(7, topic.length());
+			topicTemp = topicTemp.replace("p", "");
+			
+			int firstT = topicTemp.indexOf("/");
+			int lastT = topicTemp.lastIndexOf("/");
+			int groupT = topicTemp.lastIndexOf("g");
+			
+			if (groupT > 0) {
+				sendType = "그룹";
+				receiver.append("그룹")
+				.append(topicTemp.substring(groupT+1, topicTemp.length()))
+				.append("(")
+				.append(topicTemp.substring(firstT+1, lastT) )
+				.append( ")");
+				
+			} else {
+				receiver.append(topicTemp.substring(firstT+1, lastT))
+				.append("*")
+				.append(topicTemp.substring(lastT+1, topicTemp.length()));
+
+			}
+
+			String ufmiTemp = msg.getUfmi();
+			
+			if (ufmiTemp != null) {
+				int firstU = ufmiTemp.indexOf("*");
+				ufmi = ufmiTemp.substring(firstU+1, ufmiTemp.length());
+			} 
+
+		}
+		String status;
+		switch (msg.getStatus()) {
+		case -99:
+			status = "발송오류";
+			break;
+		case -2:
+			status = "수신자없음";
+			break;
+		case 0:
+			status = "발송중";
+			break;
+		case 1:
+			status = "발송됨";
+			break;
+		case 2:
+			status = "예약취소됨";
+			break;
+
+		default:
+			status = "기타";
+			break;
+		}
+		
+		String appAck;
+		String appAckTime = "";
+		if (msg.getAppAckType() == null) {
+			appAck = "응답없음";
+		} else {
+			appAck = "수신확인";
+			appAckTime = DateUtil.getDateTimeSvc(msg.getAppAckTime());
+		}
+		
+		String pmaAck;
+		String pmaAckTime = "";
+		if (msg.getPmaAckType() == null) {
+			pmaAck = "응답없음";
+		} else {
+			pmaAck = "수신확인";
+			pmaAckTime = DateUtil.getDateTimeSvc(msg.getPmaAckTime());
+		}
+		
+		
 		StringBuffer result = new StringBuffer();
-		result.append(msg.getUpdateTime()).append(",")
-		.append(msg.getIssueId()).append(",")
-		.append(msg.getReceiver()).append(",")
-		.append(msg.getStatus()).append(",")
-		.append(msg.getAppAckType()).append(",")
-		.append(msg.getAppAckTime()).append(",")
-		.append(msg.getPmaAckType()).append(",")
-		.append(msg.getPmaAckTime()).append(",")
+		result.append(DateUtil.getDateTimeSvc(msg.getUpdateTime())).append(",")
+		.append(pTalkVer).append(",")
+		.append(receiver.toString()).append(",")
+		.append(ufmi).append(",")
+		.append(status).append(",")
+		.append(appAck).append(",")
+		.append(appAckTime).append(",")
+		.append(pmaAck).append(",")
+		.append(pmaAckTime).append(",")
 		.append(msg.getResendCount()).append(",")
 		.append(msg.getResendInterval()).append(",")
-		.append(msg.getMsgId()).append("\n");
+		.append(content).append(",")
+		.append(sendType).append("\n");
 		
 		return result.toString();
 	}
