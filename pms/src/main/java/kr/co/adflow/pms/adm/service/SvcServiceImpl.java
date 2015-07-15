@@ -243,10 +243,10 @@ public class SvcServiceImpl implements SvcService {
 
 		int cnt = messageMapper.getSvcMessageListCnt(msgParams);
 		logger.info("cnt :::::::{}", cnt);
-
+		
 		List<Message> list = messageMapper.getSvcMessageListCvs(msgParams);
 		logger.info("list size :::::::{}", list.size());
-
+		
 		res = new MessagesRes();
 		res.setRecordsFiltered(cnt);
 		res.setRecordsTotal(cnt);

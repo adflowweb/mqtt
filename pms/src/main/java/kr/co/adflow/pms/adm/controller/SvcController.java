@@ -332,7 +332,7 @@ public class SvcController extends BaseController {
 	private String getCSVData(Message msg) {
 		
 		byte[] decode = Base64.decodeBase64(msg.getContent());
-		String content = new String(decode);
+		String content = new String(decode).replaceAll(",", " ").replaceAll("\n", " ");
 		String topic = msg.getReceiverTopic();
 		String pTalkVer="";
 		String topicTemp="";

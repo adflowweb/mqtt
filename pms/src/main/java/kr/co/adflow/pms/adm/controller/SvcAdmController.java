@@ -422,7 +422,7 @@ public class SvcAdmController extends BaseController {
 	private String getCSVData(Message msg) {
 		
 		byte[] decode = Base64.decodeBase64(msg.getContent());
-		String content = new String(decode);
+		String content = new String(decode).replaceAll(",", " ").replaceAll("\n", " ");
 		String topic = msg.getReceiverTopic();
 		String pTalkVer="";
 		String topicTemp="";
@@ -433,28 +433,35 @@ public class SvcAdmController extends BaseController {
 
 			
 		} else {
-			pTalkVer = "Ptalk"+topic.substring(5, 6)+".0";
-			topicTemp = topic.substring(7, topic.length());
-			topicTemp = topicTemp.replace("p", "");
-			
-			int firstT = topicTemp.indexOf("/");
-			int lastT = topicTemp.lastIndexOf("/");
-			int groupT = topicTemp.lastIndexOf("g");
-			
-			if (groupT > 0) {
-				sendType = "그룹";
-				receiver.append("그룹")
-				.append(topicTemp.substring(groupT+1, topicTemp.length()))
-				.append("(")
-				.append(topicTemp.substring(firstT+1, lastT) )
-				.append( ")");
+			try {
+				pTalkVer = "Ptalk"+topic.substring(5, 6)+".0";
+				topicTemp = topic.substring(7, topic.length());
+				topicTemp = topicTemp.replace("p", "");
 				
-			} else {
-				receiver.append(topicTemp.substring(firstT+1, lastT))
-				.append("*")
-				.append(topicTemp.substring(lastT+1, topicTemp.length()));
+				int firstT = topicTemp.indexOf("/");
+				int lastT = topicTemp.lastIndexOf("/");
+				int groupT = topicTemp.lastIndexOf("g");
+				
+				if (groupT > 0) {
+					sendType = "그룹";
+					receiver.append("그룹")
+					.append(topicTemp.substring(groupT+1, topicTemp.length()))
+					.append("(")
+					.append(topicTemp.substring(firstT+1, lastT) )
+					.append( ")");
+					
+				} else {
+					receiver.append(topicTemp.substring(firstT+1, lastT))
+					.append("*")
+					.append(topicTemp.substring(lastT+1, topicTemp.length()));
 
+				}
+				
+			} catch (StringIndexOutOfBoundsException e) {
+				receiver.append("잘못된번호:")
+				.append(topic);
 			}
+
 
 			String ufmiTemp = msg.getUfmi();
 			
