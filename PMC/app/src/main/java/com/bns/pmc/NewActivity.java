@@ -246,11 +246,25 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
             if (action.equals(PMCType.BNS_PMC_ACTION_NEWMSG_CONTACT)) {
                 m_strExtraNumber = intent.getStringExtra(PMCType.BNS_PMC_INTENT_EXTRA_NUMBER);
 
-                RelativeLayout lay = m_listNumberLayout.get(0);
-                EditText etNumber = (EditText) lay.findViewById(R.id.editText_new_number);
-                etNumber.requestFocus();
-                etNumber.setText(m_strExtraNumber);
-                etNumber.setSelection(etNumber.length());
+                Log.d(PMCType.TAG, "수신자번호=" + m_strExtraNumber);
+
+                // 멀티수신에대한 코드처리
+                if (m_strExtraNumber.contains(";")) {
+                    String[] result = m_strExtraNumber.split(";");
+                    for (int i = 0; i < result.length; i++) {
+                        Log.d(PMCType.TAG, "단일수신자번호=" + result[i]);
+                        EditText editText = (EditText) m_listNumberLayout.get(m_nIdxNumber - 1).findViewById(R.id.editText_new_number);
+                        editText.requestFocus();
+                        editText.setText(result[i]);
+                        editText.setSelection(editText.length());
+                    }
+                } else {
+                    RelativeLayout lay = m_listNumberLayout.get(0);
+                    EditText etNumber = (EditText) lay.findViewById(R.id.editText_new_number);
+                    etNumber.requestFocus();
+                    etNumber.setText(m_strExtraNumber);
+                    etNumber.setSelection(etNumber.length());
+                }
             } else {
                 m_nExtraID = intent.getIntExtra(PMCType.BNS_PMC_INTENT_EXTRA_ID, -1);
                 Log.d(PMCType.TAG, "m_nExtraID=" + m_nExtraID);
