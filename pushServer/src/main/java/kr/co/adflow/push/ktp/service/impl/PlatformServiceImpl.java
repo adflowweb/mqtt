@@ -122,8 +122,7 @@ public class PlatformServiceImpl implements PlatformService {
 	 * kr.co.adflow.push.ktp.service.PlatformService#sendPrecheck(java.lang.
 	 * String)
 	 */
-	public void sendPrecheck(String topicName) {jmsTemplate.execute(new PreCheckHandlerBySessionCallback(jmsTemplate,
-			topicName, TIME_TO_LIVE));
+	public void sendPrecheck(String topicName) {
 
 //		jmsTemplate.execute(topicName, new PreCheckHandler(TIME_TO_LIVE));
 	
