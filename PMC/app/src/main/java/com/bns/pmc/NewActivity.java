@@ -253,6 +253,11 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                     String[] result = m_strExtraNumber.split(";");
                     for (int i = 0; i < result.length; i++) {
                         Log.d(PMCType.TAG, "단일수신자번호=" + result[i]);
+
+                        if(!validNumber(result[i])){
+                            continue;
+                        }
+
                         EditText editText = (EditText) m_listNumberLayout.get(m_nIdxNumber - 1).findViewById(R.id.editText_new_number);
                         editText.requestFocus();
                         editText.setText(result[i]);
