@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <title></title>
+
+    <link href="lib/ionic/css/ionic.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/signature-pad.css">
+
+
+    <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
+    <link href="css/ionic.app.css" rel="stylesheet">
+    -->
+
+    <!-- ionic/angularjs js -->
+    <script src="lib/ionic/js/ionic.bundle.js"></script>
+
+    <!-- cordova script (this will be a 404 during development) -->
+    <script src="cordova.js"></script>
+
+    <!-- your app's js -->
+    <script src="js/app.js"></script>
+    <script src="js/controllers.js"></script>
+    <script src="js/services.js"></script>
+    <script src="js/signature_pad3.js"></script>
+    <script src="js/mqttws31.js"></script>
+    <script>
+        /** Websocket API. */
+        var client;
+        var connectOptions;
+        
+        function connect() {
+            try {
+                var clientId = "ID" + Math.random();
+                // client = new Messaging.Client("127.0.0.1", 8080, clientId);
+                client = new Messaging.Client("192.168.0.10", 1883, clientId);
+                
+                client.startTrace();
+                client.onMessageArrived = onMessageArrived;
+                client.onConnectionLost = onConnectionLost;
+                
+                // Set values from the connect form.
+                var connectForm = document.getElementById('connect');
+                var connectOptions = new Object();
+                connectOptions.timeout=5;
+                connectOptions.cleanSession = true;
+                connectOptions.keepAliveInterval = 60;
+                
+                // connectOptions.hosts = hosts;
+                // connectOptions.ports = ports;
+                // connectOptions.useSSL = connectForm.ssl.checked;
+                connectOptions.onSuccess = function (responseObject) {
+                    console.log("connect Ok");
+                    subscribe();
+                };
+                connectOptions.onFailure = function (responseObject) {
+                    console.log("connect onFailure");
+                    alert(responseObject.errorMessage);
+                };
+                
+                client.connect(connectOptions);
+                
+                
+                
+            } catch (error) {
+                console.log("error");
+                alert(error.message);
+            }
+        }
+    
+    function subscribe() {
+        try {
+            var options = {qos:0,
+                onFailure: function(responseObject) {alert(responseObject.errorMessage);}};
+            client.subscribe("mqtt/demo", options);
+        } catch (error) {
+            console.log("subscribe error");
+            alert(error.message);
+        }
+        console.log("subscribe Ok");
+    }
+    
+    function doSend(msg) {
+        try {
+            message = new Messaging.Message(msg);
+            
+            message.destinationName = "mqtt/demo";
+            message.qos = 0;
+            client.send(message);
+        } catch (error) {
+            alert(error.message);
+        }
+        console.log("doSend Ok");
+    }
+    
+    function onMessageArrived(message) {
+        console.log("onMessageArrived Ok");
+        var data = ""+ message.payloadString;
+        var datas = data.split(',');
+        var widTemp = datas[0] *1;
+        console.log("widTemp::"+ widTemp);
+        
+        
+        // if (widTemp != wid) {
+        console.log("widTemp Not");
+        if (datas[1] === "strokeDraw") {
+            var x = datas[2] * 1;
+            var y = datas[3] * 1;
+            var size = datas[4] * 1;
+            signaturePad._strokeDraw2(x, y, size);
+            console.log("strokeDraw Ok");
+            
+        } else if (datas[1] === "strokeBegin") {
+            var x = datas[2] * 1;
+            var y = datas[3] * 1;
+            signaturePad._strokeBegin2(x, y);
+            console.log("strokeBegin Ok");
+            
+        } else if (datas[1] === "strokeEnd") {
+            signaturePad._strokeEnd2();
+            console.log("strokeEnd Ok");
+            
+            
+        } else if (datas[1] === "strokeUpdate") {
+            var x = datas[2] * 1;
+            var y = datas[3] * 1;
+            signaturePad._strokeUpdate2(x, y);
+            console.log("strokeUpdate Ok");
+            
+            // } else if (datas[1] === "clear") {
+            //   signaturePad.clear();
+            //   console.log("clear Ok");
+            
+        };
+        // };
+        
+        if (datas[1] === "clear") {
+            signaturePad.clear();
+            console.log("clear Ok");
+        };
+    }
+    
+    function onConnectionLost(responseObject) {
+        var form = document.getElementById('connect');
+        console.log("onConnectionLost Ok");
+        if (responseObject.errorCode !== 0)
+        alert(client.clientId+" disconnected error code="+responseObject.errorCode+" reason="+responseObject.errorMessage);
+    }
+    
+    
+    connect();
+        </script>
+
+  </head>
+  <body ng-app="starter">
+    <!--
+      The nav bar that will be updated as we navigate between views.
+    -->
+    <ion-nav-bar class="bar-stable">
+      <ion-nav-back-button>
+      </ion-nav-back-button>
+    </ion-nav-bar>
+    <!--
+      The views will be rendered in the <ion-nav-view> directive below
+      Templates are in the /templates folder (but you could also
+      have templates inline in this html file if you'd like).
+    -->
+    <ion-nav-view></ion-nav-view>
+  </body>
+</html>
