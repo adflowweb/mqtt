@@ -74,6 +74,8 @@ import java.net.URISyntaxException;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 
+import android.view.inputmethod.InputMethodManager;
+
 import kr.co.adflow.push.IPushService;
 
 public class NewActivity extends Activity implements OnFocusChangeListener, TextWatcher, OnClickListener {
@@ -254,7 +256,7 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                     for (int i = 0; i < result.length; i++) {
                         Log.d(PMCType.TAG, "단일수신자번호=" + result[i]);
 
-                        if(!validNumber(result[i])){
+                        if (!validNumber(result[i])) {
                             continue;
                         }
 
@@ -366,6 +368,13 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
         // 임시 저장 삭제
         deleteTempData();
 
+        // Check if no view has focus:
+        View view = this.getCurrentFocus();
+        Log.d(PMCType.TAG, "view=" + view);
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 
     @Override

@@ -161,6 +161,8 @@ public class TalkActivity extends Activity implements LoaderCallbacks<Cursor> {
                 Color.parseColor("#ffffffff")
         };
 
+        tvBtLeft.setFocusable(true);
+
         ColorStateList list = new ColorStateList(states, colors);
         tvBtLeft.setTextColor(list);
         //tvBtLeft.setClickable(true);

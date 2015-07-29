@@ -126,7 +126,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
         TextView tvBtRight = (TextView) findViewById(R.id.bottom_button_right);
         tvBtLeft.setText(R.string.new_msg);
 
-        //tvBtLeft.setFocusable(true);
+        tvBtLeft.setFocusable(true);
         int[][] states = new int[][]{
                 new int[]{android.R.attr.state_pressed}, // pressed
                 new int[]{android.R.attr.state_focused}, // focused

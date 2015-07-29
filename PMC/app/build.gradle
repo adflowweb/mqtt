@@ -39,6 +39,9 @@ dependencies {
 
     //compile fileTree(dir: "$buildDir/native-libs", include: 'native-libs.jar')
 
+    //Adding .so Library in Android Studio 1.0.2
+    //http://stackoverflow.com/questions/24357687/how-to-include-so-library-in-android-studio
+
     //testCompile 'junit:junit:4.12'
     //compile 'io.appium:java-client:2.2.0'
     //androidTestCompile 'io.appium:java-client:2.2.0'

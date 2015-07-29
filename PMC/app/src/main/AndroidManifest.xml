@@ -49,7 +49,8 @@
             android:name=".NewActivity"
             android:icon="@drawable/ic_pmc_launcher"
             android:label="@string/title_new_activity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden"></activity>
         <activity
             android:name=".TalkActivity"
             android:icon="@drawable/ic_pmc_launcher"
