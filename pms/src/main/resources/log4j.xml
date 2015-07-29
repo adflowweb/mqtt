@@ -17,10 +17,8 @@
 	</logger>
 
 	<!-- Application Loggers -->
-<!--   	<logger name="kr.co.adflow.pms.core.handler.DirectMsgHandlerBySessionCallback">
-		<level value="debug" />
-		<appender-ref ref="console" />
-	</logger> -->
+	<!-- <logger name="kr.co.adflow.pms.core.handler.DirectMsgHandlerBySessionCallback"> 
+		<level value="debug" /> <appender-ref ref="console" /> </logger> -->
 
 
 	<!-- 3rdparty Loggers -->
@@ -43,48 +41,26 @@
 		<level value="info" />
 	</logger>
 
-	<!-- Root Logger -->
-	<root>
-		<priority value="error" />
-		<!-- <appender-ref ref="console" /> -->
-	</root>
 
-	<!-- Message 날짜별 트랜잭션로그 파일 생성 -->
-	<appender name="messageTrLogFileAppender" class="org.apache.log4j.DailyRollingFileAppender">
-		<param name="File" value="//cdrData/tranLog/message.log" />
-		<!-- <param name="File" value="/Users/gwang/Desktop/dev/workspace_PUSH_KT_V2/temp/message.log" /> --> 
-		<param name="Append" value="true" />
-		<!-- param name="MaxFileSize" value="100MB"/ -->
-		<!-- param name="MaxBackupIndex" value="2"></param -->
-		<param name="DatePattern" value="'.'yyyy-MM-dd" />
-		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="%-7p %d [%t] %c %x - %m%n" />
-		</layout>
-	</appender>
+
 
 	<logger name="messageTrLogger">
 		<level value="info" />
 		<appender-ref ref="messageTrLogFileAppender" />
 	</logger>
-	
-		<!-- Ack 날짜별 트랜잭션로그 파일 생성 -->
-	<appender name="ackLogFileAppender" class="org.apache.log4j.DailyRollingFileAppender">
-		<param name="File" value="/cdrData/tranLog/ack.log" /> 
-<!-- <param name="File" value="/Users/gwang/Desktop/dev/workspace_PUSH_KT_V2/temp/ack.log" /> --> 
-		<param name="Append" value="true" />
-		<!-- param name="MaxFileSize" value="100MB"/ -->
-		<!-- param name="MaxBackupIndex" value="2"></param -->
-		<param name="DatePattern" value="'.'yyyy-MM-dd" />
-		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="%-7p %d [%t] %c %x - %m%n" />
-		</layout>
-	</appender>
+
+
 
 	<logger name="ackLogger">
 		<level value="info" />
 		<appender-ref ref="ackLogFileAppender" />
 	</logger>
-	
-	
+
+
+	<!-- Root Logger -->
+	<root>
+		<priority value="debug" />
+		<appender-ref ref="console" />
+	</root>
 
 </log4j:configuration>
