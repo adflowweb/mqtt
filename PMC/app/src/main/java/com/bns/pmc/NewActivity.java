@@ -43,6 +43,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.text.InputType;
 
 import com.bns.pmc.exception.AuthFailException;
 import com.bns.pmc.exception.FileSizeLimitException;
@@ -250,8 +251,24 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
 
                 Log.d(PMCType.TAG, "수신자번호=" + m_strExtraNumber);
 
+                //UDG 처리
+                if (m_strExtraNumber.startsWith("##")) {
+                    String[] result = m_strExtraNumber.split("##");
+                    for (int i = 0; i < result.length; i++) {
+                        Log.d(PMCType.TAG, "단일수신자번호=" + result[i]);
+
+                        if (!validNumber(result[i])) {
+                            continue;
+                        }
+
+                        EditText editText = (EditText) m_listNumberLayout.get(m_nIdxNumber - 1).findViewById(R.id.editText_new_number);
+                        editText.requestFocus();
+                        editText.setText(result[i]);
+                        editText.setSelection(editText.length());
+                    }
+                }
                 // 멀티수신에대한 코드처리
-                if (m_strExtraNumber.contains(";")) {
+                else if (m_strExtraNumber.contains(";")) {
                     String[] result = m_strExtraNumber.split(";");
                     for (int i = 0; i < result.length; i++) {
                         Log.d(PMCType.TAG, "단일수신자번호=" + result[i]);
@@ -343,7 +360,6 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
                 etNumber.setText(m_strExtraNumber);
                 etNumber.setSelection(etNumber.length());
             }
-
             m_etNewMsg.requestFocus();
         }
         //testCode STT
@@ -367,14 +383,14 @@ public class NewActivity extends Activity implements OnFocusChangeListener, Text
 
         // 임시 저장 삭제
         deleteTempData();
-
-        // Check if no view has focus:
-        View view = this.getCurrentFocus();
-        Log.d(PMCType.TAG, "view=" + view);
-        if (view != null) {
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-        }
+//
+//        // Check if no view has focus:
+//        View view = this.getCurrentFocus();
+//        Log.d(PMCType.TAG, "view=" + view);
+//        if (view != null) {
+//            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+//            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+//        }
     }
 
     @Override

@@ -50,7 +50,7 @@
             android:icon="@drawable/ic_pmc_launcher"
             android:label="@string/title_new_activity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden"></activity>
+            android:windowSoftInputMode="stateAlwaysHidden"></activity>
         <activity
             android:name=".TalkActivity"
             android:icon="@drawable/ic_pmc_launcher"
