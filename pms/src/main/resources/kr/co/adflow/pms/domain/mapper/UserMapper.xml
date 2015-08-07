@@ -34,18 +34,10 @@
 		,user_name
 		,ip_filters
 		,status
-		,message_count_limit
 		,default_expiry
 		,default_qos
-		,message_size_limit
-		,callback_url
-		,callback_method
-		,callback_count_limit
 		,issue_time
 		,issue_id
-		,ufmi
-		,sa_id
-		,group_topics
 		)
 		values(
 		#{userId}
@@ -54,18 +46,10 @@
 		,#{userName}
 		,#{ipFilters}
 		,#{status}
-		,#{msgCntLimit}
 		,#{defaultExpiry}
 		,#{defaultQos}
-		,#{msgSizeLimit}
-		,#{callbackUrl}
-		,#{callbackMethod}
-		,#{callbackCntLimit}
 		,now()
 		,#{issueId}
-		,#{ufmi}
-		,#{saId}
-		,#{groupTopics}
 		)
 	</insert>
 
@@ -76,24 +60,30 @@
 		, a.user_name
 		, a.ip_filters
 		, a.status
-		, a.message_count_limit
+		,
+		a.message_count_limit
 		, a.default_expiry
 		, a.default_qos
-		, a.message_size_limit
+		,
+		a.message_size_limit
 		, a.callback_url
 		, a.callback_method
-		, a.callback_count_limit
+		,
+		a.callback_count_limit
 		, a.issue_time
 		, a.issue_id
 		, a.ufmi
 		, a.sa_id
-		, a.group_topics
-        , b.token_id as application_token
-		FROM pms.user a, pms.token b
+		,
+		a.group_topics
+		, b.token_id as application_token
+		FROM pms.user a,
+		pms.token b
 		WHERE
-        a.user_id = b.user_id
-        AND b.token_type = 'A'
-		AND a.user_id = #{userId}
+		a.user_id = b.user_id
+		AND b.token_type = 'A'
+		AND
+		a.user_id = #{userId}
 	</select>
 
 	<select id="listAll" parameterType="String" resultMap="UserResult">
@@ -103,32 +93,22 @@
 		, a.user_name
 		, a.ip_filters
 		, a.status
-		, a.message_count_limit
-		, a.default_expiry
+		,
+		a.default_expiry
 		, a.default_qos
-		, a.message_size_limit		
-		, a.callback_url		
-		, a.callback_method		
-		, a.callback_count_limit		
 		, a.issue_time
 		, a.issue_id
-		, a.ufmi
-		, a.sa_id
-		, a.group_topics
-		
-		<!-- kicho change - 20150401 
-		FROM pms.user
-		-->
-		<!-- kicho : application_token add [start] - 20150401 -->
-		, b.token_id as application_token
+		, b.token_id
+		as application_token
 		FROM pms.user a, pms.token b
 		WHERE
-        a.user_id = b.user_id
-        AND b.token_type = 'A'
-		<!-- kicho : appkey add [end] - 20150401 -->
-		
-		
-		
+		a.user_id =
+		b.user_id
+		AND b.token_type = 'A'
+
+
+
+
 	</select>
 
 	<resultMap id="AuthResult" type="kr.co.adflow.pms.domain.User">
@@ -141,13 +121,16 @@
 
 	<select id="selectAuth" parameterType="kr.co.adflow.pms.domain.User"
 		resultMap="AuthResult">
-		SELECT user_id, role, ufmi, group_topics, user_name
-		FROM pms.user a
-		WHERE a.user_id = #{userId}
+		SELECT user_id, role, user_name
+		FROM
+		pms.user a
+		WHERE a.user_id
+		= #{userId}
 		AND a.password = #{password}
-		AND a.status = 0
+		AND
+		a.status = 0
 	</select>
-	
+
 	<select id="selectUser" parameterType="String" resultType="String">
 		SELECT user_id
 		FROM pms.user a
@@ -166,29 +149,36 @@
 
 	<update id="updateUser" parameterType="kr.co.adflow.pms.domain.User">
 		UPDATE pms.user
-		SET role = #{role}
+		SET role =
+		#{role}
 		,user_name = #{userName}
 		,ip_filters = #{ipFilters}
-		,status = #{status}
+		,status =
+		#{status}
 		,message_count_limit = #{msgCntLimit}
-		,default_expiry = #{defaultExpiry}
+		,default_expiry =
+		#{defaultExpiry}
 		,default_qos = #{defaultQos}
-		,message_size_limit = #{msgSizeLimit}
+		,message_size_limit =
+		#{msgSizeLimit}
 		,callback_url = #{callbackUrl}
-		,callback_method = #{callbackMethod}
+		,callback_method =
+		#{callbackMethod}
 		,callback_count_limit = #{callbackCntLimit}
 		,issue_time = now()
 		,issue_id = #{issueId}
 		,ufmi = #{ufmi}
-		,sa_id = #{saId}
+		,sa_id =
+		#{saId}
 		,group_topics = #{groupTopics}
-		
+
 		WHERE user_id = #{userId}
 	</update>
 
 	<delete id="deleteUser" parameterType="String">
 		DELETE FROM pms.user
-		WHERE user_id = #{userId}
+		WHERE
+		user_id = #{userId}
 	</delete>
 
 	<insert id="logUserHistory" parameterType="kr.co.adflow.pms.domain.User">
@@ -199,19 +189,11 @@
 		,user_name
 		,ip_filters
 		,status
-		,message_count_limit
 		,default_expiry
 		,default_qos
-		,message_size_limit		
-		,callback_url		
-		,callback_method		
-		,callback_count_limit		
 		,issue_time
 		,issue_id
 		,action
-		,ufmi
-		,sa_id
-		,group_topics
 		)
 		values(
 		#{userId}
@@ -220,85 +202,88 @@
 		,#{userName}
 		,#{ipFilters}
 		,#{status}
-		,#{msgCntLimit}
 		,#{defaultExpiry}
 		,#{defaultQos}
-		,#{msgSizeLimit}		
-		,#{callbackUrl}		
-		,#{callbackMethod}		
-		,#{callbackCntLimit}		
 		,now()
 		,#{issueId}
 		,#{action}
-		,#{ufmi}
-		,#{saId}
-		,#{groupTopics}
 		)
 	</insert>
-	
+
 	<select id="getMsgCntLimit" parameterType="String" resultType="int">
 		SELECT a.message_count_limit
 		FROM pms.user a
 		WHERE
 		a.user_id = #{userId}
 	</select>
-	
+
 	<update id="updateMsgCntLimit" parameterType="kr.co.adflow.pms.domain.User">
 		UPDATE pms.user
-		SET message_count_limit = #{msgCntLimit}
+		SET
+		message_count_limit = #{msgCntLimit}
 		,issue_time = now()
-		,issue_id = #{issueId}
+		,issue_id =
+		#{issueId}
 		WHERE user_id = #{userId}
 	</update>
-	
+
 	<update id="discountMsgCntLimit" parameterType="kr.co.adflow.pms.domain.User">
 		UPDATE pms.user
-		SET message_count_limit = message_count_limit <![CDATA[-]]> #{msgCntLimit}
+		SET message_count_limit = message_count_limit <![CDATA[-]]>
+		#{msgCntLimit}
 		,issue_time = now()
 		,issue_id = #{userId}
-		WHERE user_id = #{userId}
+		WHERE user_id =
+		#{userId}
 	</update>
-	
+
 	<update id="updatePassword" parameterType="kr.co.adflow.pms.domain.User">
 		UPDATE pms.user
-		SET password = #{password}
+		SET
+		password = #{password}
 		,issue_time = now()
 		,issue_id = #{issueId}
-		WHERE user_id = #{userId}
+		WHERE
+		user_id = #{userId}
 	</update>
-	
+
 	<select id="selectUfmi" parameterType="String" resultType="String">
 		SELECT ufmi
 		FROM pms.user
 		WHERE
 		user_id = #{userId}
 	</select>
-	
+
 	<select id="selectRole" parameterType="String" resultType="String">
 		SELECT role
 		FROM pms.user
 		WHERE
 		user_id = #{userId}
 	</select>
-	
+
 	<update id="updateUserName" parameterType="kr.co.adflow.pms.domain.User">
 		UPDATE pms.user
-		SET user_name = #{userName}
+		SET
+		user_name = #{userName}
 		,issue_time = now()
 		,issue_id = #{issueId}
-		WHERE user_id = #{userId}
+		WHERE
+		user_id = #{userId}
 	</update>
-	
+
 	<update id="updateSvcUser" parameterType="kr.co.adflow.pms.domain.User">
 		UPDATE pms.user
-		SET user_name = #{userName}
+		SET
+		user_name = #{userName}
 		,callback_url = #{callbackUrl}
-		,callback_method = 'POST'
+		,callback_method
+		= 'POST'
 		,issue_time = now()
 		,issue_id = #{issueId}
-		WHERE user_id = #{userId}
+		WHERE user_id =
+		#{userId}
 	</update>
-	
+
 	<select id="selectCallbackUrl" parameterType="Map" resultType="String">
 		SELECT a.callback_url
 		FROM pms.user a, pms.message${keyMon} b
@@ -306,5 +291,5 @@
 		a.user_id = b.issue_id
 		AND b.msg_id = #{msgId}
 	</select>
-	
+
 </mapper>	

@@ -16,7 +16,7 @@ public class PmsConfig {
 	/** The executor server id. */
 	@Value("#{pms['executor.server.id1']}")
 	public String EXECUTOR_SERVER_ID1; // = "S01";
-	
+
 	/** The executor server id. */
 	@Value("#{pms['executor.server.id2']}")
 	public String EXECUTOR_SERVER_ID2;
@@ -32,7 +32,7 @@ public class PmsConfig {
 
 	@Value("#{pms['executor.server.id6']}")
 	public String EXECUTOR_SERVER_ID6;
-	
+
 	/** The executor delay time. */
 	@Value("#{pms['executor.delay.time']}")
 	public int EXECUTOR_DELAY_TIME;// = 10000;
@@ -64,11 +64,17 @@ public class PmsConfig {
 	/** The message service id default. */
 	@Value("#{pms['message.service.id.default']}")
 	public String MESSAGE_SERVICE_ID_DEFAULT;// = "kr.co.ktpowertel.push.mms";
-	
+
 	/** The message service id userMessage. */
 	@Value("#{pms['message.service.id.userMessage']}")
-	public String MESSAGE_SERVICE_ID_USERMESSAGE;// = "kr.co.ktpowertel.push.userMessage";
-	
+	public String MESSAGE_SERVICE_ID_USERMESSAGE;// =
+													// "kr.co.ktpowertel.push.userMessage";
+
+	/** The message service id userMessage. */
+	@Value("#{pms['message.service.id.adflow']}")
+	public String MESSAGE_SERVICE_ID_ADFLOW;// =
+											// "kr.co.adflow.push.message";
+
 	/** The message service id userMessage. */
 	@Value("#{pms['message.user.message.expiry.default']}")
 	public int MESSAGE_USER_MESSAGE_EXPIRY_DEFAULT;// = 600000;
@@ -77,46 +83,45 @@ public class PmsConfig {
 	@Value("#{pms['message.ack.default']}")
 	public boolean MESSAGE_ACK_DEFAULT;// = true;
 
-	
 	@Value("#{pms['message.csv.limit.default']}")
 	public int MESSAGE_CSV_LIMIT_DEFAULT;// = 100000
-	
+
 	/** The cdr.file.path. */
 	@Value("#{pms['cdr.file.path']}")
 	public String CDR_FILE_PATH;// = /cdrData/;
-	
+
 	/** The cdr.targetfile.path. */
 	@Value("#{pms['cdr.targetfile.path']}")
 	public String CDR_TARGETFILE_PATH;// = /root/;
-	
+
 	/** The cdr.file.max.row. */
 	@Value("#{pms['cdr.file.max.row']}")
 	public int CDR_FILE_MAX_ROW;// = 30000;
-	
+
 	/** The cdr.db.max.row. */
 	@Value("#{pms['cdr.db.max.row']}")
 	public int CDR_DB_MAX_ROW;// = 1000;
-	
-//	/** The mq.pcf.hostname. */
-//	@Value("#{pms['mq.pcf.hostname']}")
-//	public String MQ_PCF_HOSTNAME;// = "14.63.217.141;
-//	
-//	/** The mq.pcf.port. */
-//	@Value("#{pms['mq.pcf.port']}")
-//	public int MQ_PCF_PORT;// = 1414;
-//	
-//	/** The mq.pcf.channel. */
-//	@Value("#{pms['mq.pcf.channel']}")
-//	public String MQ_PCF_CHANNEL;// = "ADFlowPCF";
-//	
-//	/** The mq.pcf.userID. */
-//	@Value("#{pms['mq.pcf.userID']}")
-//	public String MQ_PCF_USERID;// = "adflow";
-//	
-//	/** The mq.pcf.password. */
-//	@Value("#{pms['mq.pcf.password']}")
-//	public String MQ_PCF_PASSWORD;// = "!ADFlow@";
-	
+
+	// /** The mq.pcf.hostname. */
+	// @Value("#{pms['mq.pcf.hostname']}")
+	// public String MQ_PCF_HOSTNAME;// = "14.63.217.141;
+	//
+	// /** The mq.pcf.port. */
+	// @Value("#{pms['mq.pcf.port']}")
+	// public int MQ_PCF_PORT;// = 1414;
+	//
+	// /** The mq.pcf.channel. */
+	// @Value("#{pms['mq.pcf.channel']}")
+	// public String MQ_PCF_CHANNEL;// = "ADFlowPCF";
+	//
+	// /** The mq.pcf.userID. */
+	// @Value("#{pms['mq.pcf.userID']}")
+	// public String MQ_PCF_USERID;// = "adflow";
+	//
+	// /** The mq.pcf.password. */
+	// @Value("#{pms['mq.pcf.password']}")
+	// public String MQ_PCF_PASSWORD;// = "!ADFlow@";
+
 	// public static final String EXECUTOR_MESSAGE_CRON =
 	// "0,10,20,30,40,50 * * * * *";
 	// public static final String EXECUTOR_RESERVATION_CRON =

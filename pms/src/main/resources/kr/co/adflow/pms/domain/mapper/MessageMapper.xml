@@ -18,7 +18,7 @@
 		<result property="resendCount" column="resend_count" />
 		<result property="resendMaxCount" column="resend_max_count" />
 		<result property="resendInterval" column="resend_interval" />
-		<result property="resendId" column="resend_id" />		
+		<result property="resendId" column="resend_id" />
 		<result property="serverId" column="server_id" />
 		<result property="expiry" column="expiry" />
 		<result property="qos" column="qos" />
@@ -49,47 +49,56 @@
 		, a.msg_id
 		, a.msg_type
 		, a.receiver
-		, a.receiver_topic
+		,
+		a.receiver_topic
 		, a.service_id
 		, a.is_ack
 		, a.status
 		, a.is_reservation
-		, a.reservation_time
+		,
+		a.reservation_time
 		, a.resend_count
 		, a.resend_max_count
-		, a.resend_interval
+		,
+		a.resend_interval
 		, a.resend_id
 		, a.server_id
 		, a.expiry
 		, a.qos
-		, a.retained
+		,
+		a.retained
 		, a.send_terminal_type
 		, a.media_type
 		, a.msg_size
-		, a.issue_time
+		,
+		a.issue_time
 		, a.issue_id
 		, a.update_time
 		, a.update_id
 		, b.content_type
-		, b.content
+		,
+		b.content
 		, b.file_name
 		, b.file_format
 		, c.user_name AS issue_name
-		FROM pms.message${keyMon} a, pms.content${keyMon} b, pms.user c
-		WHERE a.msg_id = b.msg_id
+		FROM
+		pms.message${keyMon} a, pms.content${keyMon} b, pms.user c
+		WHERE
+		a.msg_id = b.msg_id
 		AND a.issue_id = c.user_id
 		AND a.msg_id = #{msgId}
 		AND a.msg_type=10
 	</select>
 
-	<select id="selectList" parameterType="Map"
-		resultMap="MessageResult">
-		SELECT a.group_id
+	<select id="selectList" parameterType="Map" resultMap="MessageResult">
+		SELECT
+		a.group_id
 		, a.msg_id
 		, a.msg_type
 		, a.receiver
 		, a.receiver_topic
-		, a.service_id
+		,
+		a.service_id
 		, a.is_ack
 		, a.status
 		, a.is_reservation
@@ -98,25 +107,31 @@
 		, a.resend_max_count
 		, a.resend_interval
 		, a.resend_id
-		, a.server_id
+		,
+		a.server_id
 		, a.expiry
 		, a.qos
 		, a.retained
 		, a.send_terminal_type
-		, a.media_type
+		,
+		a.media_type
 		, a.msg_size
 		, a.issue_time
 		, a.issue_id
 		, a.update_time
-		, a.update_id
+		,
+		a.update_id
 		, b.content_type
 		, b.content
 		, b.file_name
 		, b.file_format
-		, c.user_name AS issue_name
-		FROM pms.message${keyMon} a, pms.content${keyMon} b, pms.user c
+		,
+		c.user_name AS issue_name
+		FROM pms.message${keyMon} a,
+		pms.content${keyMon} b, pms.user c
 		WHERE a.msg_id = b.msg_id
-		AND a.issue_id = c.user_id
+		AND
+		a.issue_id = c.user_id
 		AND a.status = 0
 		AND a.is_reservation IS FALSE
 		AND a.server_id = #{serverId}
@@ -124,15 +139,15 @@
 		ORDER BY issue_time ASC
 		limit #{limit}
 	</select>
-	
+
 	<select id="selectReservationList" parameterType="Map"
 		resultMap="MessageResult">
-		SELECT a.group_id
-		, a.msg_id
+		SELECT a.msg_id
 		, a.msg_type
 		, a.receiver
 		, a.receiver_topic
-		, a.service_id
+		,
+		a.service_id
 		, a.is_ack
 		, a.status
 		, a.is_reservation
@@ -141,86 +156,99 @@
 		, a.resend_max_count
 		, a.resend_interval
 		, a.resend_id
-		, a.server_id
+		,
+		a.server_id
 		, a.expiry
 		, a.qos
 		, a.retained
 		, a.send_terminal_type
-		, a.media_type
+		,
+		a.media_type
 		, a.msg_size
 		, a.issue_time
 		, a.issue_id
 		, a.update_time
-		, a.update_id
+		,
+		a.update_id
 		, a.content_type
 		, a.content
 		, a.file_name
 		, a.file_format
-		, c.user_name AS issue_name
-		FROM pms.reservation_msg a, pms.user c
-		WHERE a.msg_type=10
-		AND a.issue_id = c.user_id
-		AND a.status = 0
-		AND a.server_id = #{serverId}
-		AND a.reservation_time <![CDATA[<]]> DATE_ADD(NOW(), INTERVAL 30 SECOND)
-		ORDER BY a.reservation_time ASC, a.issue_time ASC
+
+	<!-- c.user_name AS issue_name -->
+		FROM
+	<!-- pms.reservation_msg a, pms.user c -->
+		pms.reservation_msg a
+		WHERE
+		<!-- a.issue_id = c.user_id -->
+
+		a.status = 0
+	<!-- AND a.server_id = #{serverId} -->
+		AND
+		a.reservation_time <![CDATA[<]]>
+		DATE_ADD(NOW(), INTERVAL 30 SECOND)
+		ORDER BY a.reservation_time ASC,
+		a.issue_time ASC
 		limit #{limit}
 	</select>
-	
-	
-	<select id="selectMessageType" parameterType="Map"
-		resultType="Integer">
-		SELECT 
+
+
+	<select id="selectMessageType" parameterType="Map" resultType="Integer">
+		SELECT
 		msg_type
 		FROM pms.message${keyMon}
-		WHERE 
+		WHERE
 		msg_id = #{msgId}
 	</select>
-	
-	<select id="checkGroupMessage" parameterType="Map"
-		resultType="Integer">
-		SELECT 
+
+	<select id="checkGroupMessage" parameterType="Map" resultType="Integer">
+		SELECT
 		COUNT(*)
 		FROM pms.group_msg${keyMon}
-		WHERE 
+		WHERE
 		msg_id = #{msgId}
-		AND receiver_token_id = #{receiverTokenId}
+		AND
+		receiver_token_id = #{receiverTokenId}
 	</select>
-	
-	
+
+
 	<select id="getSvcMessageListCnt" parameterType="kr.co.adflow.pms.domain.MsgParams"
 		resultType="Integer">
 		SELECT COUNT(*)
 		FROM
-		pms.message${keyMon} a left join pms.user h on a.issue_id = h.user_id,
-        pms.content${keyMon} e		
+		pms.message${keyMon} a left join pms.user h on
+		a.issue_id = h.user_id,
+		pms.content${keyMon} e
 		WHERE a.msg_id = e.msg_id
 		<if test="msgType != null and msgType != 0">
-		AND a.msg_type = #{msgType}
+			AND a.msg_type = #{msgType}
 		</if>
 		<if test="dateStart != null ">
-		AND a.update_time <![CDATA[>]]>  #{dateStart}
+			AND a.update_time <![CDATA[>]]>
+			#{dateStart}
 		</if>
 		<if test="dateEnd != null ">
-		AND a.update_time <![CDATA[<]]> #{dateEnd}
-		</if>		
+			AND a.update_time <![CDATA[<]]>
+			#{dateEnd}
+		</if>
 		<if test="issueId != null and issueId != ''">
-		AND a.issue_id = #{issueId}
+			AND a.issue_id = #{issueId}
 		</if>
 		<if test="receiver != null and receiver != ''">
-		AND a.receiver = #{receiver}
+			AND a.receiver = #{receiver}
 		</if>
 		<if test="msgId != null and msgId != ''">
-		AND a.msg_id = #{msgId}
-		</if>		
+			AND a.msg_id = #{msgId}
+		</if>
 		<if test="statusArray != null and statusArray.length != 0">
-		AND a.status IN
-	 	 <foreach item="status" index="index" collection="statusArray" open="(" separator="," close=")" >
-			#{status}
-	  	 </foreach>
-	   </if>
+			AND a.status IN
+			<foreach item="status" index="index" collection="statusArray"
+				open="(" separator="," close=")">
+				#{status}
+			</foreach>
+		</if>
 	</select>
-	
+
 	<select id="getSvcMessageList" parameterType="kr.co.adflow.pms.domain.MsgParams"
 		resultMap="MessageResult">
 		SELECT a.group_id
@@ -232,60 +260,69 @@
 		, a.is_ack
 		, a.status
 		, a.is_reservation
-		, a.reservation_time
+		,
+		a.reservation_time
 		, a.resend_count
 		, a.resend_max_count
-		, a.resend_interval
+		,
+		a.resend_interval
 		, a.resend_id
 		, a.server_id
 		, a.expiry
 		, a.qos
-		, a.retained
+		,
+		a.retained
 		, a.send_terminal_type
 		, a.media_type
 		, a.msg_size
-		, a.issue_time
+		,
+		a.issue_time
 		, a.issue_id
 		, a.update_time
 		, a.update_id
 		, e.content_type
-		, e.content
+		,
+		e.content
 		, e.file_name
 		, e.file_format
 		, h.user_name AS issue_name
 		FROM
-        pms.message${keyMon} a left join pms.user h on a.issue_id = h.user_id,
-        pms.content${keyMon} e		
+		pms.message${keyMon} a left join pms.user h on a.issue_id = h.user_id,
+		pms.content${keyMon} e
 		WHERE a.msg_id = e.msg_id
 		<if test="msgType != null and msgType != 0">
-		AND a.msg_type = #{msgType}
+			AND a.msg_type = #{msgType}
 		</if>
 		<if test="dateStart != null ">
-		AND a.update_time <![CDATA[>]]>  #{dateStart}
+			AND a.update_time <![CDATA[>]]>
+			#{dateStart}
 		</if>
 		<if test="dateEnd != null ">
-		AND a.update_time <![CDATA[<]]> #{dateEnd}
-		</if>		
+			AND a.update_time <![CDATA[<]]>
+			#{dateEnd}
+		</if>
 		<if test="issueId != null and issueId != ''">
-		AND a.issue_id = #{issueId}
+			AND a.issue_id = #{issueId}
 		</if>
 		<if test="receiver != null and receiver != ''">
-		AND a.receiver = #{receiver}
+			AND a.receiver = #{receiver}
 		</if>
 		<if test="msgId != null and msgId != ''">
-		AND a.msg_id = #{msgId}
-		</if>		
+			AND a.msg_id = #{msgId}
+		</if>
 		<if test="statusArray != null and statusArray.length != 0">
-		AND a.status IN
-	 	 <foreach item="status" index="index" collection="statusArray" open="(" separator="," close=")" >
-			#{status}
-	  	 </foreach>
-	   </if>
+			AND a.status IN
+			<foreach item="status" index="index" collection="statusArray"
+				open="(" separator="," close=")">
+				#{status}
+			</foreach>
+		</if>
 		ORDER BY a.update_time DESC, a.issue_time DESC
-		limit #{iDisplayStart} , #{iDisplayLength}
+		limit #{iDisplayStart} ,
+		#{iDisplayLength}
 	</select>
-	
-	
+
+
 	<select id="getSvcMessageListCvs" parameterType="kr.co.adflow.pms.domain.MsgParams"
 		resultMap="MessageResult">
 		SELECT a.group_id
@@ -297,195 +334,219 @@
 		, a.is_ack
 		, a.status
 		, a.is_reservation
-		, a.reservation_time
+		,
+		a.reservation_time
 		, a.resend_count
 		, a.resend_max_count
-		, a.resend_interval
+		,
+		a.resend_interval
 		, a.resend_id
 		, a.server_id
 		, a.expiry
 		, a.qos
-		, a.retained
+		,
+		a.retained
 		, a.send_terminal_type
 		, a.media_type
 		, a.msg_size
-		, a.issue_time
+		,
+		a.issue_time
 		, a.issue_id
 		, a.update_time
 		, a.update_id
 		, e.content_type
-		, e.content
+		,
+		e.content
 		, e.file_name
 		, e.file_format
 		, h.user_name AS issue_name
-		, b.ufmi
+		,
+		b.ufmi
 		, b.pma_ack_type
-        , b.pma_ack_time		
-        , b.app_ack_type
-        , b.app_ack_time
-	
+		, b.pma_ack_time
+		, b.app_ack_type
+		, b.app_ack_time
+
 		FROM
 		pms.message${keyMon} a left outer join (
-			SELECT 
-				aa.msg_id, j.ufmi,aa.ack_type as pma_ack_type,aa.ack_time as pma_ack_time,bb.ack_type as app_ack_type,bb.ack_time as app_ack_time 
-			FROM 
-				pms.ack${keyMon} aa left outer join pms.ack${keyMon} bb on aa.token_id = bb.token_id AND aa.msg_id = bb.msg_id and bb.ack_type = 'app'
-				,push.token i
-				,push.user j 
-			WHERE 
-				aa.token_id = i.tokenid 
-				AND i.userid = j.userid 
-				AND aa.ack_type = "pma" 
-				AND aa.msg_id IN
-       			(
-       				SELECT rr.msg_id
-       				FROM pms.message${keyMon} rr
-       				WHERE 
-					rr.issue_id = #{issueId}
-			        <if test="msgType != null and msgType != 0">
-					AND rr.msg_type = #{msgType}
-					</if>
-					<if test="dateStart != null ">
-					AND rr.update_time <![CDATA[>]]>  #{dateStart}
-					</if>
-					<if test="dateEnd != null ">
-					AND rr.update_time <![CDATA[<]]> #{dateEnd}
-					</if>		
-					<if test="issueId != null and issueId != ''">
-					AND rr.issue_id = #{issueId}
-					</if>
-					<if test="receiver != null and receiver != ''">
-					AND rr.receiver = #{receiver}
-					</if>
-					<if test="msgId != null and msgId != ''">
-					AND rr.msg_id = #{msgId}
-					</if>		
-					<if test="statusArray != null and statusArray.length != 0">
-					AND rr.status IN
-				 	 <foreach item="status" index="index" collection="statusArray" open="(" separator="," close=")" >
-						#{status}
-				  	 </foreach>
-				  	</if>
-       			)
-		) b on a.msg_id = b.msg_id  ,
-		pms.content${keyMon} e, 
-		pms.message${keyMon} tt left join pms.user h on tt.issue_id = h.user_id  
-		
-		WHERE 
-		a.msg_id = e.msg_id 
-		AND a.msg_id = tt.msg_id
-        <if test="msgType != null and msgType != 0">
-		AND a.msg_type = #{msgType}
+		SELECT
+		aa.msg_id,
+		j.ufmi,aa.ack_type as pma_ack_type,aa.ack_time as
+		pma_ack_time,bb.ack_type as app_ack_type,bb.ack_time as app_ack_time
+		FROM
+		pms.ack${keyMon} aa left outer join pms.ack${keyMon} bb on
+		aa.token_id = bb.token_id
+		AND aa.msg_id = bb.msg_id and bb.ack_type =
+		'app'
+		,push.token i
+		,push.user j
+		WHERE
+		aa.token_id = i.tokenid
+		AND i.userid
+		= j.userid
+		AND aa.ack_type = "pma"
+		AND aa.msg_id IN
+		(
+		SELECT rr.msg_id
+		FROM pms.message${keyMon} rr
+		WHERE
+		rr.issue_id = #{issueId}
+		<if test="msgType != null and msgType != 0">
+			AND rr.msg_type = #{msgType}
 		</if>
 		<if test="dateStart != null ">
-		AND a.update_time <![CDATA[>]]>  #{dateStart}
+			AND rr.update_time <![CDATA[>]]>
+			#{dateStart}
 		</if>
 		<if test="dateEnd != null ">
-		AND a.update_time <![CDATA[<]]> #{dateEnd}
-		</if>		
+			AND rr.update_time <![CDATA[<]]>
+			#{dateEnd}
+		</if>
 		<if test="issueId != null and issueId != ''">
-		AND a.issue_id = #{issueId}
+			AND rr.issue_id = #{issueId}
 		</if>
 		<if test="receiver != null and receiver != ''">
-		AND a.receiver = #{receiver}
+			AND rr.receiver = #{receiver}
 		</if>
 		<if test="msgId != null and msgId != ''">
-		AND a.msg_id = #{msgId}
-		</if>		
+			AND rr.msg_id = #{msgId}
+		</if>
 		<if test="statusArray != null and statusArray.length != 0">
-		AND a.status IN
-	 	 <foreach item="status" index="index" collection="statusArray" open="(" separator="," close=")" >
-			#{status}
-	  	 </foreach>
-	  	</if>
+			AND rr.status IN
+			<foreach item="status" index="index" collection="statusArray"
+				open="(" separator="," close=")">
+				#{status}
+			</foreach>
+		</if>
+		)
+		) b on a.msg_id = b.msg_id ,
+		pms.content${keyMon} e,
+		pms.message${keyMon} tt left join pms.user h on tt.issue_id =
+		h.user_id
+
+		WHERE
+		a.msg_id = e.msg_id
+		AND a.msg_id = tt.msg_id
+		<if test="msgType != null and msgType != 0">
+			AND a.msg_type = #{msgType}
+		</if>
+		<if test="dateStart != null ">
+			AND a.update_time <![CDATA[>]]>
+			#{dateStart}
+		</if>
+		<if test="dateEnd != null ">
+			AND a.update_time <![CDATA[<]]>
+			#{dateEnd}
+		</if>
+		<if test="issueId != null and issueId != ''">
+			AND a.issue_id = #{issueId}
+		</if>
+		<if test="receiver != null and receiver != ''">
+			AND a.receiver = #{receiver}
+		</if>
+		<if test="msgId != null and msgId != ''">
+			AND a.msg_id = #{msgId}
+		</if>
+		<if test="statusArray != null and statusArray.length != 0">
+			AND a.status IN
+			<foreach item="status" index="index" collection="statusArray"
+				open="(" separator="," close=")">
+				#{status}
+			</foreach>
+		</if>
 		ORDER BY a.update_time DESC,a.issue_time DESC
-		limit #{iDisplayStart} , #{iDisplayLength}
-	</select>
-	
-	
-<!-- 	<select id="getSvcMessageDetailList" parameterType="kr.co.adflow.pms.domain.MsgParams"
-		resultMap="MessageResult">
-		SELECT 
-			a.msg_id
-			, a.token_id AS receiver
-			,a.ack_type as pma_ack_type
-			,a.ack_time as pma_ack_time
-			,b.ack_type as app_ack_type
-			,b.ack_time as app_ack_time 
-		FROM 
-			pms.ack${keyMon} a left outer join pms.ack${keyMon} b on a.token_id = b.token_id AND a.msg_id = b.msg_id and b.ack_type = 'app'
-
-		WHERE 
-			a.ack_type = "pma" 
-			AND a.msg_id = #{msgId};
-	</select> -->
-	
-	
- 	<select id="getSvcMessageDetailList" parameterType="kr.co.adflow.pms.domain.MsgParams"
-		resultMap="MessageResult">
-		SELECT 
-			a.msg_id
-			, j.ufmi AS receiver
-			,a.ack_type as pma_ack_type
-			,a.ack_time as pma_ack_time
-			,b.ack_type as app_ack_type
-			,b.ack_time as app_ack_time 
-		FROM 
-			pms.ack${keyMon} a left outer join pms.ack${keyMon} b on a.token_id = b.token_id AND a.msg_id = b.msg_id and b.ack_type = 'app'
-			,push.token i
-			,push.user j 
-		WHERE 
-			a.token_id = i.tokenid 
-			AND i.userid = j.userid 
-			AND a.ack_type = "pma" 
-			AND a.msg_id = #{msgId};
+		limit #{iDisplayStart} ,
+		#{iDisplayLength}
 	</select>
 
 
- 	<select id="getSysMessageListCnt" parameterType="kr.co.adflow.pms.domain.MsgParams"
+	<!-- <select id="getSvcMessageDetailList" parameterType="kr.co.adflow.pms.domain.MsgParams" 
+		resultMap="MessageResult"> SELECT a.msg_id , a.token_id AS receiver ,a.ack_type 
+		as pma_ack_type ,a.ack_time as pma_ack_time ,b.ack_type as app_ack_type ,b.ack_time 
+		as app_ack_time FROM pms.ack${keyMon} a left outer join pms.ack${keyMon} 
+		b on a.token_id = b.token_id AND a.msg_id = b.msg_id and b.ack_type = 'app' 
+		WHERE a.ack_type = "pma" AND a.msg_id = #{msgId}; </select> -->
+
+
+	<select id="getSvcMessageDetailList" parameterType="kr.co.adflow.pms.domain.MsgParams"
+		resultMap="MessageResult">
+		SELECT
+		a.msg_id
+		, j.ufmi AS receiver
+		,a.ack_type as
+		pma_ack_type
+		,a.ack_time as pma_ack_time
+		,b.ack_type as app_ack_type
+		,b.ack_time as app_ack_time
+		FROM
+		pms.ack${keyMon} a left outer join
+		pms.ack${keyMon} b on a.token_id = b.token_id AND
+		a.msg_id = b.msg_id
+		and b.ack_type = 'app'
+		,push.token i
+		,push.user j
+		WHERE
+		a.token_id =
+		i.tokenid
+		AND i.userid = j.userid
+		AND a.ack_type = "pma"
+		AND a.msg_id =
+		#{msgId};
+	</select>
+
+
+	<select id="getSysMessageListCnt" parameterType="kr.co.adflow.pms.domain.MsgParams"
 		resultType="Integer">
 		SELECT COUNT(*)
 		FROM
-        pms.message${keyMon} a left outer join pms.ack${keyMon} b on a.msg_id = b.msg_id and b.ack_type = 'pma',
-        pms.message${keyMon} c left outer join pms.ack${keyMon} d on c.msg_id = d.msg_id and d.ack_type = 'app',
-        pms.content${keyMon} e		
-		WHERE a.msg_id = c.msg_id
+		pms.message${keyMon} a left outer join
+		pms.ack${keyMon} b on a.msg_id = b.msg_id and
+		b.ack_type = 'pma',
+		pms.message${keyMon} c left outer join pms.ack${keyMon} d on c.msg_id
+		= d.msg_id and
+		d.ack_type = 'app',
+		pms.content${keyMon} e
+		WHERE a.msg_id
+		= c.msg_id
 		AND a.msg_id = e.msg_id
 		<if test="msgType != null and msgType != 0">
-		AND a.msg_type = #{msgType}
+			AND a.msg_type = #{msgType}
 		</if>
 		<if test="dateStart != null ">
-		AND a.update_time <![CDATA[>]]>  #{dateStart}
+			AND a.update_time <![CDATA[>]]>
+			#{dateStart}
 		</if>
 		<if test="dateEnd != null ">
-		AND a.update_time <![CDATA[<]]> #{dateEnd}
-		</if>		
+			AND a.update_time <![CDATA[<]]>
+			#{dateEnd}
+		</if>
 		<if test="issueId != null and issueId != ''">
-		AND a.issue_id = #{issueId}
+			AND a.issue_id = #{issueId}
 		</if>
 		<if test="receiver != null and receiver != ''">
-		AND a.receiver = #{receiver}
+			AND a.receiver = #{receiver}
 		</if>
 		<if test="msgId != null and msgId != ''">
-		AND a.msg_id = #{msgId}
-		</if>		
+			AND a.msg_id = #{msgId}
+		</if>
 		<if test="ackType != -1 and ackType == 0">
-		AND b.ack_type IS NULL
+			AND b.ack_type IS NULL
 		</if>
 		<if test="ackType != -1 and ackType == 1">
-		AND b.ack_type = 'pma'
+			AND b.ack_type = 'pma'
 		</if>
 		<if test="ackType != -1 and ackType == 2">
-		AND d.ack_type = 'app'
+			AND d.ack_type = 'app'
 		</if>
 		<if test="statusArray != null and statusArray.length != 0">
-		AND a.status IN
-	 	 <foreach item="status" index="index" collection="statusArray" open="(" separator="," close=")" >
-			#{status}
-	  	 </foreach>
-	   </if>
-	</select>	
-	
+			AND a.status IN
+			<foreach item="status" index="index" collection="statusArray"
+				open="(" separator="," close=")">
+				#{status}
+			</foreach>
+		</if>
+	</select>
+
 	<select id="getSysMessageList" parameterType="kr.co.adflow.pms.domain.MsgParams"
 		resultMap="MessageResult">
 		SELECT a.group_id
@@ -497,106 +558,126 @@
 		, a.is_ack
 		, a.status
 		, a.is_reservation
-		, a.reservation_time
+		,
+		a.reservation_time
 		, a.resend_count
 		, a.resend_max_count
-		, a.resend_interval
+		,
+		a.resend_interval
 		, a.resend_id
 		, a.server_id
 		, a.expiry
 		, a.qos
-		, a.retained
+		,
+		a.retained
 		, a.send_terminal_type
 		, a.media_type
 		, a.msg_size
-		, a.issue_time
+		,
+		a.issue_time
 		, a.issue_id
 		, a.update_time
 		, a.update_id
-        ,b.ack_type as pma_ack_type
-        ,b.ack_time as pma_ack_time
-        ,d.ack_type as app_ack_type
-        ,d.ack_time as app_ack_time		
+		,b.ack_type as
+		pma_ack_type
+		,b.ack_time as pma_ack_time
+		,d.ack_type as app_ack_type
+		,d.ack_time as app_ack_time
 		, e.content_type
 		, e.content
 		, e.file_name
-		, e.file_format
-		, h.user_name AS issue_name
+		,
+		e.file_format
+		, h.user_name AS
+		issue_name
 		FROM
-        pms.message${keyMon} a left outer join pms.ack${keyMon} b on a.msg_id = b.msg_id and b.ack_type = 'pma',
-        pms.message${keyMon} c left outer join pms.ack${keyMon} d on c.msg_id = d.msg_id and d.ack_type = 'app',
-        pms.message${keyMon} g left join pms.user h on g.issue_id = h.user_id,
-        pms.content${keyMon} e		
-		WHERE a.msg_id = c.msg_id
+		pms.message${keyMon} a left
+		outer join pms.ack${keyMon} b on a.msg_id = b.msg_id and
+		b.ack_type =
+		'pma',
+		pms.message${keyMon} c left outer join pms.ack${keyMon} d on
+		c.msg_id = d.msg_id and
+		d.ack_type = 'app',
+		pms.message${keyMon} g left
+		join pms.user h on g.issue_id = h.user_id,
+		pms.content${keyMon} e
+		WHERE
+		a.msg_id = c.msg_id
 		AND a.msg_id = g.msg_id
 		AND a.msg_id = e.msg_id
 		<if test="msgType != null and msgType != 0">
-		AND a.msg_type = #{msgType}
+			AND a.msg_type = #{msgType}
 		</if>
 		<if test="dateStart != null ">
-		AND a.update_time <![CDATA[>]]>  #{dateStart}
+			AND a.update_time <![CDATA[>]]>
+			#{dateStart}
 		</if>
 		<if test="dateEnd != null ">
-		AND a.update_time <![CDATA[<]]> #{dateEnd}
-		</if>		
+			AND a.update_time <![CDATA[<]]>
+			#{dateEnd}
+		</if>
 		<if test="issueId != null and issueId != ''">
-		AND a.issue_id = #{issueId}
+			AND a.issue_id = #{issueId}
 		</if>
 		<if test="receiver != null and receiver != ''">
-		AND a.receiver = #{receiver}
+			AND a.receiver = #{receiver}
 		</if>
 		<if test="msgId != null and msgId != ''">
-		AND a.msg_id = #{msgId}
-		</if>		
+			AND a.msg_id = #{msgId}
+		</if>
 		<if test="ackType != -1 and ackType == 0">
-		AND b.ack_type IS NULL
+			AND b.ack_type IS NULL
 		</if>
 		<if test="ackType != -1 and ackType == 1">
-		AND b.ack_type = 'pma'
+			AND b.ack_type = 'pma'
 		</if>
 		<if test="ackType != -1 and ackType == 2">
-		AND d.ack_type = 'app'
+			AND d.ack_type = 'app'
 		</if>
 		<if test="statusArray != null and statusArray.length != 0">
-		AND a.status IN
-	 	 <foreach item="status" index="index" collection="statusArray" open="(" separator="," close=")" >
-			#{status}
-	  	 </foreach>
-	   </if>
+			AND a.status IN
+			<foreach item="status" index="index" collection="statusArray"
+				open="(" separator="," close=")">
+				#{status}
+			</foreach>
+		</if>
 		ORDER BY a.update_time DESC, a.issue_time DESC
-		limit #{iDisplayStart} , #{iDisplayLength}
+		limit #{iDisplayStart} ,
+		#{iDisplayLength}
 	</select>
-	
-	
-	
 
-	
+
+
+
+
 	<select id="getSvcResevationMessageListCnt" parameterType="kr.co.adflow.pms.domain.MsgParams"
 		resultType="Integer">
 		SELECT COUNT(*)
 		FROM
-        pms.reservation_msg		
+		pms.reservation_msg
 		WHERE status = 0
 		<if test="msgType != null and msgType != 0">
-		AND msg_type = #{msgType}
+			AND msg_type = #{msgType}
 		</if>
 		<if test="dateStart != null ">
-		AND reservation_time <![CDATA[>]]>  #{dateStart}
+			AND reservation_time <![CDATA[>]]>
+			#{dateStart}
 		</if>
 		<if test="dateEnd != null ">
-		AND reservation_time <![CDATA[<]]> #{dateEnd}
-		</if>		
+			AND reservation_time <![CDATA[<]]>
+			#{dateEnd}
+		</if>
 		<if test="issueId != null and issueId != ''">
-		AND issue_id = #{issueId}
+			AND issue_id = #{issueId}
 		</if>
 		<if test="receiver != null and receiver != ''">
-		AND receiver = #{receiver}
+			AND receiver = #{receiver}
 		</if>
 		<if test="msgId != null and msgId != ''">
-		AND msg_id = #{msgId}
+			AND msg_id = #{msgId}
 		</if>
 	</select>
-	
+
 	<select id="getSvcResevationMessageList" parameterType="kr.co.adflow.pms.domain.MsgParams"
 		resultMap="MessageResult">
 		SELECT group_id
@@ -604,7 +685,8 @@
 		, a.msg_type
 		, a.receiver
 		, a.receiver_topic
-		, a.service_id
+		,
+		a.service_id
 		, a.is_ack
 		, a.status
 		, a.is_reservation
@@ -613,61 +695,71 @@
 		, a.resend_max_count
 		, a.resend_interval
 		, a.resend_id
-		, a.server_id
+		,
+		a.server_id
 		, a.expiry
 		, a.qos
 		, a.retained
 		, a.send_terminal_type
-		, a.media_type
+		,
+		a.media_type
 		, a.msg_size
 		, a.issue_time
 		, a.issue_id
 		, a.update_time
-		, a.update_id
+		,
+		a.update_id
 		, a.content_type
 		, a.content
 		, a.file_name
 		, a.file_format
-		, h.user_name AS issue_name
+		,
+		h.user_name AS issue_name
 		FROM
-        pms.reservation_msg a left join pms.user h on a.issue_id = h.user_id
+		pms.reservation_msg a left join pms.user
+		h on a.issue_id = h.user_id
 		WHERE a.status = 0
 		<if test="msgType != null and msgType != 0">
-		AND a.msg_type = #{msgType}
+			AND a.msg_type = #{msgType}
 		</if>
 		<if test="dateStart != null ">
-		AND a.reservation_time <![CDATA[>]]>  #{dateStart}
+			AND a.reservation_time <![CDATA[>]]>
+			#{dateStart}
 		</if>
 		<if test="dateEnd != null ">
-		AND a.reservation_time <![CDATA[<]]> #{dateEnd}
-		</if>		
+			AND a.reservation_time <![CDATA[<]]>
+			#{dateEnd}
+		</if>
 		<if test="issueId != null and issueId != ''">
-		AND a.issue_id = #{issueId}
+			AND a.issue_id = #{issueId}
 		</if>
 		<if test="receiver != null and receiver != ''">
-		AND a.receiver = #{receiver}
+			AND a.receiver = #{receiver}
 		</if>
 		<if test="msgId != null and msgId != ''">
-		AND a.msg_id = #{msgId}
+			AND a.msg_id = #{msgId}
 		</if>
 		ORDER BY a.reservation_time ASC,a.update_time DESC
-		limit #{iDisplayStart} , #{iDisplayLength}
+		limit
+		#{iDisplayStart} , #{iDisplayLength}
 	</select>
 
 
 	<update id="updateStatus" parameterType="kr.co.adflow.pms.domain.Message">
-		UPDATE  pms.message${keyMon}
+		UPDATE
+		pms.message${keyMon}
 		SET status = #{status}
-		,receiver_topic = #{receiverTopic}
+		,receiver_topic =
+		#{receiverTopic}
 		,update_time = now()
 		,update_id = #{updateId}
-		WHERE msg_id = #{msgId}
+		WHERE
+		msg_id = #{msgId}
 	</update>
 
 	<insert id="insertMessage" parameterType="kr.co.adflow.pms.domain.Message">
-		INSERT INTO pms.message${keyMon}
-		(group_id
-		,msg_id
+		INSERT INTO pms.message
+		(msg_id
 		,msg_type
 		,receiver
 		,receiver_topic
@@ -693,8 +785,7 @@
 		,update_id
 		)
 		values(
-		 #{groupId}
-		,#{msgId}
+		#{msgId}
 		,#{msgType}
 		,#{receiver}
 		,#{receiverTopic}
@@ -708,7 +799,7 @@
 		,#{resendInterval}
 		,#{resendId}
 		,#{serverId}
-	    ,#{expiry}
+		,#{expiry}
 		,#{qos}
 		,#{retained}
 		,#{sendTerminalType}
@@ -721,7 +812,7 @@
 		)
 	</insert>
 	<insert id="insertContent" parameterType="kr.co.adflow.pms.domain.Message">
-		INSERT INTO pms.content${keyMon}
+		INSERT INTO pms.content
 		(msg_id
 		,content_type
 		,content
@@ -729,27 +820,28 @@
 		,file_format
 		)
 		values(
-		 #{msgId}
+		#{msgId}
 		,#{contentType}
 		,#{content}
 		,#{fileName}
 		,#{fileFormat}
 		)
 	</insert>
-	
+
 	<insert id="insertGroupMessage" parameterType="kr.co.adflow.pms.domain.GroupMessage">
-		INSERT INTO pms.group_msg${keyMon}
+		INSERT INTO
+		pms.group_msg${keyMon}
 		(msg_id
 		,receiver_token_id
 		,receiver_ufmi
 		)
 		values(
-		 #{msgId}
+		#{msgId}
 		,#{receiverTokenId}
 		,#{receiverUfmi}
 		)
 	</insert>
-	
+
 	<select id="getMessageResult" parameterType="kr.co.adflow.pms.domain.MsgIdsParams"
 		resultMap="MessageResult">
 		SELECT a.group_id
@@ -757,127 +849,104 @@
 		, a.receiver
 		, a.status
 		, a.is_reservation
-		, a.reservation_time
+		,
+		a.reservation_time
 		, a.resend_count
 		, a.resend_max_count
 		, a.update_time
 		, b.ufmi
 		, b.pma_ack_type
-        , b.pma_ack_time		
-        , b.app_ack_type
-        , b.app_ack_time
-	
+		, b.pma_ack_time
+		, b.app_ack_type
+		,
+		b.app_ack_time
+
 		FROM
 		pms.message${keyMon} a left outer join (
-			SELECT 
-				aa.msg_id, j.ufmi,aa.ack_type as pma_ack_type,aa.ack_time as pma_ack_time,bb.ack_type as app_ack_type,bb.ack_time as app_ack_time 
-			FROM 
-				pms.ack${keyMon} aa left outer join pms.ack${keyMon} bb on aa.token_id = bb.token_id AND aa.msg_id = bb.msg_id and bb.ack_type = 'app'
-				,push.token i
-				,push.user j 
-			WHERE 
-				aa.token_id = i.tokenid 
-				AND i.userid = j.userid 
-				AND aa.ack_type = "pma" 
-				AND aa.msg_id IN
-       				<foreach item="id" index="index" collection="msgIds" open="(" separator="," close=")" >
-					#{id}
-	   				</foreach>
-		) b on a.msg_id = b.msg_id  
-		WHERE 
-		a.issue_id = #{issueId}
-        AND a.msg_id IN
-       <foreach item="id" index="index" collection="msgIds" open="(" separator="," close=")" >
+		SELECT
+		aa.msg_id, j.ufmi,aa.ack_type as pma_ack_type,aa.ack_time as
+		pma_ack_time,bb.ack_type as app_ack_type,bb.ack_time as app_ack_time
+		FROM
+		pms.ack${keyMon} aa left outer join pms.ack${keyMon} bb on
+		aa.token_id = bb.token_id
+		AND aa.msg_id = bb.msg_id and bb.ack_type =
+		'app'
+		,push.token i
+		,push.user j
+		WHERE
+		aa.token_id = i.tokenid
+		AND i.userid
+		= j.userid
+		AND aa.ack_type = "pma"
+		AND aa.msg_id IN
+		<foreach item="id" index="index" collection="msgIds" open="("
+			separator="," close=")">
 			#{id}
-	   </foreach>
+		</foreach>
+		) b on a.msg_id = b.msg_id
+		WHERE
+		a.issue_id = #{issueId}
+		AND a.msg_id IN
+		<foreach item="id" index="index" collection="msgIds" open="("
+			separator="," close=")">
+			#{id}
+		</foreach>
 		ORDER BY a.update_time DESC,a.issue_time DESC
 	</select>
-	
-	
-<!-- 	<select id="getMessageResult" parameterType="kr.co.adflow.pms.domain.MsgIdsParams"
-		resultMap="MessageResult">
-		SELECT a.group_id
-		, a.msg_id
-		, a.receiver
-		, a.status
-		, a.is_reservation
-		, a.reservation_time
-		, a.resend_count
-		, a.resend_max_count
-		, a.update_time
-		, b.ack_type as pma_ack_type
-        , b.ack_time as pma_ack_time		
-        , d.ack_type as app_ack_type
-        , d.ack_time as app_ack_time
-	
-		FROM
-		pms.message${keyMon} a	
-		WHERE 
-		a.issue_id = #{issueId}
-        AND a.msg_id IN
-       <foreach item="id" index="index" collection="msgIds" open="(" separator="," close=")" >
-			#{id}
-	   </foreach>
-		ORDER BY a.update_time DESC,a.issue_time DESC
-	</select> -->
-	
-<!-- 	<select id="getMessageResult" parameterType="kr.co.adflow.pms.domain.MsgIdsParams"
-		resultMap="MessageResult">
-		SELECT a.group_id
-		, a.msg_id
-		, a.receiver
-		, a.status
-		, a.is_reservation
-		, a.reservation_time
-		, a.resend_count
-		, a.resend_max_count
-		, a.update_time
-        , b.ack_type as pma_ack_type
-        , b.ack_time as pma_ack_time		
-        , d.ack_type as app_ack_type
-        , d.ack_time as app_ack_time		
-		FROM
-		pms.message${keyMon} a left outer join pms.ack${keyMon} b on a.msg_id = b.msg_id and b.ack_type = 'pma',
-        pms.message${keyMon} c left outer join pms.ack${keyMon} d on c.msg_id = d.msg_id and d.ack_type = 'app'		
-		WHERE a.msg_id = c.msg_id
-		AND b.token = d.token
-		AND a.issue_id = #{issueId}
-        AND a.msg_id IN
-       <foreach item="id" index="index" collection="msgIds" open="(" separator="," close=")" >
-			#{id}
-	   </foreach>
-		ORDER BY a.update_time DESC,a.issue_time DESC
-	</select> -->
-	
+
+
+	<!-- <select id="getMessageResult" parameterType="kr.co.adflow.pms.domain.MsgIdsParams" 
+		resultMap="MessageResult"> SELECT a.group_id , a.msg_id , a.receiver , a.status 
+		, a.is_reservation , a.reservation_time , a.resend_count , a.resend_max_count 
+		, a.update_time , b.ack_type as pma_ack_type , b.ack_time as pma_ack_time 
+		, d.ack_type as app_ack_type , d.ack_time as app_ack_time FROM pms.message${keyMon} 
+		a WHERE a.issue_id = #{issueId} AND a.msg_id IN <foreach item="id" index="index" 
+		collection="msgIds" open="(" separator="," close=")" > #{id} </foreach> ORDER 
+		BY a.update_time DESC,a.issue_time DESC </select> -->
+
+	<!-- <select id="getMessageResult" parameterType="kr.co.adflow.pms.domain.MsgIdsParams" 
+		resultMap="MessageResult"> SELECT a.group_id , a.msg_id , a.receiver , a.status 
+		, a.is_reservation , a.reservation_time , a.resend_count , a.resend_max_count 
+		, a.update_time , b.ack_type as pma_ack_type , b.ack_time as pma_ack_time 
+		, d.ack_type as app_ack_type , d.ack_time as app_ack_time FROM pms.message${keyMon} 
+		a left outer join pms.ack${keyMon} b on a.msg_id = b.msg_id and b.ack_type 
+		= 'pma', pms.message${keyMon} c left outer join pms.ack${keyMon} d on c.msg_id 
+		= d.msg_id and d.ack_type = 'app' WHERE a.msg_id = c.msg_id AND b.token = 
+		d.token AND a.issue_id = #{issueId} AND a.msg_id IN <foreach item="id" index="index" 
+		collection="msgIds" open="(" separator="," close=")" > #{id} </foreach> ORDER 
+		BY a.update_time DESC,a.issue_time DESC </select> -->
+
 	<update id="cancelMessage" parameterType="kr.co.adflow.pms.domain.Message">
-		UPDATE  pms.message${keyMon}
+		UPDATE
+		pms.message${keyMon}
 		SET status = #{status}
 		,update_time = now()
 		,update_id = #{updateId}
 		WHERE msg_id = #{msgId}
 		AND status = 0
 	</update>
-	
+
 	<update id="cancelReservationList" parameterType="kr.co.adflow.pms.domain.MsgIdsParams">
-		UPDATE  pms.message${keyMon}
+		UPDATE pms.message${keyMon}
 		SET status = 2
 		,update_time = now()
 		,update_id = #{updateId}
 		WHERE status = 0
 		<if test="issueId != null and issueId != ''">
-		AND issue_id = #{issueId}
+			AND issue_id = #{issueId}
 		</if>
-        AND msg_id IN
-       <foreach item="id" index="index" collection="msgIds" open="(" separator="," close=")" >
+		AND msg_id IN
+		<foreach item="id" index="index" collection="msgIds" open="("
+			separator="," close=")">
 			#{id}
-	   </foreach>
+		</foreach>
 	</update>
-	
-	
+
+
 	<insert id="insertReservationMessage" parameterType="kr.co.adflow.pms.domain.Message">
-		INSERT INTO pms.reservation_msg
-		(group_id
-		,msg_id
+		INSERT INTO
+		pms.reservation_msg
+		(msg_id
 		,msg_type
 		,receiver
 		,receiver_topic
@@ -907,8 +976,7 @@
 		,file_format
 		)
 		values(
-		 #{groupId}
-		,#{msgId}
+		#{msgId}
 		,#{msgType}
 		,#{receiver}
 		,#{receiverTopic}
@@ -922,7 +990,7 @@
 		,#{resendInterval}
 		,#{resendId}
 		,#{serverId}
-	    ,#{expiry}
+		,#{expiry}
 		,#{qos}
 		,#{retained}
 		,#{sendTerminalType}
@@ -938,11 +1006,11 @@
 		,#{fileFormat}
 		)
 	</insert>
-	
+
 	<insert id="insertMessageRV" parameterType="kr.co.adflow.pms.domain.Message">
-		INSERT INTO pms.message${keyMon}
-		(group_id
-		,msg_id
+		INSERT INTO
+		pms.message
+		(msg_id
 		,msg_type
 		,receiver
 		,receiver_topic
@@ -967,9 +1035,7 @@
 		,update_time
 		,update_id
 		)
-		values(
-		 #{groupId}
-		,#{msgId}
+		values(#{msgId}
 		,#{msgType}
 		,#{receiver}
 		,#{receiverTopic}
@@ -983,7 +1049,7 @@
 		,#{resendInterval}
 		,#{resendId}
 		,#{serverId}
-	    ,#{expiry}
+		,#{expiry}
 		,#{qos}
 		,#{retained}
 		,#{sendTerminalType}
@@ -995,36 +1061,40 @@
 		,#{updateId}
 		)
 	</insert>
-	
+
 	<update id="cancelReservationMessage" parameterType="kr.co.adflow.pms.domain.Message">
-		UPDATE  pms.reservation_msg
+		UPDATE
+		pms.reservation_msg
 		SET status = 2
 		,update_time = now()
-		,update_id = #{updateId}
+		,update_id =
+		#{updateId}
 		WHERE msg_id = #{msgId}
 		AND status = 0
 	</update>
-	
+
 	<update id="cancelReservationMessageList" parameterType="kr.co.adflow.pms.domain.MsgIdsParams">
-		UPDATE  pms.reservation_msg
+		UPDATE pms.reservation_msg
 		SET status = 2
 		,update_time = now()
 		,update_id = #{updateId}
 		WHERE status = 0
 		<if test="issueId != null and issueId != ''">
-		AND issue_id = #{issueId}
+			AND issue_id = #{issueId}
 		</if>
-        AND msg_id IN
-       <foreach item="id" index="index" collection="msgIds" open="(" separator="," close=")" >
+		AND msg_id IN
+		<foreach item="id" index="index" collection="msgIds" open="("
+			separator="," close=")">
 			#{id}
-	   </foreach>
+		</foreach>
 	</update>
-	
+
 	<delete id="deleteReservationMessage" parameterType="String">
-		DELETE FROM pms.reservation_msg
-		WHERE msg_id = #{msgId} 
+		DELETE FROM
+		pms.reservation_msg
+		WHERE msg_id = #{msgId}
 	</delete>
-	
+
 	<select id="selectReservationMessage" parameterType="String"
 		resultMap="MessageResult">
 		SELECT group_id

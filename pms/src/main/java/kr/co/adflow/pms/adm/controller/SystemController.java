@@ -5,14 +5,9 @@ package kr.co.adflow.pms.adm.controller;
 
 import java.io.BufferedWriter;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
-import java.util.TimeZone;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -27,10 +22,6 @@ import kr.co.adflow.pms.adm.service.SystemService;
 import kr.co.adflow.pms.core.config.PmsConfig;
 import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.controller.BaseController;
-import kr.co.adflow.pms.core.exception.PmsRuntimeException;
-import kr.co.adflow.pms.core.executor.CDRCreateExecutor;
-import kr.co.adflow.pms.core.executor.CDRCreateExecutor2;
-import kr.co.adflow.pms.core.handler.PCFConnectionManagerHandler;
 import kr.co.adflow.pms.domain.Message;
 import kr.co.adflow.pms.domain.ServerInfo;
 import kr.co.adflow.pms.domain.User;
@@ -38,7 +29,6 @@ import kr.co.adflow.pms.domain.validator.UserValidator;
 import kr.co.adflow.pms.response.Response;
 import kr.co.adflow.pms.response.Result;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,32 +61,25 @@ public class SystemController extends BaseController {
 	/** The account service. */
 	@Autowired
 	private AccountService accountService;
-	
+
 	@Autowired
 	private PmsConfig pmsConfig;
-	
-	
-	@Autowired
-	private CDRCreateExecutor cDRCreateExecutor;
-	
-	@Autowired
-	private CDRCreateExecutor2 cDRCreateExecutor2;
-	
+
 	@Autowired
 	private UserValidator userValidator;
-	
-	
 
 	/**
 	 * Gets the account.
-	 *
-	 * @param appKey the app key
+	 * 
+	 * @param appKey
+	 *            the app key
 	 * @return the account
 	 */
 	@RequestMapping(value = "/account", method = RequestMethod.GET)
 	@ResponseBody
 	public Response<Result<User>> getAccount(
-			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey)  throws Exception{
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey)
+			throws Exception {
 
 		User user = accountService.retrieveAccount(appKey);
 
@@ -111,15 +94,19 @@ public class SystemController extends BaseController {
 
 	/**
 	 * Modify account.
-	 *
-	 * @param req the req
-	 * @param appKey the app key
+	 * 
+	 * @param req
+	 *            the req
+	 * @param appKey
+	 *            the app key
 	 * @return the response
 	 */
 	@RequestMapping(value = "/account", method = RequestMethod.PUT)
 	@ResponseBody
-	public Response<Result<List<String>>> modifyAccount(@RequestBody AccountReq req,
-			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey)  throws Exception{
+	public Response<Result<List<String>>> modifyAccount(
+			@RequestBody AccountReq req,
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey)
+			throws Exception {
 
 		int resultCnt = accountService.modifyAccount(req, appKey);
 
@@ -137,15 +124,19 @@ public class SystemController extends BaseController {
 
 	/**
 	 * Modify password.
-	 *
-	 * @param req the req
-	 * @param appKey the app key
+	 * 
+	 * @param req
+	 *            the req
+	 * @param appKey
+	 *            the app key
 	 * @return the response
 	 */
 	@RequestMapping(value = "/account/sec", method = RequestMethod.PUT)
 	@ResponseBody
-	public Response<Result<List<String>>> modifyPassword(@RequestBody PasswordReq req,
-			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey)  throws Exception{
+	public Response<Result<List<String>>> modifyPassword(
+			@RequestBody PasswordReq req,
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey)
+			throws Exception {
 
 		int resultCnt = accountService.modifyPassword(req, appKey);
 
@@ -163,9 +154,10 @@ public class SystemController extends BaseController {
 
 	/**
 	 * Gets the users.
-	 *
+	 * 
 	 * @return the users
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	@RequestMapping(value = "/users", method = RequestMethod.GET)
 	@ResponseBody
@@ -184,9 +176,11 @@ public class SystemController extends BaseController {
 
 	/**
 	 * Creates the user.
-	 *
-	 * @param user the user
-	 * @param appKey the app key
+	 * 
+	 * @param user
+	 *            the user
+	 * @param appKey
+	 *            the app key
 	 * @return the response
 	 */
 	@RequestMapping(value = "/users", method = RequestMethod.POST, consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
@@ -213,8 +207,9 @@ public class SystemController extends BaseController {
 
 	/**
 	 * Gets the users.
-	 *
-	 * @param userId the user id
+	 * 
+	 * @param userId
+	 *            the user id
 	 * @return the users
 	 */
 	@RequestMapping(value = "/users/{userId}", method = RequestMethod.GET)
@@ -234,10 +229,13 @@ public class SystemController extends BaseController {
 
 	/**
 	 * Update user.
-	 *
-	 * @param userId the user id
-	 * @param user the user
-	 * @param appKey the app key
+	 * 
+	 * @param userId
+	 *            the user id
+	 * @param user
+	 *            the user
+	 * @param appKey
+	 *            the app key
 	 * @return the response
 	 */
 	@RequestMapping(value = "/users/{userId}", method = RequestMethod.PUT, consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
@@ -264,14 +262,16 @@ public class SystemController extends BaseController {
 		return res;
 
 	}
-	
-	
+
 	/**
 	 * Update user password reset.
-	 *
-	 * @param userId the user id
-	 * @param user the user
-	 * @param appKey the app key
+	 * 
+	 * @param userId
+	 *            the user id
+	 * @param user
+	 *            the user
+	 * @param appKey
+	 *            the app key
 	 * @return the response
 	 */
 	@RequestMapping(value = "/users/{userId}/resetpw", method = RequestMethod.PUT, consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
@@ -279,7 +279,8 @@ public class SystemController extends BaseController {
 	public Response<Result<List<String>>> passwordReset(
 			@PathVariable("userId") String userId,
 			@RequestBody PasswordReq req,
-			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey) throws Exception {
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey)
+			throws Exception {
 
 		int resultCnt = systemService.resetPassword(req, userId, appKey);
 
@@ -297,9 +298,11 @@ public class SystemController extends BaseController {
 
 	/**
 	 * Delete user.
-	 *
-	 * @param userId the user id
-	 * @param appKey the app key
+	 * 
+	 * @param userId
+	 *            the user id
+	 * @param appKey
+	 *            the app key
 	 * @return the response
 	 */
 	@RequestMapping(value = "/users/{userId}", method = RequestMethod.DELETE, consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
@@ -324,8 +327,9 @@ public class SystemController extends BaseController {
 
 	/**
 	 * Sets the logger.
-	 *
-	 * @param level the level
+	 * 
+	 * @param level
+	 *            the level
 	 * @return the response
 	 */
 	@RequestMapping(value = "/loglevel/{level}", method = RequestMethod.GET)
@@ -358,11 +362,14 @@ public class SystemController extends BaseController {
 
 	/**
 	 * Gets the message list.
-	 *
-	 * @param params the params
-	 * @param appKey the app key
+	 * 
+	 * @param params
+	 *            the params
+	 * @param appKey
+	 *            the app key
 	 * @return the message list
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	@RequestMapping(value = "/messages", method = RequestMethod.GET)
 	@ResponseBody
@@ -386,14 +393,17 @@ public class SystemController extends BaseController {
 		return res;
 
 	}
-	
+
 	/**
 	 * Gets the message list.
-	 *
-	 * @param params the params
-	 * @param appKey the app key
+	 * 
+	 * @param params
+	 *            the params
+	 * @param appKey
+	 *            the app key
 	 * @return the message list
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	@RequestMapping(value = "/messages/{msgId}", method = RequestMethod.GET)
 	@ResponseBody
@@ -404,11 +414,12 @@ public class SystemController extends BaseController {
 			throws Exception {
 
 		String keyMon = (String) params.get("keyMon");
-//		params.put("appKey", appKey);
+		// params.put("appKey", appKey);
 
-		MessagesRes messagesRes = systemService.getSysMessageDetailList(msgId, keyMon);
+		MessagesRes messagesRes = systemService.getSysMessageDetailList(msgId,
+				keyMon);
 
-//		messagesRes.setsEcho(sEcho);
+		// messagesRes.setsEcho(sEcho);
 
 		Result<MessagesRes> result = new Result<MessagesRes>();
 		result.setSuccess(true);
@@ -418,59 +429,61 @@ public class SystemController extends BaseController {
 		return res;
 
 	}
-	
+
 	/**
 	 * Gets the message list.
-	 *
-	 * @param params the params
-	 * @param appKey the app key
+	 * 
+	 * @param params
+	 *            the params
+	 * @param appKey
+	 *            the app key
 	 * @return the message list
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	@RequestMapping(value = "/messages/csv", method = RequestMethod.GET)
 	@ResponseBody
 	public void getMessageCSV(
 			@RequestParam Map<String, String> params,
 			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey,
-			HttpServletResponse response)
-			throws Exception {
-		
+			HttpServletResponse response) throws Exception {
+
 		BufferedWriter writer = new BufferedWriter(response.getWriter());
-		
+
 		try {
-        String csvFileName = "messages.csv";
-        
-        response.setContentType("text/csv");
- 
-        // creates mock data
-        String headerKey = "Content-Disposition";
-        String headerValue = String.format("attachment; filename=\"%s\"",
-                csvFileName);
-        response.setHeader(headerKey, headerValue);
- 
-		String sEcho = (String) params.get("sEcho");
-		params.put("appKey", appKey);
+			String csvFileName = "messages.csv";
 
-		//download cnt limit
-		params.put("iDisplayStart", "0");
-		params.put("iDisplayLength", pmsConfig.MESSAGE_CSV_LIMIT_DEFAULT+"");
-		MessagesRes messagesRes = systemService.getSysMessageList(params);
-		
+			response.setContentType("text/csv");
 
-		messagesRes.setsEcho(sEcho);
-		
-		logger.info("messagesRes size {}",messagesRes.getData().size());
-		
-		writer.write(this.getCSVHeader());
-		int len = messagesRes.getData().size();
-		for (int i = 0; i < len; i++) {
-			writer.write(this.getCSVData(messagesRes.getData().get(i)));
-			
-		}
-		
-		writer.flush();
-		
-		} catch(Exception e) {
+			// creates mock data
+			String headerKey = "Content-Disposition";
+			String headerValue = String.format("attachment; filename=\"%s\"",
+					csvFileName);
+			response.setHeader(headerKey, headerValue);
+
+			String sEcho = (String) params.get("sEcho");
+			params.put("appKey", appKey);
+
+			// download cnt limit
+			params.put("iDisplayStart", "0");
+			params.put("iDisplayLength", pmsConfig.MESSAGE_CSV_LIMIT_DEFAULT
+					+ "");
+			MessagesRes messagesRes = systemService.getSysMessageList(params);
+
+			messagesRes.setsEcho(sEcho);
+
+			logger.info("messagesRes size {}", messagesRes.getData().size());
+
+			writer.write(this.getCSVHeader());
+			int len = messagesRes.getData().size();
+			for (int i = 0; i < len; i++) {
+				writer.write(this.getCSVData(messagesRes.getData().get(i)));
+
+			}
+
+			writer.flush();
+
+		} catch (Exception e) {
 			throw e;
 		} finally {
 			if (writer != null) {
@@ -482,46 +495,44 @@ public class SystemController extends BaseController {
 
 	private String getCSVHeader() {
 		StringBuffer result = new StringBuffer();
-		result.append("updateTime").append(",")
-		.append("issueId").append(",")
-		.append("receiver").append(",")
-		.append("status").append(",")
-		.append("appAckType").append(",")
-		.append("appAckTime").append(",")
-		.append("pmaAckType").append(",")
-		.append("pmaAckTime").append(",")
-		.append("resendCount").append(",")
-		.append("resendInterval").append(",")
-		.append("msgId").append("\n");
+		result.append("updateTime").append(",").append("issueId").append(",")
+				.append("receiver").append(",").append("status").append(",")
+				.append("appAckType").append(",").append("appAckTime")
+				.append(",").append("pmaAckType").append(",")
+				.append("pmaAckTime").append(",").append("resendCount")
+				.append(",").append("resendInterval").append(",")
+				.append("msgId").append("\n");
 
 		return result.toString();
 	}
 
 	private String getCSVData(Message msg) {
-		
+
 		StringBuffer result = new StringBuffer();
-		result.append(msg.getUpdateTime()).append(",")
-		.append(msg.getIssueId()).append(",")
-		.append(msg.getReceiver()).append(",")
-		.append(msg.getStatus()).append(",")
-		.append(msg.getAppAckType()).append(",")
-		.append(msg.getAppAckTime()).append(",")
-		.append(msg.getPmaAckType()).append(",")
-		.append(msg.getPmaAckTime()).append(",")
-		.append(msg.getResendCount()).append(",")
-		.append(msg.getResendInterval()).append(",")
-		.append(msg.getMsgId()).append("\n");
-		
+		result.append(msg.getUpdateTime()).append(",").append(msg.getIssueId())
+				.append(",").append(msg.getReceiver()).append(",")
+				.append(msg.getStatus()).append(",")
+				.append(msg.getAppAckType()).append(",")
+				.append(msg.getAppAckTime()).append(",")
+				.append(msg.getPmaAckType()).append(",")
+				.append(msg.getPmaAckTime()).append(",")
+				.append(msg.getResendCount()).append(",")
+				.append(msg.getResendInterval()).append(",")
+				.append(msg.getMsgId()).append("\n");
+
 		return result.toString();
 	}
 
 	/**
 	 * Gets the resevation message list.
-	 *
-	 * @param params the params
-	 * @param appKey the app key
+	 * 
+	 * @param params
+	 *            the params
+	 * @param appKey
+	 *            the app key
 	 * @return the resevation message list
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	@RequestMapping(value = "/messages/reservations", method = RequestMethod.GET)
 	@ResponseBody
@@ -549,9 +560,10 @@ public class SystemController extends BaseController {
 
 	/**
 	 * Gets the server info.
-	 *
+	 * 
 	 * @return the server info
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	@RequestMapping(value = "/server", method = RequestMethod.GET)
 	@ResponseBody
@@ -567,11 +579,14 @@ public class SystemController extends BaseController {
 
 	/**
 	 * Cancel reservation list.
-	 *
-	 * @param appKey the app key
-	 * @param ids the ids
+	 * 
+	 * @param appKey
+	 *            the app key
+	 * @param ids
+	 *            the ids
 	 * @return the response
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	@RequestMapping(value = "/messages/cancel", method = RequestMethod.POST, consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
 	@ResponseBody
@@ -592,9 +607,11 @@ public class SystemController extends BaseController {
 
 	/**
 	 * Gets the month summary.
-	 *
-	 * @param appKey the app key
-	 * @param keyMon the key mon
+	 * 
+	 * @param appKey
+	 *            the app key
+	 * @param keyMon
+	 *            the key mon
 	 * @return the month summary
 	 */
 	@RequestMapping(value = "/messages/summary/{month}", method = RequestMethod.GET)
@@ -602,10 +619,10 @@ public class SystemController extends BaseController {
 	public Response<Result<List<Map<String, Object>>>> getMonthSummary(
 			@RequestParam Map<String, String> params,
 			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey,
-			@PathVariable("month") String keyMon)  throws Exception{
+			@PathVariable("month") String keyMon) throws Exception {
 
-		List<Map<String, Object>> resultList = systemService.getMonthSummary(params,
-				appKey, keyMon, null);
+		List<Map<String, Object>> resultList = systemService.getMonthSummary(
+				params, appKey, keyMon, null);
 
 		Result<List<Map<String, Object>>> result = new Result<List<Map<String, Object>>>();
 		result.setSuccess(true);
@@ -618,10 +635,13 @@ public class SystemController extends BaseController {
 
 	/**
 	 * Gets the month summary.
-	 *
-	 * @param appKey the app key
-	 * @param keyMon the key mon
-	 * @param issueId the issue id
+	 * 
+	 * @param appKey
+	 *            the app key
+	 * @param keyMon
+	 *            the key mon
+	 * @param issueId
+	 *            the issue id
 	 * @return the month summary
 	 */
 	@RequestMapping(value = "/messages/summary/{month}/{userId}", method = RequestMethod.GET)
@@ -630,10 +650,10 @@ public class SystemController extends BaseController {
 			@RequestParam Map<String, String> params,
 			@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String appKey,
 			@PathVariable("month") String keyMon,
-			@PathVariable("userId") String issueId)  throws Exception{
+			@PathVariable("userId") String issueId) throws Exception {
 
-		List<Map<String, Object>> resultList = systemService.getMonthSummary(params,
-				appKey, keyMon, issueId);
+		List<Map<String, Object>> resultList = systemService.getMonthSummary(
+				params, appKey, keyMon, issueId);
 
 		Result<List<Map<String, Object>>> result = new Result<List<Map<String, Object>>>();
 		result.setSuccess(true);
@@ -643,138 +663,94 @@ public class SystemController extends BaseController {
 		return res;
 
 	}
-	
-	
-	
-	
+
 	/**
-	 *  DDR file Create.
-	 *
-	 * @param appKey the app key
-	 * @param date the date
-	 * @return 
+	 * DDR file Create.
+	 * 
+	 * @param appKey
+	 *            the app key
+	 * @param date
+	 *            the date
+	 * @return
 	 */
-	@RequestMapping(value = "/cDRCreate", method = RequestMethod.GET, params = "date", produces = StaticConfig.HEADER_CONTENT_TYPE)
-	@ResponseBody
-	public Response<Result<Integer>> cDRCreate(@RequestParam("date") String date) throws Exception{
 
-		
-		Integer re = 0;
-		re = (Integer) cDRCreateExecutor.createCDR(date);
-
-		Result<Integer> result = new Result<Integer>();
-		result.setSuccess(true);
-
-		result.setData(re);
-		@SuppressWarnings({ "unchecked", "rawtypes" })
-		Response<Result<Integer>> res = new Response(result);
-		return res;
-
-	}
-	
-	@RequestMapping(value = "/cDRCreate2", method = RequestMethod.GET, params = "date", produces = StaticConfig.HEADER_CONTENT_TYPE)
-	@ResponseBody
-	public Response<Result<Integer>> cDRCreate2(@RequestParam("date") String date) throws Exception{
-
-		Result<Integer> result;
-
-			Integer re = 0;
-			re = (Integer) cDRCreateExecutor2.createCDR(date);
-
-			result = new Result<Integer>();
-			result.setSuccess(true);
-
-			result.setData(re);
-			@SuppressWarnings({ "unchecked", "rawtypes" })
-
-			Response<Result<Integer>> res = new Response(result);
-			
-//			if (true) {
-//				throw new PmsRuntimeException("excetion Test");
-//			}
-			
-			
-			return res;
-	}
-	
-
-	
-	
-	
 	/**
-	 *  test.
+	 * test.
 	 */
 	@RequestMapping(value = "/test", method = RequestMethod.GET)
 	@ResponseBody
-	public Response<Result<Integer>> getTest() throws Exception{
+	public Response<Result<Integer>> getTest() throws Exception {
 
-		
 		String re = "";
-		
-//		Date date = System.currentTimeMillis();
-		
-//		Calendar cal = Calendar.getInstance();
-////		cal.setTime(date);
-//		cal.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
-//		
-//		System.out.println("==== Time::" + cal.getTime());
-//		cal.add(Calendar.MINUTE, 10);
-//		System.out.println("==== Time::" + cal.getTime());
-//		
-//		Properties sysprops = System.getProperties();
-//	    for (Enumeration e = sysprops.propertyNames(); e.hasMoreElements();) {
-//	      String key = (String) e.nextElement();
-//	      String value = sysprops.getProperty(key);
-//	      System.out.println(key + "=" + value);
-//	    }
-	    
-//	    String ufmi  = userValidator.getSubscribUfmi2("00*001*0011");
-//	    System.out.println("==== ufmi::" + ufmi);
-//
-//	    String requestVal = "1*01*11";
-//	    int firstT = requestVal.indexOf('*');
-//		int lastT = requestVal.lastIndexOf('*');
-//		int lengT = requestVal.length();
-//		
-////		System.out.println("firstT :"+ firstT + ", lastT :"+lastT + ", len :"+ lengT);
-//		if (requestVal.substring(0, 1).equals("0")) {
-//			System.out.println("==== 1::" + requestVal.substring(0, 1));
-//		} 
-//		if (requestVal.substring(firstT+1, firstT+2).equals("0")) {
-//			System.out.println("==== 2::" + requestVal.substring(firstT+1, firstT+2));
-//		} 
-//		if (requestVal.substring(lastT+1, lastT+2).equals("0")) {
-//			System.out.println("==== 3::" + requestVal.substring(lastT+1, lastT+2));
-//		} 
 
-//		try {
-//			String en = "6rSA7KCcIOydvOuwmCDrqZTsi5zsp4A=";
-//			byte[] decode = Base64.decodeBase64(en);
-//			
-//			System.out.println("decode::"+ decode.length);
-//			
-//			String aaa = new String(decode);
-//			System.out.println("aaa::"+ aaa);
-//			System.out.println("aaa.length::"+ aaa.length());
-//			
-//			int msgCnt = 0;
-//			 for (int i = 0; i < aaa.length(); i++) {
-//			 if (Character.getType(aaa.charAt(i)) == 5) {
-//			 msgCnt = msgCnt + 2;
-//			 } else {
-//			 msgCnt++;
-//			 }
-//			 }
-//			 System.out.println("msgCnt::"+ msgCnt);
-//			
-//		} catch (Exception e) {
-//			throw e;
-//		}
-		
+		// Date date = System.currentTimeMillis();
+
+		// Calendar cal = Calendar.getInstance();
+		// // cal.setTime(date);
+		// cal.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
+		//
+		// System.out.println("==== Time::" + cal.getTime());
+		// cal.add(Calendar.MINUTE, 10);
+		// System.out.println("==== Time::" + cal.getTime());
+		//
+		// Properties sysprops = System.getProperties();
+		// for (Enumeration e = sysprops.propertyNames(); e.hasMoreElements();)
+		// {
+		// String key = (String) e.nextElement();
+		// String value = sysprops.getProperty(key);
+		// System.out.println(key + "=" + value);
+		// }
+
+		// String ufmi = userValidator.getSubscribUfmi2("00*001*0011");
+		// System.out.println("==== ufmi::" + ufmi);
+		//
+		// String requestVal = "1*01*11";
+		// int firstT = requestVal.indexOf('*');
+		// int lastT = requestVal.lastIndexOf('*');
+		// int lengT = requestVal.length();
+		//
+		// // System.out.println("firstT :"+ firstT + ", lastT :"+lastT +
+		// ", len :"+ lengT);
+		// if (requestVal.substring(0, 1).equals("0")) {
+		// System.out.println("==== 1::" + requestVal.substring(0, 1));
+		// }
+		// if (requestVal.substring(firstT+1, firstT+2).equals("0")) {
+		// System.out.println("==== 2::" + requestVal.substring(firstT+1,
+		// firstT+2));
+		// }
+		// if (requestVal.substring(lastT+1, lastT+2).equals("0")) {
+		// System.out.println("==== 3::" + requestVal.substring(lastT+1,
+		// lastT+2));
+		// }
+
+		// try {
+		// String en = "6rSA7KCcIOydvOuwmCDrqZTsi5zsp4A=";
+		// byte[] decode = Base64.decodeBase64(en);
+		//
+		// System.out.println("decode::"+ decode.length);
+		//
+		// String aaa = new String(decode);
+		// System.out.println("aaa::"+ aaa);
+		// System.out.println("aaa.length::"+ aaa.length());
+		//
+		// int msgCnt = 0;
+		// for (int i = 0; i < aaa.length(); i++) {
+		// if (Character.getType(aaa.charAt(i)) == 5) {
+		// msgCnt = msgCnt + 2;
+		// } else {
+		// msgCnt++;
+		// }
+		// }
+		// System.out.println("msgCnt::"+ msgCnt);
+		//
+		// } catch (Exception e) {
+		// throw e;
+		// }
+
 		System.out.println("start::");
 		re = systemService.testRun();
-//		PCFConnectionManagerHandler.PCFConnectionManager();
-//		cDRCreateExecutor.createCDR();
+		// PCFConnectionManagerHandler.PCFConnectionManager();
+		// cDRCreateExecutor.createCDR();
 
 		Result<String> result = new Result<String>();
 		result.setSuccess(true);
@@ -785,6 +761,5 @@ public class SystemController extends BaseController {
 		return res;
 
 	}
-	
 
 }

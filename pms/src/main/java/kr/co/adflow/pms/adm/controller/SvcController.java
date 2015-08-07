@@ -33,11 +33,11 @@ import kr.co.adflow.pms.domain.Message;
 import kr.co.adflow.pms.domain.Template;
 import kr.co.adflow.pms.domain.User;
 import kr.co.adflow.pms.domain.validator.UserValidator;
+import kr.co.adflow.pms.mob.service.MobileMessageService;
 import kr.co.adflow.pms.response.Response;
 import kr.co.adflow.pms.response.Result;
 import kr.co.adflow.pms.svc.request.MessageReq;
 import kr.co.adflow.pms.svc.service.PushMessageService;
-import kr.co.adflow.pms.users.service.UserMessageService;
 
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
@@ -83,7 +83,7 @@ public class SvcController extends BaseController {
 	
 	/** The svc service. */
 	@Autowired
-	private UserMessageService userMessageService;
+	private MobileMessageService userMessageService;
 	
 	@Autowired
 	private PmsConfig pmsConfig;

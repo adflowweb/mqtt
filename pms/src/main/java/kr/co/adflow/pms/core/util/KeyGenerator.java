@@ -29,7 +29,7 @@ public class KeyGenerator {
 
 	/**
 	 * Generate msg id.
-	 *
+	 * 
 	 * @return the string
 	 */
 	public static String generateMsgId() {
@@ -40,14 +40,16 @@ public class KeyGenerator {
 
 	/**
 	 * Generate token.
-	 *
-	 * @param str the str
+	 * 
+	 * @param str
+	 *            the str
 	 * @return the string
 	 */
 	public static String generateToken(String str) {
 
 		StringBuffer sb = null;
 		String token = null;
+		String returnToken = null;
 		try {
 			token = KeyGenerator.generate() + str;
 			MessageDigest md = MessageDigest.getInstance("MD5");
@@ -64,15 +66,18 @@ public class KeyGenerator {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		returnToken = sb.toString().substring(0, 23);
 
-		return sb.toString();
+		return returnToken;
 	}
 
 	/**
 	 * Creates the pw.
-	 *
-	 * @param str1 the str1
-	 * @param str2 the str2
+	 * 
+	 * @param str1
+	 *            the str1
+	 * @param str2
+	 *            the str2
 	 * @return the string
 	 */
 	public static String createPw(String str1, String str2) {
@@ -87,8 +92,9 @@ public class KeyGenerator {
 
 	/**
 	 * Generate hash.
-	 *
-	 * @param str the str
+	 * 
+	 * @param str
+	 *            the str
 	 * @return the string
 	 */
 	public static String generateHash(String str) {
@@ -114,8 +120,9 @@ public class KeyGenerator {
 
 	/**
 	 * The main method.
-	 *
-	 * @param args the arguments
+	 * 
+	 * @param args
+	 *            the arguments
 	 */
 	public static void main(String[] args) {
 		System.out.println(createPw("sysAdmin", "password"));

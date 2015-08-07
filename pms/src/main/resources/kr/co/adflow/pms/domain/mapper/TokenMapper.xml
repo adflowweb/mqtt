@@ -19,10 +19,11 @@
 		, token_id
 		, token_type
 		, issue_time
-		, expired_time
+		,
+		expired_time
 		, issue_id
 		FROM pms.token a
-		WHERE 
+		WHERE
 		a.token_id = #{tokenId}
 	</select>
 
@@ -45,33 +46,41 @@
 		,#{expiredTime}
 		)
 	</insert>
-	
+
 	<delete id="deleteUserToken" parameterType="String">
 		DELETE FROM pms.token
-		WHERE user_id = #{userId} 
+		WHERE user_id = #{userId}
 	</delete>
 
 	<delete id="deleteExpiredToken" parameterType="String">
 		DELETE FROM pms.token
-		WHERE user_id = #{userId} 
-		AND expired_time IS NOT NULL 
-		AND expired_time <![CDATA[<]]>  now() 
+		WHERE user_id = #{userId}
+		AND expired_time IS NOT NULL
+		AND expired_time <![CDATA[<]]>
+		now()
 	</delete>
-	
+
 	<update id="updateTokenExpiredTime" parameterType="kr.co.adflow.pms.domain.Token">
-		UPDATE pms.token
+		UPDATE
+		pms.token
 		SET expired_time = #{expiredTime}
-		WHERE token_id = #{tokenId} 
+		WHERE token_id = #{tokenId}
 	</update>
-	
+
 	<select id="selectApplicationKey" parameterType="String"
 		resultType="String">
 		SELECT token_id
 		FROM pms.token
-		WHERE 
+		WHERE
 		token_type = 'A'
-		AND user_id = #{userId} 
+		AND user_id = #{userId}
 	</select>
 	
+	<select id="checkToken" parameterType="String" resultType="boolean">
+		SELECT CASE WHEN count(*) > 0
+		THEN TRUE ELSE FALSE END AS result
+		FROM pms.token
+		WHERE token_id = #{token}
+	</select>
 
 </mapper>	

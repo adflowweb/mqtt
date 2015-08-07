@@ -53,11 +53,11 @@ public class SystemServiceImpl implements SystemService {
 	/** The user mapper. */
 	@Autowired
 	private UserMapper userMapper;
-	
+
 	/** The token mapper. */
 	@Autowired
 	private TokenMapper tokenMapper;
-	
+
 	/** The intercept mapper. */
 	@Autowired
 	private InterceptMapper interceptMapper;
@@ -78,7 +78,9 @@ public class SystemServiceImpl implements SystemService {
 	@Autowired
 	private SummaryMapper summaryMapper;
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see kr.co.adflow.pms.adm.service.SystemService#listAllUser()
 	 */
 	@Override
@@ -99,8 +101,12 @@ public class SystemServiceImpl implements SystemService {
 		return resultUsers;
 	}
 
-	/* (non-Javadoc)
-	 * @see kr.co.adflow.pms.adm.service.SystemService#createUser(kr.co.adflow.pms.adm.request.UserReq, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * kr.co.adflow.pms.adm.service.SystemService#createUser(kr.co.adflow.pms
+	 * .adm.request.UserReq, java.lang.String)
 	 */
 	@Override
 	public String createUser(UserReq userReq, String appKey) {
@@ -121,22 +127,15 @@ public class SystemServiceImpl implements SystemService {
 			paramUser.setIpFilters(userReq.getIpFilters());
 		}
 
-		paramUser.setMsgCntLimit(userReq.getMsgCntLimit());
 		// 추가 옵션
 		if (userReq.isOptions()) {
 			paramUser.setDefaultExpiry(userReq.getDefaultExpiry());
 			paramUser.setDefaultQos(userReq.getDefaultQos());
-			paramUser.setMsgSizeLimit(userReq.getMsgSizeLimit());
-			paramUser.setCallbackUrl(userReq.getCallbackUrl());
-			paramUser.setCallbackMethod(userReq.getCallbackMethod());
-			paramUser.setCallbackCntLimit(userReq.getCallbackCntLimit());
+
 		} else {
 			paramUser.setDefaultExpiry(-1);
 			paramUser.setDefaultQos(-1);
-			paramUser.setMsgSizeLimit(-1);
-			paramUser.setCallbackUrl(null);
-			paramUser.setCallbackMethod(null);
-			paramUser.setCallbackCntLimit(-1);
+
 		}
 
 		paramUser.setStatus(-1);
@@ -161,8 +160,9 @@ public class SystemServiceImpl implements SystemService {
 
 	/**
 	 * Gets the password.
-	 *
-	 * @param req the req
+	 * 
+	 * @param req
+	 *            the req
 	 * @return the password
 	 */
 	private String getPassword(UserReq req) {
@@ -172,8 +172,9 @@ public class SystemServiceImpl implements SystemService {
 
 	/**
 	 * Gets the token id.
-	 *
-	 * @param req the req
+	 * 
+	 * @param req
+	 *            the req
 	 * @return the token id
 	 */
 	private String getTokenId(UserReq req) {
@@ -181,8 +182,11 @@ public class SystemServiceImpl implements SystemService {
 		return KeyGenerator.generateToken(req.getUserId());
 	}
 
-	/* (non-Javadoc)
-	 * @see kr.co.adflow.pms.adm.service.SystemService#retrieveUser(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * kr.co.adflow.pms.adm.service.SystemService#retrieveUser(java.lang.String)
 	 */
 	@Override
 	public User retrieveUser(String userId) {
@@ -200,8 +204,12 @@ public class SystemServiceImpl implements SystemService {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see kr.co.adflow.pms.adm.service.SystemService#updateUser(kr.co.adflow.pms.adm.request.UserUpdateReq, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * kr.co.adflow.pms.adm.service.SystemService#updateUser(kr.co.adflow.pms
+	 * .adm.request.UserUpdateReq, java.lang.String)
 	 */
 	@Override
 	public int updateUser(UserUpdateReq userReq, String appKey) {
@@ -248,15 +256,20 @@ public class SystemServiceImpl implements SystemService {
 
 		return userMapper.updateUser(paramUser);
 	}
-	
-	/* (non-Javadoc)
-	 * @see kr.co.adflow.pms.adm.service.AccountService#modifyPassword(kr.co.adflow.pms.adm.request.PasswordReq, java.lang.String)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * kr.co.adflow.pms.adm.service.AccountService#modifyPassword(kr.co.adflow
+	 * .pms.adm.request.PasswordReq, java.lang.String)
 	 */
 	@Override
-	public int resetPassword(PasswordReq req,String userId, String appKey)  throws Exception{
+	public int resetPassword(PasswordReq req, String userId, String appKey)
+			throws Exception {
 
 		if (!req.getNewPassword().trim().equals(req.getRePassword().trim())) {
-//			throw new RuntimeException("패스워드 변경 실패1");
+			// throw new RuntimeException("패스워드 변경 실패1");
 			throw new PmsRuntimeException("패스워드 리셋 실패1");
 		}
 
@@ -281,15 +294,19 @@ public class SystemServiceImpl implements SystemService {
 		if (cnt > 0) {
 			cnt = userMapper.updatePassword(paramUser);
 		} else {
-//			throw new RuntimeException("패스워드 변경 실패3");
+			// throw new RuntimeException("패스워드 변경 실패3");
 			throw new PmsRuntimeException("패스워드 리셋 실패3");
 		}
 
 		return cnt;
 	}
 
-	/* (non-Javadoc)
-	 * @see kr.co.adflow.pms.adm.service.SystemService#deleteUser(java.lang.String, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * kr.co.adflow.pms.adm.service.SystemService#deleteUser(java.lang.String,
+	 * java.lang.String)
 	 */
 	@Override
 	public int deleteUser(String userId, String appKey) {
@@ -304,11 +321,16 @@ public class SystemServiceImpl implements SystemService {
 		return userMapper.deleteUser(userId);
 	}
 
-	/* (non-Javadoc)
-	 * @see kr.co.adflow.pms.adm.service.SystemService#getSysMessageList(java.util.Map)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * kr.co.adflow.pms.adm.service.SystemService#getSysMessageList(java.util
+	 * .Map)
 	 */
 	@Override
-	public MessagesRes getSysMessageList(Map<String, String> params)  throws Exception{
+	public MessagesRes getSysMessageList(Map<String, String> params)
+			throws Exception {
 
 		MessagesRes res = null;
 
@@ -321,7 +343,7 @@ public class SystemServiceImpl implements SystemService {
 		}
 
 		MsgParams msgParams = new MsgParams();
-		
+
 		msgParams.setMsgType(0);
 
 		msgParams.setKeyMon(params.get("cSearchDate"));
@@ -352,7 +374,8 @@ public class SystemServiceImpl implements SystemService {
 			msgParams.setAckType(this.getInt(params.get("cSearchContent")));
 		}
 
-		logger.debug("[getSysMessageList]msgParams :::::::{}", msgParams.toString());
+		logger.debug("[getSysMessageList]msgParams :::::::{}",
+				msgParams.toString());
 		int cnt = messageMapper.getSysMessageListCnt(msgParams);
 		logger.debug("[getSysMessageList]cnt :::::::{}", cnt);
 
@@ -366,12 +389,17 @@ public class SystemServiceImpl implements SystemService {
 
 		return res;
 	}
-	
-	/* (non-Javadoc)
-	 * @see kr.co.adflow.pms.adm.service.SysService#getSysMessageDetailList(java.util.Map)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * kr.co.adflow.pms.adm.service.SysService#getSysMessageDetailList(java.
+	 * util.Map)
 	 */
 	@Override
-	public MessagesRes getSysMessageDetailList(String msgId, String keyMon)  throws Exception {
+	public MessagesRes getSysMessageDetailList(String msgId, String keyMon)
+			throws Exception {
 
 		MessagesRes res = null;
 		MsgParams msgParams = new MsgParams();
@@ -389,8 +417,9 @@ public class SystemServiceImpl implements SystemService {
 
 	/**
 	 * Gets the int.
-	 *
-	 * @param string the string
+	 * 
+	 * @param string
+	 *            the string
 	 * @return the int
 	 */
 	private int getInt(String string) {
@@ -398,30 +427,34 @@ public class SystemServiceImpl implements SystemService {
 		return Integer.parseInt(string);
 	}
 
-	/* (non-Javadoc)
-	 * @see kr.co.adflow.pms.adm.service.SystemService#getSysResevationMessageList(java.util.Map)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * kr.co.adflow.pms.adm.service.SystemService#getSysResevationMessageList
+	 * (java.util.Map)
 	 */
 	@Override
-	public MessagesRes getSysResevationMessageList(Map<String, String> params) throws Exception{
+	public MessagesRes getSysResevationMessageList(Map<String, String> params)
+			throws Exception {
 
 		MessagesRes res = null;
 
 		String issueId = interceptMapper.selectCashedUserId(params
 				.get("appKey"));
 
-//		if (params.get("cSearchDate") == null) {
-//			// error
-////			throw new RuntimeException("");
-//			throw new PmsRuntimeException("SearchDate is null");
-//		}
+		// if (params.get("cSearchDate") == null) {
+		// // error
+		// // throw new RuntimeException("");
+		// throw new PmsRuntimeException("SearchDate is null");
+		// }
 
 		MsgParams msgParams = new MsgParams();
-		
+
 		msgParams.setMsgType(0);
 
-//		msgParams.setKeyMon(params.get("cSearchDate"));
+		// msgParams.setKeyMon(params.get("cSearchDate"));
 
-		
 		msgParams.setIssueId(null);
 
 		msgParams.setiDisplayStart(this.getInt(params.get("iDisplayStart")));
@@ -449,14 +482,16 @@ public class SystemServiceImpl implements SystemService {
 			msgParams.setAckType(this.getInt(params.get("cSearchContent")));
 		}
 
-		logger.debug("[getSysResevationMessageList]msgParams :::::::{}", msgParams.toString());
-		
+		logger.debug("[getSysResevationMessageList]msgParams :::::::{}",
+				msgParams.toString());
+
 		int cnt = messageMapper.getSvcResevationMessageListCnt(msgParams);
 		logger.debug("[getSysResevationMessageList]cnt :::::::{}", cnt);
 
 		List<Message> list = messageMapper
 				.getSvcResevationMessageList(msgParams);
-		logger.debug("[getSysResevationMessageList]list size :::::::{}", list.size());
+		logger.debug("[getSysResevationMessageList]list size :::::::{}",
+				list.size());
 
 		res = new MessagesRes();
 		res.setRecordsFiltered(cnt);
@@ -466,40 +501,43 @@ public class SystemServiceImpl implements SystemService {
 		return res;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see kr.co.adflow.pms.adm.service.SystemService#getServerInfo()
 	 */
 	@Override
-	public ServerInfo getServerInfo()  throws Exception{
+	public ServerInfo getServerInfo() throws Exception {
 		// TODO Auto-generated method stub
 		try {
-			
+
 			ServerInfo info = serverDao.get();
-			
+
 			info.setTps(this.getTPS(-1));
-			
+
 			return info;
 		} catch (Exception e) {
 			logger.error("getServerInfo", e);
-//			throw new RuntimeException("getServerInfo error");
+			// throw new RuntimeException("getServerInfo error");
 			throw new PmsRuntimeException("getServerInfo error");
 		}
 	}
 
 	private double getTPS(int preMonth) {
 		double result = 0.0;
-		
+
 		for (int j = preMonth; j <= 0; j++) {
 			result += summaryMapper.getTPS(DateUtil.getYYYYMM(j));
 		}
-		
+
 		return result;
 	}
 
 	/**
 	 * Gets the string array.
-	 *
-	 * @param string the string
+	 * 
+	 * @param string
+	 *            the string
 	 * @return the string array
 	 */
 	private String[] getStringArray(String string) {
@@ -511,19 +549,25 @@ public class SystemServiceImpl implements SystemService {
 
 	/**
 	 * Gets the date.
-	 *
-	 * @param string the string
+	 * 
+	 * @param string
+	 *            the string
 	 * @return the date
 	 */
 	private Date getDate(String string) {
 		return DateUtil.fromISODateString(string);
 	}
 
-	/* (non-Javadoc)
-	 * @see kr.co.adflow.pms.adm.service.SystemService#cancelReservationList(java.lang.String, kr.co.adflow.pms.adm.request.ReservationCancelReq)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * kr.co.adflow.pms.adm.service.SystemService#cancelReservationList(java
+	 * .lang.String, kr.co.adflow.pms.adm.request.ReservationCancelReq)
 	 */
 	@Override
-	public int cancelReservationList(String appKey, ReservationCancelReq reqIds) throws Exception{
+	public int cancelReservationList(String appKey, ReservationCancelReq reqIds)
+			throws Exception {
 
 		String issueId = interceptMapper.selectCashedUserId(appKey);
 
@@ -541,27 +585,31 @@ public class SystemServiceImpl implements SystemService {
 
 	/**
 	 * Gets the key mon.
-	 *
-	 * @param msgIds the msg ids
+	 * 
+	 * @param msgIds
+	 *            the msg ids
 	 * @return the key mon
 	 */
-	private String getKeyMon(String[] msgIds) throws Exception{
+	private String getKeyMon(String[] msgIds) throws Exception {
 		if (msgIds.length < 1) {
-//			throw new RuntimeException("msgId not found");
+			// throw new RuntimeException("msgId not found");
 			throw new PmsRuntimeException("msgId not found");
 		}
 		return msgIds[0].substring(0, 6);
 	}
 
-	/* (non-Javadoc)
-	 * @see kr.co.adflow.pms.adm.service.SystemService#getMonthSummary(java.lang.String, java.lang.String, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * kr.co.adflow.pms.adm.service.SystemService#getMonthSummary(java.lang.
+	 * String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public List<Map<String, Object>> getMonthSummary(Map<String, String> params,
-			String appKey,
-			String keyMon, 
-			String issueId)  throws Exception{
-		
+	public List<Map<String, Object>> getMonthSummary(
+			Map<String, String> params, String appKey, String keyMon,
+			String issueId) throws Exception {
+
 		MsgParams msgParams = new MsgParams();
 		msgParams.setMsgType(0);
 		msgParams.setIssueId(issueId);
@@ -569,90 +617,90 @@ public class SystemServiceImpl implements SystemService {
 		msgParams.setDateStart(this.getDate(params.get("cSearchDateStart")));
 		msgParams.setDateEnd(this.getDate(params.get("cSearchDateEnd")));
 
-
 		return summaryMapper.getMonthSummary(msgParams);
 	}
-	
-	
+
 	/**
 	 * Gets the key Test.
-	 *
-	 * @param 
-	 * @return 
+	 * 
+	 * @param
+	 * @return
 	 */
 	public String testRun() {
 		String re = null;
-//		
-//		FileWriter write = null;
-//		File file = null;
-//		String fileNamePrefix = "EM";
-//		String fileNameDate ="";
-//		int fileNameSeq = 0;
-//		
-//		RecordFomatUtil rf = new RecordFomatUtil();
+		//
+		// FileWriter write = null;
+		// File file = null;
+		// String fileNamePrefix = "EM";
+		// String fileNameDate ="";
+		// int fileNameSeq = 0;
+		//
+		// RecordFomatUtil rf = new RecordFomatUtil();
 
 		this.cDRCopyCommand();
-		
+
 		return re;
 	}
-	
+
 	/**
 	 * Gets the password.
-	 *
-	 * @param userId the user id
-	 * @param password the password
+	 * 
+	 * @param userId
+	 *            the user id
+	 * @param password
+	 *            the password
 	 * @return the password
 	 */
 	private String getPassword(String userId, String password) {
 
 		return KeyGenerator.createPw(userId, password);
 	}
-	
+
 	public void cDRCopyCommand() {
-	
-//	String path = pmsConfig.CDR_FILE_PATH+this.fileDate;
-//	logger.info("path ::{}", path);
-//	
-//	String targetDir = pmsConfig.CDR_TARGETFILE_PATH;
-//	String shellDir = pmsConfig.CDR_FILE_PATH;
-	
-//	String command = "cat /Users/gwang/Desktop/siteDoc/KTP/150401/localhost_access_log.2015-06-29.txt|grep dig |wc -l";
-	String command = "/Users/gwang/Desktop/siteDoc/KTP/150401/test.sh";
-//	String command = shellDir + "copyCDRFile.sh"+ " 123 " + path +"/* " + targetDir;
-	
-	System.out.println("==== shell command ::{}"+ command);
 
-	java.lang.Runtime runTime = java.lang.Runtime.getRuntime();
-	java.lang.Process process;
-	try {
-		System.out.println("==== 11111");
-		process = runTime.exec(command);
-		System.out.println("==== 22222");
-		
-		process.waitFor();
-		StringBuffer output = new StringBuffer();
-		System.out.println("==== 33333");
-		BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-		System.out.println("==== 44444"); 
-        String line = "";           
-        while ((line = reader.readLine())!= null) {
-            output.append(line + "\n");
-        }
-        System.out.println("==== 55555");
-        System.out.println("==== command shell result  ::{}"+ output.toString());
-        
+		// String path = pmsConfig.CDR_FILE_PATH+this.fileDate;
+		// logger.info("path ::{}", path);
+		//
+		// String targetDir = pmsConfig.CDR_TARGETFILE_PATH;
+		// String shellDir = pmsConfig.CDR_FILE_PATH;
 
-	} catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	} catch (InterruptedException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
+		// String command =
+		// "cat /Users/gwang/Desktop/siteDoc/KTP/150401/localhost_access_log.2015-06-29.txt|grep dig |wc -l";
+		String command = "/Users/gwang/Desktop/siteDoc/KTP/150401/test.sh";
+		// String command = shellDir + "copyCDRFile.sh"+ " 123 " + path +"/* " +
+		// targetDir;
+
+		System.out.println("==== shell command ::{}" + command);
+
+		java.lang.Runtime runTime = java.lang.Runtime.getRuntime();
+		java.lang.Process process;
+		try {
+			System.out.println("==== 11111");
+			process = runTime.exec(command);
+			System.out.println("==== 22222");
+
+			process.waitFor();
+			StringBuffer output = new StringBuffer();
+			System.out.println("==== 33333");
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					process.getInputStream()));
+			System.out.println("==== 44444");
+			String line = "";
+			while ((line = reader.readLine()) != null) {
+				output.append(line + "\n");
+			}
+			System.out.println("==== 55555");
+			System.out.println("==== command shell result  ::{}"
+					+ output.toString());
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
-	
-	
-	
-}
-
 
 }

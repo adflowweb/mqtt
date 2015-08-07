@@ -12,8 +12,8 @@
 
 	<!-- Application Loggers -->
 	<logger name="kr.co.adflow.pms">
-		<level value="error" />
-		<appender-ref ref="console" />
+		<level value="debug" />
+	<!-- <appender-ref ref="console" /> -->
 	</logger>
 
 	<!-- Application Loggers -->

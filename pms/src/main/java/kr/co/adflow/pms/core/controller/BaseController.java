@@ -6,14 +6,12 @@ package kr.co.adflow.pms.core.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import kr.co.adflow.pms.adm.service.CommonServiceImpl;
 import kr.co.adflow.pms.core.exception.PmsRuntimeException;
 import kr.co.adflow.pms.response.Response;
 import kr.co.adflow.pms.response.Result;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -27,7 +25,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @Controller
 public class BaseController {
-	
+
 	/** The Constant logger. */
 	private static final Logger logger = LoggerFactory
 			.getLogger(BaseController.class);
@@ -43,15 +41,13 @@ public class BaseController {
 	@ResponseBody
 	public Response<Result<List<String>>> handleAllException(final Exception e) {
 
-		
-
 		if (e instanceof PmsRuntimeException) {
-//			System.out.println("=== PmsRuntimeException 맞어 ");
-			
+			// System.out.println("=== PmsRuntimeException 맞어 ");
+
 		} else {
-			logger.error("런타임에러발생::",e);
+			logger.error("런타임에러발생::", e);
 		}
-		
+
 		String errorMessage = null;
 		// org.springframework.web.bind.MethodArgumentNotValidException
 
@@ -64,8 +60,8 @@ public class BaseController {
 				errorMessage += " : " + error.getCode() + " : "
 						+ error.getDefaultMessage();
 			}
-//		} else if (e instanceof DuplicateKeyException) {
-//			errorMessage = e.getMessage();
+			// } else if (e instanceof DuplicateKeyException) {
+			// errorMessage = e.getMessage();
 
 		} else {
 			errorMessage = e.getMessage();

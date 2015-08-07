@@ -4,11 +4,9 @@
 package kr.co.adflow.pms.adm.service;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import kr.co.adflow.pms.adm.request.AddressDelReq;
 import kr.co.adflow.pms.adm.request.AddressReq;
 import kr.co.adflow.pms.adm.request.ReservationCancelReq;
 import kr.co.adflow.pms.adm.request.TemplateReq;
@@ -20,24 +18,20 @@ import kr.co.adflow.pms.core.util.KeyGenerator;
 import kr.co.adflow.pms.domain.Address;
 import kr.co.adflow.pms.domain.AddressParams;
 import kr.co.adflow.pms.domain.Message;
-import kr.co.adflow.pms.domain.MsgIdsParams;
 import kr.co.adflow.pms.domain.MsgParams;
 import kr.co.adflow.pms.domain.Template;
 import kr.co.adflow.pms.domain.TemplateParams;
-import kr.co.adflow.pms.domain.User;
 import kr.co.adflow.pms.domain.mapper.AddressMapper;
 import kr.co.adflow.pms.domain.mapper.InterceptMapper;
 import kr.co.adflow.pms.domain.mapper.MessageMapper;
 import kr.co.adflow.pms.domain.mapper.SummaryMapper;
 import kr.co.adflow.pms.domain.mapper.TemplateMapper;
 import kr.co.adflow.pms.domain.mapper.UserMapper;
-import kr.co.adflow.pms.domain.push.mapper.ValidationMapper;
 import kr.co.adflow.pms.domain.validator.UserValidator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 // TODO: Auto-generated Javadoc
@@ -60,8 +54,8 @@ public class SvcServiceImpl implements SvcService {
 	private InterceptMapper interceptMapper;
 
 	/** The validation mapper. */
-	@Autowired
-	private ValidationMapper validationMapper;
+	// @Autowired
+	// private ValidationMapper validationMapper;
 	
 	/** The Address mapper. */
 	@Autowired
