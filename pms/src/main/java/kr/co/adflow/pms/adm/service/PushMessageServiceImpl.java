@@ -1,7 +1,7 @@
 /*
  * 
  */
-package kr.co.adflow.pms.svc.service;
+package kr.co.adflow.pms.adm.service;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 import kr.co.adflow.pms.adm.request.AddressMessageReq;
+import kr.co.adflow.pms.adm.request.MessageIdsReq;
+import kr.co.adflow.pms.adm.request.MessageReq;
 import kr.co.adflow.pms.core.config.PmsConfig;
 import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.exception.PmsRuntimeException;
@@ -26,8 +28,6 @@ import kr.co.adflow.pms.domain.mapper.InterceptMapper;
 import kr.co.adflow.pms.domain.mapper.MessageMapper;
 import kr.co.adflow.pms.domain.mapper.UserMapper;
 import kr.co.adflow.pms.domain.validator.UserValidator;
-import kr.co.adflow.pms.svc.request.MessageIdsReq;
-import kr.co.adflow.pms.svc.request.MessageReq;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

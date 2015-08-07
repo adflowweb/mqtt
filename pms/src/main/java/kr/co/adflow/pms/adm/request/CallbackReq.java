@@ -1,7 +1,7 @@
 /*
  * 
  */
-package kr.co.adflow.pms.svc.request;
+package kr.co.adflow.pms.adm.request;
 
 // TODO: Auto-generated Javadoc
 /**

@@ -25,10 +25,7 @@
 			<mapping path="/adm/svc/**" />
 			<beans:bean class="kr.co.adflow.pms.adm.filter.SvcInterceptor" />
 		</interceptor>
-		<interceptor>
-			<mapping path="/adm/svcadm/**" />
-			<beans:bean class="kr.co.adflow.pms.adm.filter.SvcAdmInterceptor" />
-		</interceptor>
+
 
 	</interceptors>
 

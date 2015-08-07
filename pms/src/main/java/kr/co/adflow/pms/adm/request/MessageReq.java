@@ -5,9 +5,8 @@ package kr.co.adflow.pms.adm.request;
 
 import java.util.Date;
 
-import javax.validation.constraints.NotNull;
-
 import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.Range;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -18,32 +17,44 @@ public class MessageReq {
 	/** The receivers. */
 	@NotEmpty
 	private String[] receivers;
-	
+
 	/** The content type. */
 	@NotEmpty
 	private String contentType;
-	
+
 	/** The content. */
 	@NotEmpty
 	private String content;
-	
+
 	/** The reservation time. */
 	private Date reservationTime;
-	
-	/** The resend max count. */
-	private int resendMaxCount;
-	
-	/** The resend interval. */
-	private int resendInterval;
 
-	// admin 수정 가능
+	/** The resend max count. */
+	@Range(min = 0, max = 100)
+	private int resendMaxCount;
+
+	/** The resend interval. */
+	@Range(min = 0, max = 1440)
+	private int resendInterval;
 
 	/** The msg type. */
 	private int msgType;
-	
+
 	/** The service id. */
 	@NotEmpty
 	private String serviceId;
+
+	/** The content length. */
+	private Integer contentLength;
+
+	/** The file Name. */
+	private String fileName;
+
+	/** The file Format. */
+	private String fileFormat;
+
+	/** The mms. */
+	private boolean mms;
 
 	/** The ack. */
 	private boolean ack;
@@ -53,22 +64,56 @@ public class MessageReq {
 
 	/** The qos. */
 	private int qos;
-	
-	
-	/** The content length. */
-	private Integer contentLength;
-	
-	/** The file Name. */
-	private String fileName;
-	
-	/** The file Format. */
-	private String fileFormat;
-	
-	/** The mms. */
-	private  boolean mms;
 
+	public boolean isAck() {
+		return ack;
+	}
 
-	
+	public void setAck(boolean ack) {
+		this.ack = ack;
+	}
+
+	public long getExpiry() {
+		return expiry;
+	}
+
+	public void setExpiry(long expiry) {
+		this.expiry = expiry;
+	}
+
+	public int getQos() {
+		return qos;
+	}
+
+	public void setQos(int qos) {
+		this.qos = qos;
+	}
+
+	public int getMsgType() {
+		return msgType;
+	}
+
+	public void setMsgType(int msgType) {
+		this.msgType = msgType;
+	}
+
+	public String getServiceId() {
+		return serviceId;
+	}
+
+	public void setServiceId(String serviceId) {
+		this.serviceId = serviceId;
+	}
+
+	/**
+	 * Gets the content type.
+	 * 
+	 * @return the content type
+	 */
+	public String getContentType() {
+		return contentType;
+	}
+
 	public boolean isMms() {
 		return mms;
 	}
@@ -84,7 +129,6 @@ public class MessageReq {
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
 	}
-	
 
 	public String getFileFormat() {
 		return fileFormat;
@@ -93,11 +137,10 @@ public class MessageReq {
 	public void setFileFormat(String fileFormat) {
 		this.fileFormat = fileFormat;
 	}
-	
 
 	/**
 	 * Gets the content Length.
-	 *
+	 * 
 	 * @return the content Length
 	 */
 	public Integer getContentLength() {
@@ -106,26 +149,19 @@ public class MessageReq {
 
 	/**
 	 * Sets the content Length.
-	 *
-	 * @param contentLength the new content Length
+	 * 
+	 * @param contentLength
+	 *            the new content Length
 	 */
 	public void setContentLength(Integer contentLength) {
 		this.contentLength = contentLength;
 	}
 
 	/**
-	 * Gets the content type.
-	 *
-	 * @return the content type
-	 */
-	public String getContentType() {
-		return contentType;
-	}
-
-	/**
 	 * Sets the content type.
-	 *
-	 * @param contentType the new content type
+	 * 
+	 * @param contentType
+	 *            the new content type
 	 */
 	public void setContentType(String contentType) {
 		this.contentType = contentType;
@@ -133,7 +169,7 @@ public class MessageReq {
 
 	/**
 	 * Gets the content.
-	 *
+	 * 
 	 * @return the content
 	 */
 	public String getContent() {
@@ -142,8 +178,9 @@ public class MessageReq {
 
 	/**
 	 * Sets the content.
-	 *
-	 * @param content the new content
+	 * 
+	 * @param content
+	 *            the new content
 	 */
 	public void setContent(String content) {
 		this.content = content;
@@ -151,7 +188,7 @@ public class MessageReq {
 
 	/**
 	 * Gets the reservation time.
-	 *
+	 * 
 	 * @return the reservation time
 	 */
 	public Date getReservationTime() {
@@ -160,8 +197,9 @@ public class MessageReq {
 
 	/**
 	 * Sets the reservation time.
-	 *
-	 * @param reservationTime the new reservation time
+	 * 
+	 * @param reservationTime
+	 *            the new reservation time
 	 */
 	public void setReservationTime(Date reservationTime) {
 		this.reservationTime = reservationTime;
@@ -169,7 +207,7 @@ public class MessageReq {
 
 	/**
 	 * Gets the receivers.
-	 *
+	 * 
 	 * @return the receivers
 	 */
 	public String[] getReceivers() {
@@ -178,8 +216,9 @@ public class MessageReq {
 
 	/**
 	 * Sets the receivers.
-	 *
-	 * @param receivers the new receivers
+	 * 
+	 * @param receivers
+	 *            the new receivers
 	 */
 	public void setReceivers(String[] receivers) {
 		this.receivers = receivers;
@@ -187,7 +226,7 @@ public class MessageReq {
 
 	/**
 	 * Gets the resend interval.
-	 *
+	 * 
 	 * @return the resend interval
 	 */
 	public int getResendInterval() {
@@ -196,106 +235,17 @@ public class MessageReq {
 
 	/**
 	 * Sets the resend interval.
-	 *
-	 * @param resendInterval the new resend interval
+	 * 
+	 * @param resendInterval
+	 *            the new resend interval
 	 */
 	public void setResendInterval(int resendInterval) {
 		this.resendInterval = resendInterval;
 	}
 
 	/**
-	 * Gets the msg type.
-	 *
-	 * @return the msg type
-	 */
-	public int getMsgType() {
-		return msgType;
-	}
-
-	/**
-	 * Sets the msg type.
-	 *
-	 * @param msgType the new msg type
-	 */
-	public void setMsgType(int msgType) {
-		this.msgType = msgType;
-	}
-
-	/**
-	 * Gets the service id.
-	 *
-	 * @return the service id
-	 */
-	public String getServiceId() {
-		return serviceId;
-	}
-
-	/**
-	 * Sets the service id.
-	 *
-	 * @param serviceId the new service id
-	 */
-	public void setServiceId(String serviceId) {
-		this.serviceId = serviceId;
-	}
-
-	/**
-	 * Checks if is ack.
-	 *
-	 * @return true, if is ack
-	 */
-	public boolean isAck() {
-		return ack;
-	}
-
-	/**
-	 * Sets the ack.
-	 *
-	 * @param ack the new ack
-	 */
-	public void setAck(boolean ack) {
-		this.ack = ack;
-	}
-
-	/**
-	 * Gets the expiry.
-	 *
-	 * @return the expiry
-	 */
-	public long getExpiry() {
-		return expiry;
-	}
-
-	/**
-	 * Sets the expiry.
-	 *
-	 * @param expiry the new expiry
-	 */
-	public void setExpiry(long expiry) {
-		this.expiry = expiry;
-	}
-
-	/**
-	 * Gets the qos.
-	 *
-	 * @return the qos
-	 */
-	public int getQos() {
-		return qos;
-	}
-
-	/**
-	 * Sets the qos.
-	 *
-	 * @param qos the new qos
-	 */
-	public void setQos(int qos) {
-		this.qos = qos;
-	}
-
-	/**
 	 * Gets the resend max count.
-	 *
+	 * 
 	 * @return the resend max count
 	 */
 	public int getResendMaxCount() {
@@ -304,8 +254,9 @@ public class MessageReq {
 
 	/**
 	 * Sets the resend max count.
-	 *
-	 * @param resendMaxCount the new resend max count
+	 * 
+	 * @param resendMaxCount
+	 *            the new resend max count
 	 */
 	public void setResendMaxCount(int resendMaxCount) {
 		this.resendMaxCount = resendMaxCount;

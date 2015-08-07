@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
+import kr.co.adflow.pms.adm.request.CallbackReq;
+import kr.co.adflow.pms.adm.service.PushMessageService;
 import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.handler.DirectMsgHandlerBySessionCallback;
 import kr.co.adflow.pms.core.util.DateUtil;
@@ -24,8 +26,6 @@ import kr.co.adflow.pms.domain.mapper.CtlQMapper;
 import kr.co.adflow.pms.domain.mapper.MessageMapper;
 import kr.co.adflow.pms.domain.mapper.UserMapper;
 import kr.co.adflow.pms.domain.validator.UserValidator;
-import kr.co.adflow.pms.svc.request.CallbackReq;
-import kr.co.adflow.pms.svc.service.PushMessageService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
