@@ -48,8 +48,7 @@ public class AccountServiceImpl implements AccountService {
 				.getDefaultExpiry()));
 		resultUser.setDefaultQos(checkUtil.getMessageQos(resultUser
 				.getDefaultQos()));
-		resultUser.setMsgSizeLimit(checkUtil.getMessageSizeLimit(resultUser
-				.getMsgSizeLimit()));
+		
 
 		return resultUser;
 	}
@@ -203,7 +202,7 @@ public class AccountServiceImpl implements AccountService {
 		}
 		
 		paramUser.setUserName(req.getUserName());
-		paramUser.setCallbackUrl(req.getCallbackUrl());
+	
 
 		paramUser.setAction("modifySvcUser");
 		paramUser.setIssueId(userId);

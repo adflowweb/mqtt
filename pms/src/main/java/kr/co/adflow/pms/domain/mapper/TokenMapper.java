@@ -65,6 +65,8 @@ public interface TokenMapper {
 	 */
 	String selectApplicationKey(String userId);
 
+	Token getLatest(Token tokenID);
+
 	boolean checkToken(String token);
 
 }

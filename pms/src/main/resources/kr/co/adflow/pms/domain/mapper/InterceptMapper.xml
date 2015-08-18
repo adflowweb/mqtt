@@ -13,11 +13,10 @@
 	SELECT ip_filters 
 	FROM pms.token a , pms.user b
 	WHERE a.user_id = b.user_id 
-	AND a.token_type = 'A' 
 	AND a.expired_time IS NULL
 	AND b.status = 0
 	AND a.token_id = #{applicationKey} 
-	AND b.role = #{role}
+	
 	</select>
 	
 	<select id="selectCashedApplicationToken" parameterType="kr.co.adflow.pms.domain.AppKey" resultType="java.util.Date">

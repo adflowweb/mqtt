@@ -32,9 +32,9 @@ public class MessageSendExecutor {
 	@Autowired
 	private MessageSendService messageSendService;
 
-//	/** The table mgt mapper. */
-//	@Autowired
-//	private TableMgtMapper tableMgtMapper;
+	// /** The table mgt mapper. */
+	// @Autowired
+	// private TableMgtMapper tableMgtMapper;
 
 	/** The pms config. */
 	@Autowired
@@ -65,10 +65,10 @@ public class MessageSendExecutor {
 		// }
 		// messageSendService.sendMessageArray(this.serverId,
 		// executorSendLimit);
-		logger.debug("***********************start");
-		messageSendService.sendMessageArray(pmsConfig.EXECUTOR_SERVER_ID1,
-				pmsConfig.EXECUTOR_SEND_LIMIT);
-		logger.debug("***********************end");
+		// logger.debug("***********************start");
+		// messageSendService.sendMessageArray(pmsConfig.EXECUTOR_SERVER_ID1,
+		// pmsConfig.EXECUTOR_SEND_LIMIT);
+		// logger.debug("***********************end");
 
 	}
 
@@ -82,7 +82,7 @@ public class MessageSendExecutor {
 		messageSendService.sendReservationMessageArray(
 				pmsConfig.EXECUTOR_SERVER_ID1, pmsConfig.EXECUTOR_SEND_LIMIT);
 		logger.debug("***********************end");
-		
+
 	}
 
 	// /**
@@ -215,45 +215,45 @@ public class MessageSendExecutor {
 	/**
 	 * Creates the table.
 	 */
-//	public void createTable() {
-//
-//		String name = DateUtil.getYYYYMM(1);
-//
-//		// logger.info("createTable1");
-//
-//		try {
-//			tableMgtMapper.selectMessage(name);
-//			logger.info("selectMessage");
-//		} catch (Exception e) {
-//			tableMgtMapper.createMessage(name);
-//			logger.info("createMessage");
-//		}
-//		logger.info("createTable2");
-//		try {
-//			tableMgtMapper.selectContent(name);
-//			logger.info("selectContent");
-//		} catch (Exception e) {
-//			tableMgtMapper.createContent(name);
-//			logger.info("createContent");
-//		}
-//		logger.info("createTable3");
-//		try {
-//			tableMgtMapper.selectAck(name);
-//			logger.info("selectAck");
-//		} catch (Exception e) {
-//			tableMgtMapper.createAck(name);
-//			logger.info("createAck");
-//		}
-//
-//		logger.info("createTable4");
-//		try {
-//			tableMgtMapper.selectGroupMessage(name);
-//			logger.info("selectGroupMessage");
-//		} catch (Exception e) {
-//			tableMgtMapper.createGroupMessage(name);
-//			logger.info("createGroupMessage");
-//		}
-//
+	// public void createTable() {
+	//
+	// String name = DateUtil.getYYYYMM(1);
+	//
+	// // logger.info("createTable1");
+	//
+	// try {
+	// tableMgtMapper.selectMessage(name);
+	// logger.info("selectMessage");
+	// } catch (Exception e) {
+	// tableMgtMapper.createMessage(name);
+	// logger.info("createMessage");
+	// }
+	// logger.info("createTable2");
+	// try {
+	// tableMgtMapper.selectContent(name);
+	// logger.info("selectContent");
+	// } catch (Exception e) {
+	// tableMgtMapper.createContent(name);
+	// logger.info("createContent");
+	// }
+	// logger.info("createTable3");
+	// try {
+	// tableMgtMapper.selectAck(name);
+	// logger.info("selectAck");
+	// } catch (Exception e) {
+	// tableMgtMapper.createAck(name);
+	// logger.info("createAck");
+	// }
+	//
+	// logger.info("createTable4");
+	// try {
+	// tableMgtMapper.selectGroupMessage(name);
+	// logger.info("selectGroupMessage");
+	// } catch (Exception e) {
+	// tableMgtMapper.createGroupMessage(name);
+	// logger.info("createGroupMessage");
+	// }
+	//
 	// }
 
 	public String readHostname() {

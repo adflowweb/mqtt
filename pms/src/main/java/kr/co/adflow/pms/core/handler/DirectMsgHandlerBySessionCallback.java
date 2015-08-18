@@ -36,35 +36,56 @@ public class DirectMsgHandlerBySessionCallback implements
 	public String doInJms(Session session) throws JMSException {
 		MessageProducer producer = null;
 
-		logger.debug("=== msg::{}","getContentType::"+msg.getContentType()+",getExpiry::"+msg.getExpiry()+",getQos::"+msg.getQos()+",getReceiver::"+msg.getReceiver()
-				+",getIssueId::"+msg.getIssueId()+",getAppAckType::"+msg.getAppAckType()+",getGroupId::"+msg.getGroupId()+",getIssueName::"+msg.getIssueName()+",getKeyMon::"+msg.getKeyMon()
-				+",getMediaType::"+msg.getMediaType()+",getMsgId::"+msg.getMsgId()+",getMsgSize::"+msg.getMsgSize()+",getMsgType::"+msg.getMsgType()+",getPmaAckType::"+msg.getPmaAckType()
-				+",getReceiverTopic::"+msg.getReceiverTopic()+",getResendId::"+msg.getResendId()+",getResendMaxCount::"+msg.getResendMaxCount()+",getRetained::"+msg.getRetained()+
-				",getSendTerminalType::"+msg.getSendTerminalType()+",getServerId::"+msg.getServerId()+",getServiceId::"+msg.getServiceId()+",getStatus::"+msg.getStatus()
-				+",getUpdateId::"+msg.getUpdateId()+",getAppAckTime::"+msg.getAppAckTime()+",getPmaAckTime::"+msg.getIssueTime()+",getPmaAckTime::"+msg.getPmaAckTime()
-				+",getReservationTime::"+msg.getReservationTime()+",getUpdateTime::"+msg.getUpdateTime());
-		
+		logger.debug(
+				"=== msg::{}",
+				"getContentType::" + msg.getContentType() + ",getExpiry::"
+						+ msg.getExpiry() + ",getQos::" + msg.getQos()
+						+ ",getReceiver::" + msg.getReceiver()
+						+ ",getIssueId::" + msg.getIssueId()
+						+ ",getAppAckType::" + msg.getAppAckType()
+						+ ",getGroupId::" + msg.getGroupId()
+						+ ",getIssueName::" + msg.getIssueName()
+						+ ",getKeyMon::" + msg.getKeyMon() + ",getMediaType::"
+						+ msg.getMediaType() + ",getMsgId::" + msg.getMsgId()
+						+ ",getMsgSize::" + msg.getMsgSize() + ",getMsgType::"
+						+ msg.getMsgType() + ",getPmaAckType::"
+						+ msg.getPmaAckType() + ",getReceiverTopic::"
+						+ msg.getReceiverTopic() + ",getResendId::"
+						+ msg.getResendId() + ",getResendMaxCount::"
+						+ msg.getResendMaxCount() + ",getRetained::"
+						+ msg.getRetained() + ",getSendTerminalType::"
+						+ msg.getSendTerminalType() + ",getServerId::"
+						+ msg.getServerId() + ",getServiceId::"
+						+ msg.getServiceId() + ",getStatus::" + msg.getStatus()
+						+ ",getUpdateId::" + msg.getUpdateId()
+						+ ",getAppAckTime::" + msg.getAppAckTime()
+						+ ",getPmaAckTime::" + msg.getIssueTime()
+						+ ",getPmaAckTime::" + msg.getPmaAckTime()
+						+ ",getReservationTime::" + msg.getReservationTime()
+						+ ",getUpdateTime::" + msg.getUpdateTime());
+
 		String json = "";
 		byte[] byteArr = null;
 		try {
 			Destination destination = jmsTemplate.getDestinationResolver()
-					.resolveDestinationName(session, msg.getReceiverTopic(), true);
+					.resolveDestinationName(session, msg.getReceiverTopic(),
+							true);
 			producer = session.createProducer(destination);
-			
+
 			logger.debug("producer=" + producer);
-			
-//			producer.setTimeToLive(msg.getExpiry());
-//			producer.setDeliveryMode(msg.getQos());
+
+			// producer.setTimeToLive(msg.getExpiry());
+			// producer.setDeliveryMode(msg.getQos());
 
 			JSONObject msgObject = new JSONObject();
 			BytesMessage bytesMessage = session.createBytesMessage();
-			
+
 			msgObject.put("msgType", msg.getMsgType());
 			msgObject.put("msgId", msg.getMsgId());
 			msgObject.put("issueId", msg.getIssueId());
 			msgObject.put("fileFormat", msg.getFileFormat());
 			msgObject.put("fileName", msg.getFileName());
-			msgObject.put("sender", msg.getIssueName());
+			msgObject.put("sender", msg.getSender());
 			msgObject.put("receiver", msg.getReceiverTopic());
 			if (msg.isAck()) {
 				msgObject.put("ack", 1);
@@ -87,18 +108,17 @@ public class DirectMsgHandlerBySessionCallback implements
 			}
 
 			json = msgObject.toString();
-			
 
 			logger.debug("=== json::{}", json);
-			
+
 			byteArr = json.getBytes();
 			bytesMessage.writeBytes(byteArr);
-			
+
 			if (msg.getQos() <= 0) {
-				//Qos 0 => delivery mod 1
+				// Qos 0 => delivery mod 1
 				msg.setQos(1);
 			} else {
-				//Qos 1,2 => delivery mod 2
+				// Qos 1,2 => delivery mod 2
 				msg.setQos(2);
 			}
 
@@ -106,11 +126,11 @@ public class DirectMsgHandlerBySessionCallback implements
 					javax.jms.Message.DEFAULT_PRIORITY/* default */,
 					msg.getExpiry());
 			logger.debug("메시지가전송되었습니다.");
-//		} catch (JSONException e) {
-//			e.printStackTrace();
-//		
-//		} catch (JMSException e) {
-//			throw e;
+			// } catch (JSONException e) {
+			// e.printStackTrace();
+			//
+			// } catch (JMSException e) {
+			// throw e;
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {

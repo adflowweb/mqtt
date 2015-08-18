@@ -14,16 +14,11 @@
 		<result property="msgCntLimit" column="message_count_limit" />
 		<result property="defaultExpiry" column="default_expiry" />
 		<result property="defaultQos" column="default_qos" />
-		<result property="msgSizeLimit" column="message_size_limit" />
-		<result property="callbackUrl" column="callback_url" />
-		<result property="callbackMethod" column="callback_method" />
-		<result property="callbackCntLimit" column="callback_count_limit" />
+
 		<result property="issueTime" column="issue_time" />
 		<result property="issueId" column="issue_id" />
 		<result property="applicationToken" column="application_token" />
-		<result property="ufmi" column="ufmi" />
-		<result property="saId" column="sa_id" />
-		<result property="groupTopics" column="group_topics" />
+		
 	</resultMap>
 
 	<insert id="insertUser" parameterType="kr.co.adflow.pms.domain.User">
@@ -60,28 +55,17 @@
 		, a.user_name
 		, a.ip_filters
 		, a.status
-		,
-		a.message_count_limit
 		, a.default_expiry
 		, a.default_qos
-		,
-		a.message_size_limit
-		, a.callback_url
-		, a.callback_method
-		,
-		a.callback_count_limit
 		, a.issue_time
 		, a.issue_id
-		, a.ufmi
-		, a.sa_id
-		,
-		a.group_topics
-		, b.token_id as application_token
+		, b.token_id
+		as application_token
 		FROM pms.user a,
 		pms.token b
 		WHERE
-		a.user_id = b.user_id
-		AND b.token_type = 'A'
+		a.user_id =
+		b.user_id
 		AND
 		a.user_id = #{userId}
 	</select>
@@ -149,29 +133,14 @@
 
 	<update id="updateUser" parameterType="kr.co.adflow.pms.domain.User">
 		UPDATE pms.user
-		SET role =
-		#{role}
-		,user_name = #{userName}
-		,ip_filters = #{ipFilters}
+		SET user_name = #{userName}
 		,status =
 		#{status}
-		,message_count_limit = #{msgCntLimit}
 		,default_expiry =
 		#{defaultExpiry}
 		,default_qos = #{defaultQos}
-		,message_size_limit =
-		#{msgSizeLimit}
-		,callback_url = #{callbackUrl}
-		,callback_method =
-		#{callbackMethod}
-		,callback_count_limit = #{callbackCntLimit}
 		,issue_time = now()
 		,issue_id = #{issueId}
-		,ufmi = #{ufmi}
-		,sa_id =
-		#{saId}
-		,group_topics = #{groupTopics}
-
 		WHERE user_id = #{userId}
 	</update>
 

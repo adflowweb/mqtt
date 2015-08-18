@@ -34,8 +34,18 @@ public class Token {
 	 *
 	 * @return the user id
 	 */
+	
+	
+	
 	public String getUserId() {
 		return userId;
+	}
+
+	@Override
+	public String toString() {
+		return "Token [userId=" + userId + ", tokenId=" + tokenId
+				+ ", tokenType=" + tokenType + ", issueTime=" + issueTime
+				+ ", issueId=" + issueId + ", expiredTime=" + expiredTime + "]";
 	}
 
 	/**

@@ -24,13 +24,13 @@ import kr.co.adflow.pms.core.config.PmsConfig;
 import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.controller.BaseController;
 import kr.co.adflow.pms.core.exception.PmsRuntimeException;
+import kr.co.adflow.pms.core.service.MessageService;
 import kr.co.adflow.pms.core.util.DateUtil;
 import kr.co.adflow.pms.domain.Address;
 import kr.co.adflow.pms.domain.Message;
 import kr.co.adflow.pms.domain.Template;
 import kr.co.adflow.pms.domain.User;
 import kr.co.adflow.pms.domain.validator.UserValidator;
-import kr.co.adflow.pms.mob.service.MobileMessageService;
 import kr.co.adflow.pms.response.Response;
 import kr.co.adflow.pms.response.Result;
 
@@ -76,7 +76,7 @@ public class SvcController extends BaseController {
 
 	/** The svc service. */
 	@Autowired
-	private MobileMessageService userMessageService;
+	private MessageService userMessageService;
 
 	@Autowired
 	private PmsConfig pmsConfig;
@@ -860,25 +860,26 @@ public class SvcController extends BaseController {
 	 * @throws Exception
 	 *             the exception
 	 */
-	@RequestMapping(value = "/subscribe/count", method = RequestMethod.GET, produces = StaticConfig.HEADER_CONTENT_TYPE)
-	@ResponseBody
-	public Response<Result<Integer>> getgroupsListCnt(
-			@RequestParam("topic") String topic) throws Exception {
-
-		logger.debug("=== topic ::" + topic);
-
-		Integer resultCnt = userMessageService.groupListCnt(topic);
-
-		Result<Integer> result = new Result<Integer>();
-		result.setSuccess(true);
-
-		result.setData(resultCnt);
-		@SuppressWarnings({ "unchecked", "rawtypes" })
-		Response<Result<Integer>> res = new Response(result);
-
-		logger.debug("=== resultCnt :{}", resultCnt);
-		return res;
-
-	}
+	// @RequestMapping(value = "/subscribe/count", method = RequestMethod.GET,
+	// produces = StaticConfig.HEADER_CONTENT_TYPE)
+	// @ResponseBody
+	// public Response<Result<Integer>> getgroupsListCnt(
+	// @RequestParam("topic") String topic) throws Exception {
+	//
+	// logger.debug("=== topic ::" + topic);
+	//
+	// Integer resultCnt = userMessageService.groupListCnt(topic);
+	//
+	// Result<Integer> result = new Result<Integer>();
+	// result.setSuccess(true);
+	//
+	// result.setData(resultCnt);
+	// @SuppressWarnings({ "unchecked", "rawtypes" })
+	// Response<Result<Integer>> res = new Response(result);
+	//
+	// logger.debug("=== resultCnt :{}", resultCnt);
+	// return res;
+	//
+	// }
 
 }

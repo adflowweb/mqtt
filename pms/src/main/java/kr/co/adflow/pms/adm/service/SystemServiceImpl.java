@@ -94,8 +94,7 @@ public class SystemServiceImpl implements SystemService {
 					.getDefaultExpiry()));
 			resultUser.setDefaultQos(checkUtil.getMessageQos(resultUser
 					.getDefaultQos()));
-			resultUser.setMsgSizeLimit(checkUtil.getMessageSizeLimit(resultUser
-					.getMsgSizeLimit()));
+
 		}
 
 		return resultUsers;
@@ -120,28 +119,10 @@ public class SystemServiceImpl implements SystemService {
 		paramUser.setRole(userReq.getRole());
 		paramUser.setIssueId(issueId);
 
-		if (userReq.getIpFilters() == null
-				|| userReq.getIpFilters().trim().length() == 0) {
-			paramUser.setIpFilters(StaticConfig.INTERCEPTER_IP_FILTER);
-		} else {
-			paramUser.setIpFilters(userReq.getIpFilters());
-		}
-
-		// 추가 옵션
-		if (userReq.isOptions()) {
-			paramUser.setDefaultExpiry(userReq.getDefaultExpiry());
-			paramUser.setDefaultQos(userReq.getDefaultQos());
-
-		} else {
-			paramUser.setDefaultExpiry(-1);
-			paramUser.setDefaultQos(-1);
-
-		}
-
 		paramUser.setStatus(-1);
 		Token token = new Token();
 		token.setUserId(userReq.getUserId());
-		token.setTokenType(StaticConfig.TOKEN_TYPE_APPLICATION);
+		// token.setTokenType(StaticConfig.TOKEN_TYPE_APPLICATION);
 		token.setTokenId(this.getTokenId(userReq));
 
 		//
@@ -197,8 +178,6 @@ public class SystemServiceImpl implements SystemService {
 				.getDefaultExpiry()));
 		resultUser.setDefaultQos(checkUtil.getMessageQos(resultUser
 				.getDefaultQos()));
-		resultUser.setMsgSizeLimit(checkUtil.getMessageSizeLimit(resultUser
-				.getMsgSizeLimit()));
 
 		return resultUser;
 
@@ -221,9 +200,6 @@ public class SystemServiceImpl implements SystemService {
 		if (userReq.getUserName() != null)
 			paramUser.setUserName(userReq.getUserName());
 
-		if (userReq.getMsgCntLimit() != 0)
-			paramUser.setMsgCntLimit(userReq.getMsgCntLimit());
-
 		if (userReq.getRole() != null)
 			paramUser.setRole(userReq.getRole());
 
@@ -235,17 +211,11 @@ public class SystemServiceImpl implements SystemService {
 		if (userReq.isOptions()) {
 			paramUser.setDefaultExpiry(userReq.getDefaultExpiry());
 			paramUser.setDefaultQos(userReq.getDefaultQos());
-			paramUser.setMsgSizeLimit(userReq.getMsgSizeLimit());
-			paramUser.setCallbackUrl(userReq.getCallbackUrl());
-			paramUser.setCallbackMethod(userReq.getCallbackMethod());
-			paramUser.setCallbackCntLimit(userReq.getCallbackCntLimit());
+
 		} else {
 			paramUser.setDefaultExpiry(-1);
 			paramUser.setDefaultQos(-1);
-			paramUser.setMsgSizeLimit(-1);
-			paramUser.setCallbackUrl(null);
-			paramUser.setCallbackMethod(null);
-			paramUser.setCallbackCntLimit(-1);
+
 		}
 
 		paramUser.setStatus(StaticConfig.USER_STATUS_NORMAL);
@@ -346,7 +316,7 @@ public class SystemServiceImpl implements SystemService {
 
 		msgParams.setMsgType(0);
 
-		msgParams.setKeyMon(params.get("cSearchDate"));
+		// msgParams.setKeyMon(params.get("cSearchDate"));
 
 		msgParams.setIssueId(null);
 

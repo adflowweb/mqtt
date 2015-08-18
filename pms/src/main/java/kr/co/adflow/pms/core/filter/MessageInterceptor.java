@@ -1,7 +1,7 @@
 /*
  * 
  */
-package kr.co.adflow.pms.mob.filter;
+package kr.co.adflow.pms.core.filter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,11 +18,11 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 /**
  * The Class UserInterceptor.
  */
-public class MobileInterceptor extends HandlerInterceptorAdapter {
+public class MessageInterceptor extends HandlerInterceptorAdapter {
 
 	/** The Constant logger. */
 	private static final Logger logger = LoggerFactory
-			.getLogger(MobileInterceptor.class);
+			.getLogger(MessageInterceptor.class);
 
 	/** The intercept mapper. */
 	@Autowired

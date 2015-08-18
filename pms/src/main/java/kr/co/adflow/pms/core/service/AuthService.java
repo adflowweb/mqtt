@@ -10,7 +10,7 @@ import kr.co.adflow.pms.core.response.AuthRes;
 /**
  * The Interface CommonService.
  */
-public interface CommonService {
+public interface AuthService {
 
 	/**
 	 * Auth user.
@@ -20,5 +20,7 @@ public interface CommonService {
 	 * @return the auth res
 	 */
 	AuthRes authUser(AuthReq auth) throws Exception;
+
+	boolean authToken(String token) throws Exception;
 
 }

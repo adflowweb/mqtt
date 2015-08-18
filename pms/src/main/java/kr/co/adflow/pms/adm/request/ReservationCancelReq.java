@@ -11,6 +11,8 @@ public class ReservationCancelReq {
 
 	/** The msg ids. */
 	private String[] msgIds;
+	
+	
 
 	/**
 	 * Gets the msg ids.

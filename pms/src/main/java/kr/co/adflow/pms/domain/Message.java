@@ -112,6 +112,8 @@ public class Message {
 	/** The msgSize. */
 	private String ufmi;
 	
+	private String sender;
+	
 	
 	/** The file Name. */
 	private String fileName;
@@ -121,6 +123,16 @@ public class Message {
 
 	
 	
+	
+	
+	public String getSender() {
+		return sender;
+	}
+
+	public void setSender(String sender) {
+		this.sender = sender;
+	}
+
 	public String getFileName() {
 		return fileName;
 	}

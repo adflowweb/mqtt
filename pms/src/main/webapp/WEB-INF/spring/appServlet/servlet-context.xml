@@ -18,12 +18,8 @@
 	<interceptors>
 
 		<interceptor>
-			<mapping path="/adm/sys/**" />
-			<beans:bean class="kr.co.adflow.pms.adm.filter.SystemInterceptor" />
-		</interceptor>
-		<interceptor>
-			<mapping path="/adm/svc/**" />
-			<beans:bean class="kr.co.adflow.pms.adm.filter.SvcInterceptor" />
+			<mapping path="/messages/**" />
+			<beans:bean class="kr.co.adflow.pms.core.filter.MessageInterceptor" />
 		</interceptor>
 
 
@@ -45,8 +41,7 @@
 
 
 	<task:scheduled-tasks scheduler="myScheduler">
-		<!-- <task:scheduled ref="messageSendExecutor" method="sendMessageArray" -->
-		<!-- fixed-delay="#{pms['executor.delay.time']}" /> -->
+
 		<task:scheduled ref="messageSendExecutor" method="sendReservationMessageArray"
 			fixed-delay="#{pms['executor.delay.time']}" />
 

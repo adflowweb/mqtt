@@ -175,15 +175,15 @@
 		, a.file_name
 		, a.file_format
 
-	<!-- c.user_name AS issue_name -->
+		<!-- c.user_name AS issue_name -->
 		FROM
-	<!-- pms.reservation_msg a, pms.user c -->
+		<!-- pms.reservation_msg a, pms.user c -->
 		pms.reservation_msg a
 		WHERE
 		<!-- a.issue_id = c.user_id -->
 
 		a.status = 0
-	<!-- AND a.server_id = #{serverId} -->
+		<!-- AND a.server_id = #{serverId} -->
 		AND
 		a.reservation_time <![CDATA[<]]>
 		DATE_ADD(NOW(), INTERVAL 30 SECOND)
@@ -216,9 +216,10 @@
 		resultType="Integer">
 		SELECT COUNT(*)
 		FROM
-		pms.message${keyMon} a left join pms.user h on
-		a.issue_id = h.user_id,
-		pms.content${keyMon} e
+		pms.message a left join pms.user h on
+		a.issue_id =
+		h.user_id,
+		pms.content e
 		WHERE a.msg_id = e.msg_id
 		<if test="msgType != null and msgType != 0">
 			AND a.msg_type = #{msgType}
@@ -287,8 +288,8 @@
 		, e.file_format
 		, h.user_name AS issue_name
 		FROM
-		pms.message${keyMon} a left join pms.user h on a.issue_id = h.user_id,
-		pms.content${keyMon} e
+		pms.message a left join pms.user h on a.issue_id = h.user_id,
+		pms.content e
 		WHERE a.msg_id = e.msg_id
 		<if test="msgType != null and msgType != 0">
 			AND a.msg_type = #{msgType}
@@ -499,14 +500,18 @@
 		resultType="Integer">
 		SELECT COUNT(*)
 		FROM
-		pms.message${keyMon} a left outer join
-		pms.ack${keyMon} b on a.msg_id = b.msg_id and
+		pms.message a left outer join
+		pms.ack b on a.msg_id
+		= b.msg_id and
 		b.ack_type = 'pma',
-		pms.message${keyMon} c left outer join pms.ack${keyMon} d on c.msg_id
+		pms.message c left outer
+		join pms.ack
+		d on c.msg_id
 		= d.msg_id and
 		d.ack_type = 'app',
-		pms.content${keyMon} e
-		WHERE a.msg_id
+		pms.content e
+		WHERE
+		a.msg_id
 		= c.msg_id
 		AND a.msg_id = e.msg_id
 		<if test="msgType != null and msgType != 0">
@@ -591,16 +596,18 @@
 		, h.user_name AS
 		issue_name
 		FROM
-		pms.message${keyMon} a left
-		outer join pms.ack${keyMon} b on a.msg_id = b.msg_id and
+		pms.message a left
+		outer
+		join pms.ack b on a.msg_id = b.msg_id and
 		b.ack_type =
 		'pma',
-		pms.message${keyMon} c left outer join pms.ack${keyMon} d on
+		pms.message c left outer join pms.ack d on
 		c.msg_id = d.msg_id and
 		d.ack_type = 'app',
-		pms.message${keyMon} g left
-		join pms.user h on g.issue_id = h.user_id,
-		pms.content${keyMon} e
+		pms.message g left
+		join pms.user h on g.issue_id =
+		h.user_id,
+		pms.content e
 		WHERE
 		a.msg_id = c.msg_id
 		AND a.msg_id = g.msg_id

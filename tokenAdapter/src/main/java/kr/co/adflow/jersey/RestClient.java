@@ -59,9 +59,9 @@ public class RestClient {
 		Validation valid = null;
 		try {
 			logger.debug("api.key=" + API_KEY);
-			Response<Validation> data = webResource.path("validate")
-					.path(token).accept(MediaType.APPLICATION_JSON)
-					.header("X-ApiKey", API_KEY)
+			Response<Validation> data = webResource.path("auth").path(token)
+					.accept(MediaType.APPLICATION_JSON)
+					.header("X-Application-Key", API_KEY)
 					.get(new GenericType<Response<Validation>>() {
 					});
 			logger.debug("data=" + data + ")");

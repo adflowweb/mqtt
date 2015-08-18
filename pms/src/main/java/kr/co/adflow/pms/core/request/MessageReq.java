@@ -1,7 +1,7 @@
 /*
  * 
  */
-package kr.co.adflow.pms.mob.request;
+package kr.co.adflow.pms.core.request;
 
 import java.util.Date;
 

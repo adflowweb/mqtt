@@ -11,28 +11,30 @@ public interface MessageSendService {
 
 	/**
 	 * Send message array.
-	 *
-	 * @param serverId the server id
-	 * @param limit the limit
+	 * 
+	 * @param serverId
+	 *            the server id
+	 * @param limit
+	 *            the limit
 	 * @return the int
 	 */
-	public int sendMessageArray(String serverId, int limit);
-
-	/**
-	 * Send reservation message array.
-	 *
-	 * @param serverId the server id
-	 * @param limit the limit
-	 * @return the int
-	 */
+	// public int sendMessageArray(String serverId, int limit);
+	//
+	// /**
+	// * Send reservation message array.
+	// *
+	// * @param serverId the server id
+	// * @param limit the limit
+	// * @return the int
+	// */
 	public int sendReservationMessageArray(String serverId, int limit);
 
-	/**
-	 * Send callback.
-	 *
-	 * @param serverId the server id
-	 * @param limit the limit
-	 */
-	public void sendCallback(String serverId, int limit);
+	// /**
+	// * Send callback.
+	// *
+	// * @param serverId the server id
+	// * @param limit the limit
+	// */
+	// public void sendCallback(String serverId, int limit);
 
 }

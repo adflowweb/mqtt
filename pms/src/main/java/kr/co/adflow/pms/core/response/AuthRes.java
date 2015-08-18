@@ -11,30 +11,26 @@ public class AuthRes {
 
 	/** The user id. */
 	private String userId;
-	
-	/** The role. */
-	private String role;
-	
+
+	// /** The role. */
+	// private String role;
+
 	/** The token. */
 	private String token;
-	
-	/** The ufmi. */
-	private String ufmi;
-	
-	/** The groupTopic. */
-	private String[] groupTopics;
-	
-	
+
+	// /** The ufmi. */
+	// private String ufmi;
+	//
+	// /** The groupTopic. */
+	// private String[] groupTopics;
+	//
+
 	/** The userName. */
 	private String userName;
-	
-	
-	
-	
 
 	/**
 	 * Gets the userName.
-	 *
+	 * 
 	 * @return the userName
 	 */
 	public String getUserName() {
@@ -43,8 +39,9 @@ public class AuthRes {
 
 	/**
 	 * Sets the userName.
-	 *
-	 * @param ufmi the new userName
+	 * 
+	 * @param ufmi
+	 *            the new userName
 	 */
 	public void setUserName(String userName) {
 		this.userName = userName;
@@ -52,45 +49,44 @@ public class AuthRes {
 
 	/**
 	 * Gets the ufmi.
-	 *
-	 * @return the ufmi
+	 * 
+	 * @return the ufmi //
 	 */
-	public String getUfmi() {
-		return ufmi;
-	}
-
-	/**
-	 * Sets the ufmi.
-	 *
-	 * @param ufmi the new ufmi
-	 */
-	public void setUfmi(String ufmi) {
-		this.ufmi = ufmi;
-	}
-
-	
+	// public String getUfmi() {
+	// return ufmi;
+	// }
+	//
+	// /**
+	// * Sets the ufmi.
+	// *
+	// * @param ufmi the new ufmi
+	// */
+	// public void setUfmi(String ufmi) {
+	// this.ufmi = ufmi;
+	// }
 
 	/**
 	 * Gets the groupTopics.
-	 *
+	 * 
 	 * @return the groupTopics
 	 */
-	public String[] getGroupTopics() {
-		return groupTopics;
-	}
-
-	/**
-	 * Sets the groupTopics.
-	 *
-	 * @param groupTopics the new groupTopics
-	 */
-	public void setGroupTopics(String[] groupTopics) {
-		this.groupTopics = groupTopics;
-	}
+	// public String[] getGroupTopics() {
+	// return groupTopics;
+	// }
+	//
+	// /**
+	// * Sets the groupTopics.
+	// *
+	// * @param groupTopics
+	// * the new groupTopics
+	// */
+	// public void setGroupTopics(String[] groupTopics) {
+	// this.groupTopics = groupTopics;
+	// }
 
 	/**
 	 * Gets the user id.
-	 *
+	 * 
 	 * @return the user id
 	 */
 	public String getUserId() {
@@ -99,8 +95,9 @@ public class AuthRes {
 
 	/**
 	 * Sets the user id.
-	 *
-	 * @param userId the new user id
+	 * 
+	 * @param userId
+	 *            the new user id
 	 */
 	public void setUserId(String userId) {
 		this.userId = userId;
@@ -108,25 +105,26 @@ public class AuthRes {
 
 	/**
 	 * Gets the role.
-	 *
+	 * 
 	 * @return the role
 	 */
-	public String getRole() {
-		return role;
-	}
-
-	/**
-	 * Sets the role.
-	 *
-	 * @param role the new role
-	 */
-	public void setRole(String role) {
-		this.role = role;
-	}
+	// public String getRole() {
+	// return role;
+	// }
+	//
+	// /**
+	// * Sets the role.
+	// *
+	// * @param role
+	// * the new role
+	// */
+	// public void setRole(String role) {
+	// this.role = role;
+	// }
 
 	/**
 	 * Gets the token.
-	 *
+	 * 
 	 * @return the token
 	 */
 	public String getToken() {
@@ -135,8 +133,9 @@ public class AuthRes {
 
 	/**
 	 * Sets the token.
-	 *
-	 * @param token the new token
+	 * 
+	 * @param token
+	 *            the new token
 	 */
 	public void setToken(String token) {
 		this.token = token;

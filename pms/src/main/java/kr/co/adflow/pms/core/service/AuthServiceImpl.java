@@ -3,18 +3,13 @@
  */
 package kr.co.adflow.pms.core.service;
 
-import java.util.Date;
-
-import javax.servlet.http.HttpServletResponse;
-
-import kr.co.adflow.pms.core.request.AuthReq;
-import kr.co.adflow.pms.core.response.AuthRes;
 import kr.co.adflow.pms.core.config.PmsConfig;
 import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.exception.PmsRuntimeException;
+import kr.co.adflow.pms.core.request.AuthReq;
+import kr.co.adflow.pms.core.response.AuthRes;
 import kr.co.adflow.pms.core.util.DateUtil;
 import kr.co.adflow.pms.core.util.KeyGenerator;
-import kr.co.adflow.pms.domain.AppKey;
 import kr.co.adflow.pms.domain.Token;
 import kr.co.adflow.pms.domain.User;
 import kr.co.adflow.pms.domain.mapper.InterceptMapper;
@@ -31,11 +26,11 @@ import org.springframework.stereotype.Service;
  * The Class CommonServiceImpl.
  */
 @Service
-public class CommonServiceImpl implements CommonService {
+public class AuthServiceImpl implements AuthService {
 
 	/** The Constant logger. */
 	private static final Logger logger = LoggerFactory
-			.getLogger(CommonServiceImpl.class);
+			.getLogger(AuthServiceImpl.class);
 
 	/** The user mapper. */
 	@Autowired
@@ -67,52 +62,35 @@ public class CommonServiceImpl implements CommonService {
 		res = new AuthRes();
 		User paramUser = new User();
 		paramUser.setUserId(auth.getUserId());
-		// 1. password hashing
 		paramUser.setPassword(this.getPassword(auth));
-		// 2. userId/password 로 조회
 		User user = userMapper.selectAuth(paramUser);
 		if (user == null) {
 
 			throw new PmsRuntimeException("invalid auth");
 		}
 
-		// mobile user check
-		boolean webUserCheck = false;
+		Token paramToken = new Token();
+		paramToken.setUserId(user.getUserId());
 
-		if (auth.getType() != null && auth.getType().equals("webuser")) {
-			webUserCheck = true;
-		}
-		// 웹 유저 토큰발급
-		if (webUserCheck == true) {
-			Token paramToken = new Token();
-			paramToken.setUserId(user.getUserId());
-			paramToken.setTokenType(StaticConfig.TOKEN_TYPE_TOKEN);
-			// 3. 정상 사용자의 경우 token 해싱
+		Token rst = tokenMapper.getLatest(paramToken);
+		// 토큰이 존재
+		if (rst != null) {
+			logger.debug("이미 토큰이 존재함!");
+
+			res.setToken(rst.getTokenId());
+			// 새로운 토큰 발급
+		} else {
+			logger.debug("새로운 토큰 발급");
 			paramToken.setTokenId(KeyGenerator.generateToken(auth.getUserId()));
-			// 4 , expired_time 현재로 부터 30분
-			paramToken.setExpiredTime(DateUtil.afterMinute(
-					pmsConfig.HEADER_APPLICATION_TOKEN_EXPIRED,
-					System.currentTimeMillis()));
-			// 5. token 테이블 저장
 			int cnt = tokenMapper.insertToken(paramToken);
+			res.setToken(paramToken.getTokenId());
 			if (cnt < 1) {
 
 				throw new PmsRuntimeException("invalid auth error");
 			}
-			// 6. 만료일 지난 token 삭제
-			tokenMapper.deleteExpiredToken(paramToken.getUserId());
-
-			res.setToken(paramToken.getTokenId());
-
-			// 모바일 유저 토큰 발급
-		} else {
-			String appKey = tokenMapper.selectApplicationKey(user.getUserId());
-			res.setToken(appKey);
-
 		}
 
 		res.setUserId(user.getUserId());
-		res.setRole(user.getRole());
 		res.setUserName(user.getUserName());
 
 		return res;
@@ -128,6 +106,22 @@ public class CommonServiceImpl implements CommonService {
 	private String getPassword(AuthReq req) {
 
 		return KeyGenerator.createPw(req.getUserId(), req.getPassword());
+	}
+
+	@Override
+	public boolean authToken(String token) throws Exception {
+		logger.debug("validate 시작(token=" + token + ")");
+		Token tokenData = tokenMapper.selectToken(token);
+
+		if (tokenData != null) {
+			logger.debug("validate 종료(true)");
+
+			// lastaAccess Time update 추가??
+			return true;
+		} else {
+			logger.debug("validate 종료(false)");
+			return false;
+		}
 	}
 
 }
