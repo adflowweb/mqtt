@@ -19,7 +19,9 @@ public class StaticConfig {
 	public static final String HEADER_CONTENT_TYPE = "application/json";
 
 	/** The Constant INTERCEPTER_IP_FILTER. */
-	public static final String INTERCEPTER_IP_FILTER = "0.0.0.0";
+//	public static final String INTERCEPTER_IP_FILTER = "0.0.0.0";
+	// 2015-08-25 이대천대리 요청으로 0.0.0.0 -> *.*.*.* 수정 
+	public static final String INTERCEPTER_IP_FILTER = "*.*.*.*";
 	
 	/** The Constant INTERCEPTER_IP_FILTER_DELIM. */
 	public static final String INTERCEPTER_IP_FILTER_DELIM = "/";
