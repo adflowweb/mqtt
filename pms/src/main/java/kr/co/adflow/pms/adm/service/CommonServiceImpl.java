@@ -138,6 +138,30 @@ public class CommonServiceImpl implements CommonService {
 
 		return result;
 	}
+	
+	
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.pms.adm.service.CommonService#authUser(kr.co.adflow.pms.adm.request.AuthReq)
+	 */
+	@Override
+	public boolean authKey(String key) throws Exception {
+
+		boolean result = false;
+
+		AppKey appKey = new AppKey();
+
+		appKey.setApplicationKey(key);
+//		tokenKey.setRole(StaticConfig.USER_ROLE_SERVICE);
+		
+		String userId = interceptMapper.selectCashedApplicationKeyCmm(appKey);
+
+		if (userId != null) {
+			result = true;
+		}
+		
+
+		return result;
+	}
 
 	/**
 	 * Gets the password.

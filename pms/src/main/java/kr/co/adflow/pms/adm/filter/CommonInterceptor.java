@@ -42,10 +42,11 @@ public class CommonInterceptor extends HandlerInterceptorAdapter {
 		logger.info("CommonInterceptor.preHandle");
 
 		String token = request.getHeader(StaticConfig.HEADER_APPLICATION_TOKEN);
+		String key = request.getHeader(StaticConfig.HEADER_APPLICATION_KEY);
 
-		if (token == null || token.trim().length() == 0) {
+		if ((token == null || token.trim().length() == 0) && (key == null || key.trim().length() == 0)) {
 
-			logger.error("token error is {}", token);
+			logger.error("token and appkey error");
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 			return false;
 		}

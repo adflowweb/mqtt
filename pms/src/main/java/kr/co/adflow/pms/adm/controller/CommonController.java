@@ -87,5 +87,32 @@ public class CommonController extends BaseController {
 
 	}
 	
+	/**
+	 * Auth appKey.
+	 *
+	 * @param String the appKey
+	 * @return the response
+	 */
+	@RequestMapping(value = "/adm/cmm/authkey", method = RequestMethod.GET, produces = "application/json")
+	@ResponseBody
+	public Response authKey(@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String key) throws Exception {
+
+
+//		if (token == null || token.trim().length() == 0) {
+//
+//			throw new PmsRuntimeException("invalid token:"+token);
+//		}
+		
+		boolean auth = commonService.authKey(key);
+
+		Result<Validation> result = new Result<Validation>();
+		result.setSuccess(true);
+		Validation valid = new Validation(auth);
+		result.setData(valid);
+		Response res = new Response(result);
+		return res;
+
+	}
+	
 
 }

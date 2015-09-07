@@ -28,5 +28,14 @@ public interface CommonService {
 	 * @return the boolean
 	 */
 	boolean authToken(String token) throws Exception;
+	
+	
+	/**
+	 * Auth key.
+	 *
+	 * @param auth the key
+	 * @return the boolean
+	 */
+	boolean authKey(String key) throws Exception;
 
 }
