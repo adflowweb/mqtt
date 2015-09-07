@@ -129,10 +129,18 @@ public class CommonServiceImpl implements CommonService {
 		tokenKey.setApplicationKey(token);
 //		tokenKey.setRole(StaticConfig.USER_ROLE_SERVICE);
 		
+		//Token Check
 		Date expiredTime = interceptMapper.selectCashedApplicationTokenCmm(tokenKey);
 
 		if (expiredTime != null) {
 			result = true;
+		} else{
+			// AppKey Check
+			String userId = interceptMapper.selectCashedApplicationKeyCmm(tokenKey);
+
+			if (userId != null) {
+				result = true;
+			}
 		}
 		
 
