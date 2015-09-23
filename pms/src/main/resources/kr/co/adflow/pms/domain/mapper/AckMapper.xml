@@ -7,7 +7,7 @@
 
 
 	<insert id="insertAck" parameterType="kr.co.adflow.pms.domain.Ack">
-		INSERT INTO pms.ack${keyMon}
+		INSERT INTO pms.ack
 		(msg_id
 		,ack_type
 		,token_id

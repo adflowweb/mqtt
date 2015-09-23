@@ -44,8 +44,30 @@ public class MessageReq {
 	/** The content length. */
 	private Integer contentLength;
 
+	private Date issueTime;
+	private Date updateTime;
+
 	/** The mms. */
 	private boolean mms;
+	
+	
+	
+
+	public Date getIssueTime() {
+		return issueTime;
+	}
+
+	public void setIssueTime(Date issueTime) {
+		this.issueTime = issueTime;
+	}
+
+	public Date getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(Date updateTime) {
+		this.updateTime = updateTime;
+	}
 
 	public Date getReservationTime() {
 		return reservationTime;

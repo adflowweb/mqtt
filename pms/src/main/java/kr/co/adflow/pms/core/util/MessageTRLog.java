@@ -9,6 +9,6 @@ public class MessageTRLog {
  public static Logger logger = Logger.getLogger("messageTrLogger");
 
  public static void log(Message msg) {
- logger.info(msg.toString());
+// logger.info(msg.toString());
  }
 }

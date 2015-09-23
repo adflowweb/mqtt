@@ -87,6 +87,9 @@ public class MessageController extends BaseController {
 			throw new PmsRuntimeException("Content is empty.");
 		}
 
+		
+		
+		
 		int resultCnt = messageService.sendMessage(msg, appKey);
 
 		List<String> messages = new ArrayList<String>();

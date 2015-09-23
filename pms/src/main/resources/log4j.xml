@@ -12,7 +12,7 @@
 
 	<!-- Application Loggers -->
 	<logger name="kr.co.adflow.pms">
-		<level value="debug" />
+		<level value="info" />
 	<!-- <appender-ref ref="console" /> -->
 	</logger>
 
@@ -59,7 +59,7 @@
 
 	<!-- Root Logger -->
 	<root>
-		<priority value="debug" />
+		<priority value="info" />
 		<appender-ref ref="console" />
 	</root>
 

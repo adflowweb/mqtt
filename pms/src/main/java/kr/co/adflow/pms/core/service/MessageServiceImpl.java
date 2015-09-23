@@ -241,7 +241,16 @@ public class MessageServiceImpl implements MessageService {
 
 		msg.setServerId("none");
 
-		msg.setExpiry(pmsConfig.MESSAGE_USER_MESSAGE_EXPIRY_DEFAULT);
+		if (message.getExpiry() == 0) {
+			logger.debug("expiry 시간이 입력되지 않아 기본 시간으로 세팅툅니다!"
+					+ pmsConfig.MESSAGE_USER_MESSAGE_EXPIRY_DEFAULT);
+
+			msg.setExpiry(pmsConfig.MESSAGE_USER_MESSAGE_EXPIRY_DEFAULT);
+		} else {
+			logger.debug("expiry 시간이 입력되었습니다!" + message.getExpiry());
+			long expiryTime = message.getExpiry() * 1000;
+			msg.setExpiry(expiryTime);
+		}
 
 		msg.setQos(message.getQos());
 		msg.setIssueId(issueId);
@@ -259,6 +268,11 @@ public class MessageServiceImpl implements MessageService {
 		msg.setMsgId(this.getMsgId());
 
 		msg.setMsgType(106);
+
+		// 테스트 코드
+//		msg.setIssueTime(message.getIssueTime());
+//		msg.setUpdateTime(message.getIssueTime());
+		//
 
 		// sendJMS
 		msg.setReceiver(message.getReceiver());
@@ -312,6 +326,7 @@ public class MessageServiceImpl implements MessageService {
 						+ ",getReservationTime::" + msg.getReservationTime()
 						+ ",getUpdateTime::" + msg.getUpdateTime());
 		// JMS message send
+
 		jmsTemplate.execute(new DirectMsgHandlerBySessionCallback(jmsTemplate,
 				msg));
 

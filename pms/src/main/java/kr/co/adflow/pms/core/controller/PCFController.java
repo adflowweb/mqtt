@@ -1,5 +1,8 @@
 package kr.co.adflow.pms.core.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import kr.co.adflow.pms.adm.response.PCFRes;
 import kr.co.adflow.pms.core.service.PCFService;
 import kr.co.adflow.pms.response.Response;
@@ -37,6 +40,33 @@ public class PCFController extends BaseController {
 		Response<PCFRes> res = new Response<PCFRes>(result);
 		logger.debug("response=" + res);
 
+		return res;
+	}
+
+	@RequestMapping(value = "/topic/subscriptions/{token:.+}", method = RequestMethod.GET)
+	@ResponseBody
+	public Response<String[]> getTopic(@PathVariable String token)
+			throws Exception {
+		logger.debug("token=" + token);
+		Result<String[]> result = new Result<String[]>();
+		result.setSuccess(true);
+		String[] resultTopics = pcfService.getTopics(token);
+		if (resultTopics == null) {
+			List<String> messageList = new ArrayList<String>() {
+				{
+					add("topic not found");
+				}
+
+			};
+			logger.info("topics:", resultTopics);
+			resultTopics = new String[0];
+			result.setData(resultTopics);
+			result.setInfo(messageList);
+		} else {
+			result.setData(resultTopics);
+		}
+		Response<String[]> res = new Response<String[]>(result);
+		logger.debug("response:" + res);
 		return res;
 	}
 }

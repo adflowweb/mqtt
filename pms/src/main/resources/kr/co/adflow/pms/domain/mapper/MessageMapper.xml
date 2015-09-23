@@ -813,7 +813,9 @@
 		,#{mediaType}
 		,#{msgSize}
 		,now()
+		<!-- ,#{issueTime} -->
 		,#{issueId}
+		<!-- ,#{updateTime} -->
 		,now()
 		,#{updateId}
 		)

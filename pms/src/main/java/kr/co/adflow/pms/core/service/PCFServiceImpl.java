@@ -90,4 +90,65 @@ public class PCFServiceImpl implements PCFService {
 
 		return statusResult;
 	}
+
+	@Override
+	public String[] getTopics(String token) throws Exception {
+		logger.debug("token:" + token);
+		String[] topicArr = null;
+		ConnectionManager connMan = MQEnvironment.getDefaultConnectionManager();
+		MQQueueManager qmgr = null;
+		PCFMessageAgent agent = null;
+		try {
+
+			qmgr = new MQQueueManager("MQTT", connMan);
+			agent = new PCFMessageAgent(qmgr);
+			PCFMessage request = new PCFMessage(
+					MQConstants.MQCMD_INQUIRE_SUBSCRIPTION);
+			request.addParameter(MQConstants.MQCACF_SUB_NAME, token + ":*");
+			PCFMessage[] response = agent.send(request);
+			topicArr = new String[response.length];
+			for (int i = 0; i < response.length; i++) {
+				topicArr[i] = response[i].getParameterValue(
+						MQConstants.MQCA_TOPIC_STRING).toString();
+			}
+
+		} catch (PCFException pcfe) {
+
+			if (pcfe.getMessage().indexOf("2428") > 0) {
+				logger.error("해당 토큰관련 subscriptions 가 없습니다. -errorcode:2428");
+
+			} else {
+				logger.error("PCF error: " + pcfe);
+			}
+
+		} catch (MQException mqe) {
+			logger.error("MQException is ", mqe);
+			throw mqe;
+		} catch (IOException ioe) {
+			logger.error("IOException is ", ioe);
+			throw ioe;
+		} finally {
+			if (agent != null) {
+				try {
+					agent.disconnect();
+				} catch (MQException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					throw e;
+				}
+			}
+			if (qmgr != null) {
+				try {
+					qmgr.disconnect();
+				} catch (MQException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					throw e;
+				}
+			}
+
+		}
+
+		return topicArr;
+	}
 }
