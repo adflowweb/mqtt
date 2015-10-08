@@ -271,6 +271,11 @@
 			<artifactId>scala-library</artifactId>
 			<version>2.10.4</version>
 		</dependency>
+		<dependency>
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
+			<version>2.7.2</version>
+		</dependency>
 	</dependencies>
 	<build>
         <resources>
@@ -488,7 +493,13 @@
 				<mq.pcf.port>1414</mq.pcf.port>
 				<mq.pcf.channel>ADFlowPCF</mq.pcf.channel>
 				<mq.pcf.host>14.63.217.141</mq.pcf.host>
-				<!-- mq jms info -->
+				<mq.pcf.maxconnections>50</mq.pcf.maxconnections>
+
+				<!-- Redis info -->
+                <jedis.expire>86400</jedis.expire>
+                <jedis.hosts>localhost</jedis.hosts>
+
+				<!-- mq jms info -->				
 				<mq.jms.id>adflow</mq.jms.id>
 				<mq.jms.password>!ADFlow@</mq.jms.password>
 				<mq.jms.port>1414</mq.jms.port>
@@ -692,6 +703,12 @@
 				<mq.pcf.port>1414</mq.pcf.port>
 				<mq.pcf.channel>ADFlowPCF</mq.pcf.channel>
 				<mq.pcf.host>PUSH-MQ</mq.pcf.host>
+				<mq.pcf.maxconnections>50</mq.pcf.maxconnections>
+
+				<!-- Redis info -->
+                <jedis.expire>86400</jedis.expire>
+                <jedis.hosts>localhost</jedis.hosts>
+                
 				<!-- mq jms info -->
 				<mq.jms.id>adflow</mq.jms.id>
 				<mq.jms.password>!ADFlow@</mq.jms.password>

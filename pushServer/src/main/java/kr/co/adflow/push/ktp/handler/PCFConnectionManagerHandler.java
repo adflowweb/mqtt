@@ -74,8 +74,8 @@ public class PCFConnectionManagerHandler extends HttpServlet {
 			MQSimpleConnectionManager connMan = new MQSimpleConnectionManager();
 			connMan.setActive(MQSimpleConnectionManager.MODE_ACTIVE);
 			connMan.setTimeout(3600000);
-			connMan.setMaxConnections(200);
-			connMan.setMaxUnusedConnections(30);
+			connMan.setMaxConnections(Integer.parseInt(prop.getProperty("mq.pcf.maxconnections")));
+			connMan.setMaxUnusedConnections(2);
 			
 			MQEnvironment.setDefaultConnectionManager(connMan);
 			
