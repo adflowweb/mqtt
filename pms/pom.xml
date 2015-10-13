@@ -12,6 +12,7 @@
 		<org.springframework-version>3.1.1.RELEASE</org.springframework-version>
 		<org.aspectj-version>1.6.10</org.aspectj-version>
 		<org.slf4j-version>1.6.6</org.slf4j-version>
+		<testng.version>6.8.7</testng.version>
 	</properties>
 	<dependencies>
 		<!-- Spring -->
@@ -32,6 +33,9 @@
 			<artifactId>spring-webmvc</artifactId>
 			<version>${org.springframework-version}</version>
 		</dependency>
+
+
+
 
 		<!-- AspectJ -->
 		<dependency>
@@ -59,11 +63,11 @@
 			<scope>runtime</scope>
 		</dependency>
 
-	<!-- <dependency> -->
-	<!-- <groupId>mqxr</groupId> -->
-	<!-- <artifactId>MQXRListener</artifactId> -->
-	<!-- <version>1.0</version> -->
-	<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>mqxr</groupId> -->
+		<!-- <artifactId>MQXRListener</artifactId> -->
+		<!-- <version>1.0</version> -->
+		<!-- </dependency> -->
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
@@ -123,6 +127,25 @@
 			<scope>test</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.36</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${org.springframework-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>${testng.version}</version>
+			<scope>test</scope>
+		</dependency>
+
 		<!-- mybatis -->
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
@@ -160,46 +183,55 @@
 			<groupId>kr.co.adflow.push.pcf</groupId>
 			<artifactId>com.ibm.mq</artifactId>
 			<version>1.0</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>kr.co.adflow.push.pcf</groupId>
 			<artifactId>com.ibm.mq.commonservices</artifactId>
 			<version>1.0</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>kr.co.adflow.push.pcf</groupId>
 			<artifactId>com.ibm.mq.headers</artifactId>
 			<version>1.0</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>kr.co.adflow.push.pcf</groupId>
 			<artifactId>com.ibm.mq.jmqi</artifactId>
 			<version>1.0</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>kr.co.adflow.push.pcf</groupId>
 			<artifactId>com.ibm.mq.pcf</artifactId>
 			<version>1.0</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>kr.co.adflow.push.pcf</groupId>
 			<artifactId>connector</artifactId>
 			<version>1.0</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>kr.co.adflow.push.pcf</groupId>
 			<artifactId>jta</artifactId>
 			<version>1.0</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>kr.co.adflow.push.pcf</groupId>
 			<artifactId>com.ibm.mqjms</artifactId>
 			<version>1.0</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>kr.co.adflow.push.pcf</groupId>
 			<artifactId>com.ibm.mq.allclient</artifactId>
 			<version>1.0</version>
+			<scope>compile</scope>
 		</dependency>
 
 		<dependency>

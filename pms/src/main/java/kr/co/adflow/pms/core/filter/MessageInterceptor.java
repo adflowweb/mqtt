@@ -28,14 +28,6 @@ public class MessageInterceptor extends HandlerInterceptorAdapter {
 	@Autowired
 	private TokenMapper tokenMapper;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.springframework.web.servlet.handler.HandlerInterceptorAdapter#preHandle
-	 * (javax.servlet.http.HttpServletRequest,
-	 * javax.servlet.http.HttpServletResponse, java.lang.Object)
-	 */
 	public boolean preHandle(HttpServletRequest request,
 			HttpServletResponse response, Object handler) throws Exception {
 
@@ -50,11 +42,6 @@ public class MessageInterceptor extends HandlerInterceptorAdapter {
 			response.sendError(401);
 			return false;
 		}
-
-		// Map<String,String> resultMap =
-		// interceptMapper.selectCashedApplicationKey(this.getAppKey(applicationKey));
-		//
-		// String ipFilters = resultMap.get("ipFilters");
 
 		boolean appKeyCheck = tokenMapper.checkToken(applicationKey);
 

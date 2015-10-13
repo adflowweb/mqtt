@@ -5,8 +5,6 @@ package kr.co.adflow.pms.core.request;
 
 import java.util.Date;
 
-import javax.validation.constraints.NotNull;
-
 import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.Range;
 
@@ -29,29 +27,45 @@ public class MessageReq {
 	private String content;
 
 	/** The reservation time. */
-	private String sender;
-
-	/** The reservation time. */
 	private Date reservationTime;
 
-	/** The qos. */
-	@Range(min = 0, max = 2)
-	private int qos;
+	private Date issueTime;
 
-	/** The expiry. */
-	private int expiry;
+	/** The resend max count. */
+	@Range(min = 0, max = 100)
+	private int resendMaxCount;
+
+	/** The resend interval. */
+	@Range(min = 0, max = 1440)
+	private int resendInterval;
+
+	/** The msg type. */
+	private int msgType;
+
+	private String serviceId;
 
 	/** The content length. */
 	private Integer contentLength;
 
-	private Date issueTime;
-	private Date updateTime;
+	/** The file Name. */
+	private String fileName;
+
+	/** The file Format. */
+	private String fileFormat;
 
 	/** The mms. */
 	private boolean mms;
-	
-	
-	
+
+	/** The ack. */
+	private boolean ack;
+
+	/** The expiry. */
+	private long expiry;
+
+	/** The qos. */
+	private int qos;
+
+	private String sender;
 
 	public Date getIssueTime() {
 		return issueTime;
@@ -61,20 +75,69 @@ public class MessageReq {
 		this.issueTime = issueTime;
 	}
 
-	public Date getUpdateTime() {
-		return updateTime;
+	public String getReceiver() {
+		return receiver;
 	}
 
-	public void setUpdateTime(Date updateTime) {
-		this.updateTime = updateTime;
+	public void setReceiver(String receiver) {
+		this.receiver = receiver;
 	}
 
-	public Date getReservationTime() {
-		return reservationTime;
+	public String getSender() {
+		return sender;
 	}
 
-	public void setReservationTime(Date reservationTime) {
-		this.reservationTime = reservationTime;
+	public void setSender(String sender) {
+		this.sender = sender;
+	}
+
+	public boolean isAck() {
+		return ack;
+	}
+
+	public void setAck(boolean ack) {
+		this.ack = ack;
+	}
+
+	public long getExpiry() {
+		return expiry;
+	}
+
+	public void setExpiry(long expiry) {
+		this.expiry = expiry;
+	}
+
+	public int getQos() {
+		return qos;
+	}
+
+	public void setQos(int qos) {
+		this.qos = qos;
+	}
+
+	public int getMsgType() {
+		return msgType;
+	}
+
+	public void setMsgType(int msgType) {
+		this.msgType = msgType;
+	}
+
+	public String getServiceId() {
+		return serviceId;
+	}
+
+	public void setServiceId(String serviceId) {
+		this.serviceId = serviceId;
+	}
+
+	/**
+	 * Gets the content type.
+	 * 
+	 * @return the content type
+	 */
+	public String getContentType() {
+		return contentType;
 	}
 
 	public boolean isMms() {
@@ -83,6 +146,22 @@ public class MessageReq {
 
 	public void setMms(boolean mms) {
 		this.mms = mms;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
+	public String getFileFormat() {
+		return fileFormat;
+	}
+
+	public void setFileFormat(String fileFormat) {
+		this.fileFormat = fileFormat;
 	}
 
 	/**
@@ -102,15 +181,6 @@ public class MessageReq {
 	 */
 	public void setContentLength(Integer contentLength) {
 		this.contentLength = contentLength;
-	}
-
-	/**
-	 * Gets the content type.
-	 * 
-	 * @return the content type
-	 */
-	public String getContentType() {
-		return contentType;
 	}
 
 	/**
@@ -143,79 +213,60 @@ public class MessageReq {
 	}
 
 	/**
-	 * Gets the sender.
+	 * Gets the reservation time.
 	 * 
-	 * @return the sender
+	 * @return the reservation time
 	 */
-	public String getSender() {
-		return sender;
+	public Date getReservationTime() {
+		return reservationTime;
 	}
 
 	/**
-	 * Sets the sender.
+	 * Sets the reservation time.
 	 * 
 	 * @param reservationTime
-	 *            the new sender
+	 *            the new reservation time
 	 */
-	public void setSendere(String sender) {
-		this.sender = sender;
+	public void setReservationTime(Date reservationTime) {
+		this.reservationTime = reservationTime;
 	}
 
 	/**
-	 * Gets the receivers.
+	 * Gets the resend interval.
 	 * 
-	 * @return the receivers
+	 * @return the resend interval
 	 */
-	public String getReceiver() {
-		return receiver;
+	public int getResendInterval() {
+		return resendInterval;
 	}
 
 	/**
-	 * Sets the receivers.
+	 * Sets the resend interval.
 	 * 
-	 * @param receivers
-	 *            the new receivers
+	 * @param resendInterval
+	 *            the new resend interval
 	 */
-	public void setReceiver(String receiver) {
-		this.receiver = receiver;
+	public void setResendInterval(int resendInterval) {
+		this.resendInterval = resendInterval;
 	}
 
 	/**
-	 * Gets the qos.
+	 * Gets the resend max count.
 	 * 
-	 * @return the qos
+	 * @return the resend max count
 	 */
-	public int getQos() {
-		return qos;
+	public int getResendMaxCount() {
+		return resendMaxCount;
 	}
 
 	/**
-	 * Sets the qos.
+	 * Sets the resend max count.
 	 * 
-	 * @param qos
-	 *            the new qos
+	 * @param resendMaxCount
+	 *            the new resend max count
 	 */
-	public void setQos(int qos) {
-		this.qos = qos;
-	}
-
-	/**
-	 * Gets the expiry.
-	 * 
-	 * @return the expiry
-	 */
-	public int getExpiry() {
-		return expiry;
-	}
-
-	/**
-	 * Sets the expiry.
-	 * 
-	 * @param expiry
-	 *            the new expiry
-	 */
-	public void setExpiry(int expiry) {
-		this.expiry = expiry;
+	public void setResendMaxCount(int resendMaxCount) {
+		this.resendMaxCount = resendMaxCount;
 	}
 
 }

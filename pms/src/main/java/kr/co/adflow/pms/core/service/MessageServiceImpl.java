@@ -7,22 +7,20 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import kr.co.adflow.pms.adm.request.ReservationCancelReq;
-import kr.co.adflow.pms.adm.response.MessagesRes;
 import kr.co.adflow.pms.core.config.PmsConfig;
 import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.handler.DirectMsgHandlerBySessionCallback;
 import kr.co.adflow.pms.core.request.MessageReq;
+import kr.co.adflow.pms.core.request.ReservationCancelReq;
+import kr.co.adflow.pms.core.response.MessagesListRes;
 import kr.co.adflow.pms.core.util.CheckUtil;
 import kr.co.adflow.pms.core.util.DateUtil;
 import kr.co.adflow.pms.core.util.KeyGenerator;
-import kr.co.adflow.pms.core.util.MessageTRLog;
 //import kr.co.adflow.pms.core.handler.PCFConnectionManager;
 import kr.co.adflow.pms.domain.Message;
 import kr.co.adflow.pms.domain.MsgParams;
 import kr.co.adflow.pms.domain.mapper.InterceptMapper;
 import kr.co.adflow.pms.domain.mapper.MessageMapper;
-import kr.co.adflow.pms.domain.validator.UserValidator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,39 +62,16 @@ public class MessageServiceImpl implements MessageService {
 	@Autowired
 	private JmsTemplate jmsTemplate;
 
-	/** The user validator. */
-	@Autowired
-	private UserValidator userValidator;
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * kr.co.adflow.pms.svc.service.UserMessageService#sendMessage(java.lang
-	 * .String, kr.co.adflow.pms.svc.request.MessageReq)
-	 */
-
 	@Override
-	public MessagesRes getMessageListById(Map<String, String> params)
+	public MessagesListRes getMessageListById(Map<String, String> params)
 			throws Exception {
 
-		MessagesRes res = null;
+		MessagesListRes res = null;
 
 		String issueId = interceptMapper.selectCashedUserId((String) params
 				.get("appKey"));
 
-		// if (params.get("cSearchDate") == null) {
-		// // error
-		// // throw new RuntimeException("");
-		// throw new PmsRuntimeException("Search Date is null");
-		// }
-
 		MsgParams msgParams = new MsgParams();
-
-		// 관제 메세지 only msg_type : 10
-		// msgParams.setMsgType(10);
-
-		// msgParams.setKeyMon(params.get("cSearchDate"));
 		msgParams.setIssueId(issueId);
 		msgParams.setiDisplayStart(this.getInt(params.get("iDisplayStart")));
 		msgParams.setiDisplayLength(this.getInt(params.get("iDisplayLength")));
@@ -117,13 +92,13 @@ public class MessageServiceImpl implements MessageService {
 			msgParams.setAckType(this.getInt(params.get("cSearchContent")));
 		}
 
-		int cnt = messageMapper.getSvcMessageListCnt(msgParams);
+		int cnt = messageMapper.getMessageListCnt(msgParams);
 		logger.info("cnt :::::::{}", cnt);
 
-		List<Message> list = messageMapper.getSvcMessageList(msgParams);
+		List<Message> list = messageMapper.getMessageList(msgParams);
 		logger.info("list size :::::::{}", list.size());
 
-		res = new MessagesRes();
+		res = new MessagesListRes();
 		res.setRecordsFiltered(cnt);
 		res.setRecordsTotal(cnt);
 		res.setData(list);
@@ -132,10 +107,10 @@ public class MessageServiceImpl implements MessageService {
 	}
 
 	@Override
-	public MessagesRes getResevationMessageList(Map<String, String> params)
+	public MessagesListRes getResevationMessageList(Map<String, String> params)
 			throws Exception {
 
-		MessagesRes res = null;
+		MessagesListRes res = null;
 
 		String issueId = interceptMapper.selectCashedUserId(params
 				.get("appKey"));
@@ -164,14 +139,14 @@ public class MessageServiceImpl implements MessageService {
 			msgParams.setAckType(this.getInt(params.get("cSearchContent")));
 		}
 
-		int cnt = messageMapper.getSvcResevationMessageListCnt(msgParams);
+		int cnt = messageMapper.getResevationMessageListCnt(msgParams);
 		logger.info("cnt :::::::{}", cnt);
 
 		List<Message> list = messageMapper
-				.getSvcResevationMessageList(msgParams);
+				.getResevationMessageList(msgParams);
 		logger.info("list size :::::::{}", list.size());
 
-		res = new MessagesRes();
+		res = new MessagesListRes();
 		res.setRecordsFiltered(cnt);
 		res.setRecordsTotal(cnt);
 		res.setData(list);
@@ -207,11 +182,10 @@ public class MessageServiceImpl implements MessageService {
 			msg = list.get(0);
 
 			logger.debug("msg::" + msg.toString());
-			msg.setKeyMon(keyMon);
+			
 			msg.setStatus(StaticConfig.MESSAGE_STATUS_RESEVATION_CANCEL);
-			msg.setUpdateId(issueId);
+
 			messageMapper.insertMessageRV(msg);
-			messageMapper.insertContent(msg);
 			messageMapper.deleteReservationMessage(msgIds[i]);
 			cnt++;
 
@@ -227,8 +201,6 @@ public class MessageServiceImpl implements MessageService {
 						+ message.getExpiry() + ",getQos::" + message.getQos()
 						+ ",getReceiver::" + message.getReceiver()
 						+ ",getSender::" + message.getSender());
-		// String[] msgIdArray = null;
-
 		int resultCnt = 0;
 
 		String sender = message.getSender();
@@ -239,7 +211,7 @@ public class MessageServiceImpl implements MessageService {
 
 		Message msg = new Message();
 
-		msg.setServerId("none");
+		msg.setServerId(pmsConfig.EXECUTOR_SERVER_ID1);
 
 		if (message.getExpiry() == 0) {
 			logger.debug("expiry 시간이 입력되지 않아 기본 시간으로 세팅툅니다!"
@@ -254,7 +226,7 @@ public class MessageServiceImpl implements MessageService {
 
 		msg.setQos(message.getQos());
 		msg.setIssueId(issueId);
-		msg.setUpdateId(issueId);
+
 		msg.setIssueName(issueId);
 		msg.setSender(sender);
 
@@ -268,11 +240,6 @@ public class MessageServiceImpl implements MessageService {
 		msg.setMsgId(this.getMsgId());
 
 		msg.setMsgType(106);
-
-		// 테스트 코드
-//		msg.setIssueTime(message.getIssueTime());
-//		msg.setUpdateTime(message.getIssueTime());
-		//
 
 		// sendJMS
 		msg.setReceiver(message.getReceiver());
@@ -319,27 +286,18 @@ public class MessageServiceImpl implements MessageService {
 						+ msg.getSendTerminalType() + ",getServerId::"
 						+ msg.getServerId() + ",getServiceId::"
 						+ msg.getServiceId() + ",getStatus::" + msg.getStatus()
-						+ ",getUpdateId::" + msg.getUpdateId()
 						+ ",getAppAckTime::" + msg.getAppAckTime()
 						+ ",getPmaAckTime::" + msg.getIssueTime()
 						+ ",getPmaAckTime::" + msg.getPmaAckTime()
-						+ ",getReservationTime::" + msg.getReservationTime()
-						+ ",getUpdateTime::" + msg.getUpdateTime());
+						+ ",getReservationTime::" + msg.getReservationTime());
+
 		// JMS message send
 
 		jmsTemplate.execute(new DirectMsgHandlerBySessionCallback(jmsTemplate,
 				msg));
 
-		// message tran log
-		try {
-			MessageTRLog.log(msg);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
 		// DB message insert
 		messageMapper.insertMessage(msg);
-		messageMapper.insertContent(msg);
 
 	}
 

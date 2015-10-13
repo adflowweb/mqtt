@@ -1,7 +1,7 @@
 package kr.co.adflow.pms.core.service;
 
-import kr.co.adflow.pms.adm.request.UserReq;
-import kr.co.adflow.pms.adm.request.UserUpdateReq;
+import kr.co.adflow.pms.core.request.UserReq;
+import kr.co.adflow.pms.core.request.UserUpdateReq;
 import kr.co.adflow.pms.domain.User;
 
 public interface UserService {

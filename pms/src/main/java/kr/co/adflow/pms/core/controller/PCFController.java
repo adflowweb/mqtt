@@ -3,10 +3,10 @@ package kr.co.adflow.pms.core.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import kr.co.adflow.pms.adm.response.PCFRes;
+import kr.co.adflow.pms.core.config.StaticConfig;
+import kr.co.adflow.pms.core.response.PCFRes;
 import kr.co.adflow.pms.core.service.PCFService;
 import kr.co.adflow.pms.response.Response;
-import kr.co.adflow.pms.response.Result;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,19 +25,24 @@ public class PCFController extends BaseController {
 	@Autowired
 	PCFService pcfService;
 
+	private final static String S_503_SUCCESS_CODE = "503200";
+	private final static String S_505_SUCCESS_CODE = "505200";
+	private final static String S_505_NOT_FOUND_CODE = "505404";
+
 	@RequestMapping(value = "/mqtt/{token}/status", method = RequestMethod.GET)
 	@ResponseBody
 	public Response<PCFRes> getTokenStatus(@PathVariable String token)
 			throws Exception {
 		logger.debug("token:" + token);
 		String tokenStatus = pcfService.getStatus(token);
+		Response<PCFRes> res = new Response<PCFRes>();
 		PCFRes pcfRes = new PCFRes();
-		pcfRes.setStatus(tokenStatus);
+		pcfRes.setMQTTStatus(tokenStatus);
+		res.setStatus(StaticConfig.RESPONSE_STATUS_OK);
+		res.setData(pcfRes);
+		res.setCode(S_503_SUCCESS_CODE);
+		res.setMessage("MQTT 연결 상태를 체크 하였습니다");
 
-		Result<PCFRes> result = new Result<PCFRes>();
-		result.setSuccess(true);
-		result.setData(pcfRes);
-		Response<PCFRes> res = new Response<PCFRes>(result);
 		logger.debug("response=" + res);
 
 		return res;
@@ -48,24 +53,24 @@ public class PCFController extends BaseController {
 	public Response<String[]> getTopic(@PathVariable String token)
 			throws Exception {
 		logger.debug("token=" + token);
-		Result<String[]> result = new Result<String[]>();
-		result.setSuccess(true);
+
+		Response<String[]> res = new Response<String[]>();
 		String[] resultTopics = pcfService.getTopics(token);
 		if (resultTopics == null) {
-			List<String> messageList = new ArrayList<String>() {
-				{
-					add("topic not found");
-				}
-
-			};
 			logger.info("topics:", resultTopics);
-			resultTopics = new String[0];
-			result.setData(resultTopics);
-			result.setInfo(messageList);
+			res.setStatus(StaticConfig.RESPONSE_STATUS_FAIL);
+			res.setCode(S_505_NOT_FOUND_CODE);
+			res.setMessage("Subscriptions 목록을 찾을 수 없습니다");
+			res.setExplaination("해당 토큰의 Subscriptions 목록을 조회 하였으나 그 값이 없습니다");
+
 		} else {
-			result.setData(resultTopics);
+			res.setStatus(StaticConfig.RESPONSE_STATUS_OK);
+			res.setData(resultTopics);
+			res.setCode(S_505_SUCCESS_CODE);
+			res.setMessage("Subscriptions 목록을 조회 하였습니다");
+
 		}
-		Response<String[]> res = new Response<String[]>(result);
+
 		logger.debug("response:" + res);
 		return res;
 	}

@@ -3,12 +3,9 @@
  */
 package kr.co.adflow.pms.core.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.exception.PmsRuntimeException;
 import kr.co.adflow.pms.response.Response;
-import kr.co.adflow.pms.response.Result;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +36,7 @@ public class BaseController {
 	 */
 	@ExceptionHandler(Exception.class)
 	@ResponseBody
-	public Response<Result<List<String>>> handleAllException(final Exception e) {
+	public Response handleAllException(final Exception e) {
 
 		if (e instanceof PmsRuntimeException) {
 			// System.out.println("=== PmsRuntimeException 맞어 ");
@@ -60,20 +57,16 @@ public class BaseController {
 				errorMessage += " : " + error.getCode() + " : "
 						+ error.getDefaultMessage();
 			}
-			// } else if (e instanceof DuplicateKeyException) {
-			// errorMessage = e.getMessage();
 
 		} else {
 			errorMessage = e.getMessage();
 		}
-		Result<List<String>> result = new Result<List<String>>();
-		result.setSuccess(false);
-		List<String> messages = new ArrayList<String>();
-		messages.add(errorMessage);
-		result.setErrors(messages);
-		@SuppressWarnings({ "unchecked", "rawtypes" })
-		Response<Result<List<String>>> res = new Response(result);
+		Response res = new Response();
+		res.setStatus(StaticConfig.RESPONSE_STATUS_FAIL);
+		res.setCode(StaticConfig.RESPONSE_RUNTIME_EXCEPTION_CODE);
+		res.setMessage(errorMessage);
+	
+
 		return res;
 	}
-
 }

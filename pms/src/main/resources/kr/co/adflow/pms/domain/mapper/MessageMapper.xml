@@ -146,44 +146,28 @@
 		, a.msg_type
 		, a.receiver
 		, a.receiver_topic
-		,
-		a.service_id
+		,a.service_id
 		, a.is_ack
 		, a.status
 		, a.is_reservation
-		, a.reservation_time
-		, a.resend_count
-		, a.resend_max_count
-		, a.resend_interval
-		, a.resend_id
 		,
-		a.server_id
+		a.reservation_time
+		, a.server_id
 		, a.expiry
 		, a.qos
-		, a.retained
-		, a.send_terminal_type
+		, a.media_type
 		,
-		a.media_type
-		, a.msg_size
+		a.msg_size
 		, a.issue_time
 		, a.issue_id
-		, a.update_time
 		,
-		a.update_id
-		, a.content_type
+		a.content_type
 		, a.content
-		, a.file_name
-		, a.file_format
 
-		<!-- c.user_name AS issue_name -->
 		FROM
-		<!-- pms.reservation_msg a, pms.user c -->
 		pms.reservation_msg a
 		WHERE
-		<!-- a.issue_id = c.user_id -->
-
 		a.status = 0
-		<!-- AND a.server_id = #{serverId} -->
 		AND
 		a.reservation_time <![CDATA[<]]>
 		DATE_ADD(NOW(), INTERVAL 30 SECOND)
@@ -212,29 +196,32 @@
 	</select>
 
 
-	<select id="getSvcMessageListCnt" parameterType="kr.co.adflow.pms.domain.MsgParams"
+	<select id="getMessageListCnt" parameterType="kr.co.adflow.pms.domain.MsgParams"
 		resultType="Integer">
 		SELECT COUNT(*)
 		FROM
 		pms.message a left join pms.user h on
 		a.issue_id =
-		h.user_id,
-		pms.content e
-		WHERE a.msg_id = e.msg_id
+		h.user_id
+
+		WHERE
+		a.msg_id=a.msg_id
 		<if test="msgType != null and msgType != 0">
 			AND a.msg_type = #{msgType}
 		</if>
 		<if test="dateStart != null ">
-			AND a.update_time <![CDATA[>]]>
+			AND a.issue_time <![CDATA[>]]>
 			#{dateStart}
 		</if>
 		<if test="dateEnd != null ">
-			AND a.update_time <![CDATA[<]]>
+			AND a.issue_time <![CDATA[<]]>
 			#{dateEnd}
 		</if>
-		<if test="issueId != null and issueId != ''">
+
+		<if test="receiver != null and receiver != ''">
 			AND a.issue_id = #{issueId}
 		</if>
+
 		<if test="receiver != null and receiver != ''">
 			AND a.receiver = #{receiver}
 		</if>
@@ -250,56 +237,50 @@
 		</if>
 	</select>
 
-	<select id="getSvcMessageList" parameterType="kr.co.adflow.pms.domain.MsgParams"
+	<select id="getMessageList" parameterType="kr.co.adflow.pms.domain.MsgParams"
 		resultMap="MessageResult">
-		SELECT a.group_id
-		, a.msg_id
+		SELECT
+		a.msg_id
 		, a.msg_type
 		, a.receiver
 		, a.receiver_topic
 		, a.service_id
 		, a.is_ack
-		, a.status
-		, a.is_reservation
 		,
-		a.reservation_time
-		, a.resend_count
-		, a.resend_max_count
-		,
-		a.resend_interval
-		, a.resend_id
+		a.status
 		, a.server_id
-		, a.expiry
+		,
+		a.expiry
 		, a.qos
 		,
-		a.retained
-		, a.send_terminal_type
-		, a.media_type
-		, a.msg_size
+		a.msg_size
 		,
 		a.issue_time
 		, a.issue_id
-		, a.update_time
-		, a.update_id
-		, e.content_type
 		,
-		e.content
-		, e.file_name
-		, e.file_format
-		, h.user_name AS issue_name
+		a.content_type
+		,
+		a.content
+		, h.user_name AS
+		issue_name
 		FROM
-		pms.message a left join pms.user h on a.issue_id = h.user_id,
-		pms.content e
-		WHERE a.msg_id = e.msg_id
+		pms.message a
+		left join
+		pms.user
+		h on a.issue_id =
+		h.user_id
+
+		WHERE
+		a.msg_id =a.msg_id
 		<if test="msgType != null and msgType != 0">
 			AND a.msg_type = #{msgType}
 		</if>
 		<if test="dateStart != null ">
-			AND a.update_time <![CDATA[>]]>
+			AND a.issue_time <![CDATA[>]]>
 			#{dateStart}
 		</if>
 		<if test="dateEnd != null ">
-			AND a.update_time <![CDATA[<]]>
+			AND a.issue_time <![CDATA[<]]>
 			#{dateEnd}
 		</if>
 		<if test="issueId != null and issueId != ''">
@@ -318,13 +299,13 @@
 				#{status}
 			</foreach>
 		</if>
-		ORDER BY a.update_time DESC, a.issue_time DESC
+		ORDER BY a.issue_time DESC
 		limit #{iDisplayStart} ,
 		#{iDisplayLength}
 	</select>
 
 
-	<select id="getSvcMessageListCvs" parameterType="kr.co.adflow.pms.domain.MsgParams"
+	<select id="getMessageListCvs" parameterType="kr.co.adflow.pms.domain.MsgParams"
 		resultMap="MessageResult">
 		SELECT a.group_id
 		, a.msg_id
@@ -461,12 +442,6 @@
 	</select>
 
 
-	<!-- <select id="getSvcMessageDetailList" parameterType="kr.co.adflow.pms.domain.MsgParams" 
-		resultMap="MessageResult"> SELECT a.msg_id , a.token_id AS receiver ,a.ack_type 
-		as pma_ack_type ,a.ack_time as pma_ack_time ,b.ack_type as app_ack_type ,b.ack_time 
-		as app_ack_time FROM pms.ack${keyMon} a left outer join pms.ack${keyMon} 
-		b on a.token_id = b.token_id AND a.msg_id = b.msg_id and b.ack_type = 'app' 
-		WHERE a.ack_type = "pma" AND a.msg_id = #{msgId}; </select> -->
 
 
 	<select id="getSvcMessageDetailList" parameterType="kr.co.adflow.pms.domain.MsgParams"
@@ -657,7 +632,7 @@
 
 
 
-	<select id="getSvcResevationMessageListCnt" parameterType="kr.co.adflow.pms.domain.MsgParams"
+	<select id="getResevationMessageListCnt" parameterType="kr.co.adflow.pms.domain.MsgParams"
 		resultType="Integer">
 		SELECT COUNT(*)
 		FROM
@@ -685,10 +660,9 @@
 		</if>
 	</select>
 
-	<select id="getSvcResevationMessageList" parameterType="kr.co.adflow.pms.domain.MsgParams"
+	<select id="getResevationMessageList" parameterType="kr.co.adflow.pms.domain.MsgParams"
 		resultMap="MessageResult">
-		SELECT group_id
-		, a.msg_id
+		SELECT a.msg_id
 		, a.msg_type
 		, a.receiver
 		, a.receiver_topic
@@ -698,28 +672,16 @@
 		, a.status
 		, a.is_reservation
 		, a.reservation_time
-		, a.resend_count
-		, a.resend_max_count
-		, a.resend_interval
-		, a.resend_id
 		,
 		a.server_id
 		, a.expiry
 		, a.qos
-		, a.retained
-		, a.send_terminal_type
-		,
-		a.media_type
 		, a.msg_size
 		, a.issue_time
 		, a.issue_id
-		, a.update_time
 		,
-		a.update_id
-		, a.content_type
+		a.content_type
 		, a.content
-		, a.file_name
-		, a.file_format
 		,
 		h.user_name AS issue_name
 		FROM
@@ -746,9 +708,10 @@
 		<if test="msgId != null and msgId != ''">
 			AND a.msg_id = #{msgId}
 		</if>
-		ORDER BY a.reservation_time ASC,a.update_time DESC
+		ORDER BY a.reservation_time ASC
 		limit
-		#{iDisplayStart} , #{iDisplayLength}
+		#{iDisplayStart} ,
+		#{iDisplayLength}
 	</select>
 
 
@@ -773,23 +736,16 @@
 		,service_id
 		,is_ack
 		,status
-		,is_reservation
-		,reservation_time
-		,resend_count
-		,resend_max_count
-		,resend_interval
-		,resend_id
 		,server_id
 		,expiry
 		,qos
-		,retained
-		,send_terminal_type
-		,media_type
+
 		,msg_size
 		,issue_time
-		,issue_id
-		,update_time
-		,update_id
+		,issue_id,
+		content,
+		content_type
+
 		)
 		values(
 		#{msgId}
@@ -799,25 +755,17 @@
 		,#{serviceId}
 		,#{ack}
 		,#{status}
-		,#{reservation}
-		,#{reservationTime}
-		,#{resendCount}
-		,#{resendMaxCount}
-		,#{resendInterval}
-		,#{resendId}
 		,#{serverId}
 		,#{expiry}
 		,#{qos}
-		,#{retained}
-		,#{sendTerminalType}
-		,#{mediaType}
+
 		,#{msgSize}
 		,now()
-		<!-- ,#{issueTime} -->
 		,#{issueId}
-		<!-- ,#{updateTime} -->
-		,now()
-		,#{updateId}
+		,#{content}
+		,#{contentType}
+
+
 		)
 	</insert>
 	<insert id="insertContent" parameterType="kr.co.adflow.pms.domain.Message">
@@ -964,25 +912,15 @@
 		,status
 		,is_reservation
 		,reservation_time
-		,resend_count
-		,resend_max_count
-		,resend_interval
-		,resend_id
 		,server_id
 		,expiry
 		,qos
-		,retained
-		,send_terminal_type
 		,media_type
 		,msg_size
 		,issue_time
 		,issue_id
-		,update_time
-		,update_id
 		,content_type
 		,content
-		,file_name
-		,file_format
 		)
 		values(
 		#{msgId}
@@ -994,25 +932,15 @@
 		,#{status}
 		,#{reservation}
 		,#{reservationTime}
-		,#{resendCount}
-		,#{resendMaxCount}
-		,#{resendInterval}
-		,#{resendId}
 		,#{serverId}
 		,#{expiry}
 		,#{qos}
-		,#{retained}
-		,#{sendTerminalType}
 		,#{mediaType}
 		,#{msgSize}
 		,now()
 		,#{issueId}
-		,now()
-		,#{updateId}
 		,#{contentType}
 		,#{content}
-		,#{fileName}
-		,#{fileFormat}
 		)
 	</insert>
 
@@ -1028,21 +956,14 @@
 		,status
 		,is_reservation
 		,reservation_time
-		,resend_count
-		,resend_max_count
-		,resend_interval
-		,resend_id
 		,server_id
 		,expiry
 		,qos
-		,retained
-		,send_terminal_type
-		,media_type
 		,msg_size
 		,issue_time
 		,issue_id
-		,update_time
-		,update_id
+		,content
+		,content_type
 		)
 		values(#{msgId}
 		,#{msgType}
@@ -1053,21 +974,14 @@
 		,#{status}
 		,#{reservation}
 		,#{reservationTime}
-		,#{resendCount}
-		,#{resendMaxCount}
-		,#{resendInterval}
-		,#{resendId}
 		,#{serverId}
 		,#{expiry}
 		,#{qos}
-		,#{retained}
-		,#{sendTerminalType}
-		,#{mediaType}
 		,#{msgSize}
 		,#{issueTime}
 		,#{issueId}
-		,now()
-		,#{updateId}
+		,#{content}
+		,#{contentType}
 		)
 	</insert>
 
@@ -1106,8 +1020,7 @@
 
 	<select id="selectReservationMessage" parameterType="String"
 		resultMap="MessageResult">
-		SELECT group_id
-		,msg_id
+		SELECT msg_id
 		,msg_type
 		,receiver
 		,receiver_topic
@@ -1116,26 +1029,14 @@
 		,status
 		,is_reservation
 		,reservation_time
-		,resend_count
-		,resend_max_count
-		,resend_interval
-		,resend_id
 		,server_id
 		,expiry
 		,qos
-		,retained
-		,send_terminal_type
-		,media_type
-		,msg_size
-		,send_terminal_type
-		,media_type
 		,msg_size
 		,issue_time
 		,issue_id
 		,content_type
 		,content
-		,file_name
-		,file_format
 		FROM pms.reservation_msg
 		WHERE msg_id = #{msgId}
 	</select>

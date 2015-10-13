@@ -3,7 +3,6 @@
  */
 package kr.co.adflow.pms.domain;
 
-import java.util.Date;
 
 // TODO: Auto-generated Javadoc
 /**

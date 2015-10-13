@@ -4,7 +4,17 @@
      "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.co.adflow.pms.domain.mapper.AckMapper">
 
+	<resultMap id="AckResult" type="kr.co.adflow.pms.domain.Ack">
+		<result property="msgId" column="msg_id" />
+		<result property="ackType" column="ack_type" />
+		<result property="ackTime" column="ack_time" />
+		<result property="tokenId" column="token_id" />
+		<result property="receiver" column="receiver" />
+		<result property="issueId" column="issue_id" />
+		<result property="issueTime" column="issue_time" />
+		<result property="applicationKey" column="app_key" />
 
+	</resultMap>
 
 	<insert id="insertAck" parameterType="kr.co.adflow.pms.domain.Ack">
 		INSERT INTO pms.ack
@@ -26,123 +36,5 @@
 		#{serverId}
 		)
 	</insert>
-	
-	<resultMap id="AckCallbackResult" type="kr.co.adflow.pms.domain.AckCallback">
-		<result property="msgId" column="msg_id" />
-		<result property="ackType" column="ack_type" />
-		<result property="ackTime" column="ack_time" />
-		<result property="tokenId" column="token_id" />
-		<result property="callbackStatus" column="callback_status" />
-		<result property="callbackCount" column="callback_count" />
-		<result property="receiver" column="receiver" />
-		<result property="issueId" column="issue_id" />
-		<result property="callbackUrl" column="callback_url" />
-		<result property="callbackMethod" column="callback_method" />
-		<result property="callbackCountLimit" column="callback_count_limit" />
-		<result property="applicationKey" column="app_key" />
-		<result property="ufmi" column="ufmi" />
-	</resultMap>
-	
- 	<select id="getCallbackList" parameterType="Map"
-		resultMap="AckCallbackResult">
-		SELECT a.msg_id 
-		, a.ack_type
-		, a.ack_time
-		, a.token_id
-		, a.callback_status
-		, a.callback_count
-		, b.receiver
-		, b.issue_id
-		, c.callback_url
-		, c.callback_method
-		, c.callback_count_limit
-		, d.token_id AS app_key
-		, j.ufmi
-		FROM pms.ack${keyMon} a
-			,pms.message${keyMon} b
-			,user c
-			,token d
-			,push.token i
-			,push.user j 
-		WHERE a.msg_id = b.msg_id 
-		AND b.issue_id = c.user_id
-		AND a.callback_status = 0
-		AND a.server_id = #{serverId}
-		AND c.user_id = d.user_id
-		AND d.token_type = 'A'
-		AND a.token_id = i.tokenid 
-		AND i.userid = j.userid
-		ORDER BY a.issue_time ASC 
-		limit #{limit}
-	</select>
-	
-	
-<!-- 	<select id="getCallbackList" parameterType="Map"
-		resultMap="AckCallbackResult">
-		SELECT a.msg_id 
-		, a.ack_type
-		, a.ack_time
-		, a.token_id
-		, a.callback_status
-		, a.callback_count
-		, b.receiver
-		, b.issue_id
-		, c.callback_url
-		, c.callback_method
-		, c.callback_count_limit
-		, d.token_id AS app_key
-		FROM pms.ack${keyMon} a
-			,pms.message${keyMon} b
-			,user c
-			,token d
-		WHERE a.msg_id = b.msg_id 
-		AND b.issue_id = c.user_id
-		AND a.callback_status = 0
-		AND a.server_id = #{serverId}
-		AND c.user_id = d.user_id
-		AND d.token_type = 'A'
-		ORDER BY a.issue_time ASC 
-		limit #{limit}
-	</select> -->
-	
-	
-	
-<!-- 	<select id="getCallbackList" parameterType="Map"
-		resultMap="AckCallbackResult">
-		SELECT a.msg_id 
-		, a.ack_type
-		, a.ack_time
-		, a.token_id
-		, a.callback_status
-		, a.callback_count
-		, b.receiver
-		, b.issue_id
-		, c.callback_url
-		, c.callback_method
-		, c.callback_count_limit
-		, d.token_id AS app_key
-		FROM pms.ack${keyMon} a
-			,pms.message${keyMon} b
-			,user c
-			,token d
-		WHERE a.msg_id = b.msg_id 
-		AND b.issue_id = c.user_id
-		AND a.callback_status = 0
-		AND a.server_id = #{serverId}
-		AND c.user_id = d.user_id
-		AND d.token_type = 'A'
-		ORDER BY a.issue_time ASC 
-		limit #{limit}
-	</select> -->
-	
-	
-	<update id="updateAckCallback" parameterType="Map">
-		UPDATE pms.ack${keyMon}
-		SET callback_status = #{callbackStatus}
-		,callback_count = callback_count <![CDATA[+]]> #{callbackCount}
-		,issue_id = #{issueId}
-		WHERE msg_id = #{msgId}
-		AND ack_type = #{ackType}
-		AND token_id = #{tokenId}
-	</update>	
+
 </mapper>	

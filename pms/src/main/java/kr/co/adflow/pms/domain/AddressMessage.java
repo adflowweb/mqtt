@@ -3,10 +3,6 @@
  */
 package kr.co.adflow.pms.domain;
 
-import java.util.Date;
-
-import javax.validation.constraints.NotNull;
-
 import org.hibernate.validator.constraints.NotEmpty;
 
 // TODO: Auto-generated Javadoc

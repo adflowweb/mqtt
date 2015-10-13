@@ -3,60 +3,71 @@
  */
 package kr.co.adflow.pms.response;
 
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+
 // TODO: Auto-generated Javadoc
 /**
- * The Class Response.
- *
- * @param <T> the generic type
+ * The Class Result.
+ * 
+ * @param <T>
+ *            the generic type
  */
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class Response<T> {
 
-	/** The result. */
-	private Result<T> result;
+	/** The data. */
 
-	// /**
-	// * Instantiates a new response.
-	// */
-	// public Response() {
-	// }
+	private String status;
+	private T data;
+	private String code;
+	private String message;
+	private String explaination;
 
-	/**
-	 * Instantiates a new response.
-	 * 
-	 * @param result
-	 *            the result
-	 */
-	public Response(Result<T> result) {
-		this.result = result;
+	public String getStatus() {
+		return status;
 	}
 
-	/**
-	 * Gets the result.
-	 * 
-	 * @return the result
-	 */
-	public Result<T> getResult() {
-		return result;
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
-	/**
-	 * Sets the result.
-	 * 
-	 * @param result
-	 *            the new result
-	 */
-	public void setResult(Result<T> result) {
-		this.result = result;
+	public String getCode() {
+		return code;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+
+	public String getExplaination() {
+		return explaination;
+	}
+
+	public void setExplaination(String explaination) {
+		this.explaination = explaination;
+	}
+
+	public T getData() {
+		return data;
+	}
+
+	public void setData(T data) {
+		this.data = data;
+	}
+
 	@Override
 	public String toString() {
-		return "Response [result=" + result + "]";
+		return "Response [status=" + status + ", data=" + data + ", code="
+				+ code + ", message=" + message + ", explaination="
+				+ explaination + "]";
 	}
 
 }

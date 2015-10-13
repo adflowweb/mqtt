@@ -101,10 +101,18 @@
 
 	<!-- </jms:listener-container> -->
 
+
+
 	<bean id="qJmsFactory" class="com.ibm.mq.jms.MQQueueConnectionFactory">
 
 		<property name="connectionNameList" value="#{pms['mq.jms.hostname']}" />
 		<property name="port" value="#{pms['mq.jms.port']}" />
+		<!-- #{pms['mq.jms.hostname2']}, -->
+		<!-- <property name="clientReconnectOptions" value="XMSC_WMQ_CLIENT_RECONNECT_OPTIONS" 
+			/> -->
+		<!-- 67108864 -->
+		<!-- <property name="clientReconnectTimeout" value="10" /> -->
+		<!-- <property name="reconnectionRetryInterval"></property> -->
 		<property name="queueManager" value="#{pms['mq.jms.queue.manager']}" />
 		<property name="transportType" value="1" />
 		<property name="channel" value="#{pms['mq.jms.channel']}" />

@@ -4,11 +4,9 @@
 package kr.co.adflow.pms.core.service;
 
 import kr.co.adflow.pms.core.config.PmsConfig;
-import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.exception.PmsRuntimeException;
 import kr.co.adflow.pms.core.request.AuthReq;
 import kr.co.adflow.pms.core.response.AuthRes;
-import kr.co.adflow.pms.core.util.DateUtil;
 import kr.co.adflow.pms.core.util.KeyGenerator;
 import kr.co.adflow.pms.domain.Token;
 import kr.co.adflow.pms.domain.User;

@@ -8,7 +8,6 @@ import javax.jms.Session;
 
 import kr.co.adflow.pms.domain.Message;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,19 +82,16 @@ public class DirectMsgHandlerBySessionCallback implements
 			msgObject.put("msgType", msg.getMsgType());
 			msgObject.put("msgId", msg.getMsgId());
 			msgObject.put("issueId", msg.getIssueId());
-			msgObject.put("fileFormat", msg.getFileFormat());
-			msgObject.put("fileName", msg.getFileName());
 			msgObject.put("sender", msg.getSender());
 			msgObject.put("receiver", msg.getReceiverTopic());
 			if (msg.isAck()) {
 				msgObject.put("ack", 1);
 			}
-			// else {
-			// msgObject.put("ack", 0);
-			// }
-			if (msg.getResendCount() != 0) {
-				msgObject.put("resendCount", msg.getResendCount());
-			}
+			/*
+			 * // else { // msgObject.put("ack", 0); // } if
+			 * (msg.getResendCount() != 0) { msgObject.put("resendCount",
+			 * msg.getResendCount()); }
+			 */
 
 			msgObject.put("contentType", msg.getContentType());
 			msgObject.put("serviceId", msg.getServiceId());
@@ -126,11 +122,6 @@ public class DirectMsgHandlerBySessionCallback implements
 					javax.jms.Message.DEFAULT_PRIORITY/* default */,
 					msg.getExpiry());
 			logger.debug("메시지가전송되었습니다.");
-			// } catch (JSONException e) {
-			// e.printStackTrace();
-			//
-			// } catch (JMSException e) {
-			// throw e;
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {

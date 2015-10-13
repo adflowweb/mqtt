@@ -5,12 +5,9 @@ package kr.co.adflow.pms.core.executor;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.Date;
 
 import kr.co.adflow.pms.core.config.PmsConfig;
-import kr.co.adflow.pms.core.service.MessageSendService;
-import kr.co.adflow.pms.core.util.DateUtil;
-import kr.co.adflow.pms.domain.mapper.TableMgtMapper;
+import kr.co.adflow.pms.core.service.MessageExcutorService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +27,7 @@ public class MessageSendExecutor {
 
 	/** The message send service. */
 	@Autowired
-	private MessageSendService messageSendService;
+	private MessageExcutorService messageSendService;
 
 	// /** The table mgt mapper. */
 	// @Autowired

@@ -5,21 +5,16 @@ package kr.co.adflow.pms.core.handler;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 
 import javax.jms.BytesMessage;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 
-import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.util.AckTRLog;
-import kr.co.adflow.pms.core.util.MessageTRLog;
 import kr.co.adflow.pms.domain.Ack;
-import kr.co.adflow.pms.domain.CtlQ;
 import kr.co.adflow.pms.domain.mapper.AckMapper;
 import kr.co.adflow.pms.domain.mapper.CtlQMapper;
-import kr.co.adflow.pms.domain.mapper.MessageMapper;
 import kr.co.adflow.pms.domain.mapper.UserMapper;
 
 import org.json.JSONObject;
@@ -84,32 +79,15 @@ public class AckMessageDrivenBean implements MessageListener {
 
 		int cnt = 0;
 
-		// Mgs type check
 		HashMap<String, Object> param = new HashMap<String, Object>();
 
-		// param.put("keyMon", DateUtil.getYYYYMM());
-		// param.put("keyMon", ack.getKeyMon());
 		param.put("msgId", ack.getMsgId());
 
 		logger.debug("callback param ::" + param.toString());
 		try {
-			// String callbackUrl = userMapper.selectCallbackUrl(param);
-			//
-			// logger.debug("callback URL ::" + callbackUrl);
-
-			// callback check
-			// if (callbackUrl != null && callbackUrl.trim().length() > 0) {
-			//
-			// // 관제 message
-			// cnt = ackMapper.insertAck(ack);
-			// // ctlQMapper.insertQ(this.getCtlQ(ack));
-			// logger.debug("ctl_q ADD::" + ack.toString());
-			//
-			// } else {
 
 			cnt = ackMapper.insertAck(ack);
 
-			// }
 			logger.debug("ack result : {}", cnt);
 
 		} catch (Exception e) {

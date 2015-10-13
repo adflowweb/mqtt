@@ -1,9 +1,9 @@
 package kr.co.adflow.pms.core.service;
 
-import kr.co.adflow.pms.adm.request.UserReq;
-import kr.co.adflow.pms.adm.request.UserUpdateReq;
 import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.exception.PmsRuntimeException;
+import kr.co.adflow.pms.core.request.UserReq;
+import kr.co.adflow.pms.core.request.UserUpdateReq;
 import kr.co.adflow.pms.core.util.CheckUtil;
 import kr.co.adflow.pms.core.util.KeyGenerator;
 import kr.co.adflow.pms.domain.Token;
@@ -12,11 +12,18 @@ import kr.co.adflow.pms.domain.mapper.InterceptMapper;
 import kr.co.adflow.pms.domain.mapper.TokenMapper;
 import kr.co.adflow.pms.domain.mapper.UserMapper;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserServiceImpl implements UserService {
+
+	private static final Logger logger = LoggerFactory
+			.getLogger(PCFServiceImpl.class);
+
 	@Autowired
 	private CheckUtil checkUtil;
 
@@ -36,7 +43,7 @@ public class UserServiceImpl implements UserService {
 		paramUser.setUserId(userReq.getUserId());
 		paramUser.setUserName(userReq.getUserName());
 		paramUser.setPassword(this.getPassword(userReq));
-		paramUser.setRole(userReq.getRole());
+		paramUser.setRole("admin");
 
 		paramUser.setStatus(-1);
 
@@ -46,7 +53,12 @@ public class UserServiceImpl implements UserService {
 		paramUser.setAction("createUser");
 		userMapper.logUserHistory(paramUser);
 
-		userMapper.insertUser(paramUser);
+		try {
+			userMapper.insertUser(paramUser);
+
+		} catch (DuplicateKeyException e) {
+			logger.debug("유저가 이미 등록되어 있습니다. user=" + paramUser.getUserId());
+		}
 
 		paramUser.setStatus(StaticConfig.USER_STATUS_NORMAL);
 
@@ -55,13 +67,11 @@ public class UserServiceImpl implements UserService {
 		paramToken
 				.setTokenId(KeyGenerator.generateToken(paramUser.getUserId()));
 		int cnt = tokenMapper.insertToken(paramToken);
-		// res.setToken(paramToken.getTokenId());
+
 		if (cnt < 1) {
 
 			throw new PmsRuntimeException("invalid auth error");
 		}
-		//
-		// userMapper udate
 
 		return paramUser.getUserId();
 	}

@@ -26,7 +26,6 @@
 	<select id="selectToken" parameterType="String" resultMap="TokenResult">
 		SELECT user_id
 		, token_id
-		, token_type
 		, issue_time
 		,
 		expired_time
@@ -42,7 +41,6 @@
 		INSERT INTO pms.token
 		(user_id
 		,token_id
-		,token_type
 		,issue_time
 		,issue_id
 		,expired_time
@@ -50,7 +48,6 @@
 		values(
 		#{userId}
 		,#{tokenId}
-		,#{tokenType}
 		,now()
 		,#{issueId}
 		,#{expiredTime}

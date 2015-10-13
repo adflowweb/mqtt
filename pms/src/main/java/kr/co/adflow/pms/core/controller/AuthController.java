@@ -5,12 +5,12 @@ package kr.co.adflow.pms.core.controller;
 
 import javax.validation.Valid;
 
+import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.request.AuthReq;
 import kr.co.adflow.pms.core.response.AuthRes;
 import kr.co.adflow.pms.core.service.AuthService;
 import kr.co.adflow.pms.domain.Validation;
 import kr.co.adflow.pms.response.Response;
-import kr.co.adflow.pms.response.Result;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +37,10 @@ public class AuthController extends BaseController {
 	@Autowired
 	private AuthService authService;
 
+	/* Interface Code */
+	private final static String S_501_SUCCESS_CODE = "501200";
+	private final static String S_502_SUCCESS_CODE = "502200";
+
 	/**
 	 * 유저 인증후 토큰 발행.
 	 * 
@@ -46,29 +50,34 @@ public class AuthController extends BaseController {
 	 */
 	@RequestMapping(value = "/auth", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
-	public Response<Result<AuthRes>> authUser(@RequestBody @Valid AuthReq auth)
+	public Response<AuthRes> authUser(@RequestBody @Valid AuthReq auth)
 			throws Exception {
 
 		AuthRes authRes = authService.authUser(auth);
 
-		Result<AuthRes> result = new Result<AuthRes>();
-		result.setSuccess(true);
-		result.setData(authRes);
-		@SuppressWarnings({ "unchecked", "rawtypes" })
-		Response<Result<AuthRes>> res = new Response(result);
+		Response<AuthRes> res = new Response<AuthRes>();
+		res.setStatus(StaticConfig.RESPONSE_STATUS_OK);
+		res.setData(authRes);
+		res.setCode(S_501_SUCCESS_CODE);
+		res.setMessage("사용자 인증에 성공 하였습니다.");
+		
+	
+
 		return res;
 
 	}
 
-	@RequestMapping(value = "auth/{token}", method = RequestMethod.GET)
+	@RequestMapping(value = "/auth/{token}", method = RequestMethod.GET)
 	@ResponseBody
-	public Response validate(@PathVariable String token) throws Exception {
+	public Response<Validation> validate(@PathVariable String token)
+			throws Exception {
 		logger.debug("token=" + token);
-		Result<Validation> result = new Result<Validation>();
-		result.setSuccess(true);
+		Response<Validation> res = new Response<Validation>();
 		Validation valid = new Validation(authService.authToken(token));
-		result.setData(valid);
-		Response res = new Response(result);
+		res.setStatus(StaticConfig.RESPONSE_STATUS_OK);
+		res.setData(valid);
+		res.setCode(S_502_SUCCESS_CODE);
+		res.setMessage("토큰을 인증 하였습니다.");
 		logger.debug("response:" + res);
 		return res;
 	}

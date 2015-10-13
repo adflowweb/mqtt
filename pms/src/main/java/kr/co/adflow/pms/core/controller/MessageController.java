@@ -3,22 +3,17 @@
  */
 package kr.co.adflow.pms.core.controller;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
 
-import kr.co.adflow.pms.adm.request.ReservationCancelReq;
-import kr.co.adflow.pms.adm.response.MessagesRes;
-import kr.co.adflow.pms.adm.service.AccountService;
 import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.exception.PmsRuntimeException;
 import kr.co.adflow.pms.core.request.MessageReq;
+import kr.co.adflow.pms.core.response.MessageSendRes;
+import kr.co.adflow.pms.core.response.MessagesListRes;
 import kr.co.adflow.pms.core.service.MessageService;
-import kr.co.adflow.pms.domain.validator.UserValidator;
 import kr.co.adflow.pms.response.Response;
-import kr.co.adflow.pms.response.Result;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +41,9 @@ public class MessageController extends BaseController {
 	@Autowired
 	private MessageService messageService;
 
+	private final static String S_506_SUCCESS_CODE = "506200";
+	private final static String S_507_SUCCESS_CODE = "507200";
+
 	/**
 	 * Send message.
 	 * 
@@ -59,7 +57,7 @@ public class MessageController extends BaseController {
 	 */
 	@RequestMapping(value = "/messages", method = RequestMethod.POST, consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
 	@ResponseBody
-	public Response<Result<List<String>>> sendMessage(
+	public Response<MessageSendRes> sendMessage(
 			@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String appKey,
 			@RequestBody @Valid MessageReq msg) throws Exception {
 
@@ -87,27 +85,24 @@ public class MessageController extends BaseController {
 			throw new PmsRuntimeException("Content is empty.");
 		}
 
-		
-		
-		
 		int resultCnt = messageService.sendMessage(msg, appKey);
 
-		List<String> messages = new ArrayList<String>();
-		messages.add("receiver=" + msg.getReceiver());
-		messages.add("content=" + msg.getContent());
+		MessageSendRes messageSendRes = new MessageSendRes();
+		messageSendRes.setContent(msg.getContent());
+		messageSendRes.setReceiver(msg.getReceiver());
+		Response<MessageSendRes> res = new Response<MessageSendRes>();
+		res.setStatus(StaticConfig.RESPONSE_STATUS_OK);
+		res.setData(messageSendRes);
+		res.setCode(S_506_SUCCESS_CODE);
+		res.setMessage("메시지를 전송 하였습니다.");
 
-		Result<List<String>> result = new Result<List<String>>();
-		result.setSuccess(true);
-		result.setInfo(messages);
-		@SuppressWarnings({ "unchecked", "rawtypes" })
-		Response<Result<List<String>>> res = new Response(result);
 		return res;
 
 	}
 
 	@RequestMapping(value = "/messages", method = RequestMethod.GET)
 	@ResponseBody
-	public Response<Result<MessagesRes>> getMessageList(
+	public Response<MessagesListRes> getMessageList(
 			@RequestParam Map<String, String> params,
 			@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String appKey)
 			throws Exception {
@@ -115,58 +110,61 @@ public class MessageController extends BaseController {
 		String sEcho = (String) params.get("sEcho");
 		params.put("appKey", appKey);
 
-		MessagesRes messagesRes = messageService.getMessageListById(params);
+		MessagesListRes messagesListRes = messageService
+				.getMessageListById(params);
+		messagesListRes.setsEcho(sEcho);
+		Response<MessagesListRes> res = new Response<MessagesListRes>();
+		res.setStatus(StaticConfig.RESPONSE_STATUS_OK);
+		res.setData(messagesListRes);
+		res.setCode(S_507_SUCCESS_CODE);
+		res.setMessage("메시지 내역을 조회 하였습니다");
 
-		messagesRes.setsEcho(sEcho);
-
-		Result<MessagesRes> result = new Result<MessagesRes>();
-		result.setSuccess(true);
-		result.setData(messagesRes);
-		@SuppressWarnings({ "unchecked", "rawtypes" })
-		Response<Result<MessagesRes>> res = new Response(result);
 		return res;
 
 	}
 
-	@RequestMapping(value = "/messages/reservations", method = RequestMethod.GET)
-	@ResponseBody
-	public Response<Result<MessagesRes>> getResevationMessageList(
-			@RequestParam Map<String, String> params,
-			@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String appKey)
-			throws Exception {
-
-		String sEcho = (String) params.get("sEcho");
-		params.put("appKey", appKey);
-
-		MessagesRes messagesRes = messageService
-				.getResevationMessageList(params);
-
-		messagesRes.setsEcho(sEcho);
-
-		Result<MessagesRes> result = new Result<MessagesRes>();
-		result.setSuccess(true);
-		result.setData(messagesRes);
-		@SuppressWarnings({ "unchecked", "rawtypes" })
-		Response<Result<MessagesRes>> res = new Response(result);
-		return res;
-
-	}
-
-	@RequestMapping(value = "/messages/cancel", method = RequestMethod.DELETE, consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
-	@ResponseBody
-	public Response<Result<Integer>> cancelReservationList(
-			@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String appKey,
-			@RequestBody ReservationCancelReq ids) throws Exception {
-
-		Integer delCnt = messageService.cancelReservationList(appKey, ids);
-
-		Result<Integer> result = new Result<Integer>();
-		result.setSuccess(true);
-
-		result.setData(delCnt);
-		@SuppressWarnings({ "unchecked", "rawtypes" })
-		Response<Result<Integer>> res = new Response(result);
-		return res;
-	}
+	// @RequestMapping(value = "/messages/reservations", method =
+	// RequestMethod.GET)
+	// @ResponseBody
+	// public Response<Result<MessagesRes>> getResevationMessageList(
+	// @RequestParam Map<String, String> params,
+	// @RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String appKey)
+	// throws Exception {
+	//
+	// String sEcho = (String) params.get("sEcho");
+	// params.put("appKey", appKey);
+	//
+	// MessagesRes messagesRes = messageService
+	// .getResevationMessageList(params);
+	//
+	// messagesRes.setsEcho(sEcho);
+	//
+	// Result<MessagesRes> result = new Result<MessagesRes>();
+	// result.setSuccess(true);
+	// result.setData(messagesRes);
+	// @SuppressWarnings({ "unchecked", "rawtypes" })
+	// Response<Result<MessagesRes>> res = new Response(result);
+	// return res;
+	//
+	// }
+	//
+	// @RequestMapping(value = "/messages/cancel", method =
+	// RequestMethod.DELETE, consumes = StaticConfig.HEADER_CONTENT_TYPE,
+	// produces = StaticConfig.HEADER_CONTENT_TYPE)
+	// @ResponseBody
+	// public Response<Result<Integer>> cancelReservationList(
+	// @RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String appKey,
+	// @RequestBody ReservationCancelReq ids) throws Exception {
+	//
+	// Integer delCnt = messageService.cancelReservationList(appKey, ids);
+	//
+	// Result<Integer> result = new Result<Integer>();
+	// result.setSuccess(true);
+	//
+	// result.setData(delCnt);
+	// @SuppressWarnings({ "unchecked", "rawtypes" })
+	// Response<Result<Integer>> res = new Response(result);
+	// return res;
+	// }
 
 }
