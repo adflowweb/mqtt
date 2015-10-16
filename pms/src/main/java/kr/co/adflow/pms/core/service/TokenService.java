@@ -3,14 +3,14 @@
  */
 package kr.co.adflow.pms.core.service;
 
-import kr.co.adflow.pms.core.request.AuthReq;
-import kr.co.adflow.pms.core.response.AuthRes;
+import kr.co.adflow.pms.core.request.TokenReq;
+import kr.co.adflow.pms.core.response.TokenRes;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Interface CommonService.
  */
-public interface AuthService {
+public interface TokenService {
 
 	/**
 	 * Auth user.
@@ -19,7 +19,7 @@ public interface AuthService {
 	 *            the auth
 	 * @return the auth res
 	 */
-	AuthRes authUser(AuthReq auth) throws Exception;
+	TokenRes createToken(TokenReq auth,String requestUserId) throws Exception;
 
 	boolean authToken(String token) throws Exception;
 

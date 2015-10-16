@@ -1,58 +1,47 @@
-/*
- * 
- */
 package kr.co.adflow.pms.core.filter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import kr.co.adflow.pms.core.config.StaticConfig;
-import kr.co.adflow.pms.domain.mapper.TokenMapper;
+import kr.co.adflow.pms.domain.mapper.InterceptMapper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class UserInterceptor.
- */
-public class MessageInterceptor extends HandlerInterceptorAdapter {
+public class TokenInterceptor extends HandlerInterceptorAdapter {
 
-	/** The Constant logger. */
 	private static final Logger logger = LoggerFactory
-			.getLogger(MessageInterceptor.class);
+			.getLogger(TokenInterceptor.class);
 
-	/** The intercept mapper. */
 	@Autowired
-	private TokenMapper tokenMapper;
+	InterceptMapper interceptMapper;
 
 	public boolean preHandle(HttpServletRequest request,
 			HttpServletResponse response, Object handler) throws Exception {
-
 		String applicationKey = request
 				.getHeader(StaticConfig.HEADER_APPLICATION_KEY);
-
 		if (applicationKey == null || applicationKey.trim().length() == 0) {
-
 			logger.error(
 					"applicationKey not found ..please check your request{}",
 					applicationKey);
 			response.sendError(401);
 			return false;
+
 		}
 
-		boolean appKeyCheck = tokenMapper.checkToken(applicationKey);
-
-		if (!appKeyCheck) {
-			logger.error("applicationKey not found  {}", applicationKey);
+		String userId = interceptMapper.selectCashedUserId(applicationKey);
+		if (userId == null || userId.trim().length() == 0) {
+			logger.error("User not found ..please check your request{}",
+					applicationKey);
 			response.sendError(401);
 			return false;
+
 		}
 
 		return true;
-
 	}
 
 }

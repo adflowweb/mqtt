@@ -3,6 +3,8 @@
  */
 package kr.co.adflow.pms.domain.mapper;
 
+import java.util.List;
+
 import kr.co.adflow.pms.domain.Token;
 
 // TODO: Auto-generated Javadoc
@@ -28,6 +30,8 @@ public interface TokenMapper {
 	 * @return the token
 	 */
 	Token selectToken(String tokenId);
+
+	Token selectUserid(String tokenId);
 
 	/**
 	 * Delete expired token.
@@ -55,6 +59,8 @@ public interface TokenMapper {
 	 * @return the int
 	 */
 	int deleteUserToken(String userId);
+
+	List<Token> getApiCode(String userId);
 
 	/**
 	 * Select appKey.

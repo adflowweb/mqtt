@@ -98,6 +98,20 @@ public class StaticConfig {
 
 	public static final String RESPONSE_STATUS_OK = "ok";
 	public static final String RESPONSE_STATUS_FAIL = "fail";
-	public static final String RESPONSE_RUNTIME_EXCEPTION_CODE = "500000";
+	public static final String RESPONSE_MESSAGE_EXCEPTION_CODE = "500000";
+	public static final String USER_GROUP_CODE = "10000";
+
+	/* Interface Code */
+	// 토큰 생성 API Code
+	public final static String API_CODE_510 = "510";
+	public final static String API_CODE_511 = "511";
+	public final static String SUCCESS_CODE_510 = "510200";
+	public final static String ERROR_CODE_510400 = "510400";
+	public final static String ERROR_CODE_510401 = "510401";
+	public final static String ERROR_CODE_510500 = "510500";
+	public final static String SUCCESS_CODE_511 = "511200";
+	public final static String ERROR_CODE_511400 = "511400";
+	public final static String ERROR_CODE_511401 = "511401";
+	public final static String ERROR_CODE_511500 = "511500";
 
 }

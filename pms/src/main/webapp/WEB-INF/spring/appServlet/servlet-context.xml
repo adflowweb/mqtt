@@ -18,8 +18,8 @@
 	<interceptors>
 
 		<interceptor>
-			<mapping path="/messages/**" />
-			<beans:bean class="kr.co.adflow.pms.core.filter.MessageInterceptor" />
+			<mapping path="/**" />
+			<beans:bean class="kr.co.adflow.pms.core.filter.TokenInterceptor" />
 		</interceptor>
 
 

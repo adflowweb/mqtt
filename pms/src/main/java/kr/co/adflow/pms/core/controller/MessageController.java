@@ -8,7 +8,6 @@ import java.util.Map;
 import javax.validation.Valid;
 
 import kr.co.adflow.pms.core.config.StaticConfig;
-import kr.co.adflow.pms.core.exception.PmsRuntimeException;
 import kr.co.adflow.pms.core.request.MessageReq;
 import kr.co.adflow.pms.core.response.MessageSendRes;
 import kr.co.adflow.pms.core.response.MessagesListRes;
@@ -69,20 +68,20 @@ public class MessageController extends BaseController {
 
 		if (msg.getSender() == null || msg.getSender().trim().length() == 0) {
 
-			throw new PmsRuntimeException("Sender is empty.");
+			//throw new TokenRuntimeException("Sender is empty.");
 		}
 		if (msg.getReceiver() == null || msg.getReceiver().trim().length() == 0) {
 
-			throw new PmsRuntimeException("Receiver is empty.");
+//			throw new TokenRuntimeException("Receiver is empty.");
 		}
 		if (msg.getContentType() == null
 				|| msg.getContentType().trim().length() == 0) {
 
-			throw new PmsRuntimeException("ContentType is empty.");
+//			throw new TokenRuntimeException("ContentType is empty.");
 		}
 		if (msg.getContent() == null || msg.getContent().trim().length() == 0) {
 
-			throw new PmsRuntimeException("Content is empty.");
+			// throw new TokenRuntimeException("Content is empty.");
 		}
 
 		int resultCnt = messageService.sendMessage(msg, appKey);

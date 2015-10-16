@@ -3,30 +3,28 @@
  */
 package kr.co.adflow.pms.core.request;
 
-import org.hibernate.validator.constraints.NotEmpty;
-
 // TODO: Auto-generated Javadoc
 /**
  * The Class AuthReq.
  */
-public class AuthReq {
+public class TokenReq {
 
-	/** The user id. */
-	@NotEmpty
 	private String userId;
 
-	/** The password. */
-	@NotEmpty
 	private String password;
-	
+
+	private String deviceId;
+
+	private String userName;
+
+	private String deviceInfo;
+
 	/** The user type. */
 	private String type;
-	
-	
 
 	/**
 	 * Gets the user type.
-	 *
+	 * 
 	 * @return the type
 	 */
 	public String getType() {
@@ -35,8 +33,9 @@ public class AuthReq {
 
 	/**
 	 * Sets the user type.
-	 *
-	 * @param type the new user type
+	 * 
+	 * @param type
+	 *            the new user type
 	 */
 	public void setType(String type) {
 		this.type = type;
@@ -44,7 +43,7 @@ public class AuthReq {
 
 	/**
 	 * Gets the user id.
-	 *
+	 * 
 	 * @return the user id
 	 */
 	public String getUserId() {
@@ -53,8 +52,9 @@ public class AuthReq {
 
 	/**
 	 * Sets the user id.
-	 *
-	 * @param userId the new user id
+	 * 
+	 * @param userId
+	 *            the new user id
 	 */
 	public void setUserId(String userId) {
 		this.userId = userId;
@@ -62,7 +62,7 @@ public class AuthReq {
 
 	/**
 	 * Gets the password.
-	 *
+	 * 
 	 * @return the password
 	 */
 	public String getPassword() {
@@ -71,10 +71,36 @@ public class AuthReq {
 
 	/**
 	 * Sets the password.
-	 *
-	 * @param password the new password
+	 * 
+	 * @param password
+	 *            the new password
 	 */
 	public void setPassword(String password) {
 		this.password = password;
 	}
+
+	public String getDeviceId() {
+		return deviceId;
+	}
+
+	public void setDeviceId(String deviceId) {
+		this.deviceId = deviceId;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public String getDeviceInfo() {
+		return deviceInfo;
+	}
+
+	public void setDeviceInfo(String deviceInfo) {
+		this.deviceInfo = deviceInfo;
+	}
+
 }

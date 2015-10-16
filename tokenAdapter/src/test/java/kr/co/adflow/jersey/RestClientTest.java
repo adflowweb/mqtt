@@ -1,29 +1,5 @@
 package kr.co.adflow.jersey;
 
-import static org.testng.AssertJUnit.assertNotNull;
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertTrue;
-
-import java.util.Date;
-import java.util.List;
-import java.util.Properties;
-
-import javax.ws.rs.core.MediaType;
-
-import kr.co.adflow.push.auth.wmq.JAASLoginModule;
-import kr.co.adflow.push.domain.Response;
-import kr.co.adflow.push.domain.Token;
-import kr.co.adflow.push.domain.Validation;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
-
-import com.sun.jersey.api.client.GenericType;
-import com.sun.jersey.api.client.WebResource;
-
 /**
  * @author nadir93
  * @date 2014. 4. 14.

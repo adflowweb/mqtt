@@ -12,7 +12,7 @@
 
 	<!-- Application Loggers -->
 	<logger name="kr.co.adflow.pms">
-		<level value="info" />
+		<level value="debug" />
 	<!-- <appender-ref ref="console" /> -->
 	</logger>
 
@@ -38,28 +38,28 @@
 		<level value="info" />
 	</logger>
 	<logger name="org.apache.ibatis">
-		<level value="info" />
+		<level value="debug" />
 	</logger>
 
 
 
 
 	<logger name="messageTrLogger">
-		<level value="info" />
+		<level value="debug" />
 		<appender-ref ref="messageTrLogFileAppender" />
 	</logger>
 
 
 
 	<logger name="ackLogger">
-		<level value="info" />
+		<level value="debug" />
 		<appender-ref ref="ackLogFileAppender" />
 	</logger>
 
 
 	<!-- Root Logger -->
 	<root>
-		<priority value="info" />
+		<priority value="debug" />
 		<appender-ref ref="console" />
 	</root>
 

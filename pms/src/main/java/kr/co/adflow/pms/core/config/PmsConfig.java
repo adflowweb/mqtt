@@ -14,36 +14,36 @@ import org.springframework.stereotype.Component;
 public class PmsConfig {
 
 	/** The executor server id. */
-	@Value("#{pms['executor.server.id1']}")
-	public String EXECUTOR_SERVER_ID1; // = "S01";
+	@Value("#{pms['executor.server.id']}")
+	public String EXECUTOR_SERVER_ID; // = "S01";
 
-	/** The executor server id. */
-	@Value("#{pms['executor.server.id2']}")
-	public String EXECUTOR_SERVER_ID2;
+	// /** The executor server id. */
+	// @Value("#{pms['executor.server.id2']}")
+	// public String EXECUTOR_SERVER_ID2;
+	//
+	// @Value("#{pms['executor.server.id3']}")
+	// public String EXECUTOR_SERVER_ID3;
+	//
+	// @Value("#{pms['executor.server.id4']}")
+	// public String EXECUTOR_SERVER_ID4;
+	//
+	// @Value("#{pms['executor.server.id5']}")
+	// public String EXECUTOR_SERVER_ID5;
+	//
+	// @Value("#{pms['executor.server.id6']}")
+	// public String EXECUTOR_SERVER_ID6;
 
-	@Value("#{pms['executor.server.id3']}")
-	public String EXECUTOR_SERVER_ID3;
+	// /** The executor delay time. */
+	// @Value("#{pms['executor.delay.time']}")
+	// public int EXECUTOR_DELAY_TIME;// = 10000;
 
-	@Value("#{pms['executor.server.id4']}")
-	public String EXECUTOR_SERVER_ID4;
+	// /** The executor send limit. */
+	// @Value("#{pms['executor.send.limit']}")
+	// public int EXECUTOR_SEND_LIMIT;// = 100;
 
-	@Value("#{pms['executor.server.id5']}")
-	public String EXECUTOR_SERVER_ID5;
-
-	@Value("#{pms['executor.server.id6']}")
-	public String EXECUTOR_SERVER_ID6;
-
-	/** The executor delay time. */
-	@Value("#{pms['executor.delay.time']}")
-	public int EXECUTOR_DELAY_TIME;// = 10000;
-
-	/** The executor send limit. */
-	@Value("#{pms['executor.send.limit']}")
-	public int EXECUTOR_SEND_LIMIT;// = 100;
-
-	/** The header application token expired. */
-	@Value("#{pms['header.application.token.expired']}")
-	public int HEADER_APPLICATION_TOKEN_EXPIRED; // = 180;
+	// /** The header application token expired. */
+	// @Value("#{pms['header.application.token.expired']}")
+	// public int HEADER_APPLICATION_TOKEN_EXPIRED; // = 180;
 
 	/** The message header type default. */
 	@Value("#{pms['message.header.type.default']}")
@@ -65,42 +65,42 @@ public class PmsConfig {
 	@Value("#{pms['message.service.id.default']}")
 	public String MESSAGE_SERVICE_ID_DEFAULT;// = "kr.co.ktpowertel.push.mms";
 
-	/** The message service id userMessage. */
-	@Value("#{pms['message.service.id.userMessage']}")
-	public String MESSAGE_SERVICE_ID_USERMESSAGE;// =
-													// "kr.co.ktpowertel.push.userMessage";
+	// /** The message service id userMessage. */
+	// @Value("#{pms['message.service.id.userMessage']}")
+	// public String MESSAGE_SERVICE_ID_USERMESSAGE;// =
+	// // "kr.co.ktpowertel.push.userMessage";
 
-	/** The message service id userMessage. */
-	@Value("#{pms['message.service.id.adflow']}")
-	public String MESSAGE_SERVICE_ID_ADFLOW;// =
-											// "kr.co.adflow.push.message";
+	// /** The message service id userMessage. */
+	// @Value("#{pms['message.service.id.adflow']}")
+	// public String MESSAGE_SERVICE_ID_ADFLOW;// =
+	// // "kr.co.adflow.push.message";
 
-	/** The message service id userMessage. */
-	@Value("#{pms['message.user.message.expiry.default']}")
-	public int MESSAGE_USER_MESSAGE_EXPIRY_DEFAULT;// = 600000;
+	// /** The message service id userMessage. */
+	// @Value("#{pms['message.user.message.expiry.default']}")
+	// public int MESSAGE_USER_MESSAGE_EXPIRY_DEFAULT;// = 600000;
 
 	/** The message ack default. */
 	@Value("#{pms['message.ack.default']}")
 	public boolean MESSAGE_ACK_DEFAULT;// = true;
 
-	@Value("#{pms['message.csv.limit.default']}")
-	public int MESSAGE_CSV_LIMIT_DEFAULT;// = 100000
-
-	/** The cdr.file.path. */
-	@Value("#{pms['cdr.file.path']}")
-	public String CDR_FILE_PATH;// = /cdrData/;
-
-	/** The cdr.targetfile.path. */
-	@Value("#{pms['cdr.targetfile.path']}")
-	public String CDR_TARGETFILE_PATH;// = /root/;
-
-	/** The cdr.file.max.row. */
-	@Value("#{pms['cdr.file.max.row']}")
-	public int CDR_FILE_MAX_ROW;// = 30000;
-
-	/** The cdr.db.max.row. */
-	@Value("#{pms['cdr.db.max.row']}")
-	public int CDR_DB_MAX_ROW;// = 1000;
+	// @Value("#{pms['message.csv.limit.default']}")
+	// public int MESSAGE_CSV_LIMIT_DEFAULT;// = 100000
+	//
+	// /** The cdr.file.path. */
+	// @Value("#{pms['cdr.file.path']}")
+	// public String CDR_FILE_PATH;// = /cdrData/;
+	//
+	// /** The cdr.targetfile.path. */
+	// @Value("#{pms['cdr.targetfile.path']}")
+	// public String CDR_TARGETFILE_PATH;// = /root/;
+	//
+	// /** The cdr.file.max.row. */
+	// @Value("#{pms['cdr.file.max.row']}")
+	// public int CDR_FILE_MAX_ROW;// = 30000;
+	//
+	// /** The cdr.db.max.row. */
+	// @Value("#{pms['cdr.db.max.row']}")
+	// public int CDR_DB_MAX_ROW;// = 1000;
 
 	// /** The mq.pcf.hostname. */
 	// @Value("#{pms['mq.pcf.hostname']}")

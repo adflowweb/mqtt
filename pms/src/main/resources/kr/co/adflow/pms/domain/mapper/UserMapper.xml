@@ -8,39 +8,36 @@
 		<result property="userId" column="user_id" />
 		<result property="password" column="password" />
 		<result property="userName" column="user_name" />
-		<result property="role" column="role" />
 		<result property="status" column="status" />
-		<result property="msgCntLimit" column="message_count_limit" />
-		<result property="defaultExpiry" column="default_expiry" />
-		<result property="defaultQos" column="default_qos" />
 		<result property="issueTime" column="issue_time" />
 		<result property="issueId" column="issue_id" />
-		<result property="applicationToken" column="application_token" />
+
+		<result property="groupCode" column="group_code" />
+		<result property="serverId" column="server_id" />
+		<result property="action" column="action" />
 
 	</resultMap>
 
 	<insert id="insertUser" parameterType="kr.co.adflow.pms.domain.User">
 		INSERT INTO pms.user
 		(user_id
-		,role
 		,password
 		,user_name
+		,group_code
 		,status
-		,default_expiry
-		,default_qos
 		,issue_time
 		,issue_id
+		,server_id
 		)
 		values(
 		#{userId}
-		,#{role}
 		,#{password}
 		,#{userName}
+		,#{groupCode}
 		,#{status}
-		,#{defaultExpiry}
-		,#{defaultQos}
 		,now()
 		,#{issueId}
+		,#{serverId}
 		)
 	</insert>
 
@@ -52,11 +49,13 @@
 		, a.status
 		,
 		a.default_expiry
-		, a.default_qos
+		,
+		a.default_qos
 		, a.issue_time
 		, a.issue_id
 		, b.token_id
-		as application_token
+		as
+		application_token
 		FROM pms.user a,
 		pms.token b
 		WHERE
@@ -149,30 +148,26 @@
 
 	<insert id="logUserHistory" parameterType="kr.co.adflow.pms.domain.User">
 		INSERT INTO pms.user_h
-		(user_id
-		,role
+		(action
+		,user_id
 		,password
 		,user_name
-
+		,group_code
 		,status
-		,default_expiry
-		,default_qos
 		,issue_time
 		,issue_id
-		,action
+		
 		)
 		values(
-		#{userId}
-		,#{role}
+		#{action}
+		,#{userId}
 		,#{password}
 		,#{userName}
-
+		,#{groupCode}
 		,#{status}
-		,#{defaultExpiry}
-		,#{defaultQos}
 		,now()
 		,#{issueId}
-		,#{action}
+		
 		)
 	</insert>
 

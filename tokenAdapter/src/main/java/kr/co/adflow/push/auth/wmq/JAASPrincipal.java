@@ -36,7 +36,7 @@ public class JAASPrincipal implements java.security.Principal,
 		logger.info("JAASPrincipal시작(name=" + name + ")");
 		logger.info("thread=" + Thread.currentThread());
 		this.name = name;
-		//logger.info("JAASPrincipal초기화되었습니다." + this.hashCode());
+		// logger.info("JAASPrincipal초기화되었습니다." + this.hashCode());
 		logger.info("JAASPrincipal종료");
 	}
 

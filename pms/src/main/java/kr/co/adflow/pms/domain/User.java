@@ -17,17 +17,11 @@ public class User {
 	/** The user id. */
 	private String userId;
 
-	/** The role. */
-	private String role;
-
 	/** The password. */
 	private String password;
 
 	/** The user name. */
 	private String userName;
-
-	/** The ip filters. */
-	private String ipFilters;
 
 	/** The status. */
 	private int status;
@@ -41,14 +35,25 @@ public class User {
 	/** The action. */
 	private String action;
 
-	/** The application token. */
-	private String applicationToken;
+	private String serverId;
 
-	/** The default expiry. */
-	private int defaultExpiry;
+	private String groupCode;
 
-	/** The default qos. */
-	private int defaultQos;
+	public String getGroupCode() {
+		return groupCode;
+	}
+
+	public void setGroupCode(String groupCode) {
+		this.groupCode = groupCode;
+	}
+
+	public String getServerId() {
+		return serverId;
+	}
+
+	public void setServerId(String serverId) {
+		this.serverId = serverId;
+	}
 
 	/**
 	 * Gets the user id.
@@ -70,26 +75,7 @@ public class User {
 	}
 
 	/**
-	 * Gets the role.
-	 * 
-	 * @return the role
-	 */
-	public String getRole() {
-		return role;
-	}
-
-	/**
-	 * Sets the role.
-	 * 
-	 * @param role
-	 *            the new role
-	 */
-	public void setRole(String role) {
-		this.role = role;
-	}
-
-	/**
-	 * Gets the password.
+	 * /** Gets the password.
 	 * 
 	 * @return the password
 	 */
@@ -124,25 +110,6 @@ public class User {
 	 */
 	public void setUserName(String userName) {
 		this.userName = userName;
-	}
-
-	/**
-	 * Gets the ip filters.
-	 * 
-	 * @return the ip filters
-	 */
-	public String getIpFilters() {
-		return ipFilters;
-	}
-
-	/**
-	 * Sets the ip filters.
-	 * 
-	 * @param ipFilters
-	 *            the new ip filters
-	 */
-	public void setIpFilters(String ipFilters) {
-		this.ipFilters = ipFilters;
 	}
 
 	/**
@@ -219,63 +186,6 @@ public class User {
 	 */
 	public void setAction(String action) {
 		this.action = action;
-	}
-
-	/**
-	 * Gets the application token.
-	 * 
-	 * @return the application token
-	 */
-	public String getApplicationToken() {
-		return applicationToken;
-	}
-
-	/**
-	 * Sets the application token.
-	 * 
-	 * @param applicationToken
-	 *            the new application token
-	 */
-	public void setApplicationToken(String applicationToken) {
-		this.applicationToken = applicationToken;
-	}
-
-	/**
-	 * Gets the default expiry.
-	 * 
-	 * @return the default expiry
-	 */
-	public int getDefaultExpiry() {
-		return defaultExpiry;
-	}
-
-	/**
-	 * Sets the default expiry.
-	 * 
-	 * @param defaultExpiry
-	 *            the new default expiry
-	 */
-	public void setDefaultExpiry(int defaultExpiry) {
-		this.defaultExpiry = defaultExpiry;
-	}
-
-	/**
-	 * Gets the default qos.
-	 * 
-	 * @return the default qos
-	 */
-	public int getDefaultQos() {
-		return defaultQos;
-	}
-
-	/**
-	 * Sets the default qos.
-	 * 
-	 * @param defaultQos
-	 *            the new default qos
-	 */
-	public void setDefaultQos(int defaultQos) {
-		this.defaultQos = defaultQos;
 	}
 
 	/**

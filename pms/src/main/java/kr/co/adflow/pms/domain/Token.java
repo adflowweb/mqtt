@@ -13,32 +13,60 @@ public class Token {
 
 	/** The user id. */
 	private String userId;
-	
+
 	/** The token id. */
 	private String tokenId;
-	
+
+	private String deviceId;
+
 	/** The token type. */
 	private String tokenType;
-	
+
 	/** The issue time. */
 	private Date issueTime;
-	
+
 	/** The issue id. */
 	private String issueId;
-	
+
 	/** The expired time. */
 	private Date expiredTime;
 
+	private String apiCode;
+
+	private String serverId;
+
 	/**
 	 * Gets the user id.
-	 *
+	 * 
 	 * @return the user id
 	 */
-	
-	
-	
+
 	public String getUserId() {
 		return userId;
+	}
+
+	public String getServerId() {
+		return serverId;
+	}
+
+	public void setServerId(String serverId) {
+		this.serverId = serverId;
+	}
+
+	public String getDeviceId() {
+		return deviceId;
+	}
+
+	public void setDeviceId(String deviceId) {
+		this.deviceId = deviceId;
+	}
+
+	public String getApiCode() {
+		return apiCode;
+	}
+
+	public void setApiCode(String apiCode) {
+		this.apiCode = apiCode;
 	}
 
 	@Override
@@ -50,8 +78,9 @@ public class Token {
 
 	/**
 	 * Sets the user id.
-	 *
-	 * @param userId the new user id
+	 * 
+	 * @param userId
+	 *            the new user id
 	 */
 	public void setUserId(String userId) {
 		this.userId = userId;
@@ -59,7 +88,7 @@ public class Token {
 
 	/**
 	 * Gets the token id.
-	 *
+	 * 
 	 * @return the token id
 	 */
 	public String getTokenId() {
@@ -68,8 +97,9 @@ public class Token {
 
 	/**
 	 * Sets the token id.
-	 *
-	 * @param tokenId the new token id
+	 * 
+	 * @param tokenId
+	 *            the new token id
 	 */
 	public void setTokenId(String tokenId) {
 		this.tokenId = tokenId;
@@ -77,7 +107,7 @@ public class Token {
 
 	/**
 	 * Gets the token type.
-	 *
+	 * 
 	 * @return the token type
 	 */
 	public String getTokenType() {
@@ -86,8 +116,9 @@ public class Token {
 
 	/**
 	 * Sets the token type.
-	 *
-	 * @param tokenType the new token type
+	 * 
+	 * @param tokenType
+	 *            the new token type
 	 */
 	public void setTokenType(String tokenType) {
 		this.tokenType = tokenType;
@@ -95,7 +126,7 @@ public class Token {
 
 	/**
 	 * Gets the issue time.
-	 *
+	 * 
 	 * @return the issue time
 	 */
 	public Date getIssueTime() {
@@ -104,8 +135,9 @@ public class Token {
 
 	/**
 	 * Sets the issue time.
-	 *
-	 * @param issueTime the new issue time
+	 * 
+	 * @param issueTime
+	 *            the new issue time
 	 */
 	public void setIssueTime(Date issueTime) {
 		this.issueTime = issueTime;
@@ -113,7 +145,7 @@ public class Token {
 
 	/**
 	 * Gets the expired time.
-	 *
+	 * 
 	 * @return the expired time
 	 */
 	public Date getExpiredTime() {
@@ -122,8 +154,9 @@ public class Token {
 
 	/**
 	 * Sets the expired time.
-	 *
-	 * @param expiredTime the new expired time
+	 * 
+	 * @param expiredTime
+	 *            the new expired time
 	 */
 	public void setExpiredTime(Date expiredTime) {
 		this.expiredTime = expiredTime;
@@ -131,7 +164,7 @@ public class Token {
 
 	/**
 	 * Gets the issue id.
-	 *
+	 * 
 	 * @return the issue id
 	 */
 	public String getIssueId() {
@@ -140,8 +173,9 @@ public class Token {
 
 	/**
 	 * Sets the issue id.
-	 *
-	 * @param issueId the new issue id
+	 * 
+	 * @param issueId
+	 *            the new issue id
 	 */
 	public void setIssueId(String issueId) {
 		this.issueId = issueId;

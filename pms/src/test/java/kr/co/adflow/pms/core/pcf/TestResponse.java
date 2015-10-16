@@ -2,7 +2,7 @@ package kr.co.adflow.pms.core.pcf;
 
 import java.util.HashMap;
 
-import kr.co.adflow.pms.core.request.AuthReq;
+import kr.co.adflow.pms.core.request.TokenReq;
 import kr.co.adflow.pms.response.Response;
 
 import org.springframework.test.context.ContextConfiguration;

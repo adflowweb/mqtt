@@ -81,11 +81,7 @@
 			<version>1.18.1</version>
 		</dependency>
 
-		<dependency>
-			<groupId>kr.co.adflow.push</groupId>
-			<artifactId>domain</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
+
 	</dependencies>
 	<build>
 		<plugins>
@@ -130,6 +126,20 @@
 				</executions>
 			</plugin>
 
+
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>fully.qualified.MainClass</mainClass>
+						</manifest>
+					</archive>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-deploy-plugin</artifactId>

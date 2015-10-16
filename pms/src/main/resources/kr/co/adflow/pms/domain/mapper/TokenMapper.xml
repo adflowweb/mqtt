@@ -11,6 +11,10 @@
 		<result property="issueTime" column="issue_time" />
 		<result property="issueId" column="issue_id" />
 		<result property="expiredTime" column="expired_time" />
+		<result property="apiCode" column="api_code" />
+		<result property="deviceId" column="device_id" />
+		<result property="serverId" column="server_id" />
+
 	</resultMap>
 
 	<select id="getLatest" parameterType="kr.co.adflow.pms.domain.Token"
@@ -18,6 +22,7 @@
 		SELECT token_id, user_id
 		FROM token
 		WHERE user_id= #{userId}
+		AND device_id=#{deviceId}
 		order by issue_time desc
 		limit 1
 	</select>
@@ -28,29 +33,49 @@
 		, token_id
 		, issue_time
 		,
-		expired_time
-		,
 		issue_id
 		FROM pms.token a
 		WHERE
 		a.token_id = #{tokenId}
 	</select>
 
+	<select id="selectUserid" parameterType="String" resultMap="TokenResult">
+		SELECT user_id
+		FROM pms.token a
+		WHERE
+		a.token_id=#{tokneId};
+
+
+	</select>
+
+
+
+	<select id="getApiCode" parameterType="String" resultMap="TokenResult">
+
+		SELECT
+		api_code FROM pms.role WHERE group_code= (SELECT group_code FROM
+		pms.user where user_id=#{userId});
+	</select>
+
+
 
 	<insert id="insertToken" parameterType="kr.co.adflow.pms.domain.Token">
 		INSERT INTO pms.token
 		(user_id
 		,token_id
+		,device_id
 		,issue_time
 		,issue_id
-		,expired_time
+		,last_access_time
 		)
 		values(
 		#{userId}
 		,#{tokenId}
+		,#{deviceId}
 		,now()
 		,#{issueId}
-		,#{expiredTime}
+		,now()
+
 		)
 	</insert>
 

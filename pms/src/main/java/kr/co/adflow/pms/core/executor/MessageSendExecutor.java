@@ -75,10 +75,10 @@ public class MessageSendExecutor {
 	 */
 	public void sendReservationMessageArray() {
 
-		logger.debug("***********************start");
-		messageSendService.sendReservationMessageArray(
-				pmsConfig.EXECUTOR_SERVER_ID1, pmsConfig.EXECUTOR_SEND_LIMIT);
-		logger.debug("***********************end");
+		// logger.debug("***********************start");
+		// messageSendService.sendReservationMessageArray(
+		// pmsConfig.EXECUTOR_SERVER_ID1, pmsConfig.EXECUTOR_SEND_LIMIT);
+		// logger.debug("***********************end");
 
 	}
 

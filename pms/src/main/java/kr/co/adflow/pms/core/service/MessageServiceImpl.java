@@ -142,8 +142,7 @@ public class MessageServiceImpl implements MessageService {
 		int cnt = messageMapper.getResevationMessageListCnt(msgParams);
 		logger.info("cnt :::::::{}", cnt);
 
-		List<Message> list = messageMapper
-				.getResevationMessageList(msgParams);
+		List<Message> list = messageMapper.getResevationMessageList(msgParams);
 		logger.info("list size :::::::{}", list.size());
 
 		res = new MessagesListRes();
@@ -182,7 +181,7 @@ public class MessageServiceImpl implements MessageService {
 			msg = list.get(0);
 
 			logger.debug("msg::" + msg.toString());
-			
+
 			msg.setStatus(StaticConfig.MESSAGE_STATUS_RESEVATION_CANCEL);
 
 			messageMapper.insertMessageRV(msg);
@@ -211,13 +210,13 @@ public class MessageServiceImpl implements MessageService {
 
 		Message msg = new Message();
 
-		msg.setServerId(pmsConfig.EXECUTOR_SERVER_ID1);
+		msg.setServerId(pmsConfig.EXECUTOR_SERVER_ID);
 
 		if (message.getExpiry() == 0) {
 			logger.debug("expiry 시간이 입력되지 않아 기본 시간으로 세팅툅니다!"
-					+ pmsConfig.MESSAGE_USER_MESSAGE_EXPIRY_DEFAULT);
+					+ pmsConfig.MESSAGE_HEADER_EXPIRY_DEFAULT);
 
-			msg.setExpiry(pmsConfig.MESSAGE_USER_MESSAGE_EXPIRY_DEFAULT);
+			msg.setExpiry(pmsConfig.MESSAGE_HEADER_EXPIRY_DEFAULT);
 		} else {
 			logger.debug("expiry 시간이 입력되었습니다!" + message.getExpiry());
 			long expiryTime = message.getExpiry() * 1000;
@@ -230,7 +229,7 @@ public class MessageServiceImpl implements MessageService {
 		msg.setIssueName(issueId);
 		msg.setSender(sender);
 
-		msg.setServiceId(pmsConfig.MESSAGE_SERVICE_ID_ADFLOW);
+		msg.setServiceId(pmsConfig.MESSAGE_SERVICE_ID_DEFAULT);
 		// message.service.id.adflow=kr.co.adflow.push.message
 		// Ack false
 		msg.setAck(true);

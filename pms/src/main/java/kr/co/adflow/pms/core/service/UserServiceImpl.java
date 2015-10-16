@@ -1,7 +1,6 @@
 package kr.co.adflow.pms.core.service;
 
 import kr.co.adflow.pms.core.config.StaticConfig;
-import kr.co.adflow.pms.core.exception.PmsRuntimeException;
 import kr.co.adflow.pms.core.request.UserReq;
 import kr.co.adflow.pms.core.request.UserUpdateReq;
 import kr.co.adflow.pms.core.util.CheckUtil;
@@ -43,7 +42,7 @@ public class UserServiceImpl implements UserService {
 		paramUser.setUserId(userReq.getUserId());
 		paramUser.setUserName(userReq.getUserName());
 		paramUser.setPassword(this.getPassword(userReq));
-		paramUser.setRole("admin");
+		// paramUser.setRole("admin");
 
 		paramUser.setStatus(-1);
 
@@ -70,7 +69,7 @@ public class UserServiceImpl implements UserService {
 
 		if (cnt < 1) {
 
-			throw new PmsRuntimeException("invalid auth error");
+			/* throw new TokenRuntimeException("invalid auth error","dd"); */
 		}
 
 		return paramUser.getUserId();
@@ -104,10 +103,10 @@ public class UserServiceImpl implements UserService {
 		User resultUser = null;
 		resultUser = userMapper.select(userId);
 
-		resultUser.setDefaultExpiry(checkUtil.getMessageExpiry(resultUser
-				.getDefaultExpiry()));
-		resultUser.setDefaultQos(checkUtil.getMessageQos(resultUser
-				.getDefaultQos()));
+//		resultUser.setDefaultExpiry(checkUtil.getMessageExpiry(resultUser
+//				.getDefaultExpiry()));
+//		resultUser.setDefaultQos(checkUtil.getMessageQos(resultUser
+//				.getDefaultQos()));
 
 		return resultUser;
 	}

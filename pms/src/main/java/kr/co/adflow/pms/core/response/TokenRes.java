@@ -7,7 +7,7 @@ package kr.co.adflow.pms.core.response;
 /**
  * The Class AuthRes.
  */
-public class AuthRes {
+public class TokenRes {
 
 	/** The user id. */
 	private String userId;
@@ -18,6 +18,8 @@ public class AuthRes {
 	/** The token. */
 	private String token;
 
+	private String serverId;
+
 	// /** The ufmi. */
 	// private String ufmi;
 	//
@@ -27,6 +29,14 @@ public class AuthRes {
 
 	/** The userName. */
 	private String userName;
+
+	public String getServerId() {
+		return serverId;
+	}
+
+	public void setServerId(String serverId) {
+		this.serverId = serverId;
+	}
 
 	/**
 	 * Gets the userName.
