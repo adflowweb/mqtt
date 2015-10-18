@@ -109,9 +109,25 @@ public class StaticConfig {
 	public final static String ERROR_CODE_510400 = "510400";
 	public final static String ERROR_CODE_510401 = "510401";
 	public final static String ERROR_CODE_510500 = "510500";
+
 	public final static String SUCCESS_CODE_511 = "511200";
 	public final static String ERROR_CODE_511400 = "511400";
 	public final static String ERROR_CODE_511401 = "511401";
 	public final static String ERROR_CODE_511500 = "511500";
+
+	public final static String SUCCESS_CODE_512 = "512200";
+	public final static String ERROR_CODE_512400 = "512400";
+	public final static String ERROR_CODE_512401 = "512401";
+	public final static String ERROR_CODE_512500 = "512500";
+
+	public final static String SUCCESS_CODE_513 = "513200";
+	public final static String ERROR_CODE_513404 = "513404";
+	public final static String ERROR_CODE_513401 = "513401";
+	public final static String ERROR_CODE_513500 = "513500";
+
+	public final static String SUCCESS_CODE_514 = "514200";
+	public final static String ERROR_CODE_514404 = "514404";
+	public final static String ERROR_CODE_514401 = "514401";
+	public final static String ERROR_CODE_514500 = "514500";
 
 }

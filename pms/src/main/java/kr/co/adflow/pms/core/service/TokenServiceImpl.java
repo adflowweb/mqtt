@@ -7,6 +7,7 @@ import kr.co.adflow.pms.core.config.PmsConfig;
 import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.exception.TokenRunTimeException;
 import kr.co.adflow.pms.core.request.TokenReq;
+import kr.co.adflow.pms.core.response.TokenInfoRes;
 import kr.co.adflow.pms.core.response.TokenRes;
 import kr.co.adflow.pms.core.util.KeyGenerator;
 import kr.co.adflow.pms.domain.Device;
@@ -156,6 +157,14 @@ public class TokenServiceImpl implements TokenService {
 			logger.debug("validate 종료(false)");
 			return false;
 		}
+	}
+
+	@Override
+	public Token getTokenInfo(String token) throws Exception {
+		// TODO Auto-generated method stub
+		logger.debug("validate 시작(token=" + token + ")");
+		Token tokenData = tokenMapper.selectTokenInfo(token);
+		return tokenData;
 	}
 
 }

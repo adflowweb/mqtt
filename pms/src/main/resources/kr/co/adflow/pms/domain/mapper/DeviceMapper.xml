@@ -4,7 +4,7 @@
      "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.co.adflow.pms.domain.mapper.DeviceMapper">
 
-	<resultMap id="AckResult" type="kr.co.adflow.pms.domain.Device">
+	<resultMap id="deviceResult" type="kr.co.adflow.pms.domain.Device">
 		<result property="deviceId" column="device_id" />
 		<result property="deviceInfo" column="device_info" />
 		<result property="userId" column="user_id" />
@@ -13,8 +13,8 @@
 
 	</resultMap>
 
-	<insert id="insertAck" parameterType="kr.co.adflow.pms.domain.Device">
-		INSERT INTO pms.ack
+	<insert id="insertDevice" parameterType="kr.co.adflow.pms.domain.Device">
+		INSERT INTO pms.device
 		(device_id
 		,device_info
 		,user_id

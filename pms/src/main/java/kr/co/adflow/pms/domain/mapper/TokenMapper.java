@@ -70,6 +70,8 @@ public interface TokenMapper {
 	 * @return the String
 	 */
 	String selectApplicationKey(String userId);
+	
+	Token selectTokenInfo(String token);
 
 	Token getLatest(Token tokenID);
 

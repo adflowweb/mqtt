@@ -4,7 +4,9 @@
 package kr.co.adflow.pms.core.service;
 
 import kr.co.adflow.pms.core.request.TokenReq;
+import kr.co.adflow.pms.core.response.TokenInfoRes;
 import kr.co.adflow.pms.core.response.TokenRes;
+import kr.co.adflow.pms.domain.Token;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -19,8 +21,11 @@ public interface TokenService {
 	 *            the auth
 	 * @return the auth res
 	 */
-	TokenRes createToken(TokenReq auth,String requestUserId) throws Exception;
+	TokenRes createToken(TokenReq userInfo, String requestUserId)
+			throws Exception;
 
 	boolean authToken(String token) throws Exception;
+
+	Token getTokenInfo(String token) throws Exception;
 
 }

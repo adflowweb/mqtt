@@ -58,7 +58,7 @@ public class RestClient {
 		String valid = null;
 		try {
 			logger.debug("api.key=" + API_KEY);
-			Response data = webResource.path("auth").path(token)
+			Response data = webResource.path("validate").path(token)
 					.accept(MediaType.APPLICATION_JSON)
 					.header("X-Application-Key", API_KEY)
 					.get(new GenericType<Response>() {

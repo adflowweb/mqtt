@@ -172,9 +172,9 @@
 				<!-- rest api version -->
 				<api.version>v1</api.version>
 				<!-- rest api key -->
-				<api.key>devServer2</api.key>
+				<api.key>mqjasstoken</api.key>
 				<!-- 인증유무 -->
-				<auth>false</auth>
+				<auth>true</auth>
 			</properties>
 		</profile>
 		<!-- Production environment @ production server -->
@@ -190,7 +190,7 @@
 				<!-- rest api version -->
 				<api.version>v1</api.version>
 				<!-- rest api key -->
-				<api.key>devServer2</api.key>
+				<api.key>mqjasstoken</api.key>
 				<!-- 인증유무 -->
 				<auth>true</auth>
 				<!-- <db.driverClass>oracle.jdbc.driver.OracleDriver</db.driverClass> 

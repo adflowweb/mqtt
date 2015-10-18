@@ -3,15 +3,16 @@
 <suite name="Failed suite [Default suite]">
   <test name="Default test(failed)">
     <classes>
-      <class name="kr.co.adflow.pms.core.pcf.PCFConnection">
+      <class name="kr.co.adflow.pms.core.pcf.TokenControllerTest">
         <methods>
+          <include name="test"/>
           <include name="springTestContextAfterTestClass"/>
           <include name="springTestContextBeforeTestClass"/>
+          <include name="springTestContextBeforeTestMethod"/>
           <include name="springTestContextPrepareTestInstance"/>
           <include name="springTestContextAfterTestMethod"/>
-          <include name="testMessageService"/>
         </methods>
-      </class> <!-- kr.co.adflow.pms.core.pcf.PCFConnection -->
+      </class> <!-- kr.co.adflow.pms.core.pcf.TokenControllerTest -->
     </classes>
   </test> <!-- Default test(failed) -->
 </suite> <!-- Failed suite [Default suite] -->

@@ -49,6 +49,16 @@
 	</select>
 
 
+	<select id="selectTokenInfo" parameterType="String" resultMap="TokenResult">
+		SELECT user_id,device_id,issue_time
+		FROM pms.token a
+		WHERE
+		a.token_id=#{tokneId};
+
+
+	</select>
+
+
 
 	<select id="getApiCode" parameterType="String" resultMap="TokenResult">
 

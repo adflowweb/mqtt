@@ -199,6 +199,12 @@
 		</dependency>
 		<dependency>
 			<groupId>kr.co.adflow.push.pcf</groupId>
+			<artifactId>com.ibm.mq.dhbcore</artifactId>
+			<version>1.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>kr.co.adflow.push.pcf</groupId>
 			<artifactId>com.ibm.mq.jmqi</artifactId>
 			<version>1.0</version>
 			<scope>compile</scope>
