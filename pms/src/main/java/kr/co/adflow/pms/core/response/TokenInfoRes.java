@@ -32,4 +32,10 @@ public class TokenInfoRes {
 		this.issueTime = issueTime;
 	}
 
+	@Override
+	public String toString() {
+		return "TokenInfoRes [userId=" + userId + ", deviceId=" + deviceId
+				+ ", issueTime=" + issueTime + "]";
+	}
+
 }

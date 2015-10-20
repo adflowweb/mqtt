@@ -16,15 +16,16 @@ public interface SummaryMapper {
 
 	/**
 	 * Gets the month summary.
-	 *
-	 * @param params the params
+	 * 
+	 * @param params
+	 *            the params
 	 * @return the month summary
 	 */
-	//List<Map<String, Object>> getMonthSummary(Map<String, String> params);
+	// List<Map<String, Object>> getMonthSummary(Map<String, String> params);
 	List<Map<String, Object>> getMonthSummary(MsgParams params);
-	
-	
-	
+
+	Map<String, String> getMessageStatistics(MsgParams params);
+
 	double getTPS(String keyMon);
 
 }

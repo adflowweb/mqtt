@@ -5,41 +5,23 @@
 <mapper namespace="kr.co.adflow.pms.domain.mapper.MessageMapper">
 
 	<resultMap id="MessageResult" type="kr.co.adflow.pms.domain.Message">
-		<result property="groupId" column="group_id" />
 		<result property="msgId" column="msg_id" />
 		<result property="msgType" column="msg_type" />
 		<result property="receiver" column="receiver" />
-		<result property="receiverTopic" column="receiver_topic" />
-		<result property="serviceId" column="service_id" />
 		<result property="ack" column="is_ack" />
 		<result property="status" column="status" />
-		<result property="reservation" column="is_reservation" />
-		<result property="reservationTime" column="reservation_time" />
-		<result property="resendCount" column="resend_count" />
-		<result property="resendMaxCount" column="resend_max_count" />
-		<result property="resendInterval" column="resend_interval" />
-		<result property="resendId" column="resend_id" />
 		<result property="serverId" column="server_id" />
 		<result property="expiry" column="expiry" />
 		<result property="qos" column="qos" />
-		<result property="retained" column="retained" />
 		<result property="contentType" column="content_type" />
 		<result property="content" column="content" />
 		<result property="msgSize" column="msg_size" />
-		<result property="mediaType" column="media_type" />
-		<result property="sendTerminalType" column="send_terminal_type" />
 		<result property="issueTime" column="issue_time" />
 		<result property="issueId" column="issue_id" />
-		<result property="updateTime" column="update_time" />
-		<result property="updateId" column="update_id" />
 		<result property="pmaAckType" column="pma_ack_type" />
 		<result property="pmaAckTime" column="pma_ack_time" />
 		<result property="appAckType" column="app_ack_type" />
 		<result property="appAckTime" column="app_ack_time" />
-		<result property="issueName" column="issue_name" />
-		<result property="ufmi" column="ufmi" />
-		<result property="fileName" column="file_name" />
-		<result property="fileFormat" column="file_format" />
 	</resultMap>
 
 
@@ -200,26 +182,13 @@
 		resultType="Integer">
 		SELECT COUNT(*)
 		FROM
-		pms.message a left join pms.user h on
-		a.issue_id =
-		h.user_id
-
+		pms.message a
 		WHERE
 		a.msg_id=a.msg_id
+		AND issue_time
+		between #{dateStart} and #{dateEnd}
 		<if test="msgType != null and msgType != 0">
 			AND a.msg_type = #{msgType}
-		</if>
-		<if test="dateStart != null ">
-			AND a.issue_time <![CDATA[>]]>
-			#{dateStart}
-		</if>
-		<if test="dateEnd != null ">
-			AND a.issue_time <![CDATA[<]]>
-			#{dateEnd}
-		</if>
-
-		<if test="receiver != null and receiver != ''">
-			AND a.issue_id = #{issueId}
 		</if>
 
 		<if test="receiver != null and receiver != ''">
@@ -243,7 +212,7 @@
 		a.msg_id
 		, a.msg_type
 		, a.receiver
-		, a.receiver_topic
+
 		, a.service_id
 		, a.is_ack
 		,
@@ -256,13 +225,13 @@
 		a.msg_size
 		,
 		a.issue_time
-		, a.issue_id
+		,
+		a.issue_id
 		,
 		a.content_type
 		,
 		a.content
-		, h.user_name AS
-		issue_name
+
 		FROM
 		pms.message a
 		left join
@@ -272,16 +241,11 @@
 
 		WHERE
 		a.msg_id =a.msg_id
+		AND a.issue_time between #{dateStart} and #{dateEnd}
+
+
 		<if test="msgType != null and msgType != 0">
 			AND a.msg_type = #{msgType}
-		</if>
-		<if test="dateStart != null ">
-			AND a.issue_time <![CDATA[>]]>
-			#{dateStart}
-		</if>
-		<if test="dateEnd != null ">
-			AND a.issue_time <![CDATA[<]]>
-			#{dateEnd}
 		</if>
 		<if test="issueId != null and issueId != ''">
 			AND a.issue_id = #{issueId}
@@ -732,14 +696,12 @@
 		(msg_id
 		,msg_type
 		,receiver
-		,receiver_topic
 		,service_id
 		,is_ack
 		,status
 		,server_id
 		,expiry
 		,qos
-
 		,msg_size
 		,issue_time
 		,issue_id,
@@ -751,14 +713,12 @@
 		#{msgId}
 		,#{msgType}
 		,#{receiver}
-		,#{receiverTopic}
 		,#{serviceId}
 		,#{ack}
 		,#{status}
 		,#{serverId}
 		,#{expiry}
 		,#{qos}
-
 		,#{msgSize}
 		,now()
 		,#{issueId}
@@ -1037,7 +997,8 @@
 		,issue_id
 		,content_type
 		,content
-		FROM pms.reservation_msg
+		FROM
+		pms.reservation_msg
 		WHERE msg_id = #{msgId}
 	</select>
 

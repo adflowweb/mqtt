@@ -2,50 +2,50 @@
 <testng-results skipped="0" failed="0" total="1" passed="1">
   <reporter-output>
   </reporter-output>
-  <suite name="Default suite" duration-ms="4574" started-at="2015-10-16T10:49:50Z" finished-at="2015-10-16T10:49:54Z">
+  <suite name="Default suite" duration-ms="4596" started-at="2015-10-20T05:05:27Z" finished-at="2015-10-20T05:05:32Z">
     <groups>
     </groups>
-    <test name="Default test" duration-ms="4574" started-at="2015-10-16T10:49:50Z" finished-at="2015-10-16T10:49:54Z">
-      <class name="kr.co.adflow.pms.core.pcf.TokenControllerTest">
-        <test-method status="PASS" signature="springTestContextBeforeTestClass()[pri:0, instance:kr.co.adflow.pms.core.pcf.TokenControllerTest@140f3941]" name="springTestContextBeforeTestClass" is-config="true" duration-ms="15" started-at="2015-10-16T19:49:50Z" finished-at="2015-10-16T19:49:50Z">
+    <test name="Default test" duration-ms="4596" started-at="2015-10-20T05:05:27Z" finished-at="2015-10-20T05:05:32Z">
+      <class name="kr.co.adflow.pms.core.pcf.MessageControllerTest">
+        <test-method status="PASS" signature="springTestContextBeforeTestClass()[pri:0, instance:kr.co.adflow.pms.core.pcf.MessageControllerTest@6d8c8c3e]" name="springTestContextBeforeTestClass" is-config="true" duration-ms="8" started-at="2015-10-20T14:05:27Z" finished-at="2015-10-20T14:05:27Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- springTestContextBeforeTestClass -->
-        <test-method status="PASS" signature="springTestContextPrepareTestInstance()[pri:0, instance:kr.co.adflow.pms.core.pcf.TokenControllerTest@140f3941]" name="springTestContextPrepareTestInstance" is-config="true" duration-ms="4127" started-at="2015-10-16T19:49:50Z" depends-on-methods="org.springframework.test.context.testng.AbstractTestNGSpringContextTests.springTestContextBeforeTestClass" finished-at="2015-10-16T19:49:54Z">
+        <test-method status="PASS" signature="springTestContextPrepareTestInstance()[pri:0, instance:kr.co.adflow.pms.core.pcf.MessageControllerTest@6d8c8c3e]" name="springTestContextPrepareTestInstance" is-config="true" duration-ms="4024" started-at="2015-10-20T14:05:27Z" depends-on-methods="org.springframework.test.context.testng.AbstractTestNGSpringContextTests.springTestContextBeforeTestClass" finished-at="2015-10-20T14:05:31Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- springTestContextPrepareTestInstance -->
-        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.pcf.TokenControllerTest@140f3941]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="1" started-at="2015-10-16T19:49:54Z" finished-at="2015-10-16T19:49:54Z">
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.pcf.MessageControllerTest@6d8c8c3e]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="1" started-at="2015-10-20T14:05:31Z" finished-at="2015-10-20T14:05:31Z">
           <params>
             <param index="0">
               <value>
-                <![CDATA[void kr.co.adflow.pms.core.pcf.TokenControllerTest.test()]]>
+                <![CDATA[void kr.co.adflow.pms.core.pcf.MessageControllerTest.messageSendTest() throws java.lang.Exception]]>
               </value>
             </param>
           </params>
           <reporter-output>
           </reporter-output>
         </test-method> <!-- springTestContextBeforeTestMethod -->
-        <test-method status="PASS" signature="test()[pri:0, instance:kr.co.adflow.pms.core.pcf.TokenControllerTest@140f3941]" name="test" duration-ms="405" started-at="2015-10-16T19:49:54Z" finished-at="2015-10-16T19:49:54Z">
+        <test-method status="PASS" signature="messageSendTest()[pri:0, instance:kr.co.adflow.pms.core.pcf.MessageControllerTest@6d8c8c3e]" name="messageSendTest" duration-ms="546" started-at="2015-10-20T14:05:31Z" finished-at="2015-10-20T14:05:32Z">
           <reporter-output>
           </reporter-output>
-        </test-method> <!-- test -->
-        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.pcf.TokenControllerTest@140f3941]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="4" started-at="2015-10-16T19:49:54Z" finished-at="2015-10-16T19:49:54Z">
+        </test-method> <!-- messageSendTest -->
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.pcf.MessageControllerTest@6d8c8c3e]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="2" started-at="2015-10-20T14:05:32Z" finished-at="2015-10-20T14:05:32Z">
           <params>
             <param index="0">
               <value>
-                <![CDATA[void kr.co.adflow.pms.core.pcf.TokenControllerTest.test()]]>
+                <![CDATA[void kr.co.adflow.pms.core.pcf.MessageControllerTest.messageSendTest() throws java.lang.Exception]]>
               </value>
             </param>
           </params>
           <reporter-output>
           </reporter-output>
         </test-method> <!-- springTestContextAfterTestMethod -->
-        <test-method status="PASS" signature="springTestContextAfterTestClass()[pri:0, instance:kr.co.adflow.pms.core.pcf.TokenControllerTest@140f3941]" name="springTestContextAfterTestClass" is-config="true" duration-ms="1" started-at="2015-10-16T19:49:54Z" finished-at="2015-10-16T19:49:54Z">
+        <test-method status="PASS" signature="springTestContextAfterTestClass()[pri:0, instance:kr.co.adflow.pms.core.pcf.MessageControllerTest@6d8c8c3e]" name="springTestContextAfterTestClass" is-config="true" duration-ms="1" started-at="2015-10-20T14:05:32Z" finished-at="2015-10-20T14:05:32Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- springTestContextAfterTestClass -->
-      </class> <!-- kr.co.adflow.pms.core.pcf.TokenControllerTest -->
+      </class> <!-- kr.co.adflow.pms.core.pcf.MessageControllerTest -->
     </test> <!-- Default test -->
   </suite> <!-- Default suite -->
 </testng-results>

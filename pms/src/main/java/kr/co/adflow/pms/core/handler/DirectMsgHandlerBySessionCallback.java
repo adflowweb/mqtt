@@ -6,6 +6,8 @@ import javax.jms.JMSException;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 
+import kr.co.adflow.pms.core.config.StaticConfig;
+import kr.co.adflow.pms.core.exception.MessageRunTimeException;
 import kr.co.adflow.pms.domain.Message;
 
 import org.json.JSONObject;
@@ -35,63 +37,27 @@ public class DirectMsgHandlerBySessionCallback implements
 	public String doInJms(Session session) throws JMSException {
 		MessageProducer producer = null;
 
-		logger.debug(
-				"=== msg::{}",
-				"getContentType::" + msg.getContentType() + ",getExpiry::"
-						+ msg.getExpiry() + ",getQos::" + msg.getQos()
-						+ ",getReceiver::" + msg.getReceiver()
-						+ ",getIssueId::" + msg.getIssueId()
-						+ ",getAppAckType::" + msg.getAppAckType()
-						+ ",getGroupId::" + msg.getGroupId()
-						+ ",getIssueName::" + msg.getIssueName()
-						+ ",getKeyMon::" + msg.getKeyMon() + ",getMediaType::"
-						+ msg.getMediaType() + ",getMsgId::" + msg.getMsgId()
-						+ ",getMsgSize::" + msg.getMsgSize() + ",getMsgType::"
-						+ msg.getMsgType() + ",getPmaAckType::"
-						+ msg.getPmaAckType() + ",getReceiverTopic::"
-						+ msg.getReceiverTopic() + ",getResendId::"
-						+ msg.getResendId() + ",getResendMaxCount::"
-						+ msg.getResendMaxCount() + ",getRetained::"
-						+ msg.getRetained() + ",getSendTerminalType::"
-						+ msg.getSendTerminalType() + ",getServerId::"
-						+ msg.getServerId() + ",getServiceId::"
-						+ msg.getServiceId() + ",getStatus::" + msg.getStatus()
-						+ ",getUpdateId::" + msg.getUpdateId()
-						+ ",getAppAckTime::" + msg.getAppAckTime()
-						+ ",getPmaAckTime::" + msg.getIssueTime()
-						+ ",getPmaAckTime::" + msg.getPmaAckTime()
-						+ ",getReservationTime::" + msg.getReservationTime()
-						+ ",getUpdateTime::" + msg.getUpdateTime());
+		logger.debug(msg.toString());
 
 		String json = "";
 		byte[] byteArr = null;
 		try {
 			Destination destination = jmsTemplate.getDestinationResolver()
-					.resolveDestinationName(session, msg.getReceiverTopic(),
-							true);
+					.resolveDestinationName(session, msg.getReceiver(), true);
 			producer = session.createProducer(destination);
 
 			logger.debug("producer=" + producer);
-
-			// producer.setTimeToLive(msg.getExpiry());
-			// producer.setDeliveryMode(msg.getQos());
-
 			JSONObject msgObject = new JSONObject();
 			BytesMessage bytesMessage = session.createBytesMessage();
 
 			msgObject.put("msgType", msg.getMsgType());
 			msgObject.put("msgId", msg.getMsgId());
 			msgObject.put("issueId", msg.getIssueId());
-			msgObject.put("sender", msg.getSender());
-			msgObject.put("receiver", msg.getReceiverTopic());
+			msgObject.put("sender", msg.getIssueId());
+			msgObject.put("receiver", msg.getReceiver());
 			if (msg.isAck()) {
 				msgObject.put("ack", 1);
 			}
-			/*
-			 * // else { // msgObject.put("ack", 0); // } if
-			 * (msg.getResendCount() != 0) { msgObject.put("resendCount",
-			 * msg.getResendCount()); }
-			 */
 
 			msgObject.put("contentType", msg.getContentType());
 			msgObject.put("serviceId", msg.getServiceId());
@@ -124,6 +90,14 @@ public class DirectMsgHandlerBySessionCallback implements
 			logger.debug("메시지가전송되었습니다.");
 		} catch (Exception e) {
 			e.printStackTrace();
+			try {
+				throw new MessageRunTimeException(
+						StaticConfig.ERROR_CODE_530500, "메시지 전송에 실패 하였습니다");
+			} catch (MessageRunTimeException ms) {
+				// TODO Auto-generated catch block
+				ms.printStackTrace();
+			}
+
 		} finally {
 			if (producer != null) {
 				producer.close();

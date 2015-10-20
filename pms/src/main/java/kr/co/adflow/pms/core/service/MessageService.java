@@ -8,6 +8,8 @@ import java.util.Map;
 import kr.co.adflow.pms.core.request.MessageReq;
 import kr.co.adflow.pms.core.request.ReservationCancelReq;
 import kr.co.adflow.pms.core.response.MessagesListRes;
+import kr.co.adflow.pms.core.response.StatisticsRes;
+import kr.co.adflow.pms.domain.Message;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -24,15 +26,19 @@ public interface MessageService {
 	 *            the msg
 	 * @return the list
 	 */
-	public int sendMessage(MessageReq msg, String appKey) throws Exception;
+	public Message sendMessage(MessageReq msg, String appKey) throws Exception;
 
-	public MessagesListRes getMessageListById(Map<String, String> params)
+	public MessagesListRes getMessageList(Map<String, String> params)
 			throws Exception;
 
-	public MessagesListRes getResevationMessageList(Map<String, String> params)
-			throws Exception;
+	// public MessagesListRes getResevationMessageList(Map<String, String>
+	// params)
+	// throws Exception;
+	//
+	// public int cancelReservationList(String appKey, ReservationCancelReq
+	// reqIds)
+	// throws Exception;
 
-	public int cancelReservationList(String appKey, ReservationCancelReq reqIds)
-			throws Exception;
+	public StatisticsRes getstatistics(Map<String, String> params);
 
 }

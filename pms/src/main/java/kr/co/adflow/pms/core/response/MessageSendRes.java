@@ -4,6 +4,7 @@ public class MessageSendRes {
 
 	private String receiver;
 	private String content;
+	private String msgId;
 
 	public String getReceiver() {
 		return receiver;
@@ -20,5 +21,21 @@ public class MessageSendRes {
 	public void setContent(String content) {
 		this.content = content;
 	}
+
+	public String getMsgId() {
+		return msgId;
+	}
+
+	public void setMsgId(String msgId) {
+		this.msgId = msgId;
+	}
+
+	@Override
+	public String toString() {
+		return "MessageSendRes [receiver=" + receiver + ", content=" + content
+				+ ", msgId=" + msgId + "]";
+	}
+	
+	
 
 }

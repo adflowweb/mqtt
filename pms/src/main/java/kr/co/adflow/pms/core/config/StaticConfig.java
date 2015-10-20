@@ -105,6 +105,9 @@ public class StaticConfig {
 	// 토큰 생성 API Code
 	public final static String API_CODE_510 = "510";
 	public final static String API_CODE_511 = "511";
+	public final static String API_CODE_531 = "531";
+	public final static String API_CODE_532 = "532";
+	
 	public final static String SUCCESS_CODE_510 = "510200";
 	public final static String ERROR_CODE_510400 = "510400";
 	public final static String ERROR_CODE_510401 = "510401";
@@ -129,5 +132,20 @@ public class StaticConfig {
 	public final static String ERROR_CODE_514404 = "514404";
 	public final static String ERROR_CODE_514401 = "514401";
 	public final static String ERROR_CODE_514500 = "514500";
+
+	public final static String SUCCESS_CODE_530 = "530200";
+	public final static String ERROR_CODE_530401 = "530401";
+	public final static String ERROR_CODE_530404 = "530404";
+	public final static String ERROR_CODE_530500 = "530500";
+
+	public final static String SUCCESS_CODE_531 = "531200";
+	public final static String ERROR_CODE_531401 = "531401";
+	public final static String ERROR_CODE_531404 = "531404";
+	public final static String ERROR_CODE_531500 = "531500";
+
+	public final static String SUCCESS_CODE_532 = "532200";
+	public final static String ERROR_CODE_532401 = "532401";
+	public final static String ERROR_CODE_532404 = "532404";
+	public final static String ERROR_CODE_532500 = "532500";
 
 }
