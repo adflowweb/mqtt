@@ -19,5 +19,7 @@ public interface DeviceMapper {
 	 * @return the int
 	 */
 	int insertDevice(Device device);
+	
+	int deleteDevice(String deviceId);
 
 }

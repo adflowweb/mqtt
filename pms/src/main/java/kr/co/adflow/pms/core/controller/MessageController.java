@@ -201,7 +201,7 @@ public class MessageController extends BaseController {
 			}
 		}
 		if (tokenAuthCheck == false) {
-			logger.debug(StaticConfig.API_CODE_532 + "에 대한 권한이 없습니다");
+			logger.debug(StaticConfig.API_CODE_532 + "에 대한 권한이없습니다");
 			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_532401,
 					"권한이 없습니다");
 		}
@@ -232,18 +232,24 @@ public class MessageController extends BaseController {
 
 	}
 
-	@ExceptionHandler(MessageRunTimeException.class)
+	@ExceptionHandler(Exception.class)
 	@ResponseBody
-	public Response handleAllException(final MessageRunTimeException e) {
+	public Response handleAllException(final Exception e) {
 		Response res = new Response();
 		res.setStatus(StaticConfig.RESPONSE_STATUS_FAIL);
-		HashMap<String, String> errMap = e.getErrorMsg();
-		String errCode = errMap.get("errCode");
-		String errMsg = errMap.get("errMsg");
-		logger.error(errCode);
-		logger.error(errMsg);
-		res.setCode(errCode);
-		res.setMessage(errMsg);
+		if (e instanceof MessageRunTimeException) {
+			HashMap<String, String> errMap = ((MessageRunTimeException) e)
+					.getErrorMsg();
+			String errCode = errMap.get("errCode");
+			String errMsg = errMap.get("errMsg");
+			logger.error(errCode);
+			logger.error(errMsg);
+			res.setCode(errCode);
+			res.setMessage(errMsg);
+		} else {
+			res.setCode(StaticConfig.ERROR_CODE_519000);
+			res.setMessage(e.getMessage());
+		}
 		return res;
 	}
 

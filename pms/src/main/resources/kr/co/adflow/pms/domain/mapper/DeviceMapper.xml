@@ -28,4 +28,9 @@
 		)
 	</insert>
 
+	<delete id="deleteDevice" parameterType="String">
+		DELETE FROM pms.device
+		WHERE device_id = #{deviceId}
+	</delete>
+
 </mapper>	

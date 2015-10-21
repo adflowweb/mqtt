@@ -32,6 +32,7 @@ public interface TokenMapper {
 	Token selectToken(String tokenId);
 
 	Token selectUserid(String tokenId);
+	Token selectUserInfo(String userId);
 
 	/**
 	 * Delete expired token.
@@ -70,10 +71,12 @@ public interface TokenMapper {
 	 * @return the String
 	 */
 	String selectApplicationKey(String userId);
-	
+
 	Token selectTokenInfo(String token);
 
 	Token getLatest(Token tokenID);
+
+	Token getLatestByUserId(Token tokenID);
 
 	boolean checkToken(String token);
 

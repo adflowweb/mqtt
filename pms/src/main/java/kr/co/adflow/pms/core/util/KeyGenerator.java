@@ -38,6 +38,11 @@ public class KeyGenerator {
 		return DateUtil.getYYYYMM() + id;
 	}
 
+	public static String generateDeviceId() {
+		String id = KeyGenerator.generate();
+		return "device" + DateUtil.getYYYYMM() + id;
+	}
+
 	/**
 	 * Generate token.
 	 * 

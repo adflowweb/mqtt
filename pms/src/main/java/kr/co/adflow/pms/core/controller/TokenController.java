@@ -3,16 +3,15 @@
  */
 package kr.co.adflow.pms.core.controller;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import javax.validation.Valid;
 
 import kr.co.adflow.pms.core.config.StaticConfig;
+import kr.co.adflow.pms.core.exception.MessageRunTimeException;
 import kr.co.adflow.pms.core.exception.TokenRunTimeException;
 import kr.co.adflow.pms.core.request.TokenReq;
-import kr.co.adflow.pms.core.response.PCFRes;
 import kr.co.adflow.pms.core.response.SubscriptionsRes;
 import kr.co.adflow.pms.core.response.TokenInfoRes;
 import kr.co.adflow.pms.core.response.TokenRes;
@@ -61,12 +60,13 @@ public class TokenController extends BaseController {
 	 * @param TokenReq
 	 * 
 	 * @return the response
+	 * @throws Exception
 	 */
 	@RequestMapping(value = "/token", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
 	public Response<TokenRes> createToken(
 			@RequestHeader(value = StaticConfig.HEADER_APPLICATION_KEY) String applicationKey,
-			@RequestBody @Valid TokenReq userInfo) throws TokenRunTimeException {
+			@RequestBody @Valid TokenReq userInfo) throws Exception {
 		/* 권한 체크 시작************************** */
 		logger.debug(applicationKey + "의 권한 체크를 시작합니다!");
 		Token tokenId = tokenMapper.selectUserid(applicationKey);
@@ -102,12 +102,8 @@ public class TokenController extends BaseController {
 		}
 
 		TokenRes tokenRes = null;
-		try {
-			tokenRes = tokenService.createToken(userInfo, requsetUserId);
-		} catch (Exception e) {
-			throw new TokenRunTimeException(StaticConfig.ERROR_CODE_510500,
-					"토큰 생성에 실패 하였습니다");
-		}
+
+		tokenRes = tokenService.createToken(userInfo, requsetUserId);
 
 		Response<TokenRes> res = new Response<TokenRes>();
 		res.setStatus(StaticConfig.RESPONSE_STATUS_OK);
@@ -139,7 +135,7 @@ public class TokenController extends BaseController {
 			res.setStatus(StaticConfig.RESPONSE_STATUS_OK);
 			res.setData(infoRes);
 			res.setCode(StaticConfig.SUCCESS_CODE_513);
-			res.setMessage("토큰 정보를 조회 하였습니다");
+			res.setMessage("토큰 정보를 조회하였습니다");
 
 		}
 
@@ -228,7 +224,7 @@ public class TokenController extends BaseController {
 			res.setStatus(StaticConfig.RESPONSE_STATUS_OK);
 			res.setData(subscriptionsRes);
 			res.setCode(StaticConfig.SUCCESS_CODE_514);
-			res.setMessage("Subscriptions 목록을 조회 하였습니다");
+			res.setMessage("Subscriptions 목록을 조회하였습니다");
 
 		}
 
@@ -236,18 +232,24 @@ public class TokenController extends BaseController {
 		return res;
 	}
 
-	@ExceptionHandler(TokenRunTimeException.class)
+	@ExceptionHandler(Exception.class)
 	@ResponseBody
-	public Response handleAllException(final TokenRunTimeException e) {
+	public Response handleAllException(final Exception e) {
 		Response res = new Response();
 		res.setStatus(StaticConfig.RESPONSE_STATUS_FAIL);
-		HashMap<String, String> errMap = e.getErrorMsg();
-		String errCode = errMap.get("errCode");
-		String errMsg = errMap.get("errMsg");
-		logger.error(errCode);
-		logger.error(errMsg);
-		res.setCode(errCode);
-		res.setMessage(errMsg);
+		if (e instanceof TokenRunTimeException) {
+			HashMap<String, String> errMap = ((TokenRunTimeException) e)
+					.getErrorMsg();
+			String errCode = errMap.get("errCode");
+			String errMsg = errMap.get("errMsg");
+			logger.error(errCode);
+			logger.error(errMsg);
+			res.setCode(errCode);
+			res.setMessage(errMsg);
+		} else {
+			res.setCode(StaticConfig.ERROR_CODE_539000);
+			res.setMessage(e.getMessage());
+		}
 		return res;
 	}
 

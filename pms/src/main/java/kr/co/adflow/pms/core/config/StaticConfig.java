@@ -107,7 +107,15 @@ public class StaticConfig {
 	public final static String API_CODE_511 = "511";
 	public final static String API_CODE_531 = "531";
 	public final static String API_CODE_532 = "532";
-	
+	public final static String API_CODE_550 = "550";
+	public final static String API_CODE_551 = "551";
+	public final static String API_CODE_552 = "552";
+	public final static String API_CODE_553 = "553";
+
+	public final static String ERROR_CODE_519000 = "519000";
+	public final static String ERROR_CODE_539000 = "539000";
+	public final static String ERROR_CODE_559000 = "559000";
+
 	public final static String SUCCESS_CODE_510 = "510200";
 	public final static String ERROR_CODE_510400 = "510400";
 	public final static String ERROR_CODE_510401 = "510401";
@@ -148,4 +156,28 @@ public class StaticConfig {
 	public final static String ERROR_CODE_532404 = "532404";
 	public final static String ERROR_CODE_532500 = "532500";
 
+	public final static String SUCCESS_CODE_550 = "550200";
+	public final static String ERROR_CODE_550400 = "550400";
+	public final static String ERROR_CODE_550401 = "550401";
+	public final static String ERROR_CODE_550404 = "550404";
+	public final static String ERROR_CODE_550500 = "550500";
+
+	public final static String SUCCESS_CODE_551 = "551200";
+	public final static String ERROR_CODE_551400 = "551400";
+	public final static String ERROR_CODE_551401 = "551401";
+	public final static String ERROR_CODE_551404 = "551404";
+	public final static String ERROR_CODE_551500 = "551500";
+
+	public final static String SUCCESS_CODE_552 = "552200";
+	public final static String ERROR_CODE_552400 = "552400";
+	public final static String ERROR_CODE_552401 = "552401";
+	public final static String ERROR_CODE_552404 = "552404";
+	public final static String ERROR_CODE_552500 = "552500";
+
+	public final static String SUCCESS_CODE_553 = "553200";
+	public final static String ERROR_CODE_553400 = "553400";
+	public final static String ERROR_CODE_553401 = "553401";
+	public final static String ERROR_CODE_553404 = "553404";
+	public final static String ERROR_CODE_553500 = "553500";
+	
 }

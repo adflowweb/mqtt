@@ -1,8 +1,14 @@
 package kr.co.adflow.pms.core.pcf;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import kr.co.adflow.pms.core.controller.MessageController;
 import kr.co.adflow.pms.core.request.MessageReq;
 import kr.co.adflow.pms.core.response.MessageSendRes;
+import kr.co.adflow.pms.core.response.MessagesListRes;
+import kr.co.adflow.pms.core.response.StatisticsRes;
+import kr.co.adflow.pms.core.response.SubscriptionsRes;
 import kr.co.adflow.pms.response.Response;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +28,7 @@ public class MessageControllerTest extends AbstractTestNGSpringContextTests {
 	void messageSendTest() throws Exception {
 		MessageReq messageReq = new MessageReq();
 
-		messageReq.setReceiver("mms/01040269329");
+		messageReq.setReceiver("testTopic");
 		messageReq.setQos(2);
 		messageReq.setExpiry(777730);
 		messageReq.setContent("테스트 케이스 메시지 전송 !!");
@@ -34,4 +40,37 @@ public class MessageControllerTest extends AbstractTestNGSpringContextTests {
 		System.out.println(response.toString());
 	}
 
+	@Test(priority = 2)
+	void getMessage() throws Exception {
+
+		HashMap<String, String> queryParam = new HashMap<String, String>();
+		queryParam.put("iDisplayStart", "0");
+		queryParam.put("iDisplayLength", "20");
+		queryParam.put("cSearchStatus", "ALL");
+		queryParam.put("cSearchDateStart", "2015-09-01T15:00:00.000Z");
+		queryParam.put("cSearchDateEnd", "2015-10-31T15:00:00.000Z");
+		queryParam.put("cSearchFilterContent", "100");
+		queryParam.put("cSearchFilter", "msgType");
+
+		Response<MessagesListRes> response = controller.getMessageList(
+				queryParam, "c84571f51d56e3e17735eea");
+		System.out.println(response.toString());
+		Assert.assertEquals(response.getStatus(), "ok");
+		System.out.println(response.toString());
+	}
+
+	@Test(priority = 3)
+	void getStatistics() throws Exception {
+
+		HashMap<String, String> queryParam = new HashMap<String, String>();
+
+		queryParam.put("cSearchDateStart", "2015-09-01T15:00:00.000Z");
+		queryParam.put("cSearchDateEnd", "2015-10-31T15:00:00.000Z");
+
+		Response<StatisticsRes> response = controller.getMessageStatistics(
+				queryParam, "c84571f51d56e3e17735eea");
+		System.out.println(response.toString());
+		Assert.assertEquals(response.getStatus(), "ok");
+		System.out.println(response.toString());
+	}
 }

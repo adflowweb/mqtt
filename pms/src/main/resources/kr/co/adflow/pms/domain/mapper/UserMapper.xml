@@ -11,12 +11,23 @@
 		<result property="status" column="status" />
 		<result property="issueTime" column="issue_time" />
 		<result property="issueId" column="issue_id" />
-
 		<result property="groupCode" column="group_code" />
 		<result property="serverId" column="server_id" />
 		<result property="action" column="action" />
+		<result property="deviceId" column="device_id" />
+		<result property="token" column="token" />
 
 	</resultMap>
+
+	<resultMap id="UserInfo" type="kr.co.adflow.pms.domain.UserInfo">
+		<result property="userName" column="user_name" />
+		<result property="deviceId" column="device_id" />
+		<result property="tokenId" column="token" />
+
+	</resultMap>
+
+
+
 
 	<insert id="insertUser" parameterType="kr.co.adflow.pms.domain.User">
 		INSERT INTO pms.user
@@ -41,28 +52,57 @@
 		)
 	</insert>
 
-	<select id="select" parameterType="String" resultMap="UserResult">
+	<select id="selectUserInfo" parameterType="String" resultMap="UserInfo">
 		SELECT
-		a.user_id
-		, a.role
-		, a.user_name
-		, a.status
-		,
-		a.default_expiry
-		,
-		a.default_qos
-		, a.issue_time
-		, a.issue_id
-		, b.token_id
-		as
-		application_token
-		FROM pms.user a,
+		a.user_id,
+		a.user_name,
+		b.token_id
+		as token,
+		b.device_id as
+		device_id
+		FROM
+		pms.user
+		a,
 		pms.token b
 		WHERE
 		a.user_id =
 		b.user_id
 		AND
 		a.user_id = #{userId}
+	</select>
+
+	<select id="selectDeleteUser" parameterType="String" resultMap="UserResult">
+		SELECT
+		a.user_id,
+		a.user_name,
+		b.device_id as device_id
+		FROM
+		pms.user a,
+		pms.device b
+		WHERE
+		a.user_id=b.user_id
+		AND
+		a.user_id = #{userId}
+	</select>
+	<select id="selectUpdateUser" parameterType="String" resultMap="UserResult">
+		SELECT
+		user_id,
+		user_name
+		FROM
+		pms.user
+		WHERE
+		user_id = #{userId}
+	</select>
+
+
+
+
+	<select id="selectUserid" parameterType="String" resultType="String">
+		SELECT
+		user_id
+		FROM pms.user
+		WHERE
+		user_id = #{userId}
 	</select>
 
 	<select id="listAll" parameterType="String" resultMap="UserResult">
@@ -132,11 +172,9 @@
 		user_name = #{userName}
 		,status =
 		#{status}
-		,default_expiry =
-		#{defaultExpiry}
-		,default_qos = #{defaultQos}
 		,issue_time = now()
-		,issue_id = #{issueId}
+		,issue_id
+		= #{issueId}
 		WHERE user_id = #{userId}
 	</update>
 
@@ -156,7 +194,7 @@
 		,status
 		,issue_time
 		,issue_id
-		
+
 		)
 		values(
 		#{action}
@@ -167,7 +205,7 @@
 		,#{status}
 		,now()
 		,#{issueId}
-		
+
 		)
 	</insert>
 

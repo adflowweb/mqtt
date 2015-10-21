@@ -24,9 +24,9 @@
 		class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
 		<property name="driverClass" value="com.mysql.jdbc.Driver" />
 		<property name="url"
-			value="jdbc:mysql://localhost:3306/pms?useUnicode=true&amp;characterEncoding=utf8" />
+			value="jdbc:mysql://112.223.76.75:13306/pms?useUnicode=true&amp;characterEncoding=utf8" />
 		<property name="username" value="root" />
-		<property name="password" value="root" />
+		<property name="password" value="passw0rd" />
 	</bean>
 
 
@@ -54,7 +54,8 @@
 	<!-- jmsConnectionFactory -->
 	<bean id="tJmsFactory" class="com.ibm.mq.jms.MQTopicConnectionFactory">
 		<property name="hostName" value="#{pms['mq.jms.hostname']}" />
-<!-- 		<property name="connectionNameList" value="#{pms['mq.jms.hostname']}" /> -->
+		<!-- <property name="connectionNameList" value="#{pms['mq.jms.hostname']}" 
+			/> -->
 		<property name="port" value="#{pms['mq.jms.port']}" />
 		<property name="queueManager" value="#{pms['mq.jms.queue.manager']}" />
 		<property name="transportType" value="1" />
@@ -102,9 +103,9 @@
 	<!-- </jms:listener-container> -->
 
 	<bean id="qJmsFactory" class="com.ibm.mq.jms.MQQueueConnectionFactory">
-<property name="hostName" value="#{pms['mq.jms.hostname']}" />
-	<!-- <property name="connectionNameList" value="#{pms['mq.jms.hostname']}" 
-		/> -->
+		<property name="hostName" value="#{pms['mq.jms.hostname']}" />
+		<!-- <property name="connectionNameList" value="#{pms['mq.jms.hostname']}" 
+			/> -->
 		<property name="port" value="#{pms['mq.jms.port']}" />
 		<property name="queueManager" value="#{pms['mq.jms.queue.manager']}" />
 		<property name="transportType" value="1" />

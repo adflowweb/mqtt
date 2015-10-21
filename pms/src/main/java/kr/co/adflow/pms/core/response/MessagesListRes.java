@@ -15,20 +15,19 @@ public class MessagesListRes {
 
 	/** The s echo. */
 	private String sEcho;
-	
+
 	/** The records filtered. */
 	private int recordsFiltered;
-	
+
 	/** The records total. */
 	private int recordsTotal;
-	
-	
+
 	/** The data. */
 	private List<Message> data;
 
 	/**
 	 * Gets the s echo.
-	 *
+	 * 
 	 * @return the s echo
 	 */
 	public String getsEcho() {
@@ -37,8 +36,9 @@ public class MessagesListRes {
 
 	/**
 	 * Sets the s echo.
-	 *
-	 * @param sEcho the new s echo
+	 * 
+	 * @param sEcho
+	 *            the new s echo
 	 */
 	public void setsEcho(String sEcho) {
 		this.sEcho = sEcho;
@@ -46,7 +46,7 @@ public class MessagesListRes {
 
 	/**
 	 * Gets the records filtered.
-	 *
+	 * 
 	 * @return the records filtered
 	 */
 	public int getRecordsFiltered() {
@@ -55,8 +55,9 @@ public class MessagesListRes {
 
 	/**
 	 * Sets the records filtered.
-	 *
-	 * @param recordsFiltered the new records filtered
+	 * 
+	 * @param recordsFiltered
+	 *            the new records filtered
 	 */
 	public void setRecordsFiltered(int recordsFiltered) {
 		this.recordsFiltered = recordsFiltered;
@@ -64,7 +65,7 @@ public class MessagesListRes {
 
 	/**
 	 * Gets the records total.
-	 *
+	 * 
 	 * @return the records total
 	 */
 	public int getRecordsTotal() {
@@ -73,8 +74,9 @@ public class MessagesListRes {
 
 	/**
 	 * Sets the records total.
-	 *
-	 * @param recordsTotal the new records total
+	 * 
+	 * @param recordsTotal
+	 *            the new records total
 	 */
 	public void setRecordsTotal(int recordsTotal) {
 		this.recordsTotal = recordsTotal;
@@ -82,7 +84,7 @@ public class MessagesListRes {
 
 	/**
 	 * Gets the data.
-	 *
+	 * 
 	 * @return the data
 	 */
 	public List<Message> getData() {
@@ -91,11 +93,19 @@ public class MessagesListRes {
 
 	/**
 	 * Sets the data.
-	 *
-	 * @param data the new data
+	 * 
+	 * @param data
+	 *            the new data
 	 */
 	public void setData(List<Message> data) {
 		this.data = data;
+	}
+
+	@Override
+	public String toString() {
+		return "MessagesListRes [sEcho=" + sEcho + ", recordsFiltered="
+				+ recordsFiltered + ", recordsTotal=" + recordsTotal
+				+ ", data=" + data + "]";
 	}
 
 }

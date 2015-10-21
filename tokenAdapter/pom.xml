@@ -182,7 +182,7 @@
 			<id>production</id>
 			<properties>
 				<!-- 푸시서버주소 -->
-				<server.ip>127.0.0.1</server.ip>
+				<server.ip>192.168.0.51</server.ip>
 				<!-- 푸시서버포트 -->
 				<server.port>8080</server.port>
 				<!-- 어플리케이션 로깅레벨 -->

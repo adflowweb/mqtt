@@ -1,17 +1,20 @@
 package kr.co.adflow.pms.core.service;
 
+import java.util.List;
+
 import kr.co.adflow.pms.core.request.UserReq;
-import kr.co.adflow.pms.core.request.UserUpdateReq;
-import kr.co.adflow.pms.domain.User;
+import kr.co.adflow.pms.core.response.UserInfoRes;
+import kr.co.adflow.pms.core.response.UserRes;
 
 public interface UserService {
 
-	public String createUser(UserReq userReq) throws Exception;
-
-	public User retrieveUser(String userId) throws Exception;
-
-	public int updateUser(UserUpdateReq userReq, String appKey)
+	public UserRes createUser(UserReq userReq, String requestId)
 			throws Exception;
 
-	public int deleteUser(String userId, String appKey) throws Exception;
+	public UserInfoRes getUserInfo(String userId) throws Exception;
+
+	public void updateUser(UserReq userReq, String requsetUserId)
+			throws Exception;
+
+	public void deleteUser(String userId, String requsetUserId) throws Exception;
 }

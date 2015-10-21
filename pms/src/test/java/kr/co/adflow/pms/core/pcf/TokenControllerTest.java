@@ -22,7 +22,7 @@ public class TokenControllerTest extends AbstractTestNGSpringContextTests {
 	TokenController controller;
 
 	@Test(priority = 1)
-	void tokenCreate() {
+	void tokenCreate() throws Exception {
 
 		TokenReq tokenReq = new TokenReq();
 		tokenReq.setDeviceId("테스트 디바이스 아이디");
@@ -142,6 +142,27 @@ public class TokenControllerTest extends AbstractTestNGSpringContextTests {
 
 		try {
 			Response response = controller.getTopic("c84571f51d56e3e17735eea");
+
+			String result = response.getStatus();
+			logger.debug(result);
+			System.out.println(result);
+			System.out.println(response.toString());
+			Assert.assertEquals(result, "ok");
+
+		} catch (TokenRunTimeException e) {
+			// TODO Auto-generated catch block
+			HashMap<String, String> map = e.getErrorMsg();
+			System.out.println(map.get("errorCode"));
+			System.out.println(map.get("errorMsg"));
+			e.printStackTrace();
+		}
+
+	}
+
+	@Test(priority = 6)
+	void getTopicInfo() throws Exception {
+		try {
+			Response response = controller.getToken("c84571f51d56e3e17735eea");
 
 			String result = response.getStatus();
 			logger.debug(result);

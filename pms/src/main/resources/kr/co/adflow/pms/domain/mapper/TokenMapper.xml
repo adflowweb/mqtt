@@ -28,6 +28,16 @@
 	</select>
 
 
+	<select id="getLatestByUserId" parameterType="kr.co.adflow.pms.domain.Token"
+		resultMap="TokenResult">
+		SELECT token_id, user_id
+		FROM token
+		WHERE user_id= #{userId}
+		order by issue_time desc
+		limit 1
+	</select>
+
+
 	<select id="selectToken" parameterType="String" resultMap="TokenResult">
 		SELECT user_id
 		, token_id
@@ -38,6 +48,17 @@
 		WHERE
 		a.token_id = #{tokenId}
 	</select>
+
+	<select id="selectUserInfo" parameterType="String" resultMap="TokenResult">
+		SELECT
+		token_id
+		, device_id
+
+		FROM pms.token a
+		WHERE
+		a.user_id = #{userId}
+	</select>
+
 
 	<select id="selectUserid" parameterType="String" resultMap="TokenResult">
 		SELECT user_id

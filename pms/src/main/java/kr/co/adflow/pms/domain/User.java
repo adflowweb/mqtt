@@ -23,6 +23,9 @@ public class User {
 	/** The user name. */
 	private String userName;
 
+	private String deviceId;
+	private String token;
+
 	/** The status. */
 	private int status;
 
@@ -53,6 +56,22 @@ public class User {
 
 	public void setServerId(String serverId) {
 		this.serverId = serverId;
+	}
+
+	public String getDeviceId() {
+		return deviceId;
+	}
+
+	public void setDeivceId(String deviceId) {
+		this.deviceId = deviceId;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
 	}
 
 	/**
@@ -186,6 +205,15 @@ public class User {
 	 */
 	public void setAction(String action) {
 		this.action = action;
+	}
+
+	@Override
+	public String toString() {
+		return "User [userId=" + userId + ", password=" + password
+				+ ", userName=" + userName + ", deviceId=" + deviceId
+				+ ", token=" + token + ", status=" + status + ", issueTime="
+				+ issueTime + ", issueId=" + issueId + ", action=" + action
+				+ ", serverId=" + serverId + ", groupCode=" + groupCode + "]";
 	}
 
 	/**
