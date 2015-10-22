@@ -5,6 +5,7 @@ import java.util.Map;
 
 import kr.co.adflow.pms.core.controller.MessageController;
 import kr.co.adflow.pms.core.request.MessageReq;
+import kr.co.adflow.pms.core.response.AckRes;
 import kr.co.adflow.pms.core.response.MessageSendRes;
 import kr.co.adflow.pms.core.response.MessagesListRes;
 import kr.co.adflow.pms.core.response.StatisticsRes;
@@ -69,6 +70,22 @@ public class MessageControllerTest extends AbstractTestNGSpringContextTests {
 
 		Response<StatisticsRes> response = controller.getMessageStatistics(
 				queryParam, "c84571f51d56e3e17735eea");
+		System.out.println(response.toString());
+		Assert.assertEquals(response.getStatus(), "ok");
+		System.out.println(response.toString());
+	}
+
+	@Test(priority = 4)
+	void getAckMessage() throws Exception {
+
+		HashMap<String, String> queryParam = new HashMap<String, String>();
+
+		queryParam.put("cSearchDateStart", "2015-09-01T15:00:00.000Z");
+		queryParam.put("cSearchDateEnd", "2015-10-31T15:00:00.000Z");
+
+		Response<AckRes> response = controller.getAckMessage(queryParam,
+				"2015106b5686a955ac4f55a37c726c9abf9b90",
+				"c84571f51d56e3e17735eea");
 		System.out.println(response.toString());
 		Assert.assertEquals(response.getStatus(), "ok");
 		System.out.println(response.toString());

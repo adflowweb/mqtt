@@ -7,6 +7,7 @@ import java.util.Map;
 
 import kr.co.adflow.pms.core.request.MessageReq;
 import kr.co.adflow.pms.core.request.ReservationCancelReq;
+import kr.co.adflow.pms.core.response.AckRes;
 import kr.co.adflow.pms.core.response.MessagesListRes;
 import kr.co.adflow.pms.core.response.StatisticsRes;
 import kr.co.adflow.pms.domain.Message;
@@ -39,6 +40,8 @@ public interface MessageService {
 	// reqIds)
 	// throws Exception;
 
-	public StatisticsRes getstatistics(Map<String, String> params);
+	public StatisticsRes getStatistics  (Map<String, String> params) throws Exception;
+
+	public AckRes getAckMessage (Map<String, String> params, String msgId) throws Exception;
 
 }

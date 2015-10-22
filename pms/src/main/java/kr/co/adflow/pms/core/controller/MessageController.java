@@ -12,6 +12,7 @@ import javax.validation.Valid;
 import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.exception.MessageRunTimeException;
 import kr.co.adflow.pms.core.request.MessageReq;
+import kr.co.adflow.pms.core.response.AckRes;
 import kr.co.adflow.pms.core.response.MessageSendRes;
 import kr.co.adflow.pms.core.response.MessagesListRes;
 import kr.co.adflow.pms.core.response.StatisticsRes;
@@ -26,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -220,13 +222,65 @@ public class MessageController extends BaseController {
 					"끝 날짜가 없습니다");
 		}
 
-		StatisticsRes statisticsRes = messageService.getstatistics(params);
+		StatisticsRes statisticsRes = messageService.getStatistics(params);
 
 		Response<StatisticsRes> res = new Response<StatisticsRes>();
 		res.setStatus(StaticConfig.RESPONSE_STATUS_OK);
 		res.setData(statisticsRes);
 		res.setCode(StaticConfig.SUCCESS_CODE_532);
 		res.setMessage("메시지 내역을 조회 하였습니다");
+
+		return res;
+
+	}
+
+	@RequestMapping(value = "/messages/ack/{msgId:.+}", method = RequestMethod.GET)
+	@ResponseBody
+	public Response<AckRes> getAckMessage(
+			@RequestParam Map<String, String> params,
+			@PathVariable String msgId,
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String applicationKey)
+			throws Exception {
+		/* 권한 체크 시작************************** */
+		logger.debug(applicationKey + "의 권한 체크를 시작합니다!");
+		Token tokenId = tokenMapper.selectUserid(applicationKey);
+		String requsetUserId = tokenId.getUserId();
+
+		List<Token> apiCode = tokenMapper.getApiCode(requsetUserId);
+		boolean tokenAuthCheck = false;
+		for (int i = 0; i < apiCode.size(); i++) {
+
+			if (apiCode.get(i).getApiCode().equals(StaticConfig.API_CODE_533)) {
+				tokenAuthCheck = true;
+			}
+		}
+		if (tokenAuthCheck == false) {
+			logger.debug(StaticConfig.API_CODE_533 + "에 대한 권한이없습니다");
+			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_533401,
+					"권한이 없습니다");
+		}
+		logger.debug(applicationKey + "에 대한 권한체크가 완료 되었습니다.");
+		/* 권한체크 끝***************************** */
+
+		if (params.get("cSearchDateStart") == null
+				|| params.get("cSearchDateStart").trim().length() == 0) {
+			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_533404,
+					"시작 날짜가 없습니다");
+		}
+
+		if (params.get("cSearchDateEnd") == null
+				|| params.get("cSearchDateEnd").trim().length() == 0) {
+			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_533404,
+					"끝 날짜가 없습니다");
+		}
+
+		AckRes ackRes = messageService.getAckMessage(params, msgId);
+
+		Response<AckRes> res = new Response<AckRes>();
+		res.setStatus(StaticConfig.RESPONSE_STATUS_OK);
+		res.setData(ackRes);
+		res.setCode(StaticConfig.SUCCESS_CODE_533);
+		res.setMessage("수신확인 내역을 조회 하였습니다");
 
 		return res;
 

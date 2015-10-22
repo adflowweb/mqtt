@@ -22,7 +22,7 @@ public class UserControllerTest extends AbstractTestNGSpringContextTests {
 	@Test(priority = 1)
 	void createUser() throws Exception {
 		UserReq userReq = new UserReq();
-		userReq.setUserId("케이스관리자1");
+		userReq.setUserId("케이스관리자4");
 		userReq.setUserName("관리자임");
 		userReq.setPassword("password");
 		userReq.setRole(1);
@@ -37,7 +37,7 @@ public class UserControllerTest extends AbstractTestNGSpringContextTests {
 	@Test(priority = 2)
 	void getUserInfo() throws Exception {
 
-		String userId = "케이스관리자1";
+		String userId = "케이스관리자4";
 
 		Response<UserInfoRes> response = controller.getUsers(userId,
 				"c84571f51d56e3e17735eea");
@@ -49,7 +49,7 @@ public class UserControllerTest extends AbstractTestNGSpringContextTests {
 	@Test(priority = 3)
 	void updateUser() throws Exception {
 
-		String userId = "케이스관리자1";
+		String userId = "케이스관리자4";
 		UserReq userReq = new UserReq();
 		userReq.setUserName("이름을 홍길동으로");
 
@@ -63,7 +63,7 @@ public class UserControllerTest extends AbstractTestNGSpringContextTests {
 	@Test(priority = 4)
 	void deleteUser() throws Exception {
 
-		String userId = "케이스관리자1";
+		String userId = "케이스관리자4";
 
 		Response response = controller.deleteUser(userId,
 				"c84571f51d56e3e17735eea");

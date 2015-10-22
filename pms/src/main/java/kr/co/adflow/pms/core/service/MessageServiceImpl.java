@@ -9,17 +9,20 @@ import java.util.Map;
 
 import kr.co.adflow.pms.core.config.PmsConfig;
 import kr.co.adflow.pms.core.config.StaticConfig;
+import kr.co.adflow.pms.core.exception.MessageRunTimeException;
 import kr.co.adflow.pms.core.handler.DirectMsgHandlerBySessionCallback;
 import kr.co.adflow.pms.core.request.MessageReq;
-import kr.co.adflow.pms.core.request.ReservationCancelReq;
+import kr.co.adflow.pms.core.response.AckRes;
 import kr.co.adflow.pms.core.response.MessagesListRes;
 import kr.co.adflow.pms.core.response.StatisticsRes;
 import kr.co.adflow.pms.core.util.CheckUtil;
 import kr.co.adflow.pms.core.util.DateUtil;
 import kr.co.adflow.pms.core.util.KeyGenerator;
+import kr.co.adflow.pms.domain.AckData;
 //import kr.co.adflow.pms.core.handler.PCFConnectionManager;
 import kr.co.adflow.pms.domain.Message;
 import kr.co.adflow.pms.domain.MsgParams;
+import kr.co.adflow.pms.domain.mapper.AckMapper;
 import kr.co.adflow.pms.domain.mapper.InterceptMapper;
 import kr.co.adflow.pms.domain.mapper.MessageMapper;
 import kr.co.adflow.pms.domain.mapper.SummaryMapper;
@@ -50,6 +53,9 @@ public class MessageServiceImpl implements MessageService {
 
 	@Autowired
 	private SummaryMapper summaryMapper;
+
+	@Autowired
+	private AckMapper ackMapper;
 
 	/** The push Mapper. */
 	// @Autowired
@@ -110,7 +116,8 @@ public class MessageServiceImpl implements MessageService {
 	}
 
 	@Override
-	public StatisticsRes getstatistics(Map<String, String> params) {
+	public StatisticsRes getStatistics(Map<String, String> params)
+			throws Exception {
 		// TODO Auto-generated method stub
 		StatisticsRes statisticsRes = null;
 		MsgParams msgParams = new MsgParams();
@@ -127,11 +134,30 @@ public class MessageServiceImpl implements MessageService {
 		statisticsRes.setMsgFailCnt(this.getInt(String.valueOf(summaryResult
 				.get("msgFailCnt"))));
 		statisticsRes.setPmaAckCnt(this.getInt(String.valueOf(summaryResult
-				.get("pmaAckCnt"))));
+				.get("agentAckCnt"))));
 		statisticsRes.setAppAckCnt(this.getInt(String.valueOf(summaryResult
 				.get("appAckCnt"))));
 
 		return statisticsRes;
+	}
+
+	@Override
+	public AckRes getAckMessage(Map<String, String> params, String msgId)
+			throws Exception {
+		AckRes ackRes = new AckRes();
+		MsgParams msgParams = new MsgParams();
+		msgParams.setMsgId(msgId);
+		msgParams.setDateStart(this.getDate(params.get("cSearchDateStart")));
+		msgParams.setDateEnd(this.getDate(params.get("cSearchDateEnd")));
+		List<AckData> ackRst = ackMapper.selectAckMessage(msgParams);
+		if (ackRst == null || ackRst.size() == 0) {
+			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_533404,
+					"수신확인 내역이 없습니다");
+		}
+
+		ackRes.setAckList(ackRst);
+
+		return ackRes;
 	}
 
 	@Override
@@ -165,6 +191,12 @@ public class MessageServiceImpl implements MessageService {
 			msg.setExpiry(expiryTime);
 		}
 
+		if (message.getMsgType() != 0) {
+			msg.setMsgType(message.getMsgType());
+		} else {
+			msg.setMsgType(100);
+		}
+
 		msg.setQos(message.getQos());
 		msg.setIssueId(issueId);
 
@@ -176,8 +208,6 @@ public class MessageServiceImpl implements MessageService {
 		msg.setContent(message.getContent());
 		msgId = this.getMsgId();
 		msg.setMsgId(msgId);
-
-		msg.setMsgType(100);
 
 		// sendJMS
 		msg.setReceiver(message.getReceiver());

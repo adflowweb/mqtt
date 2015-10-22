@@ -10,7 +10,7 @@
 		<result property="msgCnt" column="msg_cnt" />
 		<result property="msgSuccessCnt" column="msg_success_cnt" />
 		<result property="msgFailCnt" column="msg_fail_cnt" />
-		<result property="pmaAckCnt" column="pma_ack_cnt" />
+		<result property="agentAckCnt" column="agent_ack_cnt" />
 		<result property="appAckCnt" column="app_ack_cnt" />
 		<result property="msgType" column="msg_type" />
 	</resultMap>
@@ -20,7 +20,7 @@
 		SELECT
 		COUNT(a.msg_id) as msg_cnt
 		, COUNT(b.ack_type) AS
-		pma_ack_cnt,
+		agent_ack_cnt,
 		SUM(if (a.status
 		=1,1,0)) AS msg_success_cnt,
 		SUM(if
@@ -31,7 +31,7 @@
 		pms.message a LEFT OUTER
 		JOIN
 		pms.ack b ON a.msg_id = b.msg_id AND
-		b.ack_type = 'pma',
+		b.ack_type = 'agent',
 		pms.message c
 		LEFT OUTER JOIN pms.ack d ON c.msg_id
 		= d.msg_id AND d.ack_type = 'app'
@@ -51,7 +51,7 @@
 		, media_type
 		,
 		COUNT(msg_id) as msg_cnt
-		, COUNT(pma_ack_type) AS pma_ack_cnt
+		, COUNT(pma_ack_type) AS agent_ack_cnt
 		,
 		COUNT(app_ack_type) AS app_ack_cnt
 
@@ -120,7 +120,7 @@
 		, a.is_reservation
 		,
 		COUNT(a.msg_id) as msg_cnt
-		, COUNT(b.ack_type) AS pma_ack_cnt
+		, COUNT(b.ack_type) AS agent_ack_cnt
 		,
 		COUNT(d.ack_type) AS app_ack_cnt
 		FROM

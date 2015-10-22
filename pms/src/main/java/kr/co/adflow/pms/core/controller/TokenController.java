@@ -115,8 +115,8 @@ public class TokenController extends BaseController {
 
 	}
 
-	@RequestMapping(value = "/token/{token}", method = RequestMethod.GET)
 	@ResponseBody
+	@RequestMapping(value = "/token/{token:+.}", method = RequestMethod.GET)
 	public Response<TokenInfoRes> getToken(@PathVariable String token)
 			throws Exception {
 		logger.debug("token=" + token);
@@ -142,7 +142,7 @@ public class TokenController extends BaseController {
 		return res;
 	}
 
-	@RequestMapping(value = "/validate/{token}", method = RequestMethod.GET)
+	@RequestMapping(value = "/validate/{token:.+}", method = RequestMethod.GET)
 	@ResponseBody
 	public Response validate(
 			@RequestHeader(value = StaticConfig.HEADER_APPLICATION_KEY) String applicationKey,
@@ -161,7 +161,7 @@ public class TokenController extends BaseController {
 		}
 		if (tokenAuthCheck == false) {
 			logger.debug(StaticConfig.API_CODE_511 + "에 대한 권한이 없습니다");
-			throw new TokenRunTimeException(StaticConfig.ERROR_CODE_510401,
+			throw new TokenRunTimeException(StaticConfig.ERROR_CODE_511401,
 					"권한이 없습니다");
 		}
 		logger.debug(applicationKey + "에 대한 권한체크가 완료 되었습니다.");

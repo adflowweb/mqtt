@@ -107,6 +107,7 @@ public class StaticConfig {
 	public final static String API_CODE_511 = "511";
 	public final static String API_CODE_531 = "531";
 	public final static String API_CODE_532 = "532";
+	public final static String API_CODE_533 = "533";
 	public final static String API_CODE_550 = "550";
 	public final static String API_CODE_551 = "551";
 	public final static String API_CODE_552 = "552";
@@ -156,6 +157,11 @@ public class StaticConfig {
 	public final static String ERROR_CODE_532404 = "532404";
 	public final static String ERROR_CODE_532500 = "532500";
 
+	public final static String SUCCESS_CODE_533 = "533200";
+	public final static String ERROR_CODE_533401 = "533401";
+	public final static String ERROR_CODE_533404 = "533404";
+	public final static String ERROR_CODE_533500 = "533500";
+
 	public final static String SUCCESS_CODE_550 = "550200";
 	public final static String ERROR_CODE_550400 = "550400";
 	public final static String ERROR_CODE_550401 = "550401";
@@ -179,5 +185,5 @@ public class StaticConfig {
 	public final static String ERROR_CODE_553401 = "553401";
 	public final static String ERROR_CODE_553404 = "553404";
 	public final static String ERROR_CODE_553500 = "553500";
-	
+
 }
