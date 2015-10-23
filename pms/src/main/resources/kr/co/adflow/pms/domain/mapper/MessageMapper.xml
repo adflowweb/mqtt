@@ -720,7 +720,7 @@
 		,#{expiry}
 		,#{qos}
 		,#{msgSize}
-		,now()
+		,#{issueTime}
 		,#{issueId}
 		,#{content}
 		,#{contentType}

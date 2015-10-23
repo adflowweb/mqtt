@@ -116,7 +116,7 @@ public class TokenController extends BaseController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/token/{token:+.}", method = RequestMethod.GET)
+	@RequestMapping(value = "/token/{token}", method = RequestMethod.GET)
 	public Response<TokenInfoRes> getToken(@PathVariable String token)
 			throws Exception {
 		logger.debug("token=" + token);
@@ -142,7 +142,7 @@ public class TokenController extends BaseController {
 		return res;
 	}
 
-	@RequestMapping(value = "/validate/{token:.+}", method = RequestMethod.GET)
+	@RequestMapping(value = "/validate/{token}", method = RequestMethod.GET)
 	@ResponseBody
 	public Response validate(
 			@RequestHeader(value = StaticConfig.HEADER_APPLICATION_KEY) String applicationKey,
@@ -174,7 +174,7 @@ public class TokenController extends BaseController {
 			res.setMessage("토큰을 인증 하였습니다.");
 		} else {
 			res.setStatus(StaticConfig.RESPONSE_STATUS_FAIL);
-			res.setCode(StaticConfig.ERROR_CODE_511400);
+			res.setCode(StaticConfig.ERROR_CODE_511404);
 			res.setMessage("토큰 정보를 찾을 수 없습니다.");
 		}
 
@@ -182,7 +182,7 @@ public class TokenController extends BaseController {
 		return res;
 	}
 
-	@RequestMapping(value = "/token/connection/{token:.+}", method = RequestMethod.GET)
+	@RequestMapping(value = "/token/connection/{token}", method = RequestMethod.GET)
 	@ResponseBody
 	public Response getTokenStatus(@PathVariable String token) throws Exception {
 		logger.debug("token:" + token);
@@ -204,7 +204,7 @@ public class TokenController extends BaseController {
 		return res;
 	}
 
-	@RequestMapping(value = "/token/subscriptions/{token:.+}", method = RequestMethod.GET)
+	@RequestMapping(value = "/token/subscriptions/{token}", method = RequestMethod.GET)
 	@ResponseBody
 	public Response<SubscriptionsRes> getTopic(@PathVariable String token)
 
@@ -247,7 +247,7 @@ public class TokenController extends BaseController {
 			res.setCode(errCode);
 			res.setMessage(errMsg);
 		} else {
-			res.setCode(StaticConfig.ERROR_CODE_539000);
+			res.setCode(StaticConfig.ERROR_CODE_519000);
 			res.setMessage(e.getMessage());
 		}
 		return res;

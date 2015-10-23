@@ -2,20 +2,20 @@
 <testng-results skipped="0" failed="0" total="4" passed="4">
   <reporter-output>
   </reporter-output>
-  <suite name="Default suite" duration-ms="5015" started-at="2015-10-22T07:50:49Z" finished-at="2015-10-22T07:50:54Z">
+  <suite name="Default suite" duration-ms="5360" started-at="2015-10-23T06:03:35Z" finished-at="2015-10-23T06:03:40Z">
     <groups>
     </groups>
-    <test name="Default test" duration-ms="5015" started-at="2015-10-22T07:50:49Z" finished-at="2015-10-22T07:50:54Z">
+    <test name="Default test" duration-ms="5360" started-at="2015-10-23T06:03:35Z" finished-at="2015-10-23T06:03:40Z">
       <class name="kr.co.adflow.pms.core.pcf.MessageControllerTest">
-        <test-method status="PASS" signature="springTestContextBeforeTestClass()[pri:0, instance:kr.co.adflow.pms.core.pcf.MessageControllerTest@3cdd17f5]" name="springTestContextBeforeTestClass" is-config="true" duration-ms="9" started-at="2015-10-22T16:50:49Z" finished-at="2015-10-22T16:50:49Z">
+        <test-method status="PASS" signature="springTestContextBeforeTestClass()[pri:0, instance:kr.co.adflow.pms.core.pcf.MessageControllerTest@574ff50a]" name="springTestContextBeforeTestClass" is-config="true" duration-ms="13" started-at="2015-10-23T15:03:35Z" finished-at="2015-10-23T15:03:35Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- springTestContextBeforeTestClass -->
-        <test-method status="PASS" signature="springTestContextPrepareTestInstance()[pri:0, instance:kr.co.adflow.pms.core.pcf.MessageControllerTest@3cdd17f5]" name="springTestContextPrepareTestInstance" is-config="true" duration-ms="3688" started-at="2015-10-22T16:50:49Z" depends-on-methods="org.springframework.test.context.testng.AbstractTestNGSpringContextTests.springTestContextBeforeTestClass" finished-at="2015-10-22T16:50:53Z">
+        <test-method status="PASS" signature="springTestContextPrepareTestInstance()[pri:0, instance:kr.co.adflow.pms.core.pcf.MessageControllerTest@574ff50a]" name="springTestContextPrepareTestInstance" is-config="true" duration-ms="3615" started-at="2015-10-23T15:03:35Z" depends-on-methods="org.springframework.test.context.testng.AbstractTestNGSpringContextTests.springTestContextBeforeTestClass" finished-at="2015-10-23T15:03:38Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- springTestContextPrepareTestInstance -->
-        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.pcf.MessageControllerTest@3cdd17f5]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="1" started-at="2015-10-22T16:50:53Z" finished-at="2015-10-22T16:50:53Z">
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.pcf.MessageControllerTest@574ff50a]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="2" started-at="2015-10-23T15:03:38Z" finished-at="2015-10-23T15:03:38Z">
           <params>
             <param index="0">
               <value>
@@ -26,11 +26,11 @@
           <reporter-output>
           </reporter-output>
         </test-method> <!-- springTestContextBeforeTestMethod -->
-        <test-method status="PASS" signature="messageSendTest()[pri:0, instance:kr.co.adflow.pms.core.pcf.MessageControllerTest@3cdd17f5]" name="messageSendTest" duration-ms="689" started-at="2015-10-22T16:50:53Z" finished-at="2015-10-22T16:50:53Z">
+        <test-method status="PASS" signature="messageSendTest()[pri:0, instance:kr.co.adflow.pms.core.pcf.MessageControllerTest@574ff50a]" name="messageSendTest" duration-ms="689" started-at="2015-10-23T15:03:38Z" finished-at="2015-10-23T15:03:39Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- messageSendTest -->
-        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.pcf.MessageControllerTest@3cdd17f5]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="2" started-at="2015-10-22T16:50:53Z" finished-at="2015-10-22T16:50:53Z">
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.pcf.MessageControllerTest@574ff50a]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="1" started-at="2015-10-23T15:03:39Z" finished-at="2015-10-23T15:03:39Z">
           <params>
             <param index="0">
               <value>
@@ -41,7 +41,7 @@
           <reporter-output>
           </reporter-output>
         </test-method> <!-- springTestContextAfterTestMethod -->
-        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.pcf.MessageControllerTest@3cdd17f5]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2015-10-22T16:50:53Z" finished-at="2015-10-22T16:50:53Z">
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.pcf.MessageControllerTest@574ff50a]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2015-10-23T15:03:39Z" finished-at="2015-10-23T15:03:39Z">
           <params>
             <param index="0">
               <value>
@@ -52,11 +52,11 @@
           <reporter-output>
           </reporter-output>
         </test-method> <!-- springTestContextBeforeTestMethod -->
-        <test-method status="PASS" signature="getMessage()[pri:0, instance:kr.co.adflow.pms.core.pcf.MessageControllerTest@3cdd17f5]" name="getMessage" duration-ms="275" started-at="2015-10-22T16:50:53Z" finished-at="2015-10-22T16:50:54Z">
+        <test-method status="PASS" signature="getMessage()[pri:0, instance:kr.co.adflow.pms.core.pcf.MessageControllerTest@574ff50a]" name="getMessage" duration-ms="414" started-at="2015-10-23T15:03:39Z" finished-at="2015-10-23T15:03:39Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- getMessage -->
-        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.pcf.MessageControllerTest@3cdd17f5]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="1" started-at="2015-10-22T16:50:54Z" finished-at="2015-10-22T16:50:54Z">
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.pcf.MessageControllerTest@574ff50a]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="0" started-at="2015-10-23T15:03:39Z" finished-at="2015-10-23T15:03:39Z">
           <params>
             <param index="0">
               <value>
@@ -67,22 +67,22 @@
           <reporter-output>
           </reporter-output>
         </test-method> <!-- springTestContextAfterTestMethod -->
-        <test-method status="PASS" signature="getStatistics()[pri:0, instance:kr.co.adflow.pms.core.pcf.MessageControllerTest@3cdd17f5]" name="getStatistics" duration-ms="184" started-at="2015-10-22T16:50:54Z" finished-at="2015-10-22T16:50:54Z">
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.pcf.MessageControllerTest@574ff50a]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2015-10-23T15:03:39Z" finished-at="2015-10-23T15:03:39Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[void kr.co.adflow.pms.core.pcf.MessageControllerTest.getStatistics() throws java.lang.Exception]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextBeforeTestMethod -->
+        <test-method status="PASS" signature="getStatistics()[pri:0, instance:kr.co.adflow.pms.core.pcf.MessageControllerTest@574ff50a]" name="getStatistics" duration-ms="376" started-at="2015-10-23T15:03:39Z" finished-at="2015-10-23T15:03:40Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- getStatistics -->
-        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.pcf.MessageControllerTest@3cdd17f5]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2015-10-22T16:50:54Z" finished-at="2015-10-22T16:50:54Z">
-          <params>
-            <param index="0">
-              <value>
-                <![CDATA[void kr.co.adflow.pms.core.pcf.MessageControllerTest.getStatistics() throws java.lang.Exception]]>
-              </value>
-            </param>
-          </params>
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- springTestContextBeforeTestMethod -->
-        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.pcf.MessageControllerTest@3cdd17f5]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="1" started-at="2015-10-22T16:50:54Z" finished-at="2015-10-22T16:50:54Z">
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.pcf.MessageControllerTest@574ff50a]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="1" started-at="2015-10-23T15:03:40Z" finished-at="2015-10-23T15:03:40Z">
           <params>
             <param index="0">
               <value>
@@ -93,7 +93,7 @@
           <reporter-output>
           </reporter-output>
         </test-method> <!-- springTestContextAfterTestMethod -->
-        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.pcf.MessageControllerTest@3cdd17f5]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="1" started-at="2015-10-22T16:50:54Z" finished-at="2015-10-22T16:50:54Z">
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.pcf.MessageControllerTest@574ff50a]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="1" started-at="2015-10-23T15:03:40Z" finished-at="2015-10-23T15:03:40Z">
           <params>
             <param index="0">
               <value>
@@ -104,15 +104,11 @@
           <reporter-output>
           </reporter-output>
         </test-method> <!-- springTestContextBeforeTestMethod -->
-        <test-method status="PASS" signature="getAckMessage()[pri:0, instance:kr.co.adflow.pms.core.pcf.MessageControllerTest@3cdd17f5]" name="getAckMessage" duration-ms="138" started-at="2015-10-22T16:50:54Z" finished-at="2015-10-22T16:50:54Z">
+        <test-method status="PASS" signature="getAckMessage()[pri:0, instance:kr.co.adflow.pms.core.pcf.MessageControllerTest@574ff50a]" name="getAckMessage" duration-ms="226" started-at="2015-10-23T15:03:40Z" finished-at="2015-10-23T15:03:40Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- getAckMessage -->
-        <test-method status="PASS" signature="springTestContextAfterTestClass()[pri:0, instance:kr.co.adflow.pms.core.pcf.MessageControllerTest@3cdd17f5]" name="springTestContextAfterTestClass" is-config="true" duration-ms="1" started-at="2015-10-22T16:50:54Z" finished-at="2015-10-22T16:50:54Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- springTestContextAfterTestClass -->
-        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.pcf.MessageControllerTest@3cdd17f5]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="0" started-at="2015-10-22T16:50:54Z" finished-at="2015-10-22T16:50:54Z">
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.pcf.MessageControllerTest@574ff50a]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="1" started-at="2015-10-23T15:03:40Z" finished-at="2015-10-23T15:03:40Z">
           <params>
             <param index="0">
               <value>
@@ -123,6 +119,10 @@
           <reporter-output>
           </reporter-output>
         </test-method> <!-- springTestContextAfterTestMethod -->
+        <test-method status="PASS" signature="springTestContextAfterTestClass()[pri:0, instance:kr.co.adflow.pms.core.pcf.MessageControllerTest@574ff50a]" name="springTestContextAfterTestClass" is-config="true" duration-ms="1" started-at="2015-10-23T15:03:40Z" finished-at="2015-10-23T15:03:40Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextAfterTestClass -->
       </class> <!-- kr.co.adflow.pms.core.pcf.MessageControllerTest -->
     </test> <!-- Default test -->
   </suite> <!-- Default suite -->

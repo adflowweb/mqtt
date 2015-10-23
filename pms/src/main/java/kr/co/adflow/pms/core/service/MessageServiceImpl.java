@@ -206,6 +206,7 @@ public class MessageServiceImpl implements MessageService {
 		msg.setAck(true);
 		msg.setContentType(message.getContentType());
 		msg.setContent(message.getContent());
+
 		msgId = this.getMsgId();
 		msg.setMsgId(msgId);
 
@@ -223,7 +224,7 @@ public class MessageServiceImpl implements MessageService {
 	// JMS Send and Message DB insert
 	public void sendJMS(Message msg) {
 		logger.debug(msg.toString());
-
+		msg.setIssueTime(new Date());
 		// JMS message send
 
 		jmsTemplate.execute(new DirectMsgHandlerBySessionCallback(jmsTemplate,

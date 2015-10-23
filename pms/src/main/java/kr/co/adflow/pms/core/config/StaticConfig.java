@@ -125,6 +125,7 @@ public class StaticConfig {
 	public final static String SUCCESS_CODE_511 = "511200";
 	public final static String ERROR_CODE_511400 = "511400";
 	public final static String ERROR_CODE_511401 = "511401";
+	public final static String ERROR_CODE_511404 = "511404";
 	public final static String ERROR_CODE_511500 = "511500";
 
 	public final static String SUCCESS_CODE_512 = "512200";

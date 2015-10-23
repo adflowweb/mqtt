@@ -125,7 +125,6 @@ public class TokenServiceImpl implements TokenService {
 		}
 
 		res.setUserId(user.getUserId());
-		res.setUserName(user.getUserName());
 		res.setServerId(user.getServerId());
 
 		return res;

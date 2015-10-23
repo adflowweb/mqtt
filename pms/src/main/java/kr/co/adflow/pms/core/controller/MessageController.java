@@ -234,7 +234,7 @@ public class MessageController extends BaseController {
 
 	}
 
-	@RequestMapping(value = "/messages/ack/{msgId:.+}", method = RequestMethod.GET)
+	@RequestMapping(value = "/messages/ack/{msgId}", method = RequestMethod.GET)
 	@ResponseBody
 	public Response<AckRes> getAckMessage(
 			@RequestParam Map<String, String> params,
@@ -301,7 +301,7 @@ public class MessageController extends BaseController {
 			res.setCode(errCode);
 			res.setMessage(errMsg);
 		} else {
-			res.setCode(StaticConfig.ERROR_CODE_519000);
+			res.setCode(StaticConfig.ERROR_CODE_539000);
 			res.setMessage(e.getMessage());
 		}
 		return res;

@@ -142,6 +142,8 @@ public class AckMessageDrivenBean implements MessageListener {
 		ack.setMsgId(msgObject.getString("msgId"));
 		ack.setAckType(msgObject.getString("ackType"));
 		ack.setTokenId(msgObject.getString("token"));
+	
+
 		ack.setAckTime(new Date(msgObject.getLong("ackTime")));
 		ack.setServerId(EXECUTOR_SERVER_ID);
 		// ack.setServerId("S01");
