@@ -9,10 +9,20 @@
 			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
+		<key>ADFPushTests.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
 		<key>221EA82E1BCCAFEA00F262D5</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>22609B691BCCE7F100FA6408</key>
 		<dict>
 			<key>primary</key>
 			<true/>
