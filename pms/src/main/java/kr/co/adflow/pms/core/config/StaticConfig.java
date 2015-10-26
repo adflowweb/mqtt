@@ -164,6 +164,13 @@ public class StaticConfig {
 	public final static String ERROR_CODE_533401 = "533401";
 	public final static String ERROR_CODE_533404 = "533404";
 	public final static String ERROR_CODE_533500 = "533500";
+	
+	
+	public final static String SUCCESS_CODE_534 = "534200";
+	public final static String ERROR_CODE_534400 = "534400";
+	public final static String ERROR_CODE_534401 = "534401";
+	public final static String ERROR_CODE_534404 = "534404";
+	public final static String ERROR_CODE_534500 = "534500";
 
 	public final static String SUCCESS_CODE_550 = "550200";
 	public final static String ERROR_CODE_550400 = "550400";

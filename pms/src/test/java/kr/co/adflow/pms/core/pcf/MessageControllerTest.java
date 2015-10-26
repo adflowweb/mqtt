@@ -90,4 +90,20 @@ public class MessageControllerTest extends AbstractTestNGSpringContextTests {
 		Assert.assertEquals(response.getStatus(), "ok");
 		System.out.println(response.toString());
 	}
+
+	@Test(priority = 5)
+	void messageSystemTest() throws Exception {
+		MessageReq messageReq = new MessageReq();
+
+		messageReq.setReceiver("testTopic");
+		messageReq.setQos(2);
+		messageReq.setExpiry(777730);
+		messageReq.setContent("200");
+		messageReq.setContentType("text/plain");
+
+		Response<MessageSendRes> response = controller.sendSystemMessage(
+				"c84571f51d56e3e17735eea", messageReq, 200);
+		Assert.assertEquals(response.getStatus(), "ok");
+		System.out.println(response.toString());
+	}
 }

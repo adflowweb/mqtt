@@ -198,8 +198,15 @@ public class MessageController extends BaseController {
 		if (msgType == 200) {
 			String keepAliveTime = msg.getContent();
 			JSONObject jsonObjectTime = new JSONObject();
-			jsonObjectTime
-					.put("keepAliveTime", Integer.parseInt(keepAliveTime));
+			try {
+				jsonObjectTime.put("keepAliveTime",
+						Integer.parseInt(keepAliveTime));
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new MessageRunTimeException(
+						StaticConfig.ERROR_CODE_534400,
+						"잘못된 요청 입니다(content의 입력값을 확인해주세요)");
+			}
 			msg.setContent(jsonObjectTime.toString());
 		}
 
@@ -212,7 +219,7 @@ public class MessageController extends BaseController {
 		Response<MessageSendRes> res = new Response<MessageSendRes>();
 		res.setStatus(StaticConfig.RESPONSE_STATUS_OK);
 		res.setData(messageSendRes);
-		res.setCode(StaticConfig.SUCCESS_CODE_530);
+		res.setCode(StaticConfig.SUCCESS_CODE_534);
 		res.setMessage("메시지를 전송 하였습니다.");
 
 		return res;
