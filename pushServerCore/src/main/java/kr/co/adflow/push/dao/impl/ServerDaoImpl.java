@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package kr.co.adflow.push.dao.impl;
 
 import java.lang.management.ManagementFactory;
@@ -15,6 +18,7 @@ import kr.co.adflow.push.domain.Heap;
 import kr.co.adflow.push.domain.Memory;
 import kr.co.adflow.push.domain.ServerInfo;
 import kr.co.adflow.push.service.MqttService;
+import kr.co.adflow.push.executor.TpsExceutor;
 
 import org.hyperic.sigar.CpuPerc;
 import org.hyperic.sigar.FileSystem;
@@ -27,19 +31,24 @@ import org.hyperic.sigar.SigarLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class ServerDaoImpl.
+ *
  * @author nadir93
  * @date 2014. 4. 14.
- * 
  */
 // @Repository
 public class ServerDaoImpl implements ServerDao {
 
+	/** The Constant logger. */
 	private static final Logger logger = LoggerFactory
 			.getLogger(ServerDaoImpl.class);
 
+	/** The Constant sigar. */
 	private static final Sigar sigar = new Sigar();
 
+	/** The mqtt service. */
 	@Resource
 	MqttService mqttService;
 
@@ -51,9 +60,10 @@ public class ServerDaoImpl implements ServerDao {
 	@Override
 	public ServerInfo get() throws Exception {
 		logger.debug("get시작()");
-		ServerInfo res = new ServerInfo(mqttService.isConnected(),
-				mqttService.getErrorMsg());
+//		ServerInfo res = new ServerInfo(mqttService.isConnected(),
+//				mqttService.getErrorMsg());
 
+		ServerInfo res = new ServerInfo();
 		// 서버정보 가져오기
 		// CpuInfo[] infos = sigar.getCpuInfoList();
 		// CpuPerc[] cpus = sigar.getCpuPercList();
@@ -190,11 +200,21 @@ public class ServerDaoImpl implements ServerDao {
 		res.setIpAddress(InetAddress.getLocalHost().getHostAddress());
 
 		logger.debug("get종료()");
+		
+		//get digAcount, precheck TPS 
+		logger.debug("Dao digTps::"+TpsExceutor.digTps);
+		logger.debug("Dao preTps::"+TpsExceutor.preTps);
+		
+		res.setTpsDigAccount(TpsExceutor.digTps);
+		res.setTpsPreckeck(TpsExceutor.preTps);
+		
 		return res;
 	}
 
 	/**
-	 * @param cpu
+	 * Log cpu info.
+	 *
+	 * @param cpu the cpu
 	 */
 	private void logCPUInfo(CpuPerc cpu) {
 		logger.debug("UserTime=" + CpuPerc.format(cpu.getUser()));
@@ -210,6 +230,12 @@ public class ServerDaoImpl implements ServerDao {
 		}
 	}
 
+	/**
+	 * Make disk info.
+	 *
+	 * @param fs the fs
+	 * @return the disk
+	 */
 	public Disk makeDiskInfo(FileSystem fs) {
 		long used, avail, total, pct;
 
@@ -267,20 +293,35 @@ public class ServerDaoImpl implements ServerDao {
 		return disk;
 	}
 
+	/**
+	 * Format size.
+	 *
+	 * @param size the size
+	 * @return the string
+	 */
 	private String formatSize(long size) {
 		return Sigar.formatSize(size * 1024);
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.dao.ServerDao#post()
+	 */
 	@Override
 	public void post() throws Exception {
 		// return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.dao.ServerDao#put()
+	 */
 	@Override
 	public void put() throws Exception {
 		// return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.dao.ServerDao#delete()
+	 */
 	@Override
 	public void delete() throws Exception {
 		// return null;

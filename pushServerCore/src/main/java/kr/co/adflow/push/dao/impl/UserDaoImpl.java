@@ -1,8 +1,8 @@
+/*
+ * 
+ */
 package kr.co.adflow.push.dao.impl;
 
-import javax.annotation.Resource;
-
-import kr.co.adflow.push.dao.LdapAuthDao;
 import kr.co.adflow.push.dao.UserDao;
 import kr.co.adflow.push.domain.User;
 import kr.co.adflow.push.mapper.UserMapper;
@@ -12,22 +12,26 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class UserDaoImpl.
+ *
  * @author nadir93
  * @date 2014. 4. 14.
- * 
  */
 @Repository
 public class UserDaoImpl implements UserDao {
 
+	/** The Constant logger. */
 	private static final org.slf4j.Logger logger = LoggerFactory
 			.getLogger(UserDaoImpl.class);
 	// Autowired를 사용하여 sqlSession을 사용할수 있다.
+	/** The sql session. */
 	@Autowired
 	private SqlSession sqlSession;
 
-	@Resource
-	private LdapAuthDao ldap;
+//	@Resource
+//	private LdapAuthDao ldap;
 
 	/*
 	 * (non-Javadoc)
@@ -92,15 +96,18 @@ public class UserDaoImpl implements UserDao {
 	@Override
 	public boolean auth(User user) throws Exception {
 		logger.debug("auth시작(user=" + user + ")");
-		// UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
-		// boolean rst = userMapper.auth(user);
+		 UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+		 boolean rst = userMapper.auth(user);
 
 		// ldap 인증
-		boolean rst = ldap.auth(user.getUserID(), user.getPassword());
-		logger.debug("auth종료(result=" + rst + ")");
+//		boolean rst = ldap.auth(user.getUserID(), user.getPassword());
+//		logger.debug("auth종료(result=" + rst + ")");
 		return rst;
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.dao.UserDao#getAdmin()
+	 */
 	@Override
 	public User[] getAdmin() throws Exception {
 		logger.debug("getAdmin시작()");
@@ -110,12 +117,30 @@ public class UserDaoImpl implements UserDao {
 		return users;
 	}
 
+	//KTP-skip-start
+//	@Override
+//	public int putWithoutRole(User user) throws Exception {
+//		logger.debug("putWithoutRole시작(user=" + user + ")");
+//		UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+//		int result = userMapper.putWithoutRole(user);
+//		logger.debug("putWithoutRole종료(result=" + result + ")");
+//		return result;
+//	}
+	//KTP-skip-end
+	
+	//140901 <kicho> - start
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see kr.co.adflow.push.dao.UserDAO#changePassword(kr.co.adflow.push.domain.User)
+	 */
 	@Override
-	public int putWithoutRole(User user) throws Exception {
-		logger.debug("putWithoutRole시작(user=" + user + ")");
+	public int changePassword(User user) throws Exception {
+		logger.debug("changePassword시작(user=" + user + ")");
 		UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
-		int result = userMapper.putWithoutRole(user);
-		logger.debug("putWithoutRole종료(result=" + result + ")");
+		int result = userMapper.changePassword(user);
+		logger.debug("changePassword종료(result=" + result + ")");
 		return result;
 	}
+	//140901 <kicho> - end
 }

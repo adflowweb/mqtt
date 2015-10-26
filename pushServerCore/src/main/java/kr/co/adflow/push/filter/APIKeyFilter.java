@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package kr.co.adflow.push.filter;
 
 import java.io.IOException;
@@ -18,21 +21,27 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
-import kr.co.adflow.push.service.impl.HAServiceImpl;
-
 import org.slf4j.LoggerFactory;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class APIKeyFilter.
+ *
  * @author nadir93
  * @date 2014. 5. 20.
- * 
  */
 public class APIKeyFilter implements Filter {
 
+	/** The Constant logger. */
 	private static final org.slf4j.Logger logger = LoggerFactory
 			.getLogger(APIKeyFilter.class);
+	
+	/** The ds. */
 	private DataSource ds = null;
 
+	/* (non-Javadoc)
+	 * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
+	 */
 	@Override
 	public void init(FilterConfig config) throws ServletException {
 		logger.debug("init시작(config=" + config);
@@ -47,12 +56,18 @@ public class APIKeyFilter implements Filter {
 		logger.debug("init종료()");
 	}
 
+	/* (non-Javadoc)
+	 * @see javax.servlet.Filter#destroy()
+	 */
 	@Override
 	public void destroy() {
 		logger.debug("destroy시작()");
 		logger.debug("destroy종료()");
 	}
 
+	/* (non-Javadoc)
+	 * @see javax.servlet.Filter#doFilter(javax.servlet.ServletRequest, javax.servlet.ServletResponse, javax.servlet.FilterChain)
+	 */
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response,
 			FilterChain chain) throws IOException, ServletException {
@@ -96,7 +111,7 @@ public class APIKeyFilter implements Filter {
 
 		// /v1/auth 요청일 경우는 X-ApiKey를 체크하지 않음
 		// 이유는 ApiKey를 발급받는 요청이므로 ...
-		if (appContext.equals("auth") || appContext.equals("adminAuth")) {
+		if (appContext.equals("auth") || appContext.equals("adminAuth") || appContext.equals("precheck")) {
 			chain.doFilter(httpRequest, httpResponse);
 			long stop = System.currentTimeMillis();
 			logger.debug("걸린시간=" + (stop - start) + " ms");
@@ -117,12 +132,13 @@ public class APIKeyFilter implements Filter {
 
 		// check api key
 		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
 		try {
 			conn = ds.getConnection();
-			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt
-					.executeQuery("SELECT * FROM token WHERE tokenid ='" + auth
-							+ "'");
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery("SELECT * FROM token WHERE tokenid ='"
+					+ auth + "'");
 			if (!rs.next()) {
 				logger.debug("해당토큰이존재하지않습니다.");
 				httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
@@ -143,6 +159,20 @@ public class APIKeyFilter implements Filter {
 					+ ")");
 			return;
 		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 			if (conn != null) {
 				try {
 					conn.close();

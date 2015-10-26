@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.adflow.pms.domain.mapper.SummaryMapper">
+	<!-- cache eviction="LRU" flushInterval="6000" size="100" readOnly="true" -->
+
+	<resultMap id="summaryResult" type="java.util.Map">
+
+		<result property="msgCnt" column="msg_cnt" />
+		<result property="msgSuccessCnt" column="msg_success_cnt" />
+		<result property="msgFailCnt" column="msg_fail_cnt" />
+		<result property="agentAckCnt" column="agent_ack_cnt" />
+		<result property="appAckCnt" column="app_ack_cnt" />
+		<result property="msgType" column="msg_type" />
+	</resultMap>
+
+	<select id="getMessageStatistics" parameterType="kr.co.adflow.pms.domain.MsgParams"
+		resultMap="summaryResult">
+		SELECT
+		COUNT(a.msg_id) as msg_cnt
+		, COUNT(b.ack_type) AS
+		agent_ack_cnt,
+		SUM(if (a.status
+		=1,1,0)) AS msg_success_cnt,
+		SUM(if
+		(a.status =99,1,0)) AS msg_fail_cnt
+		,
+		COUNT(d.ack_type) AS app_ack_cnt
+		FROM
+		pms.message a LEFT OUTER
+		JOIN
+		pms.ack b ON a.msg_id = b.msg_id AND
+		b.ack_type = 'agent',
+		pms.message c
+		LEFT OUTER JOIN pms.ack d ON c.msg_id
+		= d.msg_id AND d.ack_type = 'app'
+		WHERE a.msg_id = c.msg_id and
+		a.issue_time between #{dateStart} and #{dateEnd}
+
+
+	</select>
+
+
+
+	<select id="getMonthSummary" parameterType="kr.co.adflow.pms.domain.MsgParams"
+		resultMap="summaryResult">
+		SELECT issue_id AS user_id
+		, status
+		, is_reservation
+		, media_type
+		,
+		COUNT(msg_id) as msg_cnt
+		, COUNT(pma_ack_type) AS agent_ack_cnt
+		,
+		COUNT(app_ack_type) AS app_ack_cnt
+
+		FROM
+		(
+		select
+		a.issue_id, a.status,
+		a.is_reservation, a.msg_id, a.media_type, b.ack_type AS
+		pma_ack_type,
+		d.ack_type AS app_ack_type, b.token_id
+		FROM
+		pms.message${keyMon} a LEFT
+		OUTER JOIN pms.ack${keyMon} b ON a.msg_id
+		= b.msg_id AND b.ack_type =
+		'pma',
+		pms.message${keyMon} c LEFT OUTER JOIN pms.ack${keyMon} d ON
+		c.msg_id = d.msg_id AND
+		d.ack_type = 'app'
+		WHERE a.msg_id = c.msg_id
+		<if test="msgType != null and msgType != 0">
+			AND a.msg_type = #{msgType}
+		</if>
+		<if test="dateStart != null ">
+			AND a.update_time <![CDATA[>]]>
+			#{dateStart}
+		</if>
+		<if test="dateEnd != null ">
+			AND a.update_time <![CDATA[<]]>
+			#{dateEnd}
+		</if>
+		<if test="issueId != null and issueId != ''">
+			AND a.issue_id = #{issueId}
+		</if>
+
+		UNION
+		select issue_id, status, is_reservation, media_type, msg_id,
+		NULL, NULL ,
+		NULL
+
+		FROM reservation_msg
+		WHERE
+		status = 0
+		<if test="dateStart != null ">
+			AND update_time <![CDATA[>]]>
+			#{dateStart}
+		</if>
+		<if test="dateEnd != null ">
+			AND update_time <![CDATA[<]]>
+			#{dateEnd}
+		</if>
+		<if test="issueId != null and issueId != ''">
+			AND issue_id = #{issueId}
+		</if>
+
+		) s
+
+		GROUP BY user_id, status, is_reservation, media_type
+		ORDER BY
+		user_id, status, is_reservation, media_type
+	</select>
+
+	<select id="getMonthSummary_org" parameterType="kr.co.adflow.pms.domain.MsgParams"
+		resultMap="summaryResult">
+		SELECT a.issue_id AS user_id
+		, a.status
+		, a.is_reservation
+		,
+		COUNT(a.msg_id) as msg_cnt
+		, COUNT(b.ack_type) AS agent_ack_cnt
+		,
+		COUNT(d.ack_type) AS app_ack_cnt
+		FROM
+		pms.message${keyMon} a LEFT OUTER
+		JOIN pms.ack${keyMon} b ON a.msg_id = b.msg_id AND b.ack_type = 'pma',
+		pms.message${keyMon} c LEFT OUTER JOIN pms.ack${keyMon} d ON c.msg_id
+		= d.msg_id AND d.ack_type = 'app'
+		WHERE a.msg_id = c.msg_id
+		<if test="msgType != null and msgType != 0">
+			AND a.msg_type = #{msgType}
+		</if>
+		<if test="dateStart != null ">
+			AND a.update_time <![CDATA[>]]>
+			#{dateStart}
+		</if>
+		<if test="dateEnd != null ">
+			AND a.update_time <![CDATA[<]]>
+			#{dateEnd}
+		</if>
+		<if test="issueId != null and issueId != ''">
+			AND a.issue_id = #{issueId}
+		</if>
+		GROUP BY user_id, status, is_reservation
+		ORDER BY user_id, status,
+		is_reservation
+	</select>
+
+
+
+
+	<select id="getTPS" parameterType="String" resultType="double">
+		SELECT
+		COUNT(msg_id) / 10 AS TPS
+		FROM pms.message${value}
+		WHERE update_time >
+		DATE_SUB(NOW(),INTERVAL 10 SECOND)
+	</select>
+
+</mapper>	

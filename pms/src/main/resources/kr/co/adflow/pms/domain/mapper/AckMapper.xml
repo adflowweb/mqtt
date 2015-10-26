@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.adflow.pms.domain.mapper.AckMapper">
+
+	<resultMap id="AckResult" type="kr.co.adflow.pms.domain.Ack">
+		<result property="msgId" column="msg_id" />
+		<result property="ackType" column="ack_type" />
+		<result property="ackTime" column="ack_time" />
+		<result property="tokenId" column="token_id" />
+		<result property="receiver" column="receiver" />
+		<result property="issueId" column="issue_id" />
+		<result property="issueTime" column="issue_time" />
+		<result property="applicationKey" column="app_key" />
+
+	</resultMap>
+
+	<resultMap id="AckData" type="kr.co.adflow.pms.domain.AckData">
+
+		<result property="ackType" column="ack_type" />
+		<result property="ackTime" column="ack_time" />
+		<result property="token" column="token_id" />
+		<result property="serverId" column="server_id" />
+
+	</resultMap>
+
+	<insert id="insertAck" parameterType="kr.co.adflow.pms.domain.Ack">
+		INSERT INTO pms.ack
+		(msg_id
+		,ack_type
+		,token_id
+		,ack_time
+		,issue_time
+		,server_id
+		)
+		values(
+		#{msgId},
+		#{ackType},
+		#{tokenId},
+		#{ackTime},
+		now(),
+		#{serverId}
+		)
+	</insert>
+
+
+	<select id="selectAckMessage" parameterType="kr.co.adflow.pms.domain.MsgParams"
+		resultMap="AckData">
+		SELECT token_id,ack_time,ack_type,server_id
+		FROM pms.ack
+		WHERE
+		issue_time between #{dateStart} AND #{dateEnd}
+		AND msg_id =
+		#{msgId}
+	</select>
+
+</mapper>	

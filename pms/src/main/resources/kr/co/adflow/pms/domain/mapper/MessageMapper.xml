@@ -1,0 +1,1005 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.adflow.pms.domain.mapper.MessageMapper">
+
+	<resultMap id="MessageResult" type="kr.co.adflow.pms.domain.Message">
+		<result property="msgId" column="msg_id" />
+		<result property="msgType" column="msg_type" />
+		<result property="receiver" column="receiver" />
+		<result property="ack" column="is_ack" />
+		<result property="status" column="status" />
+		<result property="serverId" column="server_id" />
+		<result property="expiry" column="expiry" />
+		<result property="qos" column="qos" />
+		<result property="contentType" column="content_type" />
+		<result property="content" column="content" />
+		<result property="msgSize" column="msg_size" />
+		<result property="issueTime" column="issue_time" />
+		<result property="issueId" column="issue_id" />
+		<result property="pmaAckType" column="pma_ack_type" />
+		<result property="pmaAckTime" column="pma_ack_time" />
+		<result property="appAckType" column="app_ack_type" />
+		<result property="appAckTime" column="app_ack_time" />
+	</resultMap>
+
+
+	<select id="select" parameterType="String"
+		resultType="kr.co.adflow.pms.domain.Message">
+		SELECT a.group_id
+		, a.msg_id
+		, a.msg_type
+		, a.receiver
+		,
+		a.receiver_topic
+		, a.service_id
+		, a.is_ack
+		, a.status
+		, a.is_reservation
+		,
+		a.reservation_time
+		, a.resend_count
+		, a.resend_max_count
+		,
+		a.resend_interval
+		, a.resend_id
+		, a.server_id
+		, a.expiry
+		, a.qos
+		,
+		a.retained
+		, a.send_terminal_type
+		, a.media_type
+		, a.msg_size
+		,
+		a.issue_time
+		, a.issue_id
+		, a.update_time
+		, a.update_id
+		, b.content_type
+		,
+		b.content
+		, b.file_name
+		, b.file_format
+		, c.user_name AS issue_name
+		FROM
+		pms.message${keyMon} a, pms.content${keyMon} b, pms.user c
+		WHERE
+		a.msg_id = b.msg_id
+		AND a.issue_id = c.user_id
+		AND a.msg_id = #{msgId}
+		AND a.msg_type=10
+	</select>
+
+	<select id="selectList" parameterType="Map" resultMap="MessageResult">
+		SELECT
+		a.group_id
+		, a.msg_id
+		, a.msg_type
+		, a.receiver
+		, a.receiver_topic
+		,
+		a.service_id
+		, a.is_ack
+		, a.status
+		, a.is_reservation
+		, a.reservation_time
+		, a.resend_count
+		, a.resend_max_count
+		, a.resend_interval
+		, a.resend_id
+		,
+		a.server_id
+		, a.expiry
+		, a.qos
+		, a.retained
+		, a.send_terminal_type
+		,
+		a.media_type
+		, a.msg_size
+		, a.issue_time
+		, a.issue_id
+		, a.update_time
+		,
+		a.update_id
+		, b.content_type
+		, b.content
+		, b.file_name
+		, b.file_format
+		,
+		c.user_name AS issue_name
+		FROM pms.message${keyMon} a,
+		pms.content${keyMon} b, pms.user c
+		WHERE a.msg_id = b.msg_id
+		AND
+		a.issue_id = c.user_id
+		AND a.status = 0
+		AND a.is_reservation IS FALSE
+		AND a.server_id = #{serverId}
+		AND a.msg_type=10
+		ORDER BY issue_time ASC
+		limit #{limit}
+	</select>
+
+	<select id="selectReservationList" parameterType="Map"
+		resultMap="MessageResult">
+		SELECT a.msg_id
+		, a.msg_type
+		, a.receiver
+		, a.receiver_topic
+		,a.service_id
+		, a.is_ack
+		, a.status
+		, a.is_reservation
+		,
+		a.reservation_time
+		, a.server_id
+		, a.expiry
+		, a.qos
+		, a.media_type
+		,
+		a.msg_size
+		, a.issue_time
+		, a.issue_id
+		,
+		a.content_type
+		, a.content
+
+		FROM
+		pms.reservation_msg a
+		WHERE
+		a.status = 0
+		AND
+		a.reservation_time <![CDATA[<]]>
+		DATE_ADD(NOW(), INTERVAL 30 SECOND)
+		ORDER BY a.reservation_time ASC,
+		a.issue_time ASC
+		limit #{limit}
+	</select>
+
+
+	<select id="selectMessageType" parameterType="Map" resultType="Integer">
+		SELECT
+		msg_type
+		FROM pms.message${keyMon}
+		WHERE
+		msg_id = #{msgId}
+	</select>
+
+	<select id="checkGroupMessage" parameterType="Map" resultType="Integer">
+		SELECT
+		COUNT(*)
+		FROM pms.group_msg${keyMon}
+		WHERE
+		msg_id = #{msgId}
+		AND
+		receiver_token_id = #{receiverTokenId}
+	</select>
+
+
+	<select id="getMessageListCnt" parameterType="kr.co.adflow.pms.domain.MsgParams"
+		resultType="Integer">
+		SELECT COUNT(*)
+		FROM
+		pms.message a
+		WHERE
+		a.msg_id=a.msg_id
+		AND issue_time
+		between #{dateStart} and #{dateEnd}
+		<if test="msgType != null and msgType != 0">
+			AND a.msg_type = #{msgType}
+		</if>
+
+		<if test="receiver != null and receiver != ''">
+			AND a.receiver = #{receiver}
+		</if>
+		<if test="msgId != null and msgId != ''">
+			AND a.msg_id = #{msgId}
+		</if>
+		<if test="statusArray != null and statusArray.length != 0">
+			AND a.status IN
+			<foreach item="status" index="index" collection="statusArray"
+				open="(" separator="," close=")">
+				#{status}
+			</foreach>
+		</if>
+	</select>
+
+	<select id="getMessageList" parameterType="kr.co.adflow.pms.domain.MsgParams"
+		resultMap="MessageResult">
+		SELECT
+		a.msg_id
+		, a.msg_type
+		, a.receiver
+
+		, a.service_id
+		, a.is_ack
+		,
+		a.status
+		, a.server_id
+		,
+		a.expiry
+		, a.qos
+		,
+		a.msg_size
+		,
+		a.issue_time
+		,
+		a.issue_id
+		,
+		a.content_type
+		,
+		a.content
+
+		FROM
+		pms.message a
+		left join
+		pms.user
+		h on a.issue_id =
+		h.user_id
+
+		WHERE
+		a.msg_id =a.msg_id
+		AND a.issue_time between #{dateStart} and #{dateEnd}
+
+
+		<if test="msgType != null and msgType != 0">
+			AND a.msg_type = #{msgType}
+		</if>
+		<if test="issueId != null and issueId != ''">
+			AND a.issue_id = #{issueId}
+		</if>
+		<if test="receiver != null and receiver != ''">
+			AND a.receiver = #{receiver}
+		</if>
+		<if test="msgId != null and msgId != ''">
+			AND a.msg_id = #{msgId}
+		</if>
+		<if test="statusArray != null and statusArray.length != 0">
+			AND a.status IN
+			<foreach item="status" index="index" collection="statusArray"
+				open="(" separator="," close=")">
+				#{status}
+			</foreach>
+		</if>
+		ORDER BY a.issue_time DESC
+		limit #{iDisplayStart} ,
+		#{iDisplayLength}
+	</select>
+
+
+	<select id="getMessageListCvs" parameterType="kr.co.adflow.pms.domain.MsgParams"
+		resultMap="MessageResult">
+		SELECT a.group_id
+		, a.msg_id
+		, a.msg_type
+		, a.receiver
+		, a.receiver_topic
+		, a.service_id
+		, a.is_ack
+		, a.status
+		, a.is_reservation
+		,
+		a.reservation_time
+		, a.resend_count
+		, a.resend_max_count
+		,
+		a.resend_interval
+		, a.resend_id
+		, a.server_id
+		, a.expiry
+		, a.qos
+		,
+		a.retained
+		, a.send_terminal_type
+		, a.media_type
+		, a.msg_size
+		,
+		a.issue_time
+		, a.issue_id
+		, a.update_time
+		, a.update_id
+		, e.content_type
+		,
+		e.content
+		, e.file_name
+		, e.file_format
+		, h.user_name AS issue_name
+		,
+		b.ufmi
+		, b.pma_ack_type
+		, b.pma_ack_time
+		, b.app_ack_type
+		, b.app_ack_time
+
+		FROM
+		pms.message${keyMon} a left outer join (
+		SELECT
+		aa.msg_id,
+		j.ufmi,aa.ack_type as pma_ack_type,aa.ack_time as
+		pma_ack_time,bb.ack_type as app_ack_type,bb.ack_time as app_ack_time
+		FROM
+		pms.ack${keyMon} aa left outer join pms.ack${keyMon} bb on
+		aa.token_id = bb.token_id
+		AND aa.msg_id = bb.msg_id and bb.ack_type =
+		'app'
+		,push.token i
+		,push.user j
+		WHERE
+		aa.token_id = i.tokenid
+		AND i.userid
+		= j.userid
+		AND aa.ack_type = "pma"
+		AND aa.msg_id IN
+		(
+		SELECT rr.msg_id
+		FROM pms.message${keyMon} rr
+		WHERE
+		rr.issue_id = #{issueId}
+		<if test="msgType != null and msgType != 0">
+			AND rr.msg_type = #{msgType}
+		</if>
+		<if test="dateStart != null ">
+			AND rr.update_time <![CDATA[>]]>
+			#{dateStart}
+		</if>
+		<if test="dateEnd != null ">
+			AND rr.update_time <![CDATA[<]]>
+			#{dateEnd}
+		</if>
+		<if test="issueId != null and issueId != ''">
+			AND rr.issue_id = #{issueId}
+		</if>
+		<if test="receiver != null and receiver != ''">
+			AND rr.receiver = #{receiver}
+		</if>
+		<if test="msgId != null and msgId != ''">
+			AND rr.msg_id = #{msgId}
+		</if>
+		<if test="statusArray != null and statusArray.length != 0">
+			AND rr.status IN
+			<foreach item="status" index="index" collection="statusArray"
+				open="(" separator="," close=")">
+				#{status}
+			</foreach>
+		</if>
+		)
+		) b on a.msg_id = b.msg_id ,
+		pms.content${keyMon} e,
+		pms.message${keyMon} tt left join pms.user h on tt.issue_id =
+		h.user_id
+
+		WHERE
+		a.msg_id = e.msg_id
+		AND a.msg_id = tt.msg_id
+		<if test="msgType != null and msgType != 0">
+			AND a.msg_type = #{msgType}
+		</if>
+		<if test="dateStart != null ">
+			AND a.update_time <![CDATA[>]]>
+			#{dateStart}
+		</if>
+		<if test="dateEnd != null ">
+			AND a.update_time <![CDATA[<]]>
+			#{dateEnd}
+		</if>
+		<if test="issueId != null and issueId != ''">
+			AND a.issue_id = #{issueId}
+		</if>
+		<if test="receiver != null and receiver != ''">
+			AND a.receiver = #{receiver}
+		</if>
+		<if test="msgId != null and msgId != ''">
+			AND a.msg_id = #{msgId}
+		</if>
+		<if test="statusArray != null and statusArray.length != 0">
+			AND a.status IN
+			<foreach item="status" index="index" collection="statusArray"
+				open="(" separator="," close=")">
+				#{status}
+			</foreach>
+		</if>
+		ORDER BY a.update_time DESC,a.issue_time DESC
+		limit #{iDisplayStart} ,
+		#{iDisplayLength}
+	</select>
+
+
+
+
+	<select id="getSvcMessageDetailList" parameterType="kr.co.adflow.pms.domain.MsgParams"
+		resultMap="MessageResult">
+		SELECT
+		a.msg_id
+		, j.ufmi AS receiver
+		,a.ack_type as
+		pma_ack_type
+		,a.ack_time as pma_ack_time
+		,b.ack_type as app_ack_type
+		,b.ack_time as app_ack_time
+		FROM
+		pms.ack${keyMon} a left outer join
+		pms.ack${keyMon} b on a.token_id = b.token_id AND
+		a.msg_id = b.msg_id
+		and b.ack_type = 'app'
+		,push.token i
+		,push.user j
+		WHERE
+		a.token_id =
+		i.tokenid
+		AND i.userid = j.userid
+		AND a.ack_type = "pma"
+		AND a.msg_id =
+		#{msgId};
+	</select>
+
+
+	<select id="getSysMessageListCnt" parameterType="kr.co.adflow.pms.domain.MsgParams"
+		resultType="Integer">
+		SELECT COUNT(*)
+		FROM
+		pms.message a left outer join
+		pms.ack b on a.msg_id
+		= b.msg_id and
+		b.ack_type = 'pma',
+		pms.message c left outer
+		join pms.ack
+		d on c.msg_id
+		= d.msg_id and
+		d.ack_type = 'app',
+		pms.content e
+		WHERE
+		a.msg_id
+		= c.msg_id
+		AND a.msg_id = e.msg_id
+		<if test="msgType != null and msgType != 0">
+			AND a.msg_type = #{msgType}
+		</if>
+		<if test="dateStart != null ">
+			AND a.update_time <![CDATA[>]]>
+			#{dateStart}
+		</if>
+		<if test="dateEnd != null ">
+			AND a.update_time <![CDATA[<]]>
+			#{dateEnd}
+		</if>
+		<if test="issueId != null and issueId != ''">
+			AND a.issue_id = #{issueId}
+		</if>
+		<if test="receiver != null and receiver != ''">
+			AND a.receiver = #{receiver}
+		</if>
+		<if test="msgId != null and msgId != ''">
+			AND a.msg_id = #{msgId}
+		</if>
+		<if test="ackType != -1 and ackType == 0">
+			AND b.ack_type IS NULL
+		</if>
+		<if test="ackType != -1 and ackType == 1">
+			AND b.ack_type = 'pma'
+		</if>
+		<if test="ackType != -1 and ackType == 2">
+			AND d.ack_type = 'app'
+		</if>
+		<if test="statusArray != null and statusArray.length != 0">
+			AND a.status IN
+			<foreach item="status" index="index" collection="statusArray"
+				open="(" separator="," close=")">
+				#{status}
+			</foreach>
+		</if>
+	</select>
+
+	<select id="getSysMessageList" parameterType="kr.co.adflow.pms.domain.MsgParams"
+		resultMap="MessageResult">
+		SELECT a.group_id
+		, a.msg_id
+		, a.msg_type
+		, a.receiver
+		, a.receiver_topic
+		, a.service_id
+		, a.is_ack
+		, a.status
+		, a.is_reservation
+		,
+		a.reservation_time
+		, a.resend_count
+		, a.resend_max_count
+		,
+		a.resend_interval
+		, a.resend_id
+		, a.server_id
+		, a.expiry
+		, a.qos
+		,
+		a.retained
+		, a.send_terminal_type
+		, a.media_type
+		, a.msg_size
+		,
+		a.issue_time
+		, a.issue_id
+		, a.update_time
+		, a.update_id
+		,b.ack_type as
+		pma_ack_type
+		,b.ack_time as pma_ack_time
+		,d.ack_type as app_ack_type
+		,d.ack_time as app_ack_time
+		, e.content_type
+		, e.content
+		, e.file_name
+		,
+		e.file_format
+		, h.user_name AS
+		issue_name
+		FROM
+		pms.message a left
+		outer
+		join pms.ack b on a.msg_id = b.msg_id and
+		b.ack_type =
+		'pma',
+		pms.message c left outer join pms.ack d on
+		c.msg_id = d.msg_id and
+		d.ack_type = 'app',
+		pms.message g left
+		join pms.user h on g.issue_id =
+		h.user_id,
+		pms.content e
+		WHERE
+		a.msg_id = c.msg_id
+		AND a.msg_id = g.msg_id
+		AND a.msg_id = e.msg_id
+		<if test="msgType != null and msgType != 0">
+			AND a.msg_type = #{msgType}
+		</if>
+		<if test="dateStart != null ">
+			AND a.update_time <![CDATA[>]]>
+			#{dateStart}
+		</if>
+		<if test="dateEnd != null ">
+			AND a.update_time <![CDATA[<]]>
+			#{dateEnd}
+		</if>
+		<if test="issueId != null and issueId != ''">
+			AND a.issue_id = #{issueId}
+		</if>
+		<if test="receiver != null and receiver != ''">
+			AND a.receiver = #{receiver}
+		</if>
+		<if test="msgId != null and msgId != ''">
+			AND a.msg_id = #{msgId}
+		</if>
+		<if test="ackType != -1 and ackType == 0">
+			AND b.ack_type IS NULL
+		</if>
+		<if test="ackType != -1 and ackType == 1">
+			AND b.ack_type = 'pma'
+		</if>
+		<if test="ackType != -1 and ackType == 2">
+			AND d.ack_type = 'app'
+		</if>
+		<if test="statusArray != null and statusArray.length != 0">
+			AND a.status IN
+			<foreach item="status" index="index" collection="statusArray"
+				open="(" separator="," close=")">
+				#{status}
+			</foreach>
+		</if>
+		ORDER BY a.update_time DESC, a.issue_time DESC
+		limit #{iDisplayStart} ,
+		#{iDisplayLength}
+	</select>
+
+
+
+
+
+	<select id="getResevationMessageListCnt" parameterType="kr.co.adflow.pms.domain.MsgParams"
+		resultType="Integer">
+		SELECT COUNT(*)
+		FROM
+		pms.reservation_msg
+		WHERE status = 0
+		<if test="msgType != null and msgType != 0">
+			AND msg_type = #{msgType}
+		</if>
+		<if test="dateStart != null ">
+			AND reservation_time <![CDATA[>]]>
+			#{dateStart}
+		</if>
+		<if test="dateEnd != null ">
+			AND reservation_time <![CDATA[<]]>
+			#{dateEnd}
+		</if>
+		<if test="issueId != null and issueId != ''">
+			AND issue_id = #{issueId}
+		</if>
+		<if test="receiver != null and receiver != ''">
+			AND receiver = #{receiver}
+		</if>
+		<if test="msgId != null and msgId != ''">
+			AND msg_id = #{msgId}
+		</if>
+	</select>
+
+	<select id="getResevationMessageList" parameterType="kr.co.adflow.pms.domain.MsgParams"
+		resultMap="MessageResult">
+		SELECT a.msg_id
+		, a.msg_type
+		, a.receiver
+		, a.receiver_topic
+		,
+		a.service_id
+		, a.is_ack
+		, a.status
+		, a.is_reservation
+		, a.reservation_time
+		,
+		a.server_id
+		, a.expiry
+		, a.qos
+		, a.msg_size
+		, a.issue_time
+		, a.issue_id
+		,
+		a.content_type
+		, a.content
+		,
+		h.user_name AS issue_name
+		FROM
+		pms.reservation_msg a left join pms.user
+		h on a.issue_id = h.user_id
+		WHERE a.status = 0
+		<if test="msgType != null and msgType != 0">
+			AND a.msg_type = #{msgType}
+		</if>
+		<if test="dateStart != null ">
+			AND a.reservation_time <![CDATA[>]]>
+			#{dateStart}
+		</if>
+		<if test="dateEnd != null ">
+			AND a.reservation_time <![CDATA[<]]>
+			#{dateEnd}
+		</if>
+		<if test="issueId != null and issueId != ''">
+			AND a.issue_id = #{issueId}
+		</if>
+		<if test="receiver != null and receiver != ''">
+			AND a.receiver = #{receiver}
+		</if>
+		<if test="msgId != null and msgId != ''">
+			AND a.msg_id = #{msgId}
+		</if>
+		ORDER BY a.reservation_time ASC
+		limit
+		#{iDisplayStart} ,
+		#{iDisplayLength}
+	</select>
+
+
+	<update id="updateStatus" parameterType="kr.co.adflow.pms.domain.Message">
+		UPDATE
+		pms.message${keyMon}
+		SET status = #{status}
+		,receiver_topic =
+		#{receiverTopic}
+		,update_time = now()
+		,update_id = #{updateId}
+		WHERE
+		msg_id = #{msgId}
+	</update>
+
+	<insert id="insertMessage" parameterType="kr.co.adflow.pms.domain.Message">
+		INSERT INTO pms.message
+		(msg_id
+		,msg_type
+		,receiver
+		,service_id
+		,is_ack
+		,status
+		,server_id
+		,expiry
+		,qos
+		,msg_size
+		,issue_time
+		,issue_id,
+		content,
+		content_type
+
+		)
+		values(
+		#{msgId}
+		,#{msgType}
+		,#{receiver}
+		,#{serviceId}
+		,#{ack}
+		,#{status}
+		,#{serverId}
+		,#{expiry}
+		,#{qos}
+		,#{msgSize}
+		,#{issueTime}
+		,#{issueId}
+		,#{content}
+		,#{contentType}
+
+
+		)
+	</insert>
+	<insert id="insertContent" parameterType="kr.co.adflow.pms.domain.Message">
+		INSERT INTO pms.content
+		(msg_id
+		,content_type
+		,content
+		,file_name
+		,file_format
+		)
+		values(
+		#{msgId}
+		,#{contentType}
+		,#{content}
+		,#{fileName}
+		,#{fileFormat}
+		)
+	</insert>
+
+	<insert id="insertGroupMessage" parameterType="kr.co.adflow.pms.domain.GroupMessage">
+		INSERT INTO
+		pms.group_msg${keyMon}
+		(msg_id
+		,receiver_token_id
+		,receiver_ufmi
+		)
+		values(
+		#{msgId}
+		,#{receiverTokenId}
+		,#{receiverUfmi}
+		)
+	</insert>
+
+	<select id="getMessageResult" parameterType="kr.co.adflow.pms.domain.MsgIdsParams"
+		resultMap="MessageResult">
+		SELECT a.group_id
+		, a.msg_id
+		, a.receiver
+		, a.status
+		, a.is_reservation
+		,
+		a.reservation_time
+		, a.resend_count
+		, a.resend_max_count
+		, a.update_time
+		, b.ufmi
+		, b.pma_ack_type
+		, b.pma_ack_time
+		, b.app_ack_type
+		,
+		b.app_ack_time
+
+		FROM
+		pms.message${keyMon} a left outer join (
+		SELECT
+		aa.msg_id, j.ufmi,aa.ack_type as pma_ack_type,aa.ack_time as
+		pma_ack_time,bb.ack_type as app_ack_type,bb.ack_time as app_ack_time
+		FROM
+		pms.ack${keyMon} aa left outer join pms.ack${keyMon} bb on
+		aa.token_id = bb.token_id
+		AND aa.msg_id = bb.msg_id and bb.ack_type =
+		'app'
+		,push.token i
+		,push.user j
+		WHERE
+		aa.token_id = i.tokenid
+		AND i.userid
+		= j.userid
+		AND aa.ack_type = "pma"
+		AND aa.msg_id IN
+		<foreach item="id" index="index" collection="msgIds" open="("
+			separator="," close=")">
+			#{id}
+		</foreach>
+		) b on a.msg_id = b.msg_id
+		WHERE
+		a.issue_id = #{issueId}
+		AND a.msg_id IN
+		<foreach item="id" index="index" collection="msgIds" open="("
+			separator="," close=")">
+			#{id}
+		</foreach>
+		ORDER BY a.update_time DESC,a.issue_time DESC
+	</select>
+
+
+	<!-- <select id="getMessageResult" parameterType="kr.co.adflow.pms.domain.MsgIdsParams" 
+		resultMap="MessageResult"> SELECT a.group_id , a.msg_id , a.receiver , a.status 
+		, a.is_reservation , a.reservation_time , a.resend_count , a.resend_max_count 
+		, a.update_time , b.ack_type as pma_ack_type , b.ack_time as pma_ack_time 
+		, d.ack_type as app_ack_type , d.ack_time as app_ack_time FROM pms.message${keyMon} 
+		a WHERE a.issue_id = #{issueId} AND a.msg_id IN <foreach item="id" index="index" 
+		collection="msgIds" open="(" separator="," close=")" > #{id} </foreach> ORDER 
+		BY a.update_time DESC,a.issue_time DESC </select> -->
+
+	<!-- <select id="getMessageResult" parameterType="kr.co.adflow.pms.domain.MsgIdsParams" 
+		resultMap="MessageResult"> SELECT a.group_id , a.msg_id , a.receiver , a.status 
+		, a.is_reservation , a.reservation_time , a.resend_count , a.resend_max_count 
+		, a.update_time , b.ack_type as pma_ack_type , b.ack_time as pma_ack_time 
+		, d.ack_type as app_ack_type , d.ack_time as app_ack_time FROM pms.message${keyMon} 
+		a left outer join pms.ack${keyMon} b on a.msg_id = b.msg_id and b.ack_type 
+		= 'pma', pms.message${keyMon} c left outer join pms.ack${keyMon} d on c.msg_id 
+		= d.msg_id and d.ack_type = 'app' WHERE a.msg_id = c.msg_id AND b.token = 
+		d.token AND a.issue_id = #{issueId} AND a.msg_id IN <foreach item="id" index="index" 
+		collection="msgIds" open="(" separator="," close=")" > #{id} </foreach> ORDER 
+		BY a.update_time DESC,a.issue_time DESC </select> -->
+
+	<update id="cancelMessage" parameterType="kr.co.adflow.pms.domain.Message">
+		UPDATE
+		pms.message${keyMon}
+		SET status = #{status}
+		,update_time = now()
+		,update_id = #{updateId}
+		WHERE msg_id = #{msgId}
+		AND status = 0
+	</update>
+
+	<update id="cancelReservationList" parameterType="kr.co.adflow.pms.domain.MsgIdsParams">
+		UPDATE pms.message${keyMon}
+		SET status = 2
+		,update_time = now()
+		,update_id = #{updateId}
+		WHERE status = 0
+		<if test="issueId != null and issueId != ''">
+			AND issue_id = #{issueId}
+		</if>
+		AND msg_id IN
+		<foreach item="id" index="index" collection="msgIds" open="("
+			separator="," close=")">
+			#{id}
+		</foreach>
+	</update>
+
+
+	<insert id="insertReservationMessage" parameterType="kr.co.adflow.pms.domain.Message">
+		INSERT INTO
+		pms.reservation_msg
+		(msg_id
+		,msg_type
+		,receiver
+		,receiver_topic
+		,service_id
+		,is_ack
+		,status
+		,is_reservation
+		,reservation_time
+		,server_id
+		,expiry
+		,qos
+		,media_type
+		,msg_size
+		,issue_time
+		,issue_id
+		,content_type
+		,content
+		)
+		values(
+		#{msgId}
+		,#{msgType}
+		,#{receiver}
+		,#{receiverTopic}
+		,#{serviceId}
+		,#{ack}
+		,#{status}
+		,#{reservation}
+		,#{reservationTime}
+		,#{serverId}
+		,#{expiry}
+		,#{qos}
+		,#{mediaType}
+		,#{msgSize}
+		,now()
+		,#{issueId}
+		,#{contentType}
+		,#{content}
+		)
+	</insert>
+
+	<insert id="insertMessageRV" parameterType="kr.co.adflow.pms.domain.Message">
+		INSERT INTO
+		pms.message
+		(msg_id
+		,msg_type
+		,receiver
+		,receiver_topic
+		,service_id
+		,is_ack
+		,status
+		,is_reservation
+		,reservation_time
+		,server_id
+		,expiry
+		,qos
+		,msg_size
+		,issue_time
+		,issue_id
+		,content
+		,content_type
+		)
+		values(#{msgId}
+		,#{msgType}
+		,#{receiver}
+		,#{receiverTopic}
+		,#{serviceId}
+		,#{ack}
+		,#{status}
+		,#{reservation}
+		,#{reservationTime}
+		,#{serverId}
+		,#{expiry}
+		,#{qos}
+		,#{msgSize}
+		,#{issueTime}
+		,#{issueId}
+		,#{content}
+		,#{contentType}
+		)
+	</insert>
+
+	<update id="cancelReservationMessage" parameterType="kr.co.adflow.pms.domain.Message">
+		UPDATE
+		pms.reservation_msg
+		SET status = 2
+		,update_time = now()
+		,update_id =
+		#{updateId}
+		WHERE msg_id = #{msgId}
+		AND status = 0
+	</update>
+
+	<update id="cancelReservationMessageList" parameterType="kr.co.adflow.pms.domain.MsgIdsParams">
+		UPDATE pms.reservation_msg
+		SET status = 2
+		,update_time = now()
+		,update_id = #{updateId}
+		WHERE status = 0
+		<if test="issueId != null and issueId != ''">
+			AND issue_id = #{issueId}
+		</if>
+		AND msg_id IN
+		<foreach item="id" index="index" collection="msgIds" open="("
+			separator="," close=")">
+			#{id}
+		</foreach>
+	</update>
+
+	<delete id="deleteReservationMessage" parameterType="String">
+		DELETE FROM
+		pms.reservation_msg
+		WHERE msg_id = #{msgId}
+	</delete>
+
+	<select id="selectReservationMessage" parameterType="String"
+		resultMap="MessageResult">
+		SELECT msg_id
+		,msg_type
+		,receiver
+		,receiver_topic
+		,service_id
+		,is_ack
+		,status
+		,is_reservation
+		,reservation_time
+		,server_id
+		,expiry
+		,qos
+		,msg_size
+		,issue_time
+		,issue_id
+		,content_type
+		,content
+		FROM
+		pms.reservation_msg
+		WHERE msg_id = #{msgId}
+	</select>
+
+</mapper>	

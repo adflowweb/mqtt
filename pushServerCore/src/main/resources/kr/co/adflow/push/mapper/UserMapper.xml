@@ -4,9 +4,10 @@
      "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.co.adflow.push.mapper.UserMapper">
 
-	<select id="get" parameterType="java.lang.String" resultType="kr.co.adflow.push.domain.User">
-		SELECT * FROM user WHERE userid =
-		#{userID}
+	<select id="get" parameterType="java.lang.String" resultMap="UserResult">
+		SELECT userid, password, name, title, dept, email, phone, role, ufmi
+		FROM user 
+		WHERE userid = #{userID}
 	</select>
 
 	<resultMap id="UserResult" type="kr.co.adflow.push.domain.User">
@@ -18,22 +19,26 @@
 		<result property="email" column="email" />
 		<result property="phone" column="phone" />
 		<result property="role" column="role" />
+		<result property="ufmi" column="ufmi" />
 	</resultMap>
 
 	<select id="getAdmin" resultMap="UserResult">
-		SELECT * FROM user WHERE role =
-		'admin'
+		SELECT userid, password, name, title, dept, email, phone, role, ufmi
+		 FROM user 
+		WHERE role = 'admin'
 	</select>
 
 	<select id="getAllUser" resultMap="UserResult">
-		SELECT * FROM user
+		SELECT userid, password, name, title, dept, email, phone, role, ufmi
+		FROM user
 	</select>
 
 	<insert id="post" parameterType="kr.co.adflow.push.domain.User">
-		INSERT INTO
-		user values(
+		INSERT INTO user 
+		(userID,password,name,title,dept,email,phone,role,ufmi )
+		VALUES(
 		#{userID}, #{password}, #{name}, #{title}, #{dept}, #{email},
-		#{phone}, #{role}
+		#{phone}, #{role},#{ufmi}
 		)
 	</insert>
 
@@ -42,9 +47,13 @@
 		set name = #{name},
 		title = #{title}, dept = #{dept}, email = #{email},
 		phone = #{phone},
-		role = #{role} where userid =#{userID}
+		role = #{role},
+		ufmi = #{ufmi} 
+		where userid =#{userID}
 	</update>
 
+
+<!-- KTP-skip-start 
 	<update id="putWithoutRole" parameterType="kr.co.adflow.push.domain.User">
 		UPDATE user
 		set name =
@@ -53,7 +62,9 @@
 		phone =
 		#{phone}
 		where userid =#{userID}
-	</update>
+	</update> 
+	
+	KTP-skip-end -->
 
 	<delete id="delete" parameterType="java.lang.String">
 		DELETE from
@@ -69,6 +80,12 @@
 		where userid = #{userID} and password =
 		#{password}
 	</select>
+	
+	<update id="changePassword" parameterType="kr.co.adflow.push.domain.User">
+		UPDATE user
+		set password = #{password} where userid =#{userID}
+	</update>
+	
 </mapper>	
 	
 	

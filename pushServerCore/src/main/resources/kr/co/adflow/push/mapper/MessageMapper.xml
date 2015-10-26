@@ -23,8 +23,9 @@
 		<result property="timeOut" column="timeOut" />
 		<result property="type" column="type" />
 		<result property="content" column="content" />
+		<result property="contentType" column="contenttype" />
 		<result property="status" column="status" />
-		<result property="category" column="category" />
+		<result property="serviceID" column="serviceID" />
 	</resultMap>
 
 	<select id="getUndeliveredMsgs" resultMap="MessageResult">
@@ -40,13 +41,71 @@
 	</select>
 
 	<select id="getDeliveredMsgs" resultMap="MessageResult">
-		select * from message
-		where
-		issue is not null and type <![CDATA[ < ]]>
-		100 order by
-		issue desc limit 100
+	<![CDATA[
+		SELECT 
+		   type, id, sender, receiver, issue, issueSms, sms, timeout, qos, retained, reservation,  status, serviceID
+		FROM
+		    message
+		WHERE
+		    issue IS NOT NULL AND type IN ( 102,104,105)
+		ORDER BY issue DESC
+		LIMIT 1000
+		]]>
 		<!-- and reservation is not null -->
 	</select>
+	
+	
+	<select id="getMessageListCnt" parameterType="kr.co.adflow.push.domain.ktp.MsgParams" resultType="Integer">
+		SELECT 
+		   COUNT(*)
+		FROM
+		    message
+		WHERE
+		issue IS NOT NULL
+		<if test="type != 0">
+		AND type = #{type}
+		</if>
+		<if test="type == 0">
+		AND type IN ( 102,104,105)
+		</if>
+		<if test="dateStart != null ">
+		AND issue <![CDATA[>]]>  #{dateStart}
+		</if>
+		<if test="dateEnd != null ">
+		AND issue <![CDATA[<]]> #{dateEnd}
+		</if>		
+		<if test="receiver != null and receiver != ''">
+		AND receiver = #{receiver}
+		</if>
+	</select>
+	
+	<select id="getMessageList" parameterType="kr.co.adflow.push.domain.ktp.MsgParams" resultMap="MessageResult">
+		SELECT 
+		   type, id, sender, receiver, issue, issueSms, sms, timeout, qos, retained, reservation,  status, serviceID
+		FROM
+		    message
+		WHERE
+		issue IS NOT NULL
+		<if test="type != 0">
+		AND type = #{type}
+		</if>
+		<if test="type == 0">
+		AND type IN ( 102,104,105)
+		</if>
+		<if test="dateStart != null ">
+		AND issue <![CDATA[>]]>  #{dateStart}
+		</if>
+		<if test="dateEnd != null ">
+		AND issue <![CDATA[<]]> #{dateEnd}
+		</if>		
+		<if test="receiver != null and receiver != ''">
+		AND receiver = #{receiver}
+		</if>
+
+		ORDER BY issue DESC
+		limit #{iDisplayStart} , #{iDisplayLength}
+	</select>
+	
 
 	<select id="getReservationMsgs" resultMap="MessageResult">
 		select * from message a, content b where a.id = b.id and reservation
@@ -64,14 +123,17 @@
 	<insert id="postMsg" parameterType="kr.co.adflow.push.domain.Message">
 		INSERT INTO
 		message (sender, receiver, sms, timeOut, qos, retained,
-		reservation, type, status, category) values(
-		#{sender}, #{receiver},
+		reservation, type, status, serviceID,issue) values(
+		#{sender},
+		#{receiver},
 		#{sms},
 		#{timeOut},
 		#{qos},
-		#{retained}, #{reservation}, #{type},
+		#{retained}, #{reservation},
+		#{type},
 		#{status},
-		#{category}
+		#{serviceID},
+		#{issue}
 		)
 		<selectKey keyProperty="id" resultType="Integer" order="AFTER">
 			SELECT
@@ -86,7 +148,7 @@
 		timeOut = #{timeOut}, qos = #{qos}, retained = #{retained},
 		reservation =
 		#{reservation}, type = #{type}, status = #{status} ,
-		category = #{category} where
+		serviceID = #{serviceID} where
 		id = #{id}
 	</update>
 
@@ -108,14 +170,15 @@
 
 	<insert id="putContent" parameterType="kr.co.adflow.push.domain.Message">
 		UPDATE content set content
-		= #{content} where id = #{id}
+		= #{content}, contenttype = #{contentType}
+		where id = #{id}
 	</insert>
 
 	<insert id="postContent" parameterType="kr.co.adflow.push.domain.Message">
 		INSERT INTO
 		content
 		values(
-		#{id}, #{content}
+		#{id}, #{content}, #{contentType}
 		)
 	</insert>
 

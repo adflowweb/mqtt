@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package kr.co.adflow.push.controller;
 
 import java.util.ArrayList;
@@ -22,25 +25,30 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class TokenController.
+ *
  * @author nadir93
  * @date 2014. 3. 21.
  */
 @Controller
 public class TokenController {
+	
+	/** The Constant logger. */
 	private static final Logger logger = LoggerFactory
 			.getLogger(TokenController.class);
 
+	/** The token service. */
 	@Resource
 	private TokenService tokenService;
 
 	/**
-	 * 토큰정보가져오기
-	 * 
-	 * @param userID
-	 * @param clientID
-	 * @return
-	 * @throws Exception
+	 * 토큰정보가져오기.
+	 *
+	 * @param token the token
+	 * @return the response
+	 * @throws Exception the exception
 	 */
 	@RequestMapping(value = "tokens/{token}", method = RequestMethod.GET)
 	@ResponseBody
@@ -55,19 +63,17 @@ public class TokenController {
 	}
 
 	/**
-	 * 토큰 발행하기
-	 * 
-	 * @param token
-	 * @return
-	 * @throws Exception
+	 * 토큰 발행하기.
+	 *
+	 * @param token the token
+	 * @return the response
+	 * @throws Exception the exception
 	 */
 	@RequestMapping(value = "tokens", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
 	public Response post(@RequestBody Token token) throws Exception {
 		logger.debug("token=" + token);
-		if (token.getUserID() == null || token.getDeviceID() == null
-				|| token.getUserID().equals("")
-				|| token.getDeviceID().equals("")) {
+		if (token.getUserID() == null || token.getUserID().equals("")) {
 			Result<Object> result = new Result<Object>();
 			result.setSuccess(true);
 			List<String> messages = new ArrayList<String>() {
@@ -81,7 +87,11 @@ public class TokenController {
 
 		User user = new User();
 		user.setUserID(token.getUserID());
-		user.setDeviceID(token.getDeviceID());
+		
+		//KTP-skip-start
+//		user.setDeviceID(token.getDeviceID());
+		//KTP-skip-end
+		
 		Token rst = tokenService.post(user);
 		Result<Token> result = new Result<Token>();
 		result.setSuccess(true);
@@ -92,11 +102,11 @@ public class TokenController {
 	}
 
 	/**
-	 * 토큰유효성체크
-	 * 
-	 * @param token
-	 * @return
-	 * @throws Exception
+	 * 토큰유효성체크.
+	 *
+	 * @param token the token
+	 * @return the response
+	 * @throws Exception the exception
 	 */
 	@RequestMapping(value = "validate/{token}", method = RequestMethod.GET)
 	@ResponseBody
@@ -111,15 +121,41 @@ public class TokenController {
 		return res;
 	}
 
+	//140829 <kicho> - start
 	/**
-	 * 토큰정보 삭제하기
-	 * 
-	 * 
-	 * @param token
-	 * @return
-	 * @throws Exception
+	 * userID로 토큰정보 삭제하기.
+	 *
+	 * @param token the token
+	 * @return the response
+	 * @throws Exception the exception
 	 */
-	@RequestMapping(value = "tokens/{token}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "tokensByUser/{userID}", method = RequestMethod.DELETE)
+	@ResponseBody
+	public Response tokensByUser(@PathVariable String token) throws Exception {
+		logger.debug("token=" + token);
+		final int count = tokenService.delete(token);
+		Result result = new Result();
+		result.setSuccess(true);
+		List<String> messages = new ArrayList<String>() {
+			{
+				add("updates=" + count);
+			}
+		};
+		result.setInfo(messages);
+		Response res = new Response(result);
+		logger.debug("response=" + res);
+		return res;
+	}
+	//140829 <kicho> - end
+	
+	/**
+	 * 토큰정보 삭제하기.
+	 *
+	 * @param token the token
+	 * @return the response
+	 * @throws Exception the exception
+	 */
+	@RequestMapping(value = "token/{token}", method = RequestMethod.DELETE)
 	@ResponseBody
 	public Response delete(@PathVariable String token) throws Exception {
 		logger.debug("token=" + token);
@@ -136,12 +172,97 @@ public class TokenController {
 		logger.debug("response=" + res);
 		return res;
 	}
+	
+	//140902 <kicho> - start
+	/**
+	 * 여러 토큰 가져오기.
+	 *
+	 * @param userID the user id
+	 * @return the multi by user
+	 * @throws Exception the exception
+	 */
+	@RequestMapping(value = "tokenMulti/{userID}", method = RequestMethod.GET)
+	@ResponseBody
+	public Response<Token[]> getMultiByUser(@PathVariable String userID) throws Exception {
+		Result<Token[]> result = new Result<Token[]>();
+		result.setSuccess(true);
+		Token[] tokens = tokenService.getMultiByUser(userID);
+		if (tokens == null) {
+			List<String> messages = new ArrayList<String>() {
+				{
+					add("admin not found");
+				}
+			};
+			result.setInfo(messages);
+		} else {
+			result.setData(tokens);
+		}
+
+		Response<Token[]> res = new Response<Token[]>(result);
+		logger.debug("response=" + res);
+		return res;
+	}
+	//140902 <kicho> - end
+
+	@RequestMapping(value = "tokens/ufmi/{ufmi}", method = RequestMethod.GET)
+	@ResponseBody
+	public Response<Token[]> getMultiByUfmi(@PathVariable("ufmi") String ufmi) throws Exception {
+		Result<Token[]> result = new Result<Token[]>();
+		result.setSuccess(true);
+		Token[] tokens = tokenService.getMultiByUfmi(ufmi);
+		if (tokens == null) {
+			List<String> messages = new ArrayList<String>() {
+				{
+					add("admin not found");
+				}
+			};
+			result.setInfo(messages);
+		} else {
+			result.setData(tokens);
+		}
+
+		Response<Token[]> res = new Response<Token[]>(result);
+		logger.debug("response=" + res);
+		return res;
+	}
+	
+	//140902 <kicho> - start
+	/**
+	 * 토큰정보가져오기.
+	 *
+	 * @param userID the user id
+	 * @return the by user
+	 * @throws Exception the exception
+	 */
+	@RequestMapping(value = "tokensByUser/{userID}", method = RequestMethod.GET)
+	@ResponseBody
+	public Response getByUser(@PathVariable String userID) throws Exception {
+		Result<Token[]> result = new Result<Token[]>();
+		result.setSuccess(true);
+		Token[] tokens = tokenService.getByUser(userID);
+		if (tokens == null) {
+			List<String> messages = new ArrayList<String>() {
+				{
+					add("admin not found");
+				}
+			};
+			result.setInfo(messages);
+		} else {
+			result.setData(tokens);
+		}
+
+		Response<Token[]> res = new Response<Token[]>(result);
+		logger.debug("response=" + res);
+		return res;
+	}
+	
+	//140902 <kicho> - end
 
 	/**
-	 * 예외처리
-	 * 
-	 * @param e
-	 * @return
+	 * 예외처리.
+	 *
+	 * @param e the e
+	 * @return the response
 	 */
 	@ExceptionHandler(Exception.class)
 	@ResponseBody

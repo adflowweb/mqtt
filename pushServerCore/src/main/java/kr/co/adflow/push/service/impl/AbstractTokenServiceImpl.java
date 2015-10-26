@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package kr.co.adflow.push.service.impl;
 
 import javax.annotation.Resource;
@@ -12,28 +15,40 @@ import kr.co.adflow.push.service.TokenService;
 import kr.co.adflow.util.TokenGenerator;
 
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+
+
+// TODO: Auto-generated Javadoc
 /**
+ * The Class AbstractTokenServiceImpl.
+ *
  * @author nadir93
  * @date 2014. 4. 14.
- * 
  */
 // @Service
 abstract public class AbstractTokenServiceImpl implements TokenService {
+	
+	/** The Constant logger. */
 	private static final org.slf4j.Logger logger = LoggerFactory
 			.getLogger(AbstractTokenServiceImpl.class);
 
+	/** The token dao. */
 	@Resource
 	TokenDao tokenDao;
-
+	
+	/** The user dao. */
 	@Resource
 	protected UserDao userDao;
 
+	/** The device dao. */
 	@Resource
 	DeviceDao deviceDao;
+	
+	/** The mqtt service impl. */
+	@Autowired
+	AbstractMqttServiceImpl mqttServiceImpl;
 
 	/*
 	 * (non-Javadoc)
@@ -47,6 +62,7 @@ abstract public class AbstractTokenServiceImpl implements TokenService {
 		Token data = tokenDao.get(token);
 		if (data != null) {
 			logger.debug("validate종료(true)");
+			tokenDao.putLastAcessTime(data);
 			return true;
 		} else {
 			logger.debug("validate종료(false)");
@@ -54,6 +70,9 @@ abstract public class AbstractTokenServiceImpl implements TokenService {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.service.TokenService#get(java.lang.String)
+	 */
 	@Override
 	public Token get(String token) throws Exception {
 		logger.debug("get시작(token=" + token + ")");
@@ -86,24 +105,38 @@ abstract public class AbstractTokenServiceImpl implements TokenService {
 		} catch (DuplicateKeyException e) {
 			logger.debug("유저가이미등록되어있습니다.user=" + user.getUserID());
 		}
+		
+		//TODO
+		if (user.getUfmi() != null && user.getUfmi().trim().length() > 0) {
+			userDao.put(user);
+		}
 
 		// insert device
 		Device device = new Device();
 		device.setDeviceID(user.getDeviceID());
 		device.setUserID(user.getUserID());
-		device.setApnsToken(user.getApnsToken());
-		try {
-			deviceDao.post(device);
-		} catch (DuplicateKeyException e) {
-			logger.debug("디바이스가이미등록되어있습니다.device=" + device.getDeviceID());
-		}
+		
+		//KTP-skip-start
+//		device.setApnsToken(user.getApnsToken());
+		//KTP-skip-end
+		
+		// ktp device info skip 20150120
+//		try {
+//			deviceDao.post(device);
+//		} catch (DuplicateKeyException e) {
+//			logger.debug("디바이스가이미등록되어있습니다.device=" + device.getDeviceID());
+//		}
 
 		// select 최신 token
 		// select * from token where userid='kicho' and deviceid='test' order by
 		// issue desc limit 1;
 		Token token = new Token();
 		token.setUserID(user.getUserID());
-		token.setDeviceID(user.getDeviceID());
+		
+		//KTP-skip-start
+//		token.setDeviceID(user.getDeviceID());
+		//KTP-skip-end
+		
 		Token rst = tokenDao.getLatest(token);
 
 		// 발급시간에 따른 토큰 재발급로직... 추가해야함
@@ -124,17 +157,70 @@ abstract public class AbstractTokenServiceImpl implements TokenService {
 		return rst;
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.service.TokenService#put(kr.co.adflow.push.domain.Token)
+	 */
 	@Override
 	public int put(Token token) throws Exception {
 		return tokenDao.put(token);
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.service.TokenService#delete(java.lang.String)
+	 */
 	@Override
 	public int delete(String token) throws Exception {
 		logger.debug("delete시작(token=" + token + ")");
+		
+		
+		//140829 - 토큰 삭제시 해당 토큰 cleansession = true 로 conneciton 후 disconnection 시도 - start
+		mqttServiceImpl.mqttConnectionClean(token);
+		//140829 - 토큰 삭제시 해당 토큰 cleansession = true 로 conneciton 후 disconnection 시도 - end
+		
 		int count = tokenDao.delete(token);
 		logger.debug("delete종료(updates=" + count + ")");
+		
 		return count;
+	}
+	
+
+	 // update : 140901 <kicho> - start
+	/*
+	 * user의 Tokens 가져오기 
+	 * (non-Javadoc)
+	 * 
+	 */
+	@Override
+	public Token[] getByUser(String userID) throws Exception {
+		logger.debug("getByUser시작(userID=" + userID + ")");
+		
+		Token[] tokens = tokenDao.getByUser(userID);
+		logger.debug("getByUser종료(tokens=" + tokens + ")");
+		return tokens;
+	}
+	// update : 140901 <kicho> - end
+	
+	// update : 140902 <kicho> - start
+	/*
+	 * user의 Tokens 가져오기 
+	 * (non-Javadoc)
+	 * 
+	 */
+	@Override
+	public Token[] getMultiByUser(String userID) throws Exception {
+		logger.debug("getMultiByUser시작(userID=" + userID + ")");
+		
+		Token[] tokens = tokenDao.getMultiByUser(userID);
+		logger.debug("getMultiByUser종료(tokens=" + tokens + ")");
+		return tokens;
+	}
+	// update : 140902 <kicho> - end
+	
+	public Token[] getMultiByUfmi(String ufmi) throws Exception {
+		
+		Token[] tokens = tokenDao.getMultiByUfmi(ufmi);
+		
+		return tokens;
 	}
 
 }

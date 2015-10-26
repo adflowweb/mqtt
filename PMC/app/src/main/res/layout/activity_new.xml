@@ -1,0 +1,72 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="${relativePackage}.${activityClass}">
+
+    <FrameLayout
+        android:id="@+id/linearLayout_new_msg"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <!--android:layout_centerHorizontal="true"
+        android:orientation="vertical"-->
+
+        <!-- <ImageView
+                    android:id="@+id/image"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content" /> -->
+        <ImageView
+            android:id="@+id/image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|bottom"
+            android:layout_marginBottom="12dp"
+            android:layout_marginRight="2dp"
+            android:visibility="gone"
+            android:background="@drawable/ic_attach_file_white_24dp" />
+        <!--android:layout_margin="5dp,10dp,15dp,20dp"-->
+
+        <EditText
+            android:id="@+id/editText_new_msg"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5.33dp"
+            android:ems="11"
+            android:hint="@string/new_msg_title"
+            android:inputType="textMultiLine"
+            android:maxHeight="146.67dp"
+            android:minHeight="146.67dp"
+            android:minLines="4"
+            android:scrollbars="vertical"
+            android:textSize="@dimen/new_msg_text_size">
+
+            <requestFocus />
+        </EditText>
+
+
+    </FrameLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/start_bottom"
+        android:layout_below="@+id/linearLayout_new_msg">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/linearLayout_new_number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+            </LinearLayout>
+        </ScrollView>
+    </RelativeLayout>
+
+    <include layout="@layout/item_foot" />
+
+</RelativeLayout>

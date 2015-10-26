@@ -8,7 +8,6 @@
 	<packaging>jar</packaging>
 
 	<name>tokenAdapter</name>
-	<url>http://maven.apache.org</url>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -82,21 +81,71 @@
 			<version>1.18.1</version>
 		</dependency>
 
-		<dependency>
-			<groupId>kr.co.adflow.push</groupId>
-			<artifactId>domain</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
+
 	</dependencies>
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
+				<version>2.5.1</version>
 				<configuration>
 					<source>1.6</source>
 					<target>1.6</target>
+					<compilerArgument>-Xlint:all</compilerArgument>
+					<showWarnings>true</showWarnings>
+					<showDeprecation>true</showDeprecation>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.1.2</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.7</version>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>fully.qualified.MainClass</mainClass>
+						</manifest>
+					</archive>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<version>2.5</version>
+				<configuration>
+					<updateReleaseInfo>true</updateReleaseInfo>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -123,9 +172,9 @@
 				<!-- rest api version -->
 				<api.version>v1</api.version>
 				<!-- rest api key -->
-				<api.key>devServer2</api.key>
+				<api.key>mqjasstoken</api.key>
 				<!-- 인증유무 -->
-				<auth>false</auth>
+				<auth>true</auth>
 			</properties>
 		</profile>
 		<!-- Production environment @ production server -->
@@ -133,7 +182,7 @@
 			<id>production</id>
 			<properties>
 				<!-- 푸시서버주소 -->
-				<server.ip>127.0.0.1</server.ip>
+				<server.ip>192.168.0.51</server.ip>
 				<!-- 푸시서버포트 -->
 				<server.port>8080</server.port>
 				<!-- 어플리케이션 로깅레벨 -->
@@ -141,7 +190,7 @@
 				<!-- rest api version -->
 				<api.version>v1</api.version>
 				<!-- rest api key -->
-				<api.key>devServer2</api.key>
+				<api.key>mqjasstoken</api.key>
 				<!-- 인증유무 -->
 				<auth>true</auth>
 				<!-- <db.driverClass>oracle.jdbc.driver.OracleDriver</db.driverClass> 
@@ -151,4 +200,22 @@
 			</properties>
 		</profile>
 	</profiles>
+	<distributionManagement>
+		<repository>
+			<id>releases</id>
+			<name>Releases Repository</name>
+			<url>http://14.63.217.141:5051/nexus/content/repositories/releases</url>
+
+		</repository>
+
+
+
+
+
+		<snapshotRepository>
+			<id>snapshots</id>
+			<name>Snapshots Repository</name>
+			<url>http://14.63.217.141:5051/nexus/content/repositories/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
 </project>

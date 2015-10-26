@@ -5,7 +5,7 @@
 	<artifactId>pushServerCore</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<properties>
-		<java-version>1.6</java-version>
+		<java-version>1.7</java-version>
 		<org.springframework-version>3.2.3.RELEASE</org.springframework-version>
 		<testng.version>6.8.7</testng.version>
 		<org.aspectj-version>1.7.1</org.aspectj-version>
@@ -128,6 +128,53 @@
 			<version>1.1</version>
 		</dependency>
 	</dependencies>
+		<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.5.1</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+					<compilerArgument>-Xlint:all</compilerArgument>
+					<showWarnings>true</showWarnings>
+					<showDeprecation>true</showDeprecation>
+				</configuration>
+			</plugin>
+			
+	    <plugin>
+	      <groupId>org.apache.maven.plugins</groupId>
+	      <artifactId>maven-source-plugin</artifactId>
+	      <version>2.1.2</version>
+	      <executions>
+	        <execution>
+	          <id>attach-sources</id>
+	          <goals>
+	            <goal>jar</goal>
+	          </goals>
+	        </execution>
+	      </executions>
+	    </plugin>	
+	    
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-javadoc-plugin</artifactId>
+      <version>2.7</version>
+      <executions>
+        <execution>
+          <id>attach-javadocs</id>
+          <goals>
+            <goal>jar</goal>
+          </goals>
+        </execution>
+      </executions>
+    </plugin>
+	    		
+   </plugins>
+	</build>
+	
+	<!--
 	<repositories>
 		<repository>
 			<id>repo1.maven.org</id>
@@ -144,4 +191,18 @@
 			<url>http://www.terracotta.org/download/reflector/releases/</url>
 		</repository>
 	</repositories>
+	-->
+<distributionManagement>
+  <repository>
+    <id>releases</id>
+    <name>Releases Repository</name>
+    <url>http://14.63.217.141:5051/nexus/content/repositories/releases</url>
+  </repository>
+
+  <snapshotRepository>
+    <id>snapshots</id>
+    <name>Snapshots Repository</name>
+    <url>http://14.63.217.141:5051/nexus/content/repositories/snapshots</url>
+  </snapshotRepository>
+</distributionManagement>	
 </project>

@@ -108,7 +108,7 @@ public class TokenControllerTest extends AbstractTestNGSpringContextTests {
 		logger.debug("==========토큰발행테스트시작()==========");
 		Token token = new Token();
 		// token.setTokenID("63D31762A50F937B535746C9E31FA33E");
-		token.setDeviceID(deviceID);
+//		token.setDeviceID(deviceID);
 		token.setUserID(userID);
 		// token.setIssue(new Date());
 		Response res = tokenController.post(token);

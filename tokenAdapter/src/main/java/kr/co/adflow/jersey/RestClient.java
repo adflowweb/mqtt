@@ -6,7 +6,6 @@ import java.util.Properties;
 import javax.ws.rs.core.MediaType;
 
 import kr.co.adflow.push.domain.Response;
-import kr.co.adflow.push.domain.Validation;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,19 +52,19 @@ public class RestClient {
 		logger.debug("RestClient생성자종료()");
 	}
 
-	public Validation validate(String token) {
+	public String validate(String token) {
 		logger.debug("validate시작(token=" + token + ")");
 		logger.debug("webResource=" + webResource);
-		Validation valid = null;
+		String valid = null;
 		try {
 			logger.debug("api.key=" + API_KEY);
-			Response<Validation> data = webResource.path("validate")
-					.path(token).accept(MediaType.APPLICATION_JSON)
-					.header("X-ApiKey", API_KEY)
-					.get(new GenericType<Response<Validation>>() {
+			Response data = webResource.path("validate").path(token)
+					.accept(MediaType.APPLICATION_JSON)
+					.header("X-Application-Key", API_KEY)
+					.get(new GenericType<Response>() {
 					});
 			logger.debug("data=" + data + ")");
-			valid = data.getResult().getData();
+			valid = data.getStatus();
 			logger.debug("validate종료(valid=" + valid + ")");
 		} catch (Exception e) {
 			logger.error("에러발생", e);

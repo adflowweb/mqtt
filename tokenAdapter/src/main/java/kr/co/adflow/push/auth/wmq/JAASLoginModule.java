@@ -14,7 +14,6 @@ import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 
 import kr.co.adflow.jersey.RestClient;
-import kr.co.adflow.push.domain.Validation;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -153,11 +152,11 @@ public class JAASLoginModule implements LoginModule {
 
 			if (prop.getProperty("auth").equals("true")) {
 				// 인증요청
-				Validation response = client.validate(clientId);
-				logger.debug("토큰유효성체크결과=" + response);
+				String validResult = client.validate(clientId);
+				logger.debug("토큰유효성체크결과=" + validResult);
 				// Validation data = (Validation)
 				// response.getResult().getData();
-				if (response != null && response.isValidation()) {
+				if (validResult != null && validResult.equals("ok")) {
 					loggedIn = true;
 				} else
 					throw new FailedLoginException("Login failed");

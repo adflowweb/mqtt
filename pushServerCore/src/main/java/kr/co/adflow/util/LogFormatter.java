@@ -1,11 +1,21 @@
+/*
+ * 
+ */
 package kr.co.adflow.util;
 
 import java.util.Date;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class LogFormatter.
+ */
 public final class LogFormatter extends Formatter {
 
+	/* (non-Javadoc)
+	 * @see java.util.logging.Formatter#format(java.util.logging.LogRecord)
+	 */
 	@Override
 	public String format(LogRecord record) {
 		System.out.println("LogFormatter::ThreadID::"

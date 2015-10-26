@@ -22,16 +22,22 @@
 		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
+	<servlet>
+    	<servlet-name>PCFConnectionManagerHandler</servlet-name>
+    	<servlet-class>kr.co.adflow.push.ktp.handler.PCFConnectionManagerHandler</servlet-class>
+    	<load-on-startup>2</load-on-startup>
+	</servlet>
+	
 	<servlet-mapping>
 		<servlet-name>appServlet</servlet-name>
 		<url-pattern>/</url-pattern>
 	</servlet-mapping>
-	<resource-ref>
-		<description>DB Connection</description>
-		<res-ref-name>jdbc/testdatasource</res-ref-name>
-		<res-type>javax.sql.DataSource</res-type>
-		<res-auth>Container</res-auth>
-	</resource-ref>
+
+	<servlet-mapping>
+		<servlet-name>appServlet</servlet-name>
+		<url-pattern>/pcs/*</url-pattern>
+	</servlet-mapping>
+
 	<filter>
 		<filter-name>encodingFilter</filter-name>
 		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>

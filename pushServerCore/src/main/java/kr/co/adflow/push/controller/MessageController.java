@@ -1,10 +1,15 @@
+/*
+ * 
+ */
 package kr.co.adflow.push.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
+import kr.co.adflow.push.domain.ktp.MessagesRes;
 import kr.co.adflow.push.domain.Message;
 import kr.co.adflow.push.domain.Response;
 import kr.co.adflow.push.domain.Result;
@@ -21,26 +26,30 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class MessageController.
+ *
  * @author nadir93
  * @date 2014. 4. 14.
- * 
  */
 @Controller
 public class MessageController {
 
+	/** The Constant logger. */
 	private static final Logger logger = LoggerFactory
 			.getLogger(MessageController.class);
 
+	/** The msg service. */
 	@Resource
 	private MessageService msgService;
 
 	/**
-	 * 메시지 전송하기
-	 * 
-	 * @param msg
-	 * @return
-	 * @throws Exception
+	 * 메시지 전송하기.
+	 *
+	 * @param msg the msg
+	 * @return the response
+	 * @throws Exception the exception
 	 */
 	@RequestMapping(value = "messages", method = RequestMethod.POST)
 	@ResponseBody
@@ -61,11 +70,10 @@ public class MessageController {
 	}
 
 	/**
-	 * 메시지 전송하기 테스트
-	 * 
-	 * @param msg
-	 * @return
-	 * @throws Exception
+	 * 메시지 전송하기 테스트.
+	 *
+	 * @return the response
+	 * @throws Exception the exception
 	 */
 	@RequestMapping(value = "sendMsgTest", method = RequestMethod.GET)
 	@ResponseBody
@@ -102,11 +110,10 @@ public class MessageController {
 	}
 
 	/**
-	 * 메시지 전송하기 테스트
-	 * 
-	 * @param msg
-	 * @return
-	 * @throws Exception
+	 * 메시지 전송하기 테스트.
+	 *
+	 * @return the response
+	 * @throws Exception the exception
 	 */
 	@RequestMapping(value = "sendSMSMsgTest", method = RequestMethod.GET)
 	@ResponseBody
@@ -144,11 +151,11 @@ public class MessageController {
 	}
 
 	/**
-	 * 메시지 수정하기
-	 * 
-	 * @param msg
-	 * @return
-	 * @throws Exception
+	 * 메시지 수정하기.
+	 *
+	 * @param msg the msg
+	 * @return the response
+	 * @throws Exception the exception
 	 */
 	@RequestMapping(value = "messages", method = RequestMethod.PUT)
 	@ResponseBody
@@ -169,11 +176,11 @@ public class MessageController {
 	}
 
 	/**
-	 * 메시지 삭제하기
-	 * 
-	 * @param msg
-	 * @return
-	 * @throws Exception
+	 * 메시지 삭제하기.
+	 *
+	 * @param msgID the msg id
+	 * @return the response
+	 * @throws Exception the exception
 	 */
 	@RequestMapping(value = "messages/{msgID}", method = RequestMethod.DELETE)
 	@ResponseBody
@@ -194,11 +201,11 @@ public class MessageController {
 	}
 
 	/**
-	 * 메시지 가져오기
-	 * 
-	 * @param msg
-	 * @return
-	 * @throws Exception
+	 * 메시지 가져오기.
+	 *
+	 * @param msgID the msg id
+	 * @return the response
+	 * @throws Exception the exception
 	 */
 	@RequestMapping(value = "messages/{msgID}", method = RequestMethod.GET)
 	@ResponseBody
@@ -214,33 +221,35 @@ public class MessageController {
 		return res;
 	}
 
-	/**
-	 * 전체 메시지 가져오기
-	 * 
-	 * @param msg
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping(value = "messages", method = RequestMethod.GET)
-	@ResponseBody
-	public Response<Message[]> getMsgs() throws Exception {
-		Message[] msg = msgService.getMsgs();
-		logger.debug("메시지=" + msg);
-		Result<Message[]> result = new Result<Message[]>();
-		result.setSuccess(true);
-		result.setData(msg);
-		Response<Message[]> res = new Response<Message[]>(result);
-		logger.debug("response=" + res);
-		return res;
-	}
+//	/**
+//	 * 전체 메시지 가져오기.
+//	 *
+//	 * @return the msgs
+//	 * @throws Exception the exception
+//	 */
+//	@RequestMapping(value = "messages", method = RequestMethod.GET)
+//	@ResponseBody
+//	public Response<Message[]> getMsgs() throws Exception {
+//		Message[] msg = msgService.getMsgs();
+//		logger.debug("메시지=" + msg);
+//		Result<Message[]> result = new Result<Message[]>();
+//		result.setSuccess(true);
+//		result.setData(msg);
+//		Response<Message[]> res = new Response<Message[]>(result);
+//		logger.debug("response=" + res);
+//		return res;
+//	}
+	
+	
 
+
+	
 	/**
-	 * 발송 메시지 가져오기
-	 * 
-	 * @param msg
-	 * @return
-	 * @throws Exception
-	 */
+	 * 발송 메시지 가져오기.
+	 *
+	 * @return the delivered msgs
+	 * @throws Exception the exception
+	 */	
 	@RequestMapping(value = "messages", params = "type=sent", method = RequestMethod.GET)
 	@ResponseBody
 	public Response<Message[]> getDeliveredMsgs(
@@ -264,13 +273,42 @@ public class MessageController {
 		logger.debug("response=" + res);
 		return res;
 	}
+	
+	
+	
+	/**
+	 * 전체 메시지 가져오기.
+	 *
+	 * @return the delivered msgs
+	 * @throws Exception the exception
+	 */
+	@RequestMapping(value = "messages", method = RequestMethod.GET)
+	@ResponseBody
+	public Response<Result<MessagesRes>> getMessageList(
+			@RequestParam Map<String, String> params)
+			throws Exception {
+		
+		String sEcho = (String) params.get("sEcho");
+		
+		MessagesRes messagesRes = msgService.getMessageList(params);
+		messagesRes.setsEcho(sEcho);
+		
+		Result<MessagesRes> result = new Result<MessagesRes>();
+		result.setSuccess(true);
+		result.setData(messagesRes);
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		Response<Result<MessagesRes>> res = new Response(result);
+		
+		return res;
+	
+	}
+	
 
 	/**
-	 * 예약 메시지 가져오기
-	 * 
-	 * @param msg
-	 * @return
-	 * @throws Exception
+	 * 예약 메시지 가져오기.
+	 *
+	 * @return the reserved msgs
+	 * @throws Exception the exception
 	 */
 	@RequestMapping(value = "messages", params = "type=reservation", method = RequestMethod.GET)
 	@ResponseBody
@@ -297,10 +335,10 @@ public class MessageController {
 	}
 
 	/**
-	 * 예외처리
-	 * 
-	 * @param e
-	 * @return
+	 * 예외처리.
+	 *
+	 * @param e the e
+	 * @return the response
 	 */
 	@ExceptionHandler(Exception.class)
 	@ResponseBody

@@ -1,91 +1,131 @@
+/*
+ * 
+ */
 package kr.co.adflow.push.domain;
 
 import java.util.List;
 
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class Result.
+ *
  * @author nadir93
+ * @param <T> the generic type
  * @date 2014. 3. 20.
  */
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class Result<T> {
+	
+	/** The success. */
 	private boolean success;
+	
+	/** The data. */
 	private T data;
+	
+	/** The errors. */
 	private List<String> errors;
+	
+	/** The warnings. */
 	private List<String> warnings;
+	
+	/** The info. */
 	private List<String> info;
 
 	/**
-	 * @return
+	 * Gets the warnings.
+	 *
+	 * @return the warnings
 	 */
 	public List<String> getWarnings() {
 		return warnings;
 	}
 
 	/**
-	 * @param warnings
+	 * Sets the warnings.
+	 *
+	 * @param warnings the new warnings
 	 */
 	public void setWarnings(List<String> warnings) {
 		this.warnings = warnings;
 	}
 
 	/**
-	 * @return
+	 * Gets the info.
+	 *
+	 * @return the info
 	 */
 	public List<String> getInfo() {
 		return info;
 	}
 
 	/**
-	 * @param info
+	 * Sets the info.
+	 *
+	 * @param info the new info
 	 */
 	public void setInfo(List<String> info) {
 		this.info = info;
 	}
 
 	/**
-	 * @return
+	 * Gets the errors.
+	 *
+	 * @return the errors
 	 */
 	public List<String> getErrors() {
 		return errors;
 	}
 
 	/**
-	 * @param errors
+	 * Sets the errors.
+	 *
+	 * @param errors the new errors
 	 */
 	public void setErrors(List<String> errors) {
 		this.errors = errors;
 	}
 
 	/**
-	 * @return
+	 * Gets the data.
+	 *
+	 * @return the data
 	 */
 	public T getData() {
 		return data;
 	}
 
 	/**
-	 * @param data
+	 * Sets the data.
+	 *
+	 * @param data the new data
 	 */
 	public void setData(T data) {
 		this.data = data;
 	}
 
 	/**
-	 * @return
+	 * Checks if is success.
+	 *
+	 * @return true, if is success
 	 */
 	public boolean isSuccess() {
 		return success;
 	}
 
 	/**
-	 * @param success
+	 * Sets the success.
+	 *
+	 * @param success the new success
 	 */
 	public void setSuccess(boolean success) {
 		this.success = success;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		return "Result [success=" + success + ", data=" + data + ", errors="

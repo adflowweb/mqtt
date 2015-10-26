@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package kr.co.adflow.push.dao.impl;
 
 import kr.co.adflow.push.dao.TokenDao;
@@ -9,18 +12,22 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class TokenDaoImpl.
+ *
  * @author nadir93
  * @date 2014. 4. 14.
- * 
  */
 @Repository
 public class TokenDaoImpl implements TokenDao {
 
+	/** The Constant logger. */
 	private static final org.slf4j.Logger logger = LoggerFactory
 			.getLogger(TokenDaoImpl.class);
 
 	// Autowired를 사용하여 sqlSession을 사용할수 있다.
+	/** The sql session. */
 	@Autowired
 	private SqlSession sqlSession;
 
@@ -63,6 +70,17 @@ public class TokenDaoImpl implements TokenDao {
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.dao.TokenDao#putLastAcessTime(kr.co.adflow.push.domain.Token)
+	 */
+	@Override
+	public int putLastAcessTime(Token token) throws Exception {
+		logger.debug("put시작(token=" + token + ")");
+		TokenMapper tokenMapper = sqlSession.getMapper(TokenMapper.class);
+		int result = tokenMapper.putLastAcessTime(token);
+		logger.debug("put종료(result=" + result + ")");
+		return result;
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -77,6 +95,9 @@ public class TokenDaoImpl implements TokenDao {
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.dao.TokenDao#getLatest(kr.co.adflow.push.domain.Token)
+	 */
 	@Override
 	public Token getLatest(Token token) throws Exception {
 		TokenMapper tokenMapper = sqlSession.getMapper(TokenMapper.class);
@@ -105,4 +126,60 @@ public class TokenDaoImpl implements TokenDao {
 	// logger.debug("validate종료(true)");
 	// return true;
 	// }
+	
+
+	//140901 <kicho> - start
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see kr.co.adflow.push.dao.TokenDAO#getByUser(java.lang.String)
+	 */
+	@Override
+	public Token[] getByUser(String userID) throws Exception {
+		TokenMapper tokenMapper = sqlSession.getMapper(TokenMapper.class);
+		return tokenMapper.getByUser(userID);
+	}
+	//140901 <kicho> - end
+	
+	//140902 <kicho> - start
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see kr.co.adflow.push.dao.TokenDAO#getMultiByUser(java.lang.String)
+	 */
+	@Override
+	public Token[] getMultiByUser(String userID) throws Exception {
+		TokenMapper tokenMapper = sqlSession.getMapper(TokenMapper.class);
+		return tokenMapper.getMultiByUser(userID);
+	}
+	//140902 <kicho> - end	
+	
+	
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.dao.TokenDao#validateByUserID(java.lang.String)
+	 */
+	public boolean validateByUserID(String userID) throws Exception {
+		TokenMapper tokenMapper = sqlSession.getMapper(TokenMapper.class);
+		return tokenMapper.validateByUserID(userID);
+	}
+	
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.dao.TokenDao#validateByUfmi(java.lang.String)
+	 */
+	public boolean validateByUfmi(String ufmi) throws Exception {
+		TokenMapper tokenMapper = sqlSession.getMapper(TokenMapper.class);
+		return tokenMapper.validateByUfmi(ufmi);
+	}
+
+	@Override
+	public Token[] expiredSessionList(int lastAccessTime) throws Exception {
+		TokenMapper tokenMapper = sqlSession.getMapper(TokenMapper.class);
+		return tokenMapper.expiredSessionList(lastAccessTime);
+	}
+
+	@Override
+	public Token[] getMultiByUfmi(String ufmi) throws Exception {
+		TokenMapper tokenMapper = sqlSession.getMapper(TokenMapper.class);
+		return tokenMapper.getMultiByUfmi(ufmi);
+	}
 }

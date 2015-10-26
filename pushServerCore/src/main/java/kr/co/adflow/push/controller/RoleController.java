@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package kr.co.adflow.push.controller;
 
 import java.util.ArrayList;
@@ -8,7 +11,6 @@ import javax.annotation.Resource;
 import kr.co.adflow.push.domain.Response;
 import kr.co.adflow.push.domain.Result;
 import kr.co.adflow.push.domain.Role;
-import kr.co.adflow.push.domain.User;
 import kr.co.adflow.push.service.RoleService;
 
 import org.slf4j.Logger;
@@ -19,26 +21,30 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class RoleController.
+ *
  * @author nadir93
  * @date 2014. 7. 21.
  */
 @Controller
 public class RoleController {
 
+	/** The Constant logger. */
 	private static final Logger logger = LoggerFactory
 			.getLogger(RoleController.class);
 
+	/** The role service. */
 	@Resource
 	private RoleService roleService;
 
 	/**
-	 * role 가져오기
-	 * 
-	 * @param userID
-	 * @param clientID
-	 * @return
-	 * @throws Exception
+	 * role 가져오기.
+	 *
+	 * @param roleID the role id
+	 * @return the response
+	 * @throws Exception the exception
 	 */
 	@RequestMapping(value = "roles/{roleID}", method = RequestMethod.GET)
 	@ResponseBody
@@ -64,12 +70,10 @@ public class RoleController {
 	}
 
 	/**
-	 * 모든 role 가져오기
-	 * 
-	 * @param userID
-	 * @param clientID
-	 * @return
-	 * @throws Exception
+	 * 모든 role 가져오기.
+	 *
+	 * @return the response
+	 * @throws Exception the exception
 	 */
 	@RequestMapping(value = "roles", method = RequestMethod.GET)
 	@ResponseBody

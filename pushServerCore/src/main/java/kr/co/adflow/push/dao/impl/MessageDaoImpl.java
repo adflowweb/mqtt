@@ -1,7 +1,15 @@
+/*
+ * 
+ */
 package kr.co.adflow.push.dao.impl;
+
+import java.util.List;
+import java.util.Map;
 
 import kr.co.adflow.push.dao.MessageDao;
 import kr.co.adflow.push.domain.Message;
+import kr.co.adflow.push.domain.ktp.MessagesRes;
+import kr.co.adflow.push.domain.ktp.MsgParams;
 import kr.co.adflow.push.mapper.MessageMapper;
 
 import org.apache.ibatis.session.SqlSession;
@@ -9,17 +17,21 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class MessageDaoImpl.
+ *
  * @author nadir93
  * @date 2014. 4. 14.
- * 
  */
 @Component
 public class MessageDaoImpl implements MessageDao {
 
+	/** The Constant logger. */
 	private static final org.slf4j.Logger logger = LoggerFactory
 			.getLogger(MessageDaoImpl.class);
 
+	/** The sql session. */
 	@Autowired
 	private SqlSession sqlSession;
 
@@ -45,6 +57,7 @@ public class MessageDaoImpl implements MessageDao {
 	 */
 	@Override
 	public int post(Message msg) throws Exception {
+		System.out.println("post시작(msg=" + msg + ")");
 		logger.debug("post시작(msg=" + msg + ")");
 		// db 저장
 		MessageMapper msgMapper = sqlSession.getMapper(MessageMapper.class);
@@ -72,6 +85,22 @@ public class MessageDaoImpl implements MessageDao {
 		logger.debug("put종료(count=" + count + ")");
 		return count;
 	}
+	
+	
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.dao.MessageDao#putIssue(kr.co.adflow.push.domain.Message)
+	 */
+	public int putIssue(Message msg) throws Exception {
+		logger.debug("put시작(msg=" + msg + ")");
+		// db 저장
+		MessageMapper msgMapper = sqlSession.getMapper(MessageMapper.class);
+		int count = msgMapper.putIssue(msg);
+		logger.debug("msg=" + msg);
+		msgMapper.putContent(msg);
+		logger.debug("put종료(count=" + count + ")");
+		return count;
+	}
+
 
 	/*
 	 * (non-Javadoc)
@@ -87,6 +116,9 @@ public class MessageDaoImpl implements MessageDao {
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.dao.MessageDao#getReservationMsgs()
+	 */
 	@Override
 	public Message[] getReservationMsgs() throws Exception {
 		logger.debug("getReservationMsgs시작()");
@@ -96,6 +128,9 @@ public class MessageDaoImpl implements MessageDao {
 		return msg;
 	}
 
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.dao.MessageDao#getDeliveredMsgs()
+	 */
 	@Override
 	public Message[] getDeliveredMsgs() throws Exception {
 		logger.debug("getDeliveredMsgs시작()");
@@ -103,5 +138,29 @@ public class MessageDaoImpl implements MessageDao {
 		Message[] msg = msgMapper.getDeliveredMsgs();
 		logger.debug("getDeliveredMsgs종료(" + msg + ")");
 		return msg;
+	}
+	
+	/* (non-Javadoc)
+	 * @see kr.co.adflow.push.dao.MessageDao#getMessageList()
+	 */
+	@Override
+	public MessagesRes getMessageList(MsgParams msgParams) throws Exception {
+		logger.debug("getDeliveredMsgs시작()");
+		
+		MessagesRes res;
+		MessageMapper msgMapper = sqlSession.getMapper(MessageMapper.class);
+		
+		int cnt = msgMapper.getMessageListCnt(msgParams);
+		logger.debug("cnt :::::::{}", cnt);
+
+		List<Message> list = msgMapper.getMessageList(msgParams);
+		logger.debug("list size :::::::{}", list.size());
+
+		res = new MessagesRes();
+		res.setRecordsFiltered(cnt);
+		res.setRecordsTotal(cnt);
+		res.setData(list);
+		
+		return res;
 	}
 }

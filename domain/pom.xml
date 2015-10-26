@@ -30,6 +30,57 @@
 					<showDeprecation>true</showDeprecation>
 				</configuration>
 			</plugin>
+			
+	    <plugin>
+	      <groupId>org.apache.maven.plugins</groupId>
+	      <artifactId>maven-source-plugin</artifactId>
+	      <version>2.1.2</version>
+	      <executions>
+	        <execution>
+	          <id>attach-sources</id>
+	          <goals>
+	            <goal>jar</goal>
+	          </goals>
+	        </execution>
+	      </executions>
+	    </plugin>	
+	    
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-javadoc-plugin</artifactId>
+      <version>2.7</version>
+      <executions>
+        <execution>
+          <id>attach-javadocs</id>
+          <goals>
+            <goal>jar</goal>
+          </goals>
+        </execution>
+      </executions>
+    </plugin>
+    
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-deploy-plugin</artifactId>
+      <version>2.5</version>
+      <configuration>
+        <updateReleaseInfo>true</updateReleaseInfo>
+      </configuration>
+    </plugin>    	    		
 		</plugins>
 	</build>
+	
+<distributionManagement>
+  <repository>
+    <id>releases</id>
+    <name>Releases Repository</name>
+    <url>http://14.63.217.141:5051/nexus/content/repositories/releases</url>
+  </repository>
+
+  <snapshotRepository>
+    <id>snapshots</id>
+    <name>Snapshots Repository</name>
+    <url>http://14.63.217.141:5051/nexus/content/repositories/snapshots</url>
+  </snapshotRepository>
+</distributionManagement>	
 </project>

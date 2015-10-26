@@ -8,15 +8,15 @@
 	<packaging>war</packaging>
 	<version>1.0.0-BUILD-SNAPSHOT</version>
 	<properties>
-		<java-version>1.6</java-version>
+		<java-version>1.7</java-version>
 		<org.springframework-version>3.2.3.RELEASE</org.springframework-version>
 		<testng.version>6.8.7</testng.version>
 		<org.aspectj-version>1.7.1</org.aspectj-version>
 		<org.slf4j-version>1.6.6</org.slf4j-version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<maven.compiler.target>1.6</maven.compiler.target>
-		<maven.compiler.source>1.6</maven.compiler.source>
+		<maven.compiler.target>1.7</maven.compiler.target>
+		<maven.compiler.source>1.7</maven.compiler.source>
 	</properties>
 	<dependencies>
 		<!-- Spring -->
@@ -37,14 +37,12 @@
 			<artifactId>spring-webmvc</artifactId>
 			<version>${org.springframework-version}</version>
 		</dependency>
-
 		<!-- AspectJ -->
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjrt</artifactId>
 			<version>${org.aspectj-version}</version>
 		</dependency>
-
 		<!-- Logging -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -87,14 +85,12 @@
 			</exclusions>
 			<scope>runtime</scope>
 		</dependency>
-
 		<!-- @Inject -->
 		<dependency>
 			<groupId>javax.inject</groupId>
 			<artifactId>javax.inject</artifactId>
 			<version>1</version>
 		</dependency>
-
 		<!-- Servlet -->
 		<dependency>
 			<groupId>javax.servlet.jsp</groupId>
@@ -116,11 +112,6 @@
 			<scope>test</scope>
 		</dependency>
 		<!-- added by nadir93 -->
-		<dependency>
-			<groupId>org.eclipse.paho</groupId>
-			<artifactId>mqtt-client</artifactId>
-			<version>0.4.0</version>
-		</dependency>
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-mapper-asl</artifactId>
@@ -161,11 +152,6 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>kr.co.adflow.push</groupId>
-			<artifactId>domain</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-		<dependency>
 			<groupId>org.mybatis</groupId>
 			<artifactId>mybatis</artifactId>
 			<version>3.2.7</version>
@@ -186,20 +172,19 @@
 			<version>3.2.2.RELEASE</version>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jms</artifactId>
+			<version>${org.springframework-version}</version>
+		</dependency>
+		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>5.1.30</version>
 		</dependency>
 		<dependency>
-			<groupId>org.hyperic</groupId>
-			<artifactId>sigar</artifactId>
-			<version>1.6.2</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>kr.co.adflow.push</groupId>
-			<artifactId>pushServerCore</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<groupId>javax.jms</groupId>
+			<artifactId>javax.jms-api</artifactId>
+			<version>2.0</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -207,8 +192,94 @@
 			<version>3.0.1</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.eclipse.paho</groupId>
+			<artifactId>mqtt-client</artifactId>
+			<version>0.4.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hyperic</groupId>
+			<artifactId>sigar</artifactId>
+			<version>1.6.2</version>
+			<scope>provided</scope>
+		</dependency>		
+		<!-- pcf -->
+		<dependency>
+		  <groupId>kr.co.adflow.push.pcf</groupId>
+		  <artifactId>com.ibm.mq</artifactId>
+		  <version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>kr.co.adflow.push.pcf</groupId>
+			<artifactId>com.ibm.mq.commonservices</artifactId>
+			<version>1.0</version> 
+		</dependency>
+		<dependency>
+			<groupId>kr.co.adflow.push.pcf</groupId>
+			<artifactId>com.ibm.mq.headers</artifactId>
+			<version>1.0</version>
+		</dependency>		
+		<dependency>
+			<groupId>kr.co.adflow.push.pcf</groupId>
+			<artifactId>com.ibm.mq.jmqi</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>kr.co.adflow.push.pcf</groupId>
+			<artifactId>com.ibm.mq.pcf</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>kr.co.adflow.push.pcf</groupId>
+			<artifactId>connector</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>kr.co.adflow.push.pcf</groupId>
+			<artifactId>jta</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>kr.co.adflow.push.pcf</groupId>
+			<artifactId>com.ibm.mqjms</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>kr.co.adflow.push.pcf</groupId>
+			<artifactId>com.ibm.mq.allclient</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<!-- snapshot -->			
+		<dependency>
+			<groupId>kr.co.adflow.push</groupId>
+			<artifactId>domain</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>		
+		<dependency>
+			<groupId>kr.co.adflow.push</groupId>
+			<artifactId>pushServerCore</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.scala-lang</groupId>
+			<artifactId>scala-library</artifactId>
+			<version>2.10.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.scala-lang</groupId>
+			<artifactId>scala-library</artifactId>
+			<version>2.10.4</version>
+		</dependency>
 	</dependencies>
 	<build>
+        <resources>
+            <resource>
+                <filtering>true</filtering>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
+        
 		<plugins>
 			<plugin>
 				<artifactId>maven-eclipse-plugin</artifactId>
@@ -229,8 +300,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.5.1</version>
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>1.7</source>
+					<target>1.7</target>
 					<compilerArgument>-Xlint:all</compilerArgument>
 					<showWarnings>true</showWarnings>
 					<showDeprecation>true</showDeprecation>
@@ -250,7 +321,7 @@
 				<version>2.2</version>
 				<configuration>
 					<path>/v1</path>
-					<url>http://127.0.0.1:8080/manager/text</url>
+					<url>http://127.0.0.1:9090/manager/text</url>
 					<username>root</username>
 					<password>!Bsbank@</password>
 					<warFile>target/pushServer-1.0.0-BUILD-SNAPSHOT.war</warFile>
@@ -277,29 +348,52 @@
 							<targetPath>META-INF</targetPath>
 						</resource>
 						<resource>
-							<directory>src/main/resources/kr/co/adflow/push/bsbank/mapper</directory>
+							<directory>src/main/resources/kr/co/adflow/push/ktp/mapper</directory>
 							<filtering>true</filtering>
-							<targetPath>WEB-INF/classes/kr/co/adflow/push/bsbank/mapper</targetPath>
+							<targetPath>WEB-INF/classes/kr/co/adflow/push/ktp/mapper</targetPath>
 						</resource>
 					</webResources>
 				</configuration>
 			</plugin>
+	    <plugin>
+	      <groupId>org.apache.maven.plugins</groupId>
+	      <artifactId>maven-source-plugin</artifactId>
+	      <version>2.1.2</version>
+	      <executions>
+	        <execution>
+	          <id>attach-sources</id>
+	          <goals>
+	            <goal>jar</goal>
+	          </goals>
+	        </execution>
+	      </executions>
+	    </plugin>	
+	    
+<!--     <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-javadoc-plugin</artifactId>
+      <version>2.7</version>
+      <executions>
+        <execution>
+          <id>attach-javadocs</id>
+          <goals>
+            <goal>jar</goal>
+          </goals>
+        </execution>
+      </executions>
+    </plugin> -->
+			
 		</plugins>
-		<!-- Instructing the resources plugin to filter certain directories -->
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<filtering>true</filtering>
-			</resource>
-		</resources>
 	</build>
 	<!-- Profiles start here -->
 	<profiles>
 		<!-- Development environment @ my laptop -->
 		<profile>
 			<id>dev</id>
+	    <activation>
+            <activeByDefault>true</activeByDefault>
+        </activation>
 			<properties>
-
 				<!-- subscribe 해야하는 토픽 -->
 				<topic>/push/poll,/push/ack,/push/group,/push/badge</topic>
 
@@ -308,7 +402,8 @@
 
 				<!-- ibm mq 서버주소 -->
 				<!-- <mq.server.url>tcp://adflow.net:3881,tcp://adflow.net:3882</mq.server.url> -->
-				<mq.server.url>tcp://adflow.net:1883</mq.server.url>
+				<!-- <mq.server.url>tcp://adflow.net:1883</mq.server.url> -->
+				<mq.server.url>tcp://14.63.217.141:1883</mq.server.url>
 
 				<!-- <mq.server.url>ssl://adflow.net:8883</mq.server.url> -->
 
@@ -337,13 +432,13 @@
 				<health.check.interval>10</health.check.interval>
 
 				<!-- messageProcess enable/disable -->
-				<message.enable>true</message.enable>
+				<message.enable>false</message.enable>
 
 				<!-- messageProcess interval (second) -->
 				<message.process.interval>15</message.process.interval>
 
 				<!--SMS process enable/disable -->
-				<sms.enable>true</sms.enable>
+				<sms.enable>false</sms.enable>
 
 				<!-- SMS processing interval (second) -->
 				<sms.process.interval>30</sms.process.interval>
@@ -367,13 +462,13 @@
 				<clientid>${env.HOSTNAME}</clientid>
 
 				<!-- application log level 설정 -->
-				<log.level>debug</log.level>
+				<log.level>error</log.level>
 
 				<db.driverClass>com.mysql.jdbc.Driver</db.driverClass>
-				<db.connectionURL>jdbc:mysql://localhost:3306/push?useUnicode=true<![CDATA[&amp;]]>characterEncoding=utf8
+				<db.connectionURL>jdbc:mysql://14.63.217.141:3306/push?useUnicode=true<![CDATA[&amp;]]>characterEncoding=utf8
 				</db.connectionURL>
-				<db.username>root</db.username>
-				<db.password>passw0rd</db.password>
+				<db.username>adflow</db.username>
+				<db.password>!ADFlow@</db.password>
 				<db.maxActive>20</db.maxActive>
 				<db.maxIdle>10</db.maxIdle>
 				<db.maxWait>10000</db.maxWait>
@@ -386,13 +481,25 @@
 				<db.table.user>emp</db.table.user>
 				<db.table.department>department</db.table.department>
 				<db.sql.getUsersByName>CONCAT('%', #{name}, '%')</db.sql.getUsersByName>
-
+				
+				<!-- mq pcf info -->
+				<mq.pcf.id>adflow</mq.pcf.id>
+				<mq.pcf.password>!ADFlow@</mq.pcf.password>
+				<mq.pcf.port>1414</mq.pcf.port>
+				<mq.pcf.channel>ADFlowPCF</mq.pcf.channel>
+				<mq.pcf.host>14.63.217.141</mq.pcf.host>
+				<!-- mq jms info -->
+				<mq.jms.id>adflow</mq.jms.id>
+				<mq.jms.password>!ADFlow@</mq.jms.password>
+				<mq.jms.port>1414</mq.jms.port>
+				<mq.jms.queue.manager>MQTT</mq.jms.queue.manager>
+				<mq.jms.channel>ADFlowJMS</mq.jms.channel>
+				<mq.jms.host>14.63.217.141</mq.jms.host>
 			</properties>
 		</profile>
 		<profile>
 			<id>test</id>
 			<properties>
-
 				<!-- subscribe 해야하는 토픽 -->
 				<topic>/push/poll,/push/ack,/push/group,/push/badge</topic>
 
@@ -476,35 +583,48 @@
 				<db.table.department>TB_OCRM_GW_DEPTMT_INFO</db.table.department>
 				<db.sql.getUsersByName>'%'||#{name}||'%'</db.sql.getUsersByName>
 
+				<!-- mq pcf info -->
+				<mq.pcf.id>adflow</mq.pcf.id>
+				<mq.pcf.password>!ADFlow@</mq.pcf.password>
+				<mq.pcf.port>1414</mq.pcf.port>
+				<mq.pcf.channel>ADFlowPCF</mq.pcf.channel>
+				<mq.pcf.host>14.63.217.141</mq.pcf.host>
+				<!-- mq jms info -->
+				<mq.jms.id>adflow</mq.jms.id>
+				<mq.jms.password>!ADFlow@</mq.jms.password>
+				<mq.jms.port>1414</mq.jms.port>
+				<mq.jms.queue.manager>MQTT</mq.jms.queue.manager>
+				<mq.jms.channel>ADFlowJMS</mq.jms.channel>
+				<mq.jms.host>14.63.217.141</mq.jms.host>
+
 			</properties>
 		</profile>
 		<!-- Production environment @ production server -->
 		<profile>
 			<id>production</id>
 			<properties>
-
 				<!-- subscribe 해야하는 토픽 -->
 				<!-- <topic>/push/#</topic> -->
 				<topic>/push/poll,/push/ack,/push/group,/push/badge</topic>
 
 				<!-- ibm mq 서버주소 -->
-				<mq.server.ssl>true</mq.server.ssl>
+				<mq.server.ssl>false</mq.server.ssl>
 
 				<!-- ibm mq 서버주소 -->
-				<mq.server.url>ssl://adflow.net:8883</mq.server.url>
+				<mq.server.url>tcp://PUSH-MQ:1883</mq.server.url>
 
 				<!-- SMS 서버주소 -->
-				<sms.server.url>130.80.101.48</sms.server.url>
+				<sms.server.url>127.0.0.1</sms.server.url>
 
 				<!-- SMS 서버포트 -->
 				<sms.server.port>3000</sms.server.port>
 
 				<!-- LDAP 서버주소 -->
 				<!-- <ldap.server.url>130.10.0.32</ldap.server.url> -->
-				<ldap.server.enable>true</ldap.server.enable>
-				<ldap.server.url>adpusan.co.kr</ldap.server.url>
+				<ldap.server.enable>false</ldap.server.enable>
+				<ldap.server.url>130.10.0.32</ldap.server.url>
 
-				<apns.key.file>d:/temp/bsbankpush/keyfile/cho_push.p12</apns.key.file>
+				<apns.key.file>/Users/nadir93/tmp/cho_push.p12</apns.key.file>
 
 				<apns.key.password>test1234</apns.key.password>
 
@@ -517,13 +637,13 @@
 				<health.check.interval>10</health.check.interval>
 
 				<!-- messageProcess enable/disable -->
-				<message.enable>true</message.enable>
+				<message.enable>false</message.enable>
 
 				<!-- messageProcess interval (second) -->
 				<message.process.interval>15</message.process.interval>
 
 				<!--SMS process enable/disable -->
-				<sms.enable>true</sms.enable>
+				<sms.enable>false</sms.enable>
 
 				<!-- SMS processing interval (second) -->
 				<sms.process.interval>30</sms.process.interval>
@@ -566,9 +686,24 @@
 				<db.table.department>TB_OCRM_GW_DEPTMT_INFO</db.table.department>
 				<db.sql.getUsersByName>'%'||#{name}||'%'</db.sql.getUsersByName>
 
+				<!-- mq pcf info -->
+				<mq.pcf.id>adflow</mq.pcf.id>
+				<mq.pcf.password>!ADFlow@</mq.pcf.password>
+				<mq.pcf.port>1414</mq.pcf.port>
+				<mq.pcf.channel>ADFlowPCF</mq.pcf.channel>
+				<mq.pcf.host>PUSH-MQ</mq.pcf.host>
+				<!-- mq jms info -->
+				<mq.jms.id>adflow</mq.jms.id>
+				<mq.jms.password>!ADFlow@</mq.jms.password>
+				<mq.jms.port>1414</mq.jms.port>
+				<mq.jms.queue.manager>MQTT</mq.jms.queue.manager>
+				<mq.jms.channel>ADFlowJMS</mq.jms.channel>
+				<mq.jms.host>PUSH-MQ</mq.jms.host>
+
 			</properties>
 		</profile>
 	</profiles>
+	<!-- 
 	<repositories>
 		<repository>
 			<id>repo.eclipse.org</id>
@@ -580,4 +715,19 @@
 			<url>http://www.terracotta.org/download/reflector/releases/</url>
 		</repository>
 	</repositories>
+ -->
+
+<distributionManagement>
+  <repository>
+    <id>releases</id>
+    <name>Releases Repository</name>
+    <url>http://14.63.217.141:5051/nexus/content/repositories/releases</url>
+  </repository>
+
+  <snapshotRepository>
+    <id>snapshots</id>
+    <name>Snapshots Repository</name>
+    <url>http://14.63.217.141:5051/nexus/content/repositories/snapshots</url>
+  </snapshotRepository>
+</distributionManagement>	
 </project>

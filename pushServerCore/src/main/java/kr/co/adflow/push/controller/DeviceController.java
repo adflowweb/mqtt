@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package kr.co.adflow.push.controller;
 
 import java.util.ArrayList;
@@ -18,27 +21,30 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class DeviceController.
+ *
  * @author nadir93
  * @date 2014. 4. 28.
- * 
  */
 @Controller
 public class DeviceController {
 
+	/** The Constant logger. */
 	private static final Logger logger = LoggerFactory
 			.getLogger(DeviceController.class);
 
+	/** The device service. */
 	@Resource
 	private DeviceService deviceService;
 
 	/**
-	 * 디바이스정보 삭제하기
-	 * 
-	 * 
-	 * @param deviceID
-	 * @return
-	 * @throws Exception
+	 * 디바이스정보 삭제하기.
+	 *
+	 * @param deviceID the device id
+	 * @return the response
+	 * @throws Exception the exception
 	 */
 	@RequestMapping(value = "devices/{deviceID}", method = RequestMethod.DELETE)
 	@ResponseBody
@@ -59,10 +65,10 @@ public class DeviceController {
 	}
 
 	/**
-	 * 예외처리
-	 * 
-	 * @param e
-	 * @return
+	 * 예외처리.
+	 *
+	 * @param e the e
+	 * @return the response
 	 */
 	@ExceptionHandler(Exception.class)
 	@ResponseBody

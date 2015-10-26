@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package kr.co.adflow.push.controller;
 
 import java.util.ArrayList;
@@ -17,16 +20,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class ServerController.
+ *
  * @author nadir93
  * @date 2014. 4. 14.
- * 
  */
 @Controller
 public class ServerController {
+	
+	/** The Constant logger. */
 	private static final Logger logger = LoggerFactory
 			.getLogger(ServerController.class);
 
+	/** The server service. */
 	@Resource
 	private ServerService serverService;
 
@@ -34,10 +42,10 @@ public class ServerController {
 	 * 푸시서버정보 가져오기
 	 * 
 	 * { result : { success: true, errors : [], - warnings : [], info : [], data
-	 * : { available: true, message : "" } } }
-	 * 
-	 * @return
-	 * @throws Exception
+	 * : { available: true, message : "" } } }.
+	 *
+	 * @return the response
+	 * @throws Exception the exception
 	 */
 	@RequestMapping(value = "server", method = RequestMethod.GET)
 	@ResponseBody
@@ -51,10 +59,10 @@ public class ServerController {
 	}
 
 	/**
-	 * 예외처리
-	 * 
-	 * @param e
-	 * @return
+	 * 예외처리.
+	 *
+	 * @param e the e
+	 * @return the response
 	 */
 	@ExceptionHandler(Exception.class)
 	@ResponseBody

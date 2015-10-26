@@ -5,27 +5,62 @@
 <mapper namespace="kr.co.adflow.push.mapper.TokenMapper">
 
 	<select id="get" resultType="kr.co.adflow.push.domain.Token">
-		SELECT * FROM token WHERE tokenid =
-		#{token}
+		SELECT tokenID, userID, issue 
+		FROM token 
+		WHERE tokenid =	#{token}
 	</select>
 
 	<select id="getLatest" parameterType="kr.co.adflow.push.domain.Token"
 		resultType="kr.co.adflow.push.domain.Token">
-		SELECT * FROM token WHERE
-		userid= #{userID} and deviceid=
-		#{deviceID} order
-		by issue desc limit 1
+		SELECT tokenID, userID, issue 
+		FROM token 
+		WHERE userid= #{userID} 
+		order by issue desc 
+		limit 1
 	</select>
 
 	<insert id="post" parameterType="kr.co.adflow.push.domain.Token">
-		INSERT INTO
-		token
-		values(#{tokenID}, #{userID}, #{deviceID}, now())
+		INSERT INTO token (tokenID, userID, issue, lastAccessTime)
+		values(#{tokenID}, #{userID}, now(), now())
 	</insert>
+	
+	<update id="put" parameterType="kr.co.adflow.push.domain.Token">
+		UPDATE token
+		SET userid = #{userid} ,
+			issue = #{issue},
+            lastAcessTime = #{lastAcessTime}
+		WHERE tokenID = #{tokenID}
+	</update>
+	
+		<update id="putLastAcessTime" parameterType="kr.co.adflow.push.domain.Token">
+		UPDATE token
+		SET lastAccessTime = now()
+		WHERE tokenID = #{tokenID}
+	</update>
 
 	<select id="validate" resultType="boolean">
 		SELECT CASE WHEN count(*) > 0
-		THEN 1 ELSE 0 END From token where tokenid = #{token}
+		THEN 1 ELSE 0 END 
+		FROM token 
+		WHERE tokenid = #{token}
+	</select>
+	
+	<select id="validateByUfmi" resultType="boolean">
+		SELECT CASE WHEN count(tokenid) > 0
+			THEN 1 ELSE 0 END  AS result
+		FROM push.token a , push.user b
+		WHERE a.userid = b.userid 
+		AND b.ufmi IS NOT NULL
+		AND b.ufmi = #{ufmi}
+	</select>
+	
+	<select id="validateByUserID" resultType="boolean">
+		SELECT CASE WHEN count(tokenid) > 0
+		THEN 1 ELSE 0 END 
+		FROM token a, push.user b
+		WHERE a.userID = b.userID
+		AND a.userID = #{userID}
+		AND b.ufmi IS NOT NULL
 	</select>
 
 	<delete id="delete" parameterType="java.lang.String">
@@ -34,5 +69,45 @@
 		WHERE
 		tokenid=#{token}
 	</delete>
+	
+	<select id="getByUser" resultType="kr.co.adflow.push.domain.Token">
+		SELECT tokenid, userid, issue, lastAccessTime 
+		FROM token 
+		WHERE userid = #{userID}
+	</select>
+	
+	<select id="getMultiByUser" resultType="kr.co.adflow.push.domain.Token">
+		SELECT tokenid, userid, issue, lastAccessTime
+		FROM token 
+		WHERE userid like CONCAT(#{userID}, '%')
+	</select>
+	
+	<select id="expiredSessionList" resultType="kr.co.adflow.push.domain.Token">
+	
+	<!-- kicho : role change [start] - 20150410 
+		SELECT tokenid, userid, issue, lastAccessTime
+		FROM push.token 
+		WHERE lastAccessTime  <![CDATA[<]]> SUBDATE(NOW(),INTERVAL #{lastAccessTime} DAY)
+		AND userid NOT IN ('PCBS')
+		ORDER BY lastAccessTime ASC
+	-->	
+	
+	<!-- kicho : role change [start] - 20150410 -->	
+		SELECT a.tokenid, a.userid, a.issue, a.lastAccessTime
+		FROM push.token a, push.user b
+		WHERE a.userid = b.userid 
+		AND a.lastAccessTime  <![CDATA[<]]> SUBDATE(NOW(),INTERVAL #{lastAccessTime} DAY)
+		AND b.role IS NULL
+		ORDER BY a.lastAccessTime ASC
+	<!-- kicho : role change [end] - 20150410 -->		
+		
+	</select>
+	
+	<select id="getMultiByUfmi" resultType="kr.co.adflow.push.domain.Token">
+		SELECT a.tokenid, a.userid, a.issue, a.lastAccessTime , b.ufmi
+		FROM push.token a,push.user b
+        WHERE a.userid = b.userid
+		AND  b.ufmi like CONCAT(#{ufmi}, '%')
+	</select>
 
 </mapper>
