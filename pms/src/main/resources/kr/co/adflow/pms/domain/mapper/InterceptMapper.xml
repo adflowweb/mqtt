@@ -36,6 +36,7 @@
 	WHERE a.user_id = b.user_id 
 	AND a.token_type = 'T' 
 	AND b.status = 0
+	
 	AND a.token_id = #{applicationKey} 
 	AND expired_time <![CDATA[>=]]>  now()
 	</select>

@@ -9,6 +9,7 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
+import kr.co.adflow.pms.core.config.PmsConfig;
 import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.exception.MessageRunTimeException;
 import kr.co.adflow.pms.core.request.MessageReq;
@@ -22,6 +23,7 @@ import kr.co.adflow.pms.domain.Token;
 import kr.co.adflow.pms.domain.mapper.TokenMapper;
 import kr.co.adflow.pms.response.Response;
 
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +54,9 @@ public class MessageController extends BaseController {
 
 	@Autowired
 	private TokenMapper tokenMapper;
+
+	@Autowired
+	private PmsConfig pmsConfig;
 
 	/**
 	 * Send message.
@@ -94,6 +99,108 @@ public class MessageController extends BaseController {
 
 			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_530500,
 					"Qos 설정이 잘못 되었습니다");
+		}
+
+		if (msg.getMsgType() != 0) {
+			msg.setMsgType(msg.getMsgType());
+		} else {
+			msg.setMsgType(StaticConfig.MESSAGE_TYPE_USER);
+		}
+
+		if (msg.isAck() == false) {
+			msg.setAck(true);
+		}
+
+		if (msg.getServiceId() == null
+				|| msg.getServiceId().trim().length() == 0) {
+
+			msg.setServiceId(pmsConfig.MESSAGE_SERVICE_ID_DEFAULT);
+		}
+
+		if (msg.getExpiry() == 0) {
+			logger.debug("expiry 시간이 입력되지 않아 기본 시간으로 세팅툅니다!"
+					+ pmsConfig.MESSAGE_HEADER_EXPIRY_DEFAULT);
+
+			msg.setExpiry(pmsConfig.MESSAGE_HEADER_EXPIRY_DEFAULT);
+		} else {
+			logger.debug("expiry 시간이 입력되었습니다!" + msg.getExpiry());
+			long expiryTime = msg.getExpiry() * 1000;
+			msg.setExpiry(expiryTime);
+		}
+
+		Message msgSendData = messageService.sendMessage(msg, appKey);
+
+		MessageSendRes messageSendRes = new MessageSendRes();
+		messageSendRes.setContent(msgSendData.getContent());
+		messageSendRes.setReceiver(msgSendData.getReceiver());
+		messageSendRes.setMsgId(msgSendData.getMsgId());
+		Response<MessageSendRes> res = new Response<MessageSendRes>();
+		res.setStatus(StaticConfig.RESPONSE_STATUS_OK);
+		res.setData(messageSendRes);
+		res.setCode(StaticConfig.SUCCESS_CODE_530);
+		res.setMessage("메시지를 전송 하였습니다.");
+
+		return res;
+
+	}
+
+	@RequestMapping(value = "/system/messages/{msgType}", method = RequestMethod.POST, consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
+	@ResponseBody
+	public Response<MessageSendRes> sendSystemMessage(
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String appKey,
+			@RequestBody @Valid MessageReq msg, @PathVariable int msgType)
+			throws Exception {
+
+		logger.debug("=== msg::{}", "getContentType::" + msg.getContentType()
+				+ ",getExpiry::" + msg.getExpiry() + ",getQos::" + msg.getQos()
+				+ ",getReceiver::" + msg.getReceiver());
+
+		if (msg.getReceiver() == null || msg.getReceiver().trim().length() == 0) {
+
+			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_530404,
+					"Receiver 가 없습니다");
+		}
+		if (msg.getContentType() == null
+				|| msg.getContentType().trim().length() == 0) {
+
+			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_530404,
+					"Content-Type 이 없습니다");
+		}
+		if (msg.getContent() == null || msg.getContent().trim().length() == 0) {
+
+			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_530404,
+					"Content 가 없습니다");
+		}
+		if (msg.getQos() < 0 || msg.getQos() > 2) {
+
+			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_530500,
+					"Qos 설정이 잘못 되었습니다");
+		}
+
+		if (msg.getServiceId() == null
+				|| msg.getServiceId().trim().length() == 0) {
+
+			msg.setServiceId(pmsConfig.MESSAGE_SERVICE_ID_DEFAULT);
+		}
+
+		if (msg.getExpiry() == 0) {
+			logger.debug("expiry 시간이 입력되지 않아 기본 시간으로 세팅툅니다!"
+					+ pmsConfig.MESSAGE_HEADER_EXPIRY_DEFAULT);
+
+			msg.setExpiry(pmsConfig.MESSAGE_HEADER_EXPIRY_DEFAULT);
+		} else {
+			logger.debug("expiry 시간이 입력되었습니다!" + msg.getExpiry());
+			long expiryTime = msg.getExpiry() * 1000;
+			msg.setExpiry(expiryTime);
+		}
+
+		msg.setMsgType(msgType);
+		if (msgType == 200) {
+			String keepAliveTime = msg.getContent();
+			JSONObject jsonObjectTime = new JSONObject();
+			jsonObjectTime
+					.put("keepAliveTime", Integer.parseInt(keepAliveTime));
+			msg.setContent(jsonObjectTime.toString());
 		}
 
 		Message msgSendData = messageService.sendMessage(msg, appKey);

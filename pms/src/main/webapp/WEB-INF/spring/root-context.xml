@@ -148,6 +148,9 @@
 		</property>
 	</bean>
 
+	<bean id="pcfConnectionPool"
+		class="kr.co.adflow.pms.core.handler.PCFConnectionManagerHandler"
+		init-method="init"></bean>
 
 	<!-- Creates the JSR-303 Validator -->
 	<bean id="validator"

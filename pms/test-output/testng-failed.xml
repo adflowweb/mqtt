@@ -10,7 +10,7 @@
           <include name="springTestContextBeforeTestMethod"/>
           <include name="springTestContextPrepareTestInstance"/>
           <include name="springTestContextAfterTestMethod"/>
-          <include name="getToken"/>
+          <include name="getConnections"/>
         </methods>
       </class> <!-- kr.co.adflow.pms.core.pcf.TokenControllerTest -->
     </classes>

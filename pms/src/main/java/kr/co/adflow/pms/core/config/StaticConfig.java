@@ -101,6 +101,8 @@ public class StaticConfig {
 	public static final String RESPONSE_MESSAGE_EXCEPTION_CODE = "500000";
 	public static final String USER_GROUP_CODE = "10000";
 
+	public static final int MESSAGE_TYPE_USER = 100;
+	public static final int MESSAGE_TYPE_KEEPALIVE = 200;
 	/* Interface Code */
 	// 토큰 생성 API Code
 	public final static String API_CODE_510 = "510";

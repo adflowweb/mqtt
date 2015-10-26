@@ -34,8 +34,20 @@ public class MessageReq {
 
 	/** The qos. */
 	private int qos;
+	
+	private boolean ack;
+	
+	
 
 
+
+	public boolean isAck() {
+		return ack;
+	}
+
+	public void setAck(boolean ack) {
+		this.ack = ack;
+	}
 
 	public String getReceiver() {
 		return receiver;

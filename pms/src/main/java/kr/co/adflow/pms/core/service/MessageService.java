@@ -29,6 +29,8 @@ public interface MessageService {
 	 */
 	public Message sendMessage(MessageReq msg, String appKey) throws Exception;
 
+
+
 	public MessagesListRes getMessageList(Map<String, String> params)
 			throws Exception;
 
@@ -40,8 +42,10 @@ public interface MessageService {
 	// reqIds)
 	// throws Exception;
 
-	public StatisticsRes getStatistics  (Map<String, String> params) throws Exception;
+	public StatisticsRes getStatistics(Map<String, String> params)
+			throws Exception;
 
-	public AckRes getAckMessage (Map<String, String> params, String msgId) throws Exception;
+	public AckRes getAckMessage(Map<String, String> params, String msgId)
+			throws Exception;
 
 }

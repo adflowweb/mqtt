@@ -27,6 +27,7 @@ import kr.co.adflow.pms.domain.mapper.InterceptMapper;
 import kr.co.adflow.pms.domain.mapper.MessageMapper;
 import kr.co.adflow.pms.domain.mapper.SummaryMapper;
 
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -180,33 +181,14 @@ public class MessageServiceImpl implements MessageService {
 
 		msg.setServerId(pmsConfig.EXECUTOR_SERVER_ID);
 
-		if (message.getExpiry() == 0) {
-			logger.debug("expiry 시간이 입력되지 않아 기본 시간으로 세팅툅니다!"
-					+ pmsConfig.MESSAGE_HEADER_EXPIRY_DEFAULT);
-
-			msg.setExpiry(pmsConfig.MESSAGE_HEADER_EXPIRY_DEFAULT);
-		} else {
-			logger.debug("expiry 시간이 입력되었습니다!" + message.getExpiry());
-			long expiryTime = message.getExpiry() * 1000;
-			msg.setExpiry(expiryTime);
-		}
-
-		if (message.getMsgType() != 0) {
-			msg.setMsgType(message.getMsgType());
-		} else {
-			msg.setMsgType(100);
-		}
-
 		msg.setQos(message.getQos());
 		msg.setIssueId(issueId);
-
-		msg.setServiceId(pmsConfig.MESSAGE_SERVICE_ID_DEFAULT);
-		// message.service.id.adflow=kr.co.adflow.push.message
-		// Ack false
-		msg.setAck(true);
+		msg.setMsgType(message.getMsgType());
+		msg.setServiceId(message.getServiceId());
+		msg.setAck(message.isAck());
 		msg.setContentType(message.getContentType());
 		msg.setContent(message.getContent());
-
+		msg.setExpiry(message.getExpiry());
 		msgId = this.getMsgId();
 		msg.setMsgId(msgId);
 
@@ -223,6 +205,7 @@ public class MessageServiceImpl implements MessageService {
 
 	// JMS Send and Message DB insert
 	public void sendJMS(Message msg) {
+		logger.debug("발송정 입력값 시작");
 		logger.debug(msg.toString());
 		msg.setIssueTime(new Date());
 		// JMS message send
