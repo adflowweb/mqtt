@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:showIn="@layout/activity_main" tools:context=".MainActivity">
+
+    <TextView android:text="Receiver :" android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/connectionTextView"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/textView"
+        android:layout_alignRight="@+id/contentTextView"
+        android:layout_alignEnd="@+id/contentTextView" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:id="@+id/contentTextView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/textView"
+        android:textAlignment="gravity"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_above="@+id/startService" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="푸시 서비스 시작"
+        android:id="@+id/startService"
+        android:layout_above="@+id/subscribe"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="푸시 서비스 종료"
+        android:id="@+id/stopService"
+        android:layout_toRightOf="@+id/startService"
+        android:layout_below="@+id/contentTextView"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="바인드"
+        android:id="@+id/bindService"
+        android:layout_toRightOf="@+id/stopService"
+        android:layout_below="@+id/contentTextView"
+        android:layout_alignRight="@+id/contentTextView"
+        android:layout_alignEnd="@+id/contentTextView" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="토픽 구독"
+        android:id="@+id/subscribe"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/startService"
+        android:layout_alignEnd="@+id/startService" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="토픽 구독 취소"
+        android:id="@+id/unsubscribe"
+        android:layout_alignTop="@+id/subscribe"
+        android:layout_toRightOf="@+id/startService" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="언바인드"
+        android:id="@+id/unbindService"
+        android:layout_toRightOf="@+id/unsubscribe"
+        android:layout_below="@+id/bindService"
+        android:layout_alignRight="@+id/contentTextView"
+        android:layout_alignEnd="@+id/contentTextView" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="토큰 등록"
+        android:id="@+id/registerToken"
+        android:layout_below="@+id/subscribe"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="토큰 가져오기"
+        android:id="@+id/getToken"
+        android:layout_below="@+id/subscribe"
+        android:layout_toRightOf="@+id/registerToken"
+        android:layout_toEndOf="@+id/registerToken" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="세션 가져오기"
+        android:id="@+id/getSession"
+        android:layout_alignBottom="@+id/getToken"
+        android:layout_toRightOf="@+id/getToken"
+        android:layout_toEndOf="@+id/getToken"
+        android:layout_alignRight="@+id/contentTextView"
+        android:layout_alignEnd="@+id/contentTextView" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="구독정보 가져오기"
+        android:id="@+id/getSubscriptions"
+        android:layout_below="@+id/registerToken"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="PING"
+        android:id="@+id/ping"
+        android:layout_alignTop="@+id/getSubscriptions"
+        android:layout_toRightOf="@+id/getSubscriptions"
+        android:layout_toEndOf="@+id/getSubscriptions"
+        android:layout_alignRight="@+id/contentTextView"
+        android:layout_alignEnd="@+id/contentTextView" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SMS 테스트"
+        android:id="@+id/sendSMS"
+        android:layout_below="@+id/getSubscriptions"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/contentTextView"
+        android:layout_alignEnd="@+id/contentTextView" />
+
+    <!--
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="서비스 시작"
+        android:id="@+id/startService"
+        android:layout_below="@+id/contentTextView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="서비스 종료"
+        android:id="@+id/stopService"
+        android:layout_above="@+id/unsubscribe"
+        android:layout_toRightOf="@+id/startService"
+        android:layout_marginRight="110dp"
+        android:layout_marginEnd="110dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="바인드 서비스"
+        android:id="@+id/bindService"
+        android:layout_below="@+id/contentTextView"
+        android:layout_toRightOf="@+id/stopService" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="토픽구독"
+        android:id="@+id/subscribe"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/startService"
+        android:layout_alignEnd="@+id/startService" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="토픽구독해제"
+        android:id="@+id/unsubscribe"
+        android:layout_alignTop="@+id/subscribe"
+        android:layout_toLeftOf="@+id/bindService"
+        android:layout_toRightOf="@+id/startService"
+        android:layout_toEndOf="@+id/startService" />
+
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="언바인드 서비스"
+        android:id="@+id/unbindService"
+        android:layout_below="@+id/bindService"
+        android:layout_alignRight="@+id/contentTextView"
+        android:layout_alignEnd="@+id/contentTextView" />
+
+        -->
+
+
+
+</RelativeLayout>
