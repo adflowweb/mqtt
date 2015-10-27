@@ -65,6 +65,8 @@ public class DirectMsgHandlerBySessionCallback implements
 
 			if ("application/json".equals(msg.getContentType())) {
 				JSONObject contentObject = new JSONObject(msg.getContent());
+				logger.debug(contentObject.toString());
+				logger.debug("제이슨 오브젝트로 변경");
 				msgObject.put("content", contentObject);
 			} else {
 				msgObject.put("content", msg.getContent());

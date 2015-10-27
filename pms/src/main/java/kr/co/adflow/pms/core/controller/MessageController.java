@@ -12,6 +12,7 @@ import javax.validation.Valid;
 import kr.co.adflow.pms.core.config.PmsConfig;
 import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.exception.MessageRunTimeException;
+import kr.co.adflow.pms.core.exception.TokenRunTimeException;
 import kr.co.adflow.pms.core.request.MessageReq;
 import kr.co.adflow.pms.core.response.AckRes;
 import kr.co.adflow.pms.core.response.MessageSendRes;
@@ -147,7 +148,7 @@ public class MessageController extends BaseController {
 	@RequestMapping(value = "/system/messages/{msgType}", method = RequestMethod.POST, consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
 	@ResponseBody
 	public Response<MessageSendRes> sendSystemMessage(
-			@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String appKey,
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String applicationKey,
 			@RequestBody @Valid MessageReq msg, @PathVariable int msgType)
 			throws Exception {
 
@@ -155,20 +156,39 @@ public class MessageController extends BaseController {
 				+ ",getExpiry::" + msg.getExpiry() + ",getQos::" + msg.getQos()
 				+ ",getReceiver::" + msg.getReceiver());
 
+		// logger.debug(applicationKey + "의 권한 체크를 시작합니다!");
+		// Token tokenId = tokenMapper.selectUserid(applicationKey);
+		// String requsetUserId = tokenId.getUserId();
+		//
+		// List<Token> apiCode = tokenMapper.getApiCode(requsetUserId);
+		// boolean tokenAuthCheck = false;
+		// for (int i = 0; i < apiCode.size(); i++) {
+		//
+		// if (apiCode.get(i).getApiCode().equals(StaticConfig.API_CODE_534)) {
+		// tokenAuthCheck = true;
+		// }
+		// }
+		// if (tokenAuthCheck == false) {
+		// logger.debug(StaticConfig.API_CODE_534 + "에 대한 권한이 없습니다");
+		// throw new TokenRunTimeException(StaticConfig.ERROR_CODE_534401,
+		// "권한이 없습니다");
+		// }
+		// logger.debug(applicationKey + "에 대한 권한체크가 완료 되었습니다.");
+
 		if (msg.getReceiver() == null || msg.getReceiver().trim().length() == 0) {
 
-			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_530404,
+			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_534404,
 					"Receiver 가 없습니다");
 		}
 		if (msg.getContentType() == null
 				|| msg.getContentType().trim().length() == 0) {
 
-			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_530404,
+			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_534404,
 					"Content-Type 이 없습니다");
 		}
 		if (msg.getContent() == null || msg.getContent().trim().length() == 0) {
 
-			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_530404,
+			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_534404,
 					"Content 가 없습니다");
 		}
 		if (msg.getQos() < 0 || msg.getQos() > 2) {
@@ -197,20 +217,20 @@ public class MessageController extends BaseController {
 		msg.setMsgType(msgType);
 		if (msgType == 200) {
 			String keepAliveTime = msg.getContent();
-			JSONObject jsonObjectTime = new JSONObject();
+
 			try {
-				jsonObjectTime.put("keepAliveTime",
-						Integer.parseInt(keepAliveTime));
+				msg.setContent("{\"keepAliveTime\":"
+						+ Integer.parseInt(keepAliveTime) + "}");
 			} catch (Exception e) {
 				e.printStackTrace();
 				throw new MessageRunTimeException(
 						StaticConfig.ERROR_CODE_534400,
 						"잘못된 요청 입니다(content의 입력값을 확인해주세요)");
 			}
-			msg.setContent(jsonObjectTime.toString());
+
 		}
 
-		Message msgSendData = messageService.sendMessage(msg, appKey);
+		Message msgSendData = messageService.sendMessage(msg, applicationKey);
 
 		MessageSendRes messageSendRes = new MessageSendRes();
 		messageSendRes.setContent(msgSendData.getContent());
