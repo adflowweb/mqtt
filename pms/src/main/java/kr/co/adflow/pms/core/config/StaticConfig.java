@@ -110,6 +110,7 @@ public class StaticConfig {
 	public final static String API_CODE_531 = "531";
 	public final static String API_CODE_532 = "532";
 	public final static String API_CODE_533 = "533";
+	public final static String API_CODE_534 = "534";
 	public final static String API_CODE_550 = "550";
 	public final static String API_CODE_551 = "551";
 	public final static String API_CODE_552 = "552";
