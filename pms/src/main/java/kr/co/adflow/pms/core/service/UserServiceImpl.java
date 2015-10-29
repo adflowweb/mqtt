@@ -101,11 +101,16 @@ public class UserServiceImpl implements UserService {
 		device.setDeviceId(userReq.getDeviceId());
 		device.setDeviceInfo(userReq.getDeviceInfo());
 		device.setUserId(userReq.getUserId());
-
-		int deviceResult = deviceMapper.insertDevice(device);
+		int deviceResult = 0;
+		try {
+			deviceResult = deviceMapper.insertDevice(device);
+		} catch (DuplicateKeyException e) {
+			throw new UserRunTimeException(StaticConfig.ERROR_CODE_550500,
+					"이미 등록된 디바이스입니다");
+		}
 
 		if (deviceResult < 1) {
-			throw new TokenRunTimeException(StaticConfig.ERROR_CODE_550500,
+			throw new UserRunTimeException(StaticConfig.ERROR_CODE_550500,
 					"디바이스 등록에 실패 하였습니다");
 		}
 
@@ -117,7 +122,7 @@ public class UserServiceImpl implements UserService {
 		userRes.setUserId(paramToken.getUserId());
 		if (tokenResult < 1) {
 
-			throw new TokenRunTimeException(StaticConfig.ERROR_CODE_550500,
+			throw new UserRunTimeException(StaticConfig.ERROR_CODE_550500,
 					"토큰 생성에 실패 하였습니다");
 		}
 

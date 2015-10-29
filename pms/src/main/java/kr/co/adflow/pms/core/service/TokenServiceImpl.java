@@ -101,8 +101,13 @@ public class TokenServiceImpl implements TokenService {
 			device.setDeviceId(userInfo.getDeviceId());
 			device.setDeviceInfo(userInfo.getDeviceInfo());
 			device.setUserId(userInfo.getUserId());
-
-			int deviceResult = deviceMapper.insertDevice(device);
+			int deviceResult = 0;
+			try {
+				deviceResult = deviceMapper.insertDevice(device);
+			} catch (DuplicateKeyException e) {
+				throw new TokenRunTimeException(StaticConfig.ERROR_CODE_510500,
+						"이미 등록된 디바이스 입니다");
+			}
 
 			if (deviceResult < 1) {
 				throw new TokenRunTimeException(StaticConfig.ERROR_CODE_510500,
