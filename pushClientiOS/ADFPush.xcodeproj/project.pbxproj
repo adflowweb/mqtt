@@ -7,11 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		221EA8421BCCB08300F262D5 /* ADFPush.m in Sources */ = {isa = PBXBuildFile; fileRef = 221EA83D1BCCB08300F262D5 /* ADFPush.m */; settings = {ASSET_TAGS = (); }; };
 		221EA8431BCCB08300F262D5 /* QueueFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 221EA8401BCCB08300F262D5 /* QueueFile.m */; settings = {ASSET_TAGS = (); }; };
 		221EA8441BCCB08300F262D5 /* libiosMQTT.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 221EA8411BCCB08300F262D5 /* libiosMQTT.a */; settings = {ASSET_TAGS = (); }; };
+		222C66091BE20BA10081FCE6 /* ADFPush.m in Sources */ = {isa = PBXBuildFile; fileRef = 222C66061BE20BA10081FCE6 /* ADFPush.m */; settings = {ASSET_TAGS = (); }; };
+		222C660A1BE20BA10081FCE6 /* PushDataBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 222C66081BE20BA10081FCE6 /* PushDataBase.m */; settings = {ASSET_TAGS = (); }; };
 		226426E41BDD118300E683CB /* JobBean.m in Sources */ = {isa = PBXBuildFile; fileRef = 226426E11BDD118300E683CB /* JobBean.m */; settings = {ASSET_TAGS = (); }; };
-		226426E51BDD118300E683CB /* PushDataBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 226426E31BDD118300E683CB /* PushDataBase.m */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -29,16 +29,16 @@
 /* Begin PBXFileReference section */
 		221EA82F1BCCAFEA00F262D5 /* libADFPush.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libADFPush.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		221EA83B1BCCB08300F262D5 /* MqttOCClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MqttOCClient.h; sourceTree = "<group>"; };
-		221EA83C1BCCB08300F262D5 /* ADFPush.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ADFPush.h; sourceTree = "<group>"; };
-		221EA83D1BCCB08300F262D5 /* ADFPush.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ADFPush.m; sourceTree = "<group>"; };
 		221EA83E1BCCB08300F262D5 /* Cassette.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cassette.h; sourceTree = "<group>"; };
 		221EA83F1BCCB08300F262D5 /* QueueFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QueueFile.h; sourceTree = "<group>"; };
 		221EA8401BCCB08300F262D5 /* QueueFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QueueFile.m; sourceTree = "<group>"; };
 		221EA8411BCCB08300F262D5 /* libiosMQTT.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libiosMQTT.a; sourceTree = "<group>"; };
+		222C66051BE20BA10081FCE6 /* ADFPush.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ADFPush.h; sourceTree = "<group>"; };
+		222C66061BE20BA10081FCE6 /* ADFPush.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ADFPush.m; sourceTree = "<group>"; };
+		222C66071BE20BA10081FCE6 /* PushDataBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushDataBase.h; sourceTree = "<group>"; };
+		222C66081BE20BA10081FCE6 /* PushDataBase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PushDataBase.m; sourceTree = "<group>"; };
 		226426E01BDD118300E683CB /* JobBean.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JobBean.h; sourceTree = "<group>"; };
 		226426E11BDD118300E683CB /* JobBean.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JobBean.m; sourceTree = "<group>"; };
-		226426E21BDD118300E683CB /* PushDataBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushDataBase.h; sourceTree = "<group>"; };
-		226426E31BDD118300E683CB /* PushDataBase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PushDataBase.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,13 +72,13 @@
 		221EA8311BCCAFEA00F262D5 /* ADFPush */ = {
 			isa = PBXGroup;
 			children = (
+				222C66051BE20BA10081FCE6 /* ADFPush.h */,
+				222C66061BE20BA10081FCE6 /* ADFPush.m */,
+				222C66071BE20BA10081FCE6 /* PushDataBase.h */,
+				222C66081BE20BA10081FCE6 /* PushDataBase.m */,
 				226426E01BDD118300E683CB /* JobBean.h */,
 				226426E11BDD118300E683CB /* JobBean.m */,
-				226426E21BDD118300E683CB /* PushDataBase.h */,
-				226426E31BDD118300E683CB /* PushDataBase.m */,
 				221EA83B1BCCB08300F262D5 /* MqttOCClient.h */,
-				221EA83C1BCCB08300F262D5 /* ADFPush.h */,
-				221EA83D1BCCB08300F262D5 /* ADFPush.m */,
 				221EA83E1BCCB08300F262D5 /* Cassette.h */,
 				221EA83F1BCCB08300F262D5 /* QueueFile.h */,
 				221EA8401BCCB08300F262D5 /* QueueFile.m */,
@@ -143,9 +143,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				221EA8421BCCB08300F262D5 /* ADFPush.m in Sources */,
 				226426E41BDD118300E683CB /* JobBean.m in Sources */,
-				226426E51BDD118300E683CB /* PushDataBase.m in Sources */,
+				222C66091BE20BA10081FCE6 /* ADFPush.m in Sources */,
+				222C660A1BE20BA10081FCE6 /* PushDataBase.m in Sources */,
 				221EA8431BCCB08300F262D5 /* QueueFile.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -188,7 +188,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -224,7 +224,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;

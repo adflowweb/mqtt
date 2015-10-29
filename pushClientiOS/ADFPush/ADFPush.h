@@ -36,7 +36,7 @@
 - (void)subscribeMQTT:(NSString *)topicFilter qos:(int)qos;
 - (void)unsubscribeMQTT:(NSString *)topicFilter;
 - (void)disconnectMQTT:(int)timeout;
-- (void)connectMQTT:(BOOL)cleanSession;
+- (void)connectMQTT;
 - (NSString *)callAck:(NSString *)msgId ackTime:(int)ackTime jobId:(int) jobId;
 - (void)agentAck:(NSString *)msgId ackTime:(int)ackTime ackType:(NSString *) ackType;
 - (void)addJobLog:(NSString *)jobName param1:(NSString *) param1 param2:(NSString *) param2 param3:(NSString *) param3;
@@ -44,9 +44,9 @@
 - (NSString *)getTokenMQTT;
 - (NSString *)connectStateMQTT;
 - (NSString *)cleanJobQueue;
-- (NSString *)getSubscriptions;
-- (NSString *)registerADFPushEnv:(NSArray *)hosts ports:(NSArray *)ports token:(NSString *)token adfPushServerUrl:(NSString *)adfPushServerUrl;
+- (void)getSubscriptions;
+- (NSString *)registerADFPushEnv:(NSArray *)hosts ports:(NSArray *)ports cleanSesstion:(BOOL)cleanSesstion  token:(NSString *)token adfPushServerUrl:(NSString *)adfPushServerUrl;
 - (NSString *)getAdfPushEnv;
-
+- (void) callBackSelector:(NSString *)tempMethord data:(NSString *) data;
 @end
 
