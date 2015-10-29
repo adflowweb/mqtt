@@ -204,15 +204,19 @@ public class MessageServiceImpl implements MessageService {
 	}
 
 	// JMS Send and Message DB insert
-	public void sendJMS(Message msg) {
+	public void sendJMS(Message msg) throws MessageRunTimeException {
 		logger.debug("발송정 입력값 시작");
 		logger.debug(msg.toString());
 		msg.setIssueTime(new Date());
 		// JMS message send
 
-		jmsTemplate.execute(new DirectMsgHandlerBySessionCallback(jmsTemplate,
-				msg));
-
+		String result = jmsTemplate
+				.execute(new DirectMsgHandlerBySessionCallback(jmsTemplate, msg));
+		if (result.equals("fail")) {
+			logger.debug("메시지 전송실패!!!");
+			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_539000,
+					"메시지 전송에 실패 하였습니다");
+		}
 		// DB message insert
 		messageMapper.insertMessage(msg);
 

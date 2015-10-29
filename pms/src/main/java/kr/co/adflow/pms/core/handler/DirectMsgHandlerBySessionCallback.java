@@ -36,7 +36,7 @@ public class DirectMsgHandlerBySessionCallback implements
 	@Override
 	public String doInJms(Session session) throws JMSException {
 		MessageProducer producer = null;
-
+		
 		logger.debug(msg.toString());
 
 		String json = "";
@@ -99,6 +99,7 @@ public class DirectMsgHandlerBySessionCallback implements
 			} catch (MessageRunTimeException ms) {
 				// TODO Auto-generated catch block
 				ms.printStackTrace();
+				return "fail";
 			}
 
 		} finally {
@@ -107,7 +108,7 @@ public class DirectMsgHandlerBySessionCallback implements
 				logger.debug("메시지프로듀서가제거되었습니다.");
 			}
 		}
-		return "";
+		return "success";
 	}
 
 }
