@@ -18,11 +18,11 @@
  
         [self dataBaseConnection:&pDataBase];     // 데이터베이스 연결합니다.
         if (pDataBase == nil) {
-            NSLog(@"Erro Message : '%s'", sqlite3_errmsg(pDataBase));
+            NSLog(@"[ADFPush] initWithDataBase - Error Message : '%s'", sqlite3_errmsg(pDataBase));
             return;
         }
         
-           const char* sql = "SELECT count(*) from job";
+        const char* sql = "SELECT count(*) from job";
             
         /* job을 쿼리해보고 오류가 있으면 job table을 생성한다. */
         if (sqlite3_prepare_v2(pDataBase, sql, -1, &statement, NULL) != SQLITE_OK) {
@@ -30,22 +30,12 @@
             NSLog(@"[ADFPush] Erro Message : '%s'", sqlite3_errmsg(pDataBase));
             /* 테이블 생성 */
             if (sqlite3_prepare_v2(pDataBase, "CREATE TABLE job ( jobid INTEGER PRIMARY KEY AUTOINCREMENT, msgtype INTEGER, ack INTEGER, qos INTEGER,msgid TEXT, content TEXT, contenttype TEXT, topic TEXT, serviceid TEXT, issuetime INTEGER);", -1, &statement, NULL) != SQLITE_OK) {
-                NSLog(@"[ADFPush] TABLE CREATE ERROR: %s", sqlite3_errmsg(pDataBase));
+                NSLog(@"[ADFPush] initWithDataBase - TABLE CREATE ERROR: %s", sqlite3_errmsg(pDataBase));
             }else {
                 sqlite3_step(statement);
                 NSLog(@"[ADFPush] job table CREATE OK");
             }
         }
-        
-//        int count;
-//        //쿼리를 실행한다.
-//        while(sqlite3_step(statement) == SQLITE_ROW) {
-//            
-//            count = sqlite3_column_int(statement,0);
-//            
-//            NSLog(@"== Message UnRead Count : %d", count);
-//        }
-
         
         
     }
@@ -91,12 +81,12 @@
     int jobId = -1;
     
     @try {
-        NSLog(@"======  Job instert - Start");
+//        NSLog(@"======  Job instert - Start");
         
         
         [self dataBaseConnection:&pDataBase];     // 데이터베이스 연결합니다.
         if (pDataBase == nil) {
-            NSLog(@"Erro Message : '%s'", sqlite3_errmsg(pDataBase));
+            NSLog(@"[ADFPush] insertJob - Error Message : '%s'", sqlite3_errmsg(pDataBase));
             return -1;
         }
         
@@ -106,7 +96,7 @@
         if(sqlite3_prepare_v2(pDataBase, sql, -1, &statement, NULL) != SQLITE_OK)
         {
             
-            NSLog(@"Erro Message : '%s'", sqlite3_errmsg(pDataBase));
+            NSLog(@"[ADFPush] insertJob - Error Message : '%s'", sqlite3_errmsg(pDataBase));
             //            sqlite3_close(pDataBase);   //데이터베이스를 닫는다
             //            pDataBase = nil;
             return -1;
@@ -127,10 +117,10 @@
         
         //쿼리를 실행한다.
         int resultCode = sqlite3_step(statement);
-        NSLog(@"resultCode : '%d'", resultCode);
+//        NSLog(@"resultCode : '%d'", resultCode);
         
         if( resultCode != SQLITE_DONE) {
-            NSLog(@"Erro Message : '%s'", sqlite3_errmsg(pDataBase));
+            NSLog(@"[ADFPush] insertJob - Error Message select : '%s'", sqlite3_errmsg(pDataBase));
             return -1;
         }
         
@@ -141,7 +131,7 @@
         if(sqlite3_prepare_v2(pDataBase, sql2, -1, &statement, NULL) != SQLITE_OK)
         {
             
-            NSLog(@"Erro Message : '%s'", sqlite3_errmsg(pDataBase));
+            NSLog(@"[ADFPush] insertJob - Error Message : '%s'", sqlite3_errmsg(pDataBase));
             return -1;
             
         }
@@ -154,12 +144,12 @@
             
             jobId = sqlite3_column_int(statement,0);
             
-            NSLog(@"jobId : %d ", jobId);
+//            NSLog(@"jobId : %d ", jobId);
         }
         
     }
     @catch (NSException *exception) {
-        NSLog(@"exceptionName %@, reason %@", [exception name], [exception reason]);
+        NSLog(@"[ADFPush] insertJob - exceptionName %@, reason %@", [exception name], [exception reason]);
     }
     @finally {
         
@@ -177,7 +167,7 @@
 // Job Select
 - (NSArray *) getJobList
 {
-    NSLog(@"======  getJobList - Start ");
+//    NSLog(@"======  getJobList - Start ");
     
 	sqlite3_stmt *statement = nil;
 	sqlite3 *pDataBase;
@@ -187,7 +177,7 @@
     @try {
         [self dataBaseConnection:&pDataBase];    // 데이터베이스 연결
         if (pDataBase == nil) {
-            NSLog(@"Erro Message : '%s'", sqlite3_errmsg(pDataBase));
+            NSLog(@"[ADFPush] getJobList - Error Message : '%s'", sqlite3_errmsg(pDataBase));
             return NULL;
         }
         
@@ -198,7 +188,7 @@
         if(sqlite3_prepare_v2(pDataBase, sql, -1, &statement, NULL) != SQLITE_OK)
         {
             
-            NSLog(@"Erro Message : '%s'", sqlite3_errmsg(pDataBase));
+            NSLog(@"[ADFPush] getJobList - Error Message : '%s'", sqlite3_errmsg(pDataBase));
             sqlite3_close(pDataBase);   //데이터베이스를 닫는다
             pDataBase = nil;
             return NULL;
@@ -251,12 +241,12 @@
     sqlite3 *pDataBase;
     
     @try {
-        NSLog(@"======  deleteJob ID:%@ - Start ",msgId);
+//        NSLog(@"======  deleteJob ID:%@ - Start ",msgId);
         
         
         [self dataBaseConnection:&pDataBase];     // 데이터베이스 연결합니다.
         if (pDataBase == nil) {
-            NSLog(@"Erro Message : '%s'", sqlite3_errmsg(pDataBase));
+            NSLog(@"[ADFPush] deleteJob - Error Message : '%s'", sqlite3_errmsg(pDataBase));
             return;
         }
         
@@ -266,7 +256,7 @@
         if(sqlite3_prepare_v2(pDataBase, sql, -1, &statement, NULL) != SQLITE_OK)
         {
             
-            NSLog(@"Erro Message : '%s'", sqlite3_errmsg(pDataBase));
+            NSLog(@"[ADFPush] deleteJob - Error Message : '%s'", sqlite3_errmsg(pDataBase));
             //            sqlite3_close(pDataBase);   //데이터베이스를 닫는다
             //            pDataBase = nil;
             return;
@@ -280,16 +270,16 @@
         
         //쿼리를 실행한다.
         int resultCode = sqlite3_step(statement);
-        NSLog(@"resultCode : '%d'", resultCode);
+//        NSLog(@"resultCode : '%d'", resultCode);
         
         if( resultCode != SQLITE_DONE) {
-            NSLog(@"Erro Message : '%s'", sqlite3_errmsg(pDataBase));
+            NSLog(@"[ADFPush] deleteJob - Error Message : '%s'", sqlite3_errmsg(pDataBase));
             
         }
         
     }
     @catch (NSException *exception) {
-        NSLog(@"exceptionName %@, reason %@", [exception name], [exception reason]);
+        NSLog(@"[ADFPush] deleteJob - exceptionName %@, reason %@", [exception name], [exception reason]);
     }
     @finally {
         
@@ -308,12 +298,12 @@
     sqlite3 *pDataBase;
     
     @try {
-        NSLog(@"======  deleteJob ID:%d - Start ",jobId);
+//        NSLog(@"======  deleteJob ID:%d - Start ",jobId);
         
         
         [self dataBaseConnection:&pDataBase];     // 데이터베이스 연결합니다.
         if (pDataBase == nil) {
-            NSLog(@"Erro Message : '%s'", sqlite3_errmsg(pDataBase));
+            NSLog(@"[ADFPush] deleteJobId - Error Message : '%s'", sqlite3_errmsg(pDataBase));
             return;
         }
         
@@ -323,7 +313,7 @@
         if(sqlite3_prepare_v2(pDataBase, sql, -1, &statement, NULL) != SQLITE_OK)
         {
             
-            NSLog(@"Erro Message : '%s'", sqlite3_errmsg(pDataBase));
+            NSLog(@"[ADFPush] deleteJobId - Error Message : '%s'", sqlite3_errmsg(pDataBase));
             //            sqlite3_close(pDataBase);   //데이터베이스를 닫는다
             //            pDataBase = nil;
             return;
@@ -337,16 +327,16 @@
         
         //쿼리를 실행한다.
         int resultCode = sqlite3_step(statement);
-        NSLog(@"resultCode : '%d'", resultCode);
+//        NSLog(@"resultCode : '%d'", resultCode);
         
         if( resultCode != SQLITE_DONE) {
-            NSLog(@"Erro Message : '%s'", sqlite3_errmsg(pDataBase));
+            NSLog(@"[ADFPush] deleteJobId - Error Message : '%s'", sqlite3_errmsg(pDataBase));
             
         }
         
     }
     @catch (NSException *exception) {
-        NSLog(@"exceptionName %@, reason %@", [exception name], [exception reason]);
+        NSLog(@"[ADFPush] deleteJobId - exceptionName %@, reason %@", [exception name], [exception reason]);
     }
     @finally {
         
@@ -366,12 +356,12 @@
     NSString *result;
     
     @try {
-        NSLog(@"======  deleteJobAll - Start ");
+//        NSLog(@"======  deleteJobAll - Start ");
         
         
         [self dataBaseConnection:&pDataBase];     // 데이터베이스 연결합니다.
         if (pDataBase == nil) {
-            NSLog(@"Erro Message : '%s'", sqlite3_errmsg(pDataBase));
+            NSLog(@"[ADFPush] deleteJobAll - Error Message : '%s'", sqlite3_errmsg(pDataBase));
             result = [NSString stringWithUTF8String:(char*)sqlite3_errmsg(pDataBase)];
             return result;
         }
@@ -382,7 +372,7 @@
         if(sqlite3_prepare_v2(pDataBase, sql, -1, &statement, NULL) != SQLITE_OK)
         {
             
-            NSLog(@"Erro Message : '%s'", sqlite3_errmsg(pDataBase));
+            NSLog(@"[ADFPush] deleteJobAll - Error Message : '%s'", sqlite3_errmsg(pDataBase));
             result = [NSString stringWithUTF8String:(char*)sqlite3_errmsg(pDataBase)];
             return result;
             
@@ -391,10 +381,10 @@
         
         //쿼리를 실행한다.
         int resultCode = sqlite3_step(statement);
-        NSLog(@"resultCode : '%d'", resultCode);
+//        NSLog(@"resultCode : '%d'", resultCode);
         
         if( resultCode != SQLITE_DONE) {
-            NSLog(@"Erro Message : '%s'", sqlite3_errmsg(pDataBase));
+            NSLog(@"[ADFPush] deleteJobAll - Error Message : '%s'", sqlite3_errmsg(pDataBase));
             result = [NSString stringWithUTF8String:(char*)sqlite3_errmsg(pDataBase)];
             return result;
         }
@@ -402,7 +392,7 @@
         result = @"OK";
     }
     @catch (NSException *exception) {
-        NSLog(@"exceptionName %@, reason %@", [exception name], [exception reason]);
+        NSLog(@"[ADFPush] deleteJobAll - exceptionName %@, reason %@", [exception name], [exception reason]);
         result = [NSString stringWithFormat:@"%@",exception];
     }
     @finally {
@@ -420,7 +410,7 @@
 
 - (int) getAck:(int) jobId // Ack 여부
 {
-    NSLog(@"======  getAck - Start ");
+//    NSLog(@"======  getAck - Start ");
     
     sqlite3_stmt *statement = nil;
     sqlite3 *pDataBase;
@@ -429,7 +419,7 @@
     @try {
         [self dataBaseConnection:&pDataBase];    // 데이터베이스 연결
         if (pDataBase == nil) {
-            NSLog(@"Erro Message : '%s'", sqlite3_errmsg(pDataBase));
+            NSLog(@"[ADFPush] getAck - Error Message : '%s'", sqlite3_errmsg(pDataBase));
             return 2;
         }
         
@@ -440,7 +430,7 @@
         if(sqlite3_prepare_v2(pDataBase, sql, -1, &statement, NULL) != SQLITE_OK)
         {
             
-            NSLog(@"Erro Message : '%s'", sqlite3_errmsg(pDataBase));
+            NSLog(@"[ADFPush] getAck - Error Message : '%s'", sqlite3_errmsg(pDataBase));
             return 2;
             
         }
@@ -453,11 +443,11 @@
             
             ack = sqlite3_column_int(statement,0);
             
-            NSLog(@"ack : %d ", ack);
+//            NSLog(@"ack : %d ", ack);
         }
     }
     @catch (NSException *exception) {
-        NSLog(@"exceptionName %@, reason %@", [exception name], [exception reason]);
+        NSLog(@"[ADFPush] getAck - exceptionName %@, reason %@", [exception name], [exception reason]);
     }
     @finally {
         sqlite3_reset(statement);   //객체 초기화

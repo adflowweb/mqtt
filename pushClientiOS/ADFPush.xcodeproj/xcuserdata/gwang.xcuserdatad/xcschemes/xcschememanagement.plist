@@ -4,6 +4,21 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>ADFPush-Device.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>3</integer>
+		</dict>
+		<key>ADFPush-Simulator.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>2</integer>
+		</dict>
+		<key>ADFPush-iOS9.0.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>4</integer>
+		</dict>
 		<key>ADFPush.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -18,6 +33,21 @@
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
 		<key>221EA82E1BCCAFEA00F262D5</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>221F8A511BE35834007F6D0E</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>221F8A681BE359B8007F6D0E</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>221F8A7D1BE35A64007F6D0E</key>
 		<dict>
 			<key>primary</key>
 			<true/>

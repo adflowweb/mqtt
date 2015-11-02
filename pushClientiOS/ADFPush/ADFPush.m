@@ -56,7 +56,7 @@ NSData *dataForString(NSString *text)
 
 - (void) onFailure:(NSObject*) invocationContext errorCode:(int) errorCode errorMessage:(NSString*) errorMessage
 {
-    NSLog(@"- invocationContext=%@  errorCode=%d  errorMessage=%@", invocationContext, errorCode, errorMessage);
+//    NSLog(@"- invocationContext=%@  errorCode=%d  errorMessage=%@", invocationContext, errorCode, errorMessage);
     NSString *tempMethord = @"connectCallBack:";
     
     NSString *result = nil;
@@ -92,7 +92,7 @@ NSData *dataForString(NSString *text)
 }
 - (void) onFailure:(NSObject*) invocationContext errorCode:(int) errorCode errorMessage:(NSString*) errorMessage
 {
-    NSLog(@"- invocationContext=%@  errorCode=%d  errorMessage=%@", invocationContext, errorCode, errorMessage);
+//    NSLog(@"- invocationContext=%@  errorCode=%d  errorMessage=%@", invocationContext, errorCode, errorMessage);
     NSString *tempMethord = @"disconnectCallBack:";
     
     NSString *result = @"{\"status\": \"fail\",\"code\": 303400,\"message\": \"MQTT 서버에 접속종료가 실패되었습니다\"}";
@@ -109,11 +109,11 @@ NSData *dataForString(NSString *text)
 @implementation PublishCallbacks
 - (void) onSuccess:(NSObject *) invocationContext
 {
-    NSLog(@"PublishCallbacks - onSuccess, invocationContext:%@", invocationContext);
+//    NSLog(@"PublishCallbacks - onSuccess, invocationContext:%@", invocationContext);
 }
 - (void) onFailure:(NSObject *) invocationContext errorCode:(int) errorCode errorMessage:(NSString *)errorMessage
 {
-    NSLog(@"PublishCallbacks - onFailure");
+//    NSLog(@"PublishCallbacks - onFailure");
 }
 @end
 
@@ -125,7 +125,7 @@ NSData *dataForString(NSString *text)
 @implementation AckCallbacks
 - (void) onSuccess:(NSObject *) invocationContext
 {
-    NSLog(@"AckCallbacks - onSuccess, invocationContext:%@", invocationContext);
+//    NSLog(@"AckCallbacks - onSuccess, invocationContext:%@", invocationContext);
     NSString *tempMethord = @"ackCallBack:";
     
     NSString *result = @"{\"status\": \"ok\",\"code\": 309200,\"message\": \"수신확인 메세지 전달이 완료 되었습니다.\"}";
@@ -134,7 +134,7 @@ NSData *dataForString(NSString *text)
 }
 - (void) onFailure:(NSObject *) invocationContext errorCode:(int) errorCode errorMessage:(NSString *)errorMessage
 {
-    NSLog(@"-AckCallbacks  invocationContext=%@  errorCode=%d  errorMessage=%@", invocationContext, errorCode, errorMessage);
+//    NSLog(@"-AckCallbacks  invocationContext=%@  errorCode=%d  errorMessage=%@", invocationContext, errorCode, errorMessage);
     NSString *tempMethord = @"ackCallBack:";
     
     NSString *result = @"{\"status\": \"fail\",\"code\": 309400,\"message\": \"수신확인 메세지 전달이 실패 했습니다\"}";
@@ -153,13 +153,13 @@ NSData *dataForString(NSString *text)
 - (void) onSuccess:(NSObject *) invocationContext
 {
     
-    NSLog(@"AgentAckCallbacks - onSuccess, invocationContext:%@", invocationContext);
+//    NSLog(@"AgentAckCallbacks - onSuccess, invocationContext:%@", invocationContext);
     [[ADFPush sharedADFPush] setMessageADF:@"AckCallbackOK"];
     
 }
 - (void) onFailure:(NSObject *) invocationContext errorCode:(int) errorCode errorMessage:(NSString *)errorMessage
 {
-    NSLog(@"AgentAckCallbacks  invocationContext=%@  errorCode=%d  errorMessage=%@", invocationContext, errorCode, errorMessage);
+//    NSLog(@"AgentAckCallbacks  invocationContext=%@  errorCode=%d  errorMessage=%@", invocationContext, errorCode, errorMessage);
     [[ADFPush sharedADFPush] setMessageADF:@"AckCallbackFail"];
 }
 @end
@@ -236,13 +236,13 @@ NSData *dataForString(NSString *text)
 - (void) onMessageArrived:(NSObject*)invocationContext message:(MqttMessage*)msg
 {
     int qos = msg.qos;
-    BOOL retained = msg.retained;
+//    BOOL retained = msg.retained;
     NSString *payload = [[NSString alloc] initWithBytes:msg.payload length:msg.payloadLength encoding:NSUTF8StringEncoding];
     NSString *topic = msg.destinationName;
-    NSString *retainedStr = retained ? @" [retained]" : @"";
-    NSString *logStr = [NSString stringWithFormat:@"[%@ QoS:%d] %@%@", topic, qos, payload, retainedStr];
-    NSLog(@"- %@", logStr);
-    NSLog(@"GeneralCallbacks - onMessageArrived!");
+//    NSString *retainedStr = retained ? @" [retained]" : @"";
+//    NSString *logStr = [NSString stringWithFormat:@"[%@ QoS:%d] %@%@", topic, qos, payload, retainedStr];
+//    NSLog(@"- %@", logStr);
+//    NSLog(@"GeneralCallbacks - onMessageArrived!");
     
     PushDataBase *pushDataDB = [[ADFPush sharedADFPush] pushDataDB];
     JobBean *job;
@@ -341,7 +341,7 @@ NSData *dataForString(NSString *text)
 
 - (void) onMessageDelivered:(NSObject*)invocationContext messageId:(int)msgId
 {
-    NSLog(@"GeneralCallbacks - onMessageDelivered!, messageID:%d", msgId);
+//    NSLog(@"GeneralCallbacks - onMessageDelivered!, messageID:%d", msgId);
 }
 
 
@@ -450,7 +450,7 @@ int MQTTKEEPALIVEINTERVAL;
         [NSTimer scheduledTimerWithTimeInterval:JOBINTERVAL target:self selector:@selector(jobAgent) userInfo:nil repeats:YES];
         //Job Background loop run - start
         
-        NSLog(@"============   Background start");
+//        NSLog(@"============   Background start");
         
     }
     return self;
@@ -475,7 +475,7 @@ int MQTTKEEPALIVEINTERVAL;
         }
         
 
-        NSLog(@"====== MQTTTOKEN :: %@", MQTTTOKEN);
+//        NSLog(@"====== MQTTTOKEN :: %@", MQTTTOKEN);
         client = [client initWithHosts:MQTTHOSTS ports:MQTTPORTS clientId:MQTTTOKEN];
         ConnectOptions *opts = [[ConnectOptions alloc] init];
         opts.timeout = 3600;
@@ -487,7 +487,7 @@ int MQTTKEEPALIVEINTERVAL;
         opts.sslProperties = ssloti;
         
         
-        NSLog(@"host=%@, port=%@, clientId=%@, cleanSession=%@", MQTTHOSTS, MQTTPORTS, MQTTTOKEN,  (CLEANSESSION)? @"true" : @"false");
+//        NSLog(@"host=%@, port=%@, clientId=%@, cleanSession=%@", MQTTHOSTS, MQTTPORTS, MQTTTOKEN,  (CLEANSESSION)? @"true" : @"false");
         [client connectWithOptions:opts invocationContext:self onCompletion:[[ConnectCallbacks alloc] init]];
     }
     @catch (NSException *exception) {
@@ -528,16 +528,16 @@ int MQTTKEEPALIVEINTERVAL;
         // Job Logging
         [[ADFPush sharedADFPush] addJobLog:@"publish" param1:topic  param2:[NSString stringWithFormat: @"%d", qos] param3:(retained)? @"true" : @"false"];
         
-        NSLog(@"=========== playload1 :%@", payload);
+//        NSLog(@"=========== playload1 :%@", payload);
         
-        NSString *retainedStr = retained ? @" [retained]" : @"";
-        NSString *logStr = [NSString stringWithFormat:@"[%@] %@%@", topic, payload, retainedStr];
-        NSLog(@"- %@", logStr);
+//        NSString *retainedStr = retained ? @" [retained]" : @"";
+//        NSString *logStr = [NSString stringWithFormat:@"[%@] %@%@", topic, payload, retainedStr];
+//        NSLog(@"- %@", logStr);
         //    [[ADFPush sharedADFPush] addLogMessage:logStr type:@"Publish"];
         
-        NSLog(@"=========== playload2 :%@", payload);
+//        NSLog(@"=========== playload2 :%@", payload);
         MqttMessage *msg = [[MqttMessage alloc] initWithMqttMessage:topic payload:(char*)[payload UTF8String] length:(int)payload.length qos:qos retained:retained duplicate:NO];
-        NSLog(@"=========== msg :%@", msg);
+//        NSLog(@"=========== msg :%@", msg);
         
         [client send:msg invocationContext:self onCompletion:[[PublishCallbacks alloc] init]];
     }
@@ -556,8 +556,8 @@ int MQTTKEEPALIVEINTERVAL;
         // Job Logging
         [[ADFPush sharedADFPush] addJobLog:@"subscribeMQTT" param1:topicFilter param2:[NSString stringWithFormat: @"%d", qos]   param3:@""];
         
-        NSLog(@"topicFilter=%@, qos=%d", topicFilter, qos);
-        NSLog(@"=====  subscribe start");
+//        NSLog(@"topicFilter=%@, qos=%d", topicFilter, qos);
+//        NSLog(@"=====  subscribe start");
         [client subscribe:topicFilter qos:qos invocationContext:topicFilter onCompletion:[[SubscribeCallbacks alloc] init]];
     }
     @catch (NSException *exception) {
@@ -575,7 +575,7 @@ int MQTTKEEPALIVEINTERVAL;
         // Job Logging
         [[ADFPush sharedADFPush] addJobLog:@"unsubscribeMQTT" param1:topicFilter  param2:@"" param3:@""];
         
-        NSLog(@"topicFilter=%@", topicFilter);
+//        NSLog(@"topicFilter=%@", topicFilter);
         [client unsubscribe:topicFilter invocationContext:topicFilter onCompletion:[[UnsubscribeCallbacks alloc] init]];
     }
     @catch (NSException *exception) {
@@ -628,7 +628,7 @@ int MQTTKEEPALIVEINTERVAL;
                 
                
             }
-             NSLog(@"envJson : %@", envJson);
+//             NSLog(@"envJson : %@", envJson);
             
             [adfEnv clear];
             [adfEnv add:dataForString(envJson)];
@@ -645,7 +645,7 @@ int MQTTKEEPALIVEINTERVAL;
             
         }
         @catch (NSException *exception) {
-            NSLog(@"[ADFError] NSException: %@", exception);
+            NSLog(@"[ADFError] registerToken - NSException: %@", exception);
             result = [NSString stringWithFormat:@"{\"status\": \"fail\",\"code\": 301500,\"message\": \"%@\"}",exception];
         }
         @finally {
@@ -653,7 +653,7 @@ int MQTTKEEPALIVEINTERVAL;
         }
     } else {
         
-        NSLog(@"[ADFError] token length error - token: %@", token);
+        NSLog(@"[ADFError] registerToken - token length error - token: %@", token);
         result = @"{\"status\": \"fail\",\"code\": 301401,\"message\": \"토큰길이가 큽니다.\"}";
     }
     
@@ -673,7 +673,7 @@ int MQTTKEEPALIVEINTERVAL;
         result = [NSString stringWithFormat:@"{\"status\": \"ok\",\"data\":{ \"token\":\"%@\"},\"code\": 310200,\"message\": \"토큰 가져오기가  완료 되었습니다\"}",MQTTTOKEN];
     }
     @catch (NSException *exception) {
-        NSLog(@"[ADFError] NSException: %@", exception);
+        NSLog(@"[ADFError] getTokenMQTT - NSException: %@", exception);
         result = [NSString stringWithFormat:@"{\"status\": \"fail\",\"code\": 301500,\"message\": \"%@\"}",exception];
     }
     @finally {
@@ -703,7 +703,7 @@ int MQTTKEEPALIVEINTERVAL;
         
     }
     @catch (NSException *exception) {
-        NSLog(@"[ADFError] NSException: %@", exception);
+        NSLog(@"[ADFError] connectStateMQTT - NSException: %@", exception);
         result = [NSString stringWithFormat:@"{\"status\": \"fail\",\"code\": 304500,\"message\": \"%@\"}",exception];
     }
 
@@ -747,7 +747,7 @@ int MQTTKEEPALIVEINTERVAL;
         [jobLogQF add:dataForString(result)];
     }
     @catch (NSException *exception) {
-        NSLog(@"[ADFError] NSException: %@", exception);
+        NSLog(@"[ADFError] addJobLog - NSException: %@", exception);
     }
 }
 
@@ -761,7 +761,7 @@ int MQTTKEEPALIVEINTERVAL;
         
         NSString *urlString = [NSString stringWithFormat:@"%@/v1/token/subscriptions/%@",host,MQTTTOKEN];
         
-        NSLog(@"urlMu :%@", urlString);
+//        NSLog(@"urlMu :%@", urlString);
         
         NSURL *url = [[NSURL alloc] initWithString:urlString];
         NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
@@ -778,16 +778,16 @@ int MQTTKEEPALIVEINTERVAL;
         NSURLSessionDataTask *task = [session dataTaskWithRequest:request
                                                 completionHandler:
                                       ^(NSData *data, NSURLResponse *response, NSError *error) {
-                                          NSLog(@"================ddfff================");
+//                                          NSLog(@"================ddfff================");
                                           NSString * result;
                                           
                                           if (error != nil) {
-                                              NSLog(@"[ADFPush] Error on load = %@", [error localizedDescription]);
+                                              NSLog(@"[ADFPush] getSubscriptions - Error on load = %@", [error localizedDescription]);
                                               NSString *tempMethord = @"getSubscriptionsCallBack:";
                                               
                                               result = [NSString stringWithFormat:@"{\"status\": \"fail\",\"code\": 307500,\"message\": \"%@\"}",[error localizedDescription]];
                                               
-                                              NSLog(@"=====result = %@", result);
+//                                              NSLog(@"=====result = %@", result);
                                               [[ADFPush sharedADFPush] callBackSelector:tempMethord data:result];
                                               
                                           } else {
@@ -796,7 +796,7 @@ int MQTTKEEPALIVEINTERVAL;
                                                   NSHTTPURLResponse * httpResponse = (NSHTTPURLResponse *) response;
                                                   
                                                   if (httpResponse.statusCode != 200) {
-                                                      NSLog(@"[ADFPush] httpResponse statusCode  = %ld", (long) httpResponse.statusCode);
+//                                                      NSLog(@"[ADFPush] httpResponse statusCode  = %ld", (long) httpResponse.statusCode);
                                                       
                                                       result = [NSString stringWithFormat:@"{\"status\": \"fail\",\"code\": 307500,\"message\": \"httpResponse statusCode  = %ld\"}",(long) httpResponse.statusCode];
                                                       NSString *tempMethord = @"getSubscriptionsCallBack:";
@@ -808,7 +808,7 @@ int MQTTKEEPALIVEINTERVAL;
                                               
                                               NSString *content = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
                                               
-                                              NSLog(@" content : %@",content);
+//                                              NSLog(@" content : %@",content);
                                               
                                               NSString *tempMethord = @"getSubscriptionsCallBack:";
                                               
@@ -820,7 +820,7 @@ int MQTTKEEPALIVEINTERVAL;
         
     }
     @catch (NSException *exception) {
-        NSLog(@"[ADFError] NSException: %@", exception);
+        NSLog(@"[ADFError] getSubscriptions - NSException: %@", exception);
         NSString *result2 = [NSString stringWithFormat:@"{\"status\": \"fail\",\"code\": 307500,\"message\": \"%@\"}",exception];
         
         NSString *tempMethord = @"connectLostCallBack:";
@@ -915,7 +915,7 @@ int MQTTKEEPALIVEINTERVAL;
 
 - (NSString *)callAck:(NSString *)msgId ackTime:(int)ackTime jobId:(int) jobId{
     
-    NSLog(@"callAck - start");
+//    NSLog(@"callAck - start");
     NSString *result;
     
     @try {
@@ -949,7 +949,7 @@ int MQTTKEEPALIVEINTERVAL;
         result = @"{\"status\": \"ok\",\"code\": 309200,\"message\": \"수신확인 메세지가 작업 DB에 저장이 되었습니다.\"}";
     }
     @catch (NSException *exception) {
-        NSLog(@"[ADFError] NSException: %@", exception);
+        NSLog(@"[ADFError] callAck - NSException: %@", exception);
         result = [NSString stringWithFormat:@"{\"status\": \"fail\",\"code\": 309500,\"message\": \"%@\"}",exception];
     }
     @finally {
@@ -963,7 +963,7 @@ int MQTTKEEPALIVEINTERVAL;
 
 - (void)agentAck:(NSString *)msgId ackTime:(int)ackTime ackType:(NSString *) ackType {
 
-    NSLog(@"agentAck - start");
+//    NSLog(@"agentAck - start");
     
     @try {
         
@@ -973,7 +973,7 @@ int MQTTKEEPALIVEINTERVAL;
         long long  currentTimeMillis = (long long) ackTime*1000;
         NSString *payload = [NSString stringWithFormat:@"{\"msgId\": \"%@\",\"ackTime\": %lld,\"token\": \"%@\",\"ackType\": \"%@\"}",msgId,currentTimeMillis,MQTTTOKEN,ackType];
         
-        NSLog(@"=========== playload :%@", payload);
+//        NSLog(@"=========== playload :%@", payload);
         NSString *topic = @"adfpush/ack";
         
         
@@ -1038,12 +1038,12 @@ int MQTTKEEPALIVEINTERVAL;
                 adfEnv = [ [ADFPush sharedADFPush] adfEnv];
                 //시스템 명령 읽기
                 
-                NSLog(@"===== content : %@",job.content);
+//                NSLog(@"===== content : %@",job.content);
                 
                 contentData = [job.content dataUsingEncoding:NSUTF8StringEncoding];
                 contentDict = [NSJSONSerialization JSONObjectWithData:contentData options:NSJSONReadingMutableContainers error:nil];
                 mqttKeepAliveInterval = [[NSNumber alloc] initWithInt:[contentDict[@"keepAliveTime"] intValue]];
-                NSLog(@"===== mqttKeepAliveInterval : %d",[contentDict[@"keepAliveTime"] intValue]);
+//                NSLog(@"===== mqttKeepAliveInterval : %d",[contentDict[@"keepAliveTime"] intValue]);
                 
                 if ([adfEnv size] > 0) {
                     
@@ -1074,7 +1074,7 @@ int MQTTKEEPALIVEINTERVAL;
                     
                     
                 }
-                NSLog(@"envJson : %@", envJson);
+//                NSLog(@"envJson : %@", envJson);
                 
                 [adfEnv clear];
                 [adfEnv add:dataForString(envJson)];
@@ -1111,7 +1111,7 @@ int MQTTKEEPALIVEINTERVAL;
             default:
                 
                 [self addJobLog:@"JobError" param1:queMsg param2:@"" param3:@""];
-                NSLog(@"[ADFPush] jobAgent msgType error  : %@", queMsg);
+                NSLog(@"[ADFPush] jobAgent - msgType error  : %@", queMsg);
                 [pushDataDB deleteJobId:job.jobId];
                 break;
         }
@@ -1139,7 +1139,7 @@ int MQTTKEEPALIVEINTERVAL;
         NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:nil];
         NSString *envJson = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
         
-        NSLog(@"envJson : %@", envJson);
+//        NSLog(@"envJson : %@", envJson);
     
     
         QueueFile * adfEnv = [ [ADFPush sharedADFPush] adfEnv];
@@ -1162,7 +1162,7 @@ int MQTTKEEPALIVEINTERVAL;
         
     }
     @catch (NSException *exception) {
-        NSLog(@"[ADFError] NSException: %@", exception);
+        NSLog(@"[ADFError] registerADFPushEnv - NSException: %@", exception);
         result = [NSString stringWithFormat:@"{\"status\": \"fail\",\"code\": 312500,\"message\": \"%@\"}",exception];
     }
 
@@ -1187,7 +1187,7 @@ int MQTTKEEPALIVEINTERVAL;
         }
     }
     @catch (NSException *exception) {
-        NSLog(@"[ADFError] NSException: %@", exception);
+        NSLog(@"[ADFError] getAdfPushEnv - NSException: %@", exception);
         result = [NSString stringWithFormat:@"{\"status\": \"fail\",\"code\": 313500,\"message\": \"%@\"}",exception];
     }
     
@@ -1207,7 +1207,7 @@ int MQTTKEEPALIVEINTERVAL;
         void (*func)(id, SEL, id) = (void *) imp;
         func(tempResponder, sel, data);
     } else {
-        NSLog(@"[ADFPush] Warning : Method '%@' not defind \n",tempMethord);
+        NSLog(@"[ADFPush] callBackSelector - Warning : Method '%@' not defind \n",tempMethord);
         return;
     }
     
