@@ -214,7 +214,7 @@
             [job setIssueTime:sqlite3_column_int(statement, 9)];
 
             [jobList addObject:job];
-            NSLog(@"Message : %d, %d, %d, %d, %@, %@, %@, %@, %@, %d", job.jobId,job.msgType,job.ack,job.qos,job.msgId,job.content,job.contentType,job.topic,job.serviceId, job.issueTime);
+//            NSLog(@"Message : %d, %d, %d, %d, %@, %@, %@, %@, %@, %d", job.jobId,job.msgType,job.ack,job.qos,job.msgId,job.content,job.contentType,job.topic,job.serviceId, job.issueTime);
         }
         
         return (NSArray *) jobList;
