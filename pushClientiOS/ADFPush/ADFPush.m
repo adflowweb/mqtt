@@ -447,7 +447,7 @@ int MQTTKEEPALIVEINTERVAL;
         }
 
         
-        filePath = [documentsDirectory stringByAppendingPathComponent:@"jobLog.q"];
+        filePath = [documentsDirectory stringByAppendingPathComponent:@"adfJobLog.q"];
         self.jobLogQF = [QueueFile queueFileWithPath:filePath];
         self.messageADF = nil;
         
@@ -754,11 +754,19 @@ int MQTTKEEPALIVEINTERVAL;
         
         NSString *result = [NSString stringWithFormat:@"{\"date\": \"%@\",\"jobName\": \"%@=%@=%@=%@\"}",dateString, jobName,param1,param2,param3];
         
-        QueueFile * jobLogQF = [ [ADFPush sharedADFPush] jobLogQF];
-        if ([jobLogQF size] > 3000) {
-            [jobLogQF remove];
-        }
-        [jobLogQF add:dataForString(result)];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            @try {
+                QueueFile * jobLogQF = [ [ADFPush sharedADFPush] jobLogQF];
+                if ([jobLogQF size] > 3000) {
+                    [jobLogQF remove];
+                }
+                [jobLogQF add:dataForString(result)];
+            }
+            @catch (NSException *exception) {
+                NSLog(@"[ADFError] addJobLog - NSException: %@", exception);
+            }
+        });
     }
     @catch (NSException *exception) {
         NSLog(@"[ADFError] addJobLog - NSException: %@", exception);
@@ -955,16 +963,20 @@ int MQTTKEEPALIVEINTERVAL;
     NSDictionary *dict=nil;
     NSDictionary *contentDict=nil;
     NSString *adfEnvJson;
+    int timestamp;
     
     for (int i=0; i < jobList.count; i++) {
         job = [jobList objectAtIndex:i];
         switch (job.msgType) {
             case 100:
-                tempMethord = @"onMessageArrivedCallBack:";
-                result = [NSString stringWithFormat:@"{\"content\": \"%@\",\"msgId\":\"%@\",\"contentType\":\"%@\",\"topic\":\"%@\",\"qos\":%d,\"jobId\":%d}",job.content,job.msgId, job.contentType, job.topic, job.qos, job.jobId];
-
-                [[ADFPush sharedADFPush] callBackSelector:tempMethord data:result];
-
+                timestamp = [[NSDate date] timeIntervalSince1970] - JOBINTERVAL;
+                if (job.issueTime < timestamp) {
+                    tempMethord = @"onMessageArrivedCallBack:";
+                    result = [NSString stringWithFormat:@"{\"content\": \"%@\",\"msgId\":\"%@\",\"contentType\":\"%@\",\"topic\":\"%@\",\"qos\":%d,\"jobId\":%d}",job.content,job.msgId, job.contentType, job.topic, job.qos, job.jobId];
+                    
+                    [[ADFPush sharedADFPush] callBackSelector:tempMethord data:result];
+                }
+                
                 break;
             
             case 200:
