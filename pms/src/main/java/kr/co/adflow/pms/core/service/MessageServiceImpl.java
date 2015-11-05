@@ -134,7 +134,7 @@ public class MessageServiceImpl implements MessageService {
 				.get("msgSuccessCnt"))));
 		statisticsRes.setMsgFailCnt(this.getInt(String.valueOf(summaryResult
 				.get("msgFailCnt"))));
-		statisticsRes.setPmaAckCnt(this.getInt(String.valueOf(summaryResult
+		statisticsRes.setAgentAckCnt(this.getInt(String.valueOf(summaryResult
 				.get("agentAckCnt"))));
 		statisticsRes.setAppAckCnt(this.getInt(String.valueOf(summaryResult
 				.get("appAckCnt"))));

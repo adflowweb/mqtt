@@ -16,18 +16,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.SessionCallback;
 
-public class DirectMsgHandlerBySessionCallback implements
+public class PCFTEST implements
 		SessionCallback<String> {
 
 	/** The Constant logger. */
 	private static final Logger logger = LoggerFactory
-			.getLogger(DirectMsgHandlerBySessionCallback.class);
+			.getLogger(PCFTEST.class);
 
 	private JmsTemplate jmsTemplate;
 	/** The msg. */
 	private Message msg;
 
-	public DirectMsgHandlerBySessionCallback(JmsTemplate jmsTemplate,
+	public PCFTEST(JmsTemplate jmsTemplate,
 			Message msg) {
 		this.jmsTemplate = jmsTemplate;
 		this.msg = msg;
@@ -46,6 +46,8 @@ public class DirectMsgHandlerBySessionCallback implements
 			Destination destination = jmsTemplate.getDestinationResolver()
 					.resolveDestinationName(session, msg.getReceiver(), true);
 			producer = session.createProducer(destination);
+			
+			
 
 			logger.debug("producer=" + producer);
 			JSONObject msgObject = new JSONObject();

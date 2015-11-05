@@ -11,6 +11,11 @@ import java.util.Properties;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 
+import kr.co.adflow.pms.core.controller.TokenController;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.ibm.mq.MQEnvironment;
 import com.ibm.mq.MQSimpleConnectionManager;
 
@@ -20,6 +25,9 @@ import com.ibm.mq.MQSimpleConnectionManager;
  */
 
 public class PCFConnectionManagerHandler extends HttpServlet {
+
+	private static final Logger logger = LoggerFactory
+			.getLogger(PCFConnectionManagerHandler.class);
 
 	public void init() throws ServletException {
 
@@ -38,9 +46,10 @@ public class PCFConnectionManagerHandler extends HttpServlet {
 			// System.out.println("mq.pcf.hostname ::"+
 			// prop.getProperty("mq.pcf.hostname"));
 			// MQEnvironment.hostname = "14.63.216.249";
+			// MQEnvironment.hostname ="14.63.217.141,112.223.76.75";
 			MQEnvironment.hostname = prop.getProperty("mq.pcf.hostname");
-			MQEnvironment.port = Integer.parseInt(prop
-					.getProperty("mq.pcf.port"));
+			// MQEnvironment.port = 11414;
+
 			MQEnvironment.channel = prop.getProperty("mq.pcf.channel");
 			MQEnvironment.userID = prop.getProperty("mq.pcf.userID");
 			MQEnvironment.password = prop.getProperty("mq.pcf.password");
@@ -54,12 +63,10 @@ public class PCFConnectionManagerHandler extends HttpServlet {
 
 			MQEnvironment.setDefaultConnectionManager(connMan);
 
-			System.out.println("=== PCFConnectionManagerHandler Load OK ===");
-
+			logger.debug("=== PCFConnectionManagerHandler Load OK ===");
 		} catch (Exception mqe) {
-			System.err.println(mqe);
+			logger.error(mqe.toString());
 		}
 
 	}
-
 }
