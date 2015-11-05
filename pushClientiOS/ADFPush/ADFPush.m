@@ -568,9 +568,18 @@ int MQTTKEEPALIVEINTERVAL;
         // Job Logging
         [[ADFPush sharedADFPush] addJobLog:@"subscribeMQTT" param1:topicFilter param2:[NSString stringWithFormat: @"%d", qos]   param3:@""];
         
-//        NSLog(@"topicFilter=%@, qos=%d", topicFilter, qos);
-//        NSLog(@"=====  subscribe start");
-        [client subscribe:topicFilter qos:qos invocationContext:topicFilter onCompletion:[[SubscribeCallbacks alloc] init]];
+        // 2015-11-04 개발자 요청으로 isConnected 추가
+        MqttClient *mClient = [[ADFPush sharedADFPush] client];
+        if ([mClient isConnected]) {
+//            NSLog(@"topicFilter=%@, qos=%d", topicFilter, qos);
+//            NSLog(@"=====  subscribe start");
+            [client subscribe:topicFilter qos:qos invocationContext:topicFilter onCompletion:[[SubscribeCallbacks alloc] init]];
+        } else {
+            NSString *tempMethord = @"subscribeCallBack:";
+            NSString * result = [NSString stringWithFormat:@"{\"status\": \"fail\",\"code\": 305401,\"data\" : {\"topic\" : \"%@\"}, \"message\": \"MQTT 연결이 안되어 있습니다.\"}",topicFilter];
+            
+            [[ADFPush sharedADFPush] callBackSelector:tempMethord data:result];
+        }
     }
     @catch (NSException *exception) {
         NSLog(@"[ADFError] subscribeMQTT - NSException: %@", exception);
@@ -588,8 +597,17 @@ int MQTTKEEPALIVEINTERVAL;
         // Job Logging
         [[ADFPush sharedADFPush] addJobLog:@"unsubscribeMQTT" param1:topicFilter  param2:@"" param3:@""];
         
-//        NSLog(@"topicFilter=%@", topicFilter);
-        [client unsubscribe:topicFilter invocationContext:topicFilter onCompletion:[[UnsubscribeCallbacks alloc] init]];
+        // 2015-11-04 개발자 요청으로 isConnected 추가
+        MqttClient *mClient = [[ADFPush sharedADFPush] client];
+        if ([mClient isConnected]) {
+//            NSLog(@"topicFilter=%@", topicFilter);
+            [client unsubscribe:topicFilter invocationContext:topicFilter onCompletion:[[UnsubscribeCallbacks alloc] init]];
+        } else {
+            NSString *tempMethord = @"unsubscribeCallBack:";
+            NSString * result = [NSString stringWithFormat:@"{\"status\": \"fail\",\"code\": 306401,\"data\" : {\"topic\" : \"%@\"}, \"message\": \"MQTT 연결이 안되어 있습니다.\"}",topicFilter];
+            
+            [[ADFPush sharedADFPush] callBackSelector:tempMethord data:result];
+        }
     }
     @catch (NSException *exception) {
         NSLog(@"[ADFError] unsubscribeMQTT - NSException: %@", exception);
