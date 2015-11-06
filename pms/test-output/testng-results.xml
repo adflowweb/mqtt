@@ -1,51 +1,129 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testng-results skipped="0" failed="0" total="1" passed="1">
+<testng-results skipped="0" failed="0" total="4" passed="4">
   <reporter-output>
   </reporter-output>
-  <suite name="Default suite" duration-ms="5943" started-at="2015-10-26T09:06:05Z" finished-at="2015-10-26T09:06:11Z">
+  <suite name="Default suite" duration-ms="9813" started-at="2015-11-06T09:44:39Z" finished-at="2015-11-06T09:44:48Z">
     <groups>
     </groups>
-    <test name="Default test" duration-ms="5943" started-at="2015-10-26T09:06:05Z" finished-at="2015-10-26T09:06:11Z">
-      <class name="kr.co.adflow.pms.core.pcf.MessageControllerTest">
-        <test-method status="PASS" signature="springTestContextBeforeTestClass()[pri:0, instance:kr.co.adflow.pms.core.pcf.MessageControllerTest@616a37dc]" name="springTestContextBeforeTestClass" is-config="true" duration-ms="20" started-at="2015-10-26T18:06:05Z" finished-at="2015-10-26T18:06:06Z">
+    <test name="Default test" duration-ms="9813" started-at="2015-11-06T09:44:39Z" finished-at="2015-11-06T09:44:48Z">
+      <class name="kr.co.adflow.pms.core.test.GroupControllerTest">
+        <test-method status="PASS" signature="springTestContextBeforeTestClass()[pri:0, instance:kr.co.adflow.pms.core.test.GroupControllerTest@1d75249c]" name="springTestContextBeforeTestClass" is-config="true" duration-ms="8" started-at="2015-11-06T18:44:39Z" finished-at="2015-11-06T18:44:39Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- springTestContextBeforeTestClass -->
-        <test-method status="PASS" signature="springTestContextPrepareTestInstance()[pri:0, instance:kr.co.adflow.pms.core.pcf.MessageControllerTest@616a37dc]" name="springTestContextPrepareTestInstance" is-config="true" duration-ms="5868" started-at="2015-10-26T18:06:06Z" depends-on-methods="org.springframework.test.context.testng.AbstractTestNGSpringContextTests.springTestContextBeforeTestClass" finished-at="2015-10-26T18:06:11Z">
+        <test-method status="PASS" signature="springTestContextPrepareTestInstance()[pri:0, instance:kr.co.adflow.pms.core.test.GroupControllerTest@1d75249c]" name="springTestContextPrepareTestInstance" is-config="true" duration-ms="3692" started-at="2015-11-06T18:44:39Z" depends-on-methods="org.springframework.test.context.testng.AbstractTestNGSpringContextTests.springTestContextBeforeTestClass" finished-at="2015-11-06T18:44:42Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- springTestContextPrepareTestInstance -->
-        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.pcf.MessageControllerTest@616a37dc]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="1" started-at="2015-10-26T18:06:11Z" finished-at="2015-10-26T18:06:11Z">
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.test.GroupControllerTest@1d75249c]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="1" started-at="2015-11-06T18:44:42Z" finished-at="2015-11-06T18:44:42Z">
           <params>
             <param index="0">
               <value>
-                <![CDATA[void kr.co.adflow.pms.core.pcf.MessageControllerTest.test() throws java.lang.Exception]]>
+                <![CDATA[void kr.co.adflow.pms.core.test.GroupControllerTest.createGroup() throws java.lang.Exception]]>
               </value>
             </param>
           </params>
           <reporter-output>
           </reporter-output>
         </test-method> <!-- springTestContextBeforeTestMethod -->
-        <test-method status="PASS" signature="test()[pri:0, instance:kr.co.adflow.pms.core.pcf.MessageControllerTest@616a37dc]" name="test" duration-ms="14" started-at="2015-10-26T18:06:11Z" finished-at="2015-10-26T18:06:11Z">
+        <test-method status="PASS" signature="createGroup()[pri:0, instance:kr.co.adflow.pms.core.test.GroupControllerTest@1d75249c]" name="createGroup" duration-ms="1841" started-at="2015-11-06T18:44:42Z" finished-at="2015-11-06T18:44:44Z">
           <reporter-output>
           </reporter-output>
-        </test-method> <!-- test -->
-        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.pcf.MessageControllerTest@616a37dc]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="2" started-at="2015-10-26T18:06:11Z" finished-at="2015-10-26T18:06:11Z">
+        </test-method> <!-- createGroup -->
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.test.GroupControllerTest@1d75249c]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="2" started-at="2015-11-06T18:44:44Z" finished-at="2015-11-06T18:44:44Z">
           <params>
             <param index="0">
               <value>
-                <![CDATA[void kr.co.adflow.pms.core.pcf.MessageControllerTest.test() throws java.lang.Exception]]>
+                <![CDATA[void kr.co.adflow.pms.core.test.GroupControllerTest.createGroup() throws java.lang.Exception]]>
               </value>
             </param>
           </params>
           <reporter-output>
           </reporter-output>
         </test-method> <!-- springTestContextAfterTestMethod -->
-        <test-method status="PASS" signature="springTestContextAfterTestClass()[pri:0, instance:kr.co.adflow.pms.core.pcf.MessageControllerTest@616a37dc]" name="springTestContextAfterTestClass" is-config="true" duration-ms="1" started-at="2015-10-26T18:06:11Z" finished-at="2015-10-26T18:06:11Z">
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.test.GroupControllerTest@1d75249c]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2015-11-06T18:44:44Z" finished-at="2015-11-06T18:44:44Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[void kr.co.adflow.pms.core.test.GroupControllerTest.getGroup() throws java.lang.Exception]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextBeforeTestMethod -->
+        <test-method status="PASS" signature="getGroup()[pri:0, instance:kr.co.adflow.pms.core.test.GroupControllerTest@1d75249c]" name="getGroup" duration-ms="1503" started-at="2015-11-06T18:44:44Z" finished-at="2015-11-06T18:44:46Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- getGroup -->
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.test.GroupControllerTest@1d75249c]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="0" started-at="2015-11-06T18:44:46Z" finished-at="2015-11-06T18:44:46Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[void kr.co.adflow.pms.core.test.GroupControllerTest.getGroup() throws java.lang.Exception]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextAfterTestMethod -->
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.test.GroupControllerTest@1d75249c]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2015-11-06T18:44:46Z" finished-at="2015-11-06T18:44:46Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[void kr.co.adflow.pms.core.test.GroupControllerTest.updateGroup() throws java.lang.Exception]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextBeforeTestMethod -->
+        <test-method status="PASS" signature="updateGroup()[pri:0, instance:kr.co.adflow.pms.core.test.GroupControllerTest@1d75249c]" name="updateGroup" duration-ms="1362" started-at="2015-11-06T18:44:46Z" finished-at="2015-11-06T18:44:47Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- updateGroup -->
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.test.GroupControllerTest@1d75249c]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="1" started-at="2015-11-06T18:44:47Z" finished-at="2015-11-06T18:44:47Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[void kr.co.adflow.pms.core.test.GroupControllerTest.updateGroup() throws java.lang.Exception]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextAfterTestMethod -->
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.test.GroupControllerTest@1d75249c]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="1" started-at="2015-11-06T18:44:47Z" finished-at="2015-11-06T18:44:47Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[void kr.co.adflow.pms.core.test.GroupControllerTest.deleteGroup() throws java.lang.Exception]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextBeforeTestMethod -->
+        <test-method status="PASS" signature="deleteGroup()[pri:0, instance:kr.co.adflow.pms.core.test.GroupControllerTest@1d75249c]" name="deleteGroup" duration-ms="1368" started-at="2015-11-06T18:44:47Z" finished-at="2015-11-06T18:44:48Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- deleteGroup -->
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.test.GroupControllerTest@1d75249c]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="1" started-at="2015-11-06T18:44:48Z" finished-at="2015-11-06T18:44:48Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[void kr.co.adflow.pms.core.test.GroupControllerTest.deleteGroup() throws java.lang.Exception]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextAfterTestMethod -->
+        <test-method status="PASS" signature="springTestContextAfterTestClass()[pri:0, instance:kr.co.adflow.pms.core.test.GroupControllerTest@1d75249c]" name="springTestContextAfterTestClass" is-config="true" duration-ms="1" started-at="2015-11-06T18:44:48Z" finished-at="2015-11-06T18:44:48Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- springTestContextAfterTestClass -->
-      </class> <!-- kr.co.adflow.pms.core.pcf.MessageControllerTest -->
+      </class> <!-- kr.co.adflow.pms.core.test.GroupControllerTest -->
     </test> <!-- Default test -->
   </suite> <!-- Default suite -->
 </testng-results>

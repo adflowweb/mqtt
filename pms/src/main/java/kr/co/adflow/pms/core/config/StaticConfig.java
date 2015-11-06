@@ -115,10 +115,20 @@ public class StaticConfig {
 	public final static String API_CODE_551 = "551";
 	public final static String API_CODE_552 = "552";
 	public final static String API_CODE_553 = "553";
+	public final static String API_CODE_570 = "570";
+	public final static String API_CODE_571 = "571";
+	public final static String API_CODE_572 = "572";
+	public final static String API_CODE_573 = "573";
+	public final static String API_CODE_580 = "580";
+	public final static String API_CODE_581 = "581";
+	public final static String API_CODE_582 = "582";
+	public final static String API_CODE_583 = "583";
 
 	public final static String ERROR_CODE_519000 = "519000";
 	public final static String ERROR_CODE_539000 = "539000";
 	public final static String ERROR_CODE_559000 = "559000";
+	public final static String ERROR_CODE_579000 = "579000";
+	public final static String ERROR_CODE_589000 = "589000";
 
 	public final static String SUCCESS_CODE_510 = "510200";
 	public final static String ERROR_CODE_510400 = "510400";
@@ -165,8 +175,7 @@ public class StaticConfig {
 	public final static String ERROR_CODE_533401 = "533401";
 	public final static String ERROR_CODE_533404 = "533404";
 	public final static String ERROR_CODE_533500 = "533500";
-	
-	
+
 	public final static String SUCCESS_CODE_534 = "534200";
 	public final static String ERROR_CODE_534400 = "534400";
 	public final static String ERROR_CODE_534401 = "534401";
@@ -196,5 +205,53 @@ public class StaticConfig {
 	public final static String ERROR_CODE_553401 = "553401";
 	public final static String ERROR_CODE_553404 = "553404";
 	public final static String ERROR_CODE_553500 = "553500";
+
+	public final static String SUCCESS_CODE_570 = "570200";
+	public final static String ERROR_CODE_570400 = "570400";
+	public final static String ERROR_CODE_570401 = "570401";
+	public final static String ERROR_CODE_570404 = "570404";
+	public final static String ERROR_CODE_570500 = "570500";
+
+	public final static String SUCCESS_CODE_571 = "571200";
+	public final static String ERROR_CODE_571400 = "571400";
+	public final static String ERROR_CODE_571401 = "571401";
+	public final static String ERROR_CODE_571404 = "571404";
+	public final static String ERROR_CODE_571500 = "571500";
+
+	public final static String SUCCESS_CODE_572 = "572200";
+	public final static String ERROR_CODE_572400 = "572400";
+	public final static String ERROR_CODE_572401 = "572401";
+	public final static String ERROR_CODE_572404 = "572404";
+	public final static String ERROR_CODE_572500 = "572500";
+
+	public final static String SUCCESS_CODE_573 = "573200";
+	public final static String ERROR_CODE_573400 = "573400";
+	public final static String ERROR_CODE_573401 = "573401";
+	public final static String ERROR_CODE_573404 = "573404";
+	public final static String ERROR_CODE_573500 = "573500";
+
+	public final static String SUCCESS_CODE_580 = "580200";
+	public final static String ERROR_CODE_580400 = "580400";
+	public final static String ERROR_CODE_580401 = "580401";
+	public final static String ERROR_CODE_580404 = "580404";
+	public final static String ERROR_CODE_580500 = "580500";
+
+	public final static String SUCCESS_CODE_581 = "581200";
+	public final static String ERROR_CODE_581400 = "581400";
+	public final static String ERROR_CODE_581401 = "581401";
+	public final static String ERROR_CODE_581404 = "581404";
+	public final static String ERROR_CODE_581500 = "581500";
+
+	public final static String SUCCESS_CODE_582 = "582200";
+	public final static String ERROR_CODE_582400 = "582400";
+	public final static String ERROR_CODE_582401 = "582401";
+	public final static String ERROR_CODE_582404 = "582404";
+	public final static String ERROR_CODE_582500 = "582500";
+
+	public final static String SUCCESS_CODE_583 = "583200";
+	public final static String ERROR_CODE_583400 = "583400";
+	public final static String ERROR_CODE_583401 = "583401";
+	public final static String ERROR_CODE_583404 = "583404";
+	public final static String ERROR_CODE_583500 = "583500";
 
 }

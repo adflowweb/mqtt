@@ -108,9 +108,9 @@ public class MessageController extends BaseController {
 			msg.setMsgType(StaticConfig.MESSAGE_TYPE_USER);
 		}
 
-		if (msg.isAck() == false) {
-			msg.setAck(true);
-		}
+		// if (msg.isAck() == false) {
+		// msg.setAck(true);
+		// }
 
 		if (msg.getServiceId() == null
 				|| msg.getServiceId().trim().length() == 0) {

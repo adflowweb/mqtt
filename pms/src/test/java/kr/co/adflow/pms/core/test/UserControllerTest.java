@@ -1,4 +1,4 @@
-package kr.co.adflow.pms.core.pcf;
+package kr.co.adflow.pms.core.test;
 
 import kr.co.adflow.pms.core.controller.UserController;
 import kr.co.adflow.pms.core.request.UserReq;
