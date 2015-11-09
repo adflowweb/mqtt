@@ -1,129 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testng-results skipped="0" failed="0" total="4" passed="4">
+<testng-results skipped="0" failed="0" total="1" passed="1">
   <reporter-output>
   </reporter-output>
-  <suite name="Default suite" duration-ms="10620" started-at="2015-11-06T10:57:02Z" finished-at="2015-11-06T10:57:13Z">
+  <suite name="Default suite" duration-ms="6698" started-at="2015-11-09T02:36:31Z" finished-at="2015-11-09T02:36:37Z">
     <groups>
     </groups>
-    <test name="Default test" duration-ms="10620" started-at="2015-11-06T10:57:02Z" finished-at="2015-11-06T10:57:13Z">
-      <class name="kr.co.adflow.pms.core.test.RoleControllerTest">
-        <test-method status="PASS" signature="springTestContextBeforeTestClass()[pri:0, instance:kr.co.adflow.pms.core.test.RoleControllerTest@3435c7be]" name="springTestContextBeforeTestClass" is-config="true" duration-ms="9" started-at="2015-11-06T19:57:02Z" finished-at="2015-11-06T19:57:02Z">
+    <test name="Default test" duration-ms="6698" started-at="2015-11-09T02:36:31Z" finished-at="2015-11-09T02:36:37Z">
+      <class name="kr.co.adflow.pms.core.test.MonitorControllerTest">
+        <test-method status="PASS" signature="springTestContextBeforeTestClass()[pri:0, instance:kr.co.adflow.pms.core.test.MonitorControllerTest@547d573]" name="springTestContextBeforeTestClass" is-config="true" duration-ms="13" started-at="2015-11-09T11:36:31Z" finished-at="2015-11-09T11:36:31Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- springTestContextBeforeTestClass -->
-        <test-method status="PASS" signature="springTestContextPrepareTestInstance()[pri:0, instance:kr.co.adflow.pms.core.test.RoleControllerTest@3435c7be]" name="springTestContextPrepareTestInstance" is-config="true" duration-ms="3681" started-at="2015-11-06T19:57:02Z" depends-on-methods="org.springframework.test.context.testng.AbstractTestNGSpringContextTests.springTestContextBeforeTestClass" finished-at="2015-11-06T19:57:06Z">
+        <test-method status="PASS" signature="springTestContextPrepareTestInstance()[pri:0, instance:kr.co.adflow.pms.core.test.MonitorControllerTest@547d573]" name="springTestContextPrepareTestInstance" is-config="true" duration-ms="3830" started-at="2015-11-09T11:36:31Z" depends-on-methods="org.springframework.test.context.testng.AbstractTestNGSpringContextTests.springTestContextBeforeTestClass" finished-at="2015-11-09T11:36:34Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- springTestContextPrepareTestInstance -->
-        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.test.RoleControllerTest@3435c7be]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2015-11-06T19:57:06Z" finished-at="2015-11-06T19:57:06Z">
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.test.MonitorControllerTest@547d573]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="1" started-at="2015-11-09T11:36:34Z" finished-at="2015-11-09T11:36:34Z">
           <params>
             <param index="0">
               <value>
-                <![CDATA[void kr.co.adflow.pms.core.test.RoleControllerTest.createRole() throws java.lang.Exception]]>
+                <![CDATA[void kr.co.adflow.pms.core.test.MonitorControllerTest.getServerInfo() throws java.lang.Exception]]>
               </value>
             </param>
           </params>
           <reporter-output>
           </reporter-output>
         </test-method> <!-- springTestContextBeforeTestMethod -->
-        <test-method status="PASS" signature="createRole()[pri:0, instance:kr.co.adflow.pms.core.test.RoleControllerTest@3435c7be]" name="createRole" duration-ms="1762" started-at="2015-11-06T19:57:06Z" finished-at="2015-11-06T19:57:08Z">
+        <test-method status="PASS" signature="getServerInfo()[pri:0, instance:kr.co.adflow.pms.core.test.MonitorControllerTest@547d573]" name="getServerInfo" duration-ms="2829" started-at="2015-11-09T11:36:34Z" finished-at="2015-11-09T11:36:37Z">
           <reporter-output>
           </reporter-output>
-        </test-method> <!-- createRole -->
-        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.test.RoleControllerTest@3435c7be]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="2" started-at="2015-11-06T19:57:08Z" finished-at="2015-11-06T19:57:08Z">
+        </test-method> <!-- getServerInfo -->
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.test.MonitorControllerTest@547d573]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="2" started-at="2015-11-09T11:36:37Z" finished-at="2015-11-09T11:36:37Z">
           <params>
             <param index="0">
               <value>
-                <![CDATA[void kr.co.adflow.pms.core.test.RoleControllerTest.createRole() throws java.lang.Exception]]>
+                <![CDATA[void kr.co.adflow.pms.core.test.MonitorControllerTest.getServerInfo() throws java.lang.Exception]]>
               </value>
             </param>
           </params>
           <reporter-output>
           </reporter-output>
         </test-method> <!-- springTestContextAfterTestMethod -->
-        <test-method status="PASS" signature="getRole()[pri:0, instance:kr.co.adflow.pms.core.test.RoleControllerTest@3435c7be]" name="getRole" duration-ms="1465" started-at="2015-11-06T19:57:08Z" finished-at="2015-11-06T19:57:09Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- getRole -->
-        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.test.RoleControllerTest@3435c7be]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2015-11-06T19:57:08Z" finished-at="2015-11-06T19:57:08Z">
-          <params>
-            <param index="0">
-              <value>
-                <![CDATA[void kr.co.adflow.pms.core.test.RoleControllerTest.getRole() throws java.lang.Exception]]>
-              </value>
-            </param>
-          </params>
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- springTestContextBeforeTestMethod -->
-        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.test.RoleControllerTest@3435c7be]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="0" started-at="2015-11-06T19:57:09Z" finished-at="2015-11-06T19:57:09Z">
-          <params>
-            <param index="0">
-              <value>
-                <![CDATA[void kr.co.adflow.pms.core.test.RoleControllerTest.getRole() throws java.lang.Exception]]>
-              </value>
-            </param>
-          </params>
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- springTestContextAfterTestMethod -->
-        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.test.RoleControllerTest@3435c7be]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="2" started-at="2015-11-06T19:57:09Z" finished-at="2015-11-06T19:57:09Z">
-          <params>
-            <param index="0">
-              <value>
-                <![CDATA[void kr.co.adflow.pms.core.test.RoleControllerTest.updateRole() throws java.lang.Exception]]>
-              </value>
-            </param>
-          </params>
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- springTestContextBeforeTestMethod -->
-        <test-method status="PASS" signature="updateRole()[pri:0, instance:kr.co.adflow.pms.core.test.RoleControllerTest@3435c7be]" name="updateRole" duration-ms="1513" started-at="2015-11-06T19:57:09Z" finished-at="2015-11-06T19:57:11Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- updateRole -->
-        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.test.RoleControllerTest@3435c7be]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="1" started-at="2015-11-06T19:57:11Z" finished-at="2015-11-06T19:57:11Z">
-          <params>
-            <param index="0">
-              <value>
-                <![CDATA[void kr.co.adflow.pms.core.test.RoleControllerTest.updateRole() throws java.lang.Exception]]>
-              </value>
-            </param>
-          </params>
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- springTestContextAfterTestMethod -->
-        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.test.RoleControllerTest@3435c7be]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="1" started-at="2015-11-06T19:57:11Z" finished-at="2015-11-06T19:57:11Z">
-          <params>
-            <param index="0">
-              <value>
-                <![CDATA[void kr.co.adflow.pms.core.test.RoleControllerTest.deleteRole() throws java.lang.Exception]]>
-              </value>
-            </param>
-          </params>
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- springTestContextBeforeTestMethod -->
-        <test-method status="PASS" signature="deleteRole()[pri:0, instance:kr.co.adflow.pms.core.test.RoleControllerTest@3435c7be]" name="deleteRole" duration-ms="2152" started-at="2015-11-06T19:57:11Z" finished-at="2015-11-06T19:57:13Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- deleteRole -->
-        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.test.RoleControllerTest@3435c7be]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="1" started-at="2015-11-06T19:57:13Z" finished-at="2015-11-06T19:57:13Z">
-          <params>
-            <param index="0">
-              <value>
-                <![CDATA[void kr.co.adflow.pms.core.test.RoleControllerTest.deleteRole() throws java.lang.Exception]]>
-              </value>
-            </param>
-          </params>
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- springTestContextAfterTestMethod -->
-        <test-method status="PASS" signature="springTestContextAfterTestClass()[pri:0, instance:kr.co.adflow.pms.core.test.RoleControllerTest@3435c7be]" name="springTestContextAfterTestClass" is-config="true" duration-ms="0" started-at="2015-11-06T19:57:13Z" finished-at="2015-11-06T19:57:13Z">
+        <test-method status="PASS" signature="springTestContextAfterTestClass()[pri:0, instance:kr.co.adflow.pms.core.test.MonitorControllerTest@547d573]" name="springTestContextAfterTestClass" is-config="true" duration-ms="2" started-at="2015-11-09T11:36:37Z" finished-at="2015-11-09T11:36:37Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- springTestContextAfterTestClass -->
-      </class> <!-- kr.co.adflow.pms.core.test.RoleControllerTest -->
+      </class> <!-- kr.co.adflow.pms.core.test.MonitorControllerTest -->
     </test> <!-- Default test -->
   </suite> <!-- Default suite -->
 </testng-results>
