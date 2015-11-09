@@ -21,6 +21,7 @@ import kr.co.adflow.pms.core.response.StatisticsRes;
 import kr.co.adflow.pms.core.service.MessageService;
 import kr.co.adflow.pms.domain.Message;
 import kr.co.adflow.pms.domain.Token;
+import kr.co.adflow.pms.domain.mapper.InterceptMapper;
 import kr.co.adflow.pms.domain.mapper.TokenMapper;
 import kr.co.adflow.pms.response.Response;
 
@@ -58,6 +59,9 @@ public class MessageController extends BaseController {
 
 	@Autowired
 	private PmsConfig pmsConfig;
+
+	@Autowired
+	private InterceptMapper interceptMapper;
 
 	/**
 	 * Send message.
@@ -272,8 +276,8 @@ public class MessageController extends BaseController {
 			throws Exception {
 		/* 권한 체크 시작************************** */
 		logger.debug(applicationKey + "의 권한 체크를 시작합니다!");
-		Token tokenId = tokenMapper.selectUserid(applicationKey);
-		String requsetUserId = tokenId.getUserId();
+		String requsetUserId = interceptMapper
+				.selectCashedUserId(applicationKey);
 
 		List<Token> apiCode = tokenMapper.getApiCode(requsetUserId);
 		boolean tokenAuthCheck = false;
@@ -343,8 +347,8 @@ public class MessageController extends BaseController {
 			throws Exception {
 		/* 권한 체크 시작************************** */
 		logger.debug(applicationKey + "의 권한 체크를 시작합니다!");
-		Token tokenId = tokenMapper.selectUserid(applicationKey);
-		String requsetUserId = tokenId.getUserId();
+		String requsetUserId = interceptMapper
+				.selectCashedUserId(applicationKey);
 
 		List<Token> apiCode = tokenMapper.getApiCode(requsetUserId);
 		boolean tokenAuthCheck = false;
@@ -395,8 +399,8 @@ public class MessageController extends BaseController {
 			throws Exception {
 		/* 권한 체크 시작************************** */
 		logger.debug(applicationKey + "의 권한 체크를 시작합니다!");
-		Token tokenId = tokenMapper.selectUserid(applicationKey);
-		String requsetUserId = tokenId.getUserId();
+		String requsetUserId = interceptMapper
+				.selectCashedUserId(applicationKey);
 
 		List<Token> apiCode = tokenMapper.getApiCode(requsetUserId);
 		boolean tokenAuthCheck = false;

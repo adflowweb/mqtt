@@ -11,6 +11,7 @@ import kr.co.adflow.pms.core.response.RoleListRes;
 import kr.co.adflow.pms.core.response.RoleRes;
 import kr.co.adflow.pms.core.service.RoleService;
 import kr.co.adflow.pms.domain.Token;
+import kr.co.adflow.pms.domain.mapper.InterceptMapper;
 import kr.co.adflow.pms.domain.mapper.TokenMapper;
 import kr.co.adflow.pms.response.Response;
 
@@ -39,6 +40,9 @@ public class RoleController extends BaseController {
 	@Autowired
 	private RoleService roleService;
 
+	@Autowired
+	private InterceptMapper interceptMapper;
+
 	@RequestMapping(value = "/role", method = RequestMethod.POST, consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
 	@ResponseBody
 	public Response<RoleRes> createRole(
@@ -48,8 +52,8 @@ public class RoleController extends BaseController {
 		logger.debug("createRole");
 		logger.debug("권한크도 생성");
 		logger.debug(applicationKey + "의 권한 체크를 시작합니다!");
-		Token tokenId = tokenMapper.selectUserid(applicationKey);
-		String requsetUserId = tokenId.getUserId();
+		String requsetUserId = interceptMapper
+				.selectCashedUserId(applicationKey);
 
 		List<Token> apiCode = tokenMapper.getApiCode(requsetUserId);
 		boolean tokenAuthCheck = false;
@@ -120,8 +124,8 @@ public class RoleController extends BaseController {
 		logger.debug("getRole");
 		logger.debug("권한크도 조회");
 		logger.debug(applicationKey + "의 권한 체크를 시작합니다!");
-		Token tokenId = tokenMapper.selectUserid(applicationKey);
-		String requsetUserId = tokenId.getUserId();
+		String requsetUserId = interceptMapper
+				.selectCashedUserId(applicationKey);
 
 		List<Token> apiCode = tokenMapper.getApiCode(requsetUserId);
 		boolean tokenAuthCheck = false;
@@ -159,8 +163,8 @@ public class RoleController extends BaseController {
 		logger.debug("updateRole");
 		logger.debug("권한크도수정");
 		logger.debug(applicationKey + "의 권한 체크를 시작합니다!");
-		Token tokenId = tokenMapper.selectUserid(applicationKey);
-		String requsetUserId = tokenId.getUserId();
+		String requsetUserId = interceptMapper
+				.selectCashedUserId(applicationKey);
 
 		List<Token> getApiCode = tokenMapper.getApiCode(requsetUserId);
 		boolean tokenAuthCheck = false;
@@ -200,8 +204,8 @@ public class RoleController extends BaseController {
 		logger.debug("deleteRole");
 		logger.debug("권한크도삭제");
 		logger.debug(applicationKey + "의 권한 체크를 시작합니다!");
-		Token tokenId = tokenMapper.selectUserid(applicationKey);
-		String requsetUserId = tokenId.getUserId();
+		String requsetUserId = interceptMapper
+				.selectCashedUserId(applicationKey);
 
 		List<Token> getApiCode = tokenMapper.getApiCode(requsetUserId);
 		boolean tokenAuthCheck = false;

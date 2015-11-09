@@ -18,6 +18,7 @@ import kr.co.adflow.pms.core.response.TokenRes;
 import kr.co.adflow.pms.core.service.PCFService;
 import kr.co.adflow.pms.core.service.TokenService;
 import kr.co.adflow.pms.domain.Token;
+import kr.co.adflow.pms.domain.mapper.InterceptMapper;
 import kr.co.adflow.pms.domain.mapper.TokenMapper;
 import kr.co.adflow.pms.response.Response;
 
@@ -54,6 +55,9 @@ public class TokenController extends BaseController {
 	@Autowired
 	private TokenMapper tokenMapper;
 
+	@Autowired
+	private InterceptMapper interceptMapper;
+
 	/**
 	 * 유저 인증후 토큰 발행.
 	 * 
@@ -69,8 +73,8 @@ public class TokenController extends BaseController {
 			@RequestBody @Valid TokenReq userInfo) throws Exception {
 		/* 권한 체크 시작************************** */
 		logger.debug(applicationKey + "의 권한 체크를 시작합니다!");
-		Token tokenId = tokenMapper.selectUserid(applicationKey);
-		String requsetUserId = tokenId.getUserId();
+		String requsetUserId = interceptMapper
+				.selectCashedUserId(applicationKey);
 
 		List<Token> apiCode = tokenMapper.getApiCode(requsetUserId);
 		boolean tokenAuthCheck = false;
@@ -149,8 +153,8 @@ public class TokenController extends BaseController {
 			@PathVariable String token) throws Exception {
 		/* 권한 체크 시작************************** */
 		logger.debug(applicationKey + "의 권한 체크를 시작합니다!");
-		Token tokenId = tokenMapper.selectUserid(applicationKey);
-		String requsetUserId = tokenId.getUserId();
+		String requsetUserId = interceptMapper
+				.selectCashedUserId(applicationKey);
 		List<Token> apiCode = tokenMapper.getApiCode(requsetUserId);
 		boolean tokenAuthCheck = false;
 		for (int i = 0; i < apiCode.size(); i++) {

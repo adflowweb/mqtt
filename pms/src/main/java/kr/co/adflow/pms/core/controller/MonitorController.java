@@ -6,10 +6,10 @@ import java.util.List;
 import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.exception.MessageRunTimeException;
 import kr.co.adflow.pms.core.exception.MonitorRunTimeException;
-import kr.co.adflow.pms.core.response.MessageSendRes;
 import kr.co.adflow.pms.core.service.ServerInfoService;
 import kr.co.adflow.pms.domain.ServerInfo;
 import kr.co.adflow.pms.domain.Token;
+import kr.co.adflow.pms.domain.mapper.InterceptMapper;
 import kr.co.adflow.pms.domain.mapper.TokenMapper;
 import kr.co.adflow.pms.response.Response;
 
@@ -36,6 +36,9 @@ public class MonitorController extends BaseController {
 	@Autowired
 	TokenMapper tokenMapper;
 
+	@Autowired
+	InterceptMapper interceptMapper;
+
 	@RequestMapping(value = "/server", method = RequestMethod.GET)
 	@ResponseBody
 	public Response<ServerInfo> getServerInfo(
@@ -44,8 +47,8 @@ public class MonitorController extends BaseController {
 
 		/* 권한 체크 시작************************** */
 		logger.debug(applicationKey + "의 권한 체크를 시작합니다!");
-		Token tokenId = tokenMapper.selectUserid(applicationKey);
-		String requsetUserId = tokenId.getUserId();
+		String requsetUserId = interceptMapper
+				.selectCashedUserId(applicationKey);
 
 		List<Token> apiCode = tokenMapper.getApiCode(requsetUserId);
 		boolean tokenAuthCheck = false;

@@ -3,16 +3,17 @@
 <suite name="Failed suite [Default suite]">
   <test name="Default test(failed)">
     <classes>
-      <class name="kr.co.adflow.pms.core.test.MonitorControllerTest">
+      <class name="kr.co.adflow.pms.core.test.MessageControllerTest">
         <methods>
           <include name="springTestContextAfterTestClass"/>
-          <include name="getServerInfo"/>
           <include name="springTestContextBeforeTestClass"/>
+          <include name="messageSendTest"/>
           <include name="springTestContextBeforeTestMethod"/>
           <include name="springTestContextPrepareTestInstance"/>
           <include name="springTestContextAfterTestMethod"/>
+          <include name="messageSystemTest"/>
         </methods>
-      </class> <!-- kr.co.adflow.pms.core.test.MonitorControllerTest -->
+      </class> <!-- kr.co.adflow.pms.core.test.MessageControllerTest -->
     </classes>
   </test> <!-- Default test(failed) -->
 </suite> <!-- Failed suite [Default suite] -->

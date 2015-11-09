@@ -10,6 +10,7 @@ import kr.co.adflow.pms.core.response.GroupListRes;
 import kr.co.adflow.pms.core.response.GroupRes;
 import kr.co.adflow.pms.core.service.GroupService;
 import kr.co.adflow.pms.domain.Token;
+import kr.co.adflow.pms.domain.mapper.InterceptMapper;
 import kr.co.adflow.pms.domain.mapper.TokenMapper;
 import kr.co.adflow.pms.response.Response;
 
@@ -38,6 +39,9 @@ public class GroupController extends BaseController {
 	@Autowired
 	private GroupService groupService;
 
+	@Autowired
+	private InterceptMapper interceptMapper;
+
 	@RequestMapping(value = "/group", method = RequestMethod.POST, consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
 	@ResponseBody
 	public Response<GroupRes> createGroup(
@@ -47,8 +51,8 @@ public class GroupController extends BaseController {
 		logger.debug("createGroup");
 		logger.debug("그룹생성");
 		logger.debug(applicationKey + "의 권한 체크를 시작합니다!");
-		Token tokenId = tokenMapper.selectUserid(applicationKey);
-		String requsetUserId = tokenId.getUserId();
+		String requsetUserId = interceptMapper
+				.selectCashedUserId(applicationKey);
 
 		List<Token> apiCode = tokenMapper.getApiCode(requsetUserId);
 		boolean tokenAuthCheck = false;
@@ -103,8 +107,8 @@ public class GroupController extends BaseController {
 		logger.debug("getGroup");
 
 		logger.debug(applicationKey + "의 권한 체크를 시작합니다!");
-		Token tokenId = tokenMapper.selectUserid(applicationKey);
-		String requsetUserId = tokenId.getUserId();
+		String requsetUserId = interceptMapper
+				.selectCashedUserId(applicationKey);
 
 		List<Token> apiCode = tokenMapper.getApiCode(requsetUserId);
 		boolean tokenAuthCheck = false;
@@ -141,8 +145,8 @@ public class GroupController extends BaseController {
 		logger.debug("updateGroup");
 		logger.debug("그룹수정");
 		logger.debug(applicationKey + "의 권한 체크를 시작합니다!");
-		Token tokenId = tokenMapper.selectUserid(applicationKey);
-		String requsetUserId = tokenId.getUserId();
+		String requsetUserId = interceptMapper
+				.selectCashedUserId(applicationKey);
 
 		List<Token> apiCode = tokenMapper.getApiCode(requsetUserId);
 		boolean tokenAuthCheck = false;
@@ -185,8 +189,8 @@ public class GroupController extends BaseController {
 		logger.debug("deleteGroup");
 		logger.debug("그룹수정");
 		logger.debug(applicationKey + "의 권한 체크를 시작합니다!");
-		Token tokenId = tokenMapper.selectUserid(applicationKey);
-		String requsetUserId = tokenId.getUserId();
+		String requsetUserId = interceptMapper
+				.selectCashedUserId(applicationKey);
 
 		List<Token> apiCode = tokenMapper.getApiCode(requsetUserId);
 		boolean tokenAuthCheck = false;
@@ -202,8 +206,6 @@ public class GroupController extends BaseController {
 					"권한이 없습니다");
 		}
 		logger.debug(applicationKey + "에 대한 권한체크가 완료되었습니다.");
-
-		
 
 		if (groupCode == 0) {
 			throw new GroupRunTimeException(StaticConfig.ERROR_CODE_573400,

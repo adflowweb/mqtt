@@ -25,15 +25,15 @@ public class CheckUtil {
 	 * @param msgSize the msg size
 	 * @return the message size limit
 	 */
-	public int getMessageSizeLimit(int msgSize) {
-
-		if (msgSize == -1) {
-			return pmsConfig.MESSAGE_SIZE_LIMIT_DEFAULT;
-		} else {
-			return msgSize;
-		}
-
-	}
+	// public int getMessageSizeLimit(int msgSize) {
+	//
+	// if (msgSize == -1) {
+	// return pmsConfig.MESSAGE_SIZE_LIMIT_DEFAULT;
+	// } else {
+	// return msgSize;
+	// }
+	//
+	// }
 
 	/**
 	 * Gets the message expiry.
