@@ -8,6 +8,7 @@
 		<result property="groupCode" column="group_code" />
 		<result property="apiCode" column="api_code" />
 		<result property="apiUrl" column="api_url" />
+		<result property="apiName" column="api_name" />
 		<result property="apiMethod" column="api_method" />
 		<result property="issueTime" column="issue_time" />
 		<result property="issueId" column="issue_id" />
@@ -22,12 +23,14 @@
 		,api_code
 		,api_url
 		,api_method
+		,api_name
 		,issue_time
 		,issue_id
 		)
 		values(
 		#{groupCode},
 		#{apiCode},
+		#{apiName},
 		#{apiUrl},
 		#{apiMethod},
 		now(),
@@ -35,7 +38,26 @@
 		)
 	</insert>
 
+	<select id="getRole" resultMap="RoleResult">
+		select * from pms.role
 
+	</select>
+
+	<update id="updateRole" parameterType="int">
+		UPDATE pms.role
+		SET
+		api_code = #{updateApiCode}
+		WHERE
+		group_code = #{groupCode} and
+		api_code=#{apiCode}
+	</update>
+
+
+	<delete id="deleteRole" parameterType="int">
+		DELETE FROM pms.role
+		WHERE
+		api_code = #{apiCode} and group_code=#{groupCode}
+	</delete>
 
 
 </mapper>	

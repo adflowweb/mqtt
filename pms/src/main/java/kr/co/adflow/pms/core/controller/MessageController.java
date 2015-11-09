@@ -228,20 +228,23 @@ public class MessageController extends BaseController {
 						"잘못된 요청 입니다(content의 입력값을 확인해주세요)");
 			}
 
-		} 
-		
-		else {
-			String keepAliveTime = msg.getContent();
+		}
 
-			try {
-				msg.setContent("{\"keepAliveTime\":"
-						+ Integer.parseInt(keepAliveTime) + "}");
-			} catch (Exception e) {
-				e.printStackTrace();
-				throw new MessageRunTimeException(
-						StaticConfig.ERROR_CODE_534400,
-						"잘못된 요청 입니다(content의 입력값을 확인해주세요)");
-			}
+		else {
+
+			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_530500,
+					"시스템 메시지의 타입이 잘못되었습니다");
+			// String keepAliveTime = msg.getContent();
+			//
+			// try {
+			// msg.setContent("{\"keepAliveTime\":"
+			// + Integer.parseInt(keepAliveTime) + "}");
+			// } catch (Exception e) {
+			// e.printStackTrace();
+			// throw new MessageRunTimeException(
+			// StaticConfig.ERROR_CODE_534400,
+			// "잘못된 요청 입니다(content의 입력값을 확인해주세요)");
+			// }
 
 		}
 

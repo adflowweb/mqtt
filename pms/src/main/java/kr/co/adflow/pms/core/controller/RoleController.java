@@ -7,6 +7,7 @@ import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.exception.GroupRunTimeException;
 import kr.co.adflow.pms.core.exception.RoleRunTimeException;
 import kr.co.adflow.pms.core.request.RoleReq;
+import kr.co.adflow.pms.core.response.RoleListRes;
 import kr.co.adflow.pms.core.response.RoleRes;
 import kr.co.adflow.pms.core.service.RoleService;
 import kr.co.adflow.pms.domain.Token;
@@ -18,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,7 +41,7 @@ public class RoleController extends BaseController {
 
 	@RequestMapping(value = "/role", method = RequestMethod.POST, consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
 	@ResponseBody
-	public Response<RoleRes> createGroup(
+	public Response<RoleRes> createRole(
 			@RequestHeader(value = StaticConfig.HEADER_APPLICATION_KEY) String applicationKey,
 			@RequestBody RoleReq roleReq) throws Exception {
 
@@ -109,6 +111,124 @@ public class RoleController extends BaseController {
 
 	}
 
+	@RequestMapping(value = "/role", method = RequestMethod.GET)
+	@ResponseBody
+	public Response<RoleListRes> getRole(
+			@RequestHeader(value = StaticConfig.HEADER_APPLICATION_KEY) String applicationKey)
+			throws Exception {
+
+		logger.debug("getRole");
+		logger.debug("권한크도 조회");
+		logger.debug(applicationKey + "의 권한 체크를 시작합니다!");
+		Token tokenId = tokenMapper.selectUserid(applicationKey);
+		String requsetUserId = tokenId.getUserId();
+
+		List<Token> apiCode = tokenMapper.getApiCode(requsetUserId);
+		boolean tokenAuthCheck = false;
+		for (int i = 0; i < apiCode.size(); i++) {
+
+			if (apiCode.get(i).getApiCode().equals(StaticConfig.API_CODE_581)) {
+				tokenAuthCheck = true;
+			}
+		}
+		if (tokenAuthCheck == false) {
+			logger.debug(StaticConfig.API_CODE_581 + "에 대한 권한이 없습니다");
+			throw new GroupRunTimeException(StaticConfig.ERROR_CODE_581401,
+					"권한이 없습니다");
+		}
+		logger.debug(applicationKey + "에 대한 권한체크가 완료되었습니다.");
+
+		Response<RoleListRes> res = new Response<RoleListRes>();
+		RoleListRes roleListRes = roleService.getRole();
+		res.setStatus(StaticConfig.RESPONSE_STATUS_OK);
+		res.setData(roleListRes);
+		res.setCode(StaticConfig.SUCCESS_CODE_581);
+		res.setMessage("권한정보를 조회하였습니다.");
+
+		return res;
+
+	}
+
+	@RequestMapping(value = "/role/{groupCode}/{apiCode}", method = RequestMethod.PUT, consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
+	@ResponseBody
+	public Response updateRole(
+			@RequestHeader(value = StaticConfig.HEADER_APPLICATION_KEY) String applicationKey,
+			@PathVariable int groupCode, @PathVariable int apiCode,
+			@RequestBody RoleReq roleReq) throws Exception {
+
+		logger.debug("updateRole");
+		logger.debug("권한크도수정");
+		logger.debug(applicationKey + "의 권한 체크를 시작합니다!");
+		Token tokenId = tokenMapper.selectUserid(applicationKey);
+		String requsetUserId = tokenId.getUserId();
+
+		List<Token> getApiCode = tokenMapper.getApiCode(requsetUserId);
+		boolean tokenAuthCheck = false;
+		for (int i = 0; i < getApiCode.size(); i++) {
+
+			if (getApiCode.get(i).getApiCode()
+					.equals(StaticConfig.API_CODE_582)) {
+				tokenAuthCheck = true;
+			}
+		}
+		if (tokenAuthCheck == false) {
+			logger.debug(StaticConfig.API_CODE_582 + "에 대한 권한이 없습니다");
+			throw new GroupRunTimeException(StaticConfig.ERROR_CODE_582401,
+					"권한이 없습니다");
+		}
+		logger.debug(applicationKey + "에 대한 권한체크가 완료되었습니다.");
+
+		Response res = new Response();
+		int updateResult = roleService.updateRole(groupCode, apiCode,
+				roleReq.getApiCode());
+		res.setStatus(StaticConfig.RESPONSE_STATUS_OK);
+		res.setCode(StaticConfig.SUCCESS_CODE_582);
+		res.setMessage(groupCode + "그룹의 " + apiCode + "코드를 "
+				+ roleReq.getApiCode() + "로수정하였습니다.");
+
+		return res;
+
+	}
+
+	@RequestMapping(value = "/role/{groupCode}/{apiCode}", method = RequestMethod.DELETE)
+	@ResponseBody
+	public Response deleteRole(
+			@RequestHeader(value = StaticConfig.HEADER_APPLICATION_KEY) String applicationKey,
+			@PathVariable int groupCode, @PathVariable int apiCode)
+			throws Exception {
+
+		logger.debug("deleteRole");
+		logger.debug("권한크도삭제");
+		logger.debug(applicationKey + "의 권한 체크를 시작합니다!");
+		Token tokenId = tokenMapper.selectUserid(applicationKey);
+		String requsetUserId = tokenId.getUserId();
+
+		List<Token> getApiCode = tokenMapper.getApiCode(requsetUserId);
+		boolean tokenAuthCheck = false;
+		for (int i = 0; i < getApiCode.size(); i++) {
+
+			if (getApiCode.get(i).getApiCode()
+					.equals(StaticConfig.API_CODE_583)) {
+				tokenAuthCheck = true;
+			}
+		}
+		if (tokenAuthCheck == false) {
+			logger.debug(StaticConfig.API_CODE_583 + "에 대한 권한이 없습니다");
+			throw new GroupRunTimeException(StaticConfig.ERROR_CODE_583401,
+					"권한이 없습니다");
+		}
+		logger.debug(applicationKey + "에 대한 권한체크가 완료되었습니다.");
+
+		Response res = new Response();
+		int deleteResult = roleService.deleteRole(groupCode, apiCode);
+		res.setStatus(StaticConfig.RESPONSE_STATUS_OK);
+		res.setCode(StaticConfig.SUCCESS_CODE_583);
+		res.setMessage(groupCode + "그룹의 " + apiCode + "코드를 삭제하였습니다.");
+
+		return res;
+
+	}
+
 	@ExceptionHandler(Exception.class)
 	@ResponseBody
 	public Response handleAllException(final Exception e) {
@@ -130,43 +250,6 @@ public class RoleController extends BaseController {
 		return res;
 	}
 
-	// @RequestMapping(value = "/group", method = RequestMethod.GET)
-	// @ResponseBody
-	// public Response<GroupListRes> getGroups(
-	// @RequestHeader(value = StaticConfig.HEADER_APPLICATION_KEY) String
-	// applicationKey)
-	// throws Exception {
-	//
-	// logger.debug("getGroup");
-	//
-	// logger.debug(applicationKey + "의 권한 체크를 시작합니다!");
-	// Token tokenId = tokenMapper.selectUserid(applicationKey);
-	// String requsetUserId = tokenId.getUserId();
-	//
-	// List<Token> apiCode = tokenMapper.getApiCode(requsetUserId);
-	// boolean tokenAuthCheck = false;
-	// for (int i = 0; i < apiCode.size(); i++) {
-	//
-	// if (apiCode.get(i).getApiCode().equals(StaticConfig.API_CODE_571)) {
-	// tokenAuthCheck = true;
-	// }
-	// }
-	// if (tokenAuthCheck == false) {
-	// logger.debug(StaticConfig.API_CODE_571 + "에 대한 권한이 없습니다");
-	// throw new GroupRunTimeException(StaticConfig.ERROR_CODE_571401,
-	// "권한이 없습니다");
-	// }
-	// logger.debug(applicationKey + "에 대한 권한체크가 완료되었습니다.");
-	//
-	// Response<GroupListRes> res = new Response<GroupListRes>();
-	// GroupListRes groupListRes = groupService.getGroup();
-	// res.setStatus(StaticConfig.RESPONSE_STATUS_OK);
-	// res.setData(groupListRes);
-	// res.setCode(StaticConfig.SUCCESS_CODE_571);
-	// res.setMessage("그룹정보를  조회하였습니다.");
-	//
-	// return res;
-	// }
 	//
 	// @RequestMapping(value = "/group/{groupCode}", method = RequestMethod.PUT,
 	// consumes = StaticConfig.HEADER_CONTENT_TYPE, produces =

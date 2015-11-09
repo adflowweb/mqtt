@@ -1,9 +1,14 @@
 package kr.co.adflow.pms.core.service;
 
+import java.util.List;
+
 import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.exception.RoleRunTimeException;
 import kr.co.adflow.pms.core.request.RoleReq;
+import kr.co.adflow.pms.core.response.GroupListRes;
+import kr.co.adflow.pms.core.response.RoleListRes;
 import kr.co.adflow.pms.core.response.RoleRes;
+import kr.co.adflow.pms.domain.Group;
 import kr.co.adflow.pms.domain.Role;
 import kr.co.adflow.pms.domain.mapper.RoleMapper;
 
@@ -46,6 +51,40 @@ public class RoleServiceImpl implements RoleService {
 		roleRes.setGroupCode(roleReq.getGroupCode());
 
 		return roleRes;
+	}
+
+	@Override
+	public RoleListRes getRole() throws Exception {
+		// TODO Auto-generated method stub
+		List<Role> roles = roleMapper.getRole();
+		RoleListRes rolListRes = new RoleListRes();
+		rolListRes.setRole(roles);
+		return rolListRes;
+	}
+
+	@Override
+	public int updateRole(int groupCode, int apiCode, int updateApiCode)
+			throws Exception {
+		// TODO Auto-generated method stub
+
+		int updateResult = roleMapper.updateRole(groupCode, apiCode,
+				updateApiCode);
+		if (updateResult < 1) {
+			throw new RoleRunTimeException(StaticConfig.ERROR_CODE_582500,
+					"API_CODE 수정에 실패하였습니다");
+		}
+		return updateResult;
+
+	}
+
+	@Override
+	public int deleteRole(int groupCode, int apiCode) throws Exception {
+		int deleteResult = roleMapper.deleteRole(groupCode, apiCode);
+		if (deleteResult < 1) {
+			throw new RoleRunTimeException(StaticConfig.ERROR_CODE_583500,
+					"API_CODE 삭제에 실패하였습니다");
+		}
+		return deleteResult;
 	}
 
 }
