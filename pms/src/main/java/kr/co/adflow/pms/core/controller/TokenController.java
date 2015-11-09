@@ -250,6 +250,7 @@ public class TokenController extends BaseController {
 			res.setCode(StaticConfig.ERROR_CODE_519000);
 			res.setMessage(e.getMessage());
 		}
+		e.printStackTrace();
 		return res;
 	}
 

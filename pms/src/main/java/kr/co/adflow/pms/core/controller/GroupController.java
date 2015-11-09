@@ -238,6 +238,7 @@ public class GroupController extends BaseController {
 			res.setCode(StaticConfig.ERROR_CODE_579000);
 			res.setMessage(e.getMessage());
 		}
+		e.printStackTrace();
 		return res;
 	}
 

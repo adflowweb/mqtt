@@ -92,6 +92,7 @@ public class MonitorController extends BaseController {
 			res.setCode(StaticConfig.ERROR_CODE_599000);
 			res.setMessage(e.getMessage());
 		}
+		e.printStackTrace();
 		return res;
 	}
 

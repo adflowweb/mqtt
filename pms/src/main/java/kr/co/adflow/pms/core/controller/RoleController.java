@@ -247,6 +247,7 @@ public class RoleController extends BaseController {
 			res.setCode(StaticConfig.ERROR_CODE_589000);
 			res.setMessage(e.getMessage());
 		}
+		e.printStackTrace();
 		return res;
 	}
 

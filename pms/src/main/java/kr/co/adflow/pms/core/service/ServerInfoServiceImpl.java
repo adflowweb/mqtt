@@ -175,11 +175,11 @@ public class ServerInfoServiceImpl implements ServerInfoService {
 		// res.setTps(tps);
 		// logger.debug("tps=" + tps);
 
-		logger.debug("canonicalHostName= {}", InetAddress.getLocalHost()
-				.getCanonicalHostName());
-
-		res.setHostName(InetAddress.getLocalHost().getHostName());
-		res.setIpAddress(InetAddress.getLocalHost().getHostAddress());
+		// logger.debug("canonicalHostName= {}", InetAddress.getLocalHost()
+		// .getCanonicalHostName());
+		//
+		// res.setHostName(InetAddress.getLocalHost().getHostName());
+		// res.setIpAddress(InetAddress.getLocalHost().getHostAddress());
 
 		logger.debug("get종료()");
 		return res;

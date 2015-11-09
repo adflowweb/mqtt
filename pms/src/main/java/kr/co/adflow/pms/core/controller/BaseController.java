@@ -35,6 +35,7 @@ public class BaseController {
 	public Response handleAllException(final Exception e) {
 		Response res = new Response();
 		logger.error("런타임에러발생::", e);
+		e.printStackTrace();
 		res.setStatus(StaticConfig.RESPONSE_STATUS_FAIL);
 		res.setCode("900000");
 		res.setMessage(e.getMessage());

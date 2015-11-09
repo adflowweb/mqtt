@@ -233,6 +233,7 @@ public class UserController extends BaseController {
 			res.setCode(StaticConfig.ERROR_CODE_559000);
 			res.setMessage(e.getMessage());
 		}
+		e.printStackTrace();
 		return res;
 	}
 }

@@ -456,6 +456,8 @@ public class MessageController extends BaseController {
 			res.setCode(StaticConfig.ERROR_CODE_539000);
 			res.setMessage(e.getMessage());
 		}
+
+		e.printStackTrace();
 		return res;
 	}
 
