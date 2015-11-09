@@ -123,12 +123,14 @@ public class StaticConfig {
 	public final static String API_CODE_581 = "581";
 	public final static String API_CODE_582 = "582";
 	public final static String API_CODE_583 = "583";
+	public final static String API_CODE_590 = "590";
 
 	public final static String ERROR_CODE_519000 = "519000";
 	public final static String ERROR_CODE_539000 = "539000";
 	public final static String ERROR_CODE_559000 = "559000";
 	public final static String ERROR_CODE_579000 = "579000";
 	public final static String ERROR_CODE_589000 = "589000";
+	public final static String ERROR_CODE_599000 = "599000";
 
 	public final static String SUCCESS_CODE_510 = "510200";
 	public final static String ERROR_CODE_510400 = "510400";
@@ -253,5 +255,11 @@ public class StaticConfig {
 	public final static String ERROR_CODE_583401 = "583401";
 	public final static String ERROR_CODE_583404 = "583404";
 	public final static String ERROR_CODE_583500 = "583500";
+
+	public final static String SUCCESS_CODE_590 = "590200";
+	public final static String ERROR_CODE_590400 = "590400";
+	public final static String ERROR_CODE_590401 = "590401";
+	public final static String ERROR_CODE_590404 = "590404";
+	public final static String ERROR_CODE_590500 = "590500";
 
 }

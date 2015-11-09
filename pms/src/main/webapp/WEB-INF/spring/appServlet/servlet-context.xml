@@ -41,13 +41,13 @@
 	</beans:bean>
 
 
-	<task:scheduled-tasks scheduler="myScheduler">
+	<!-- <task:scheduled-tasks scheduler="myScheduler"> -->
 
-		<task:scheduled ref="messageSendExecutor" method="sendReservationMessageArray"
-			fixed-delay="#{pms['executor.delay.time']}" />
+	<!-- <task:scheduled ref="messageSendExecutor" method="sendReservationMessageArray" -->
+	<!-- fixed-delay="#{pms['executor.delay.time']}" /> -->
 
-	</task:scheduled-tasks>
+	<!-- </task:scheduled-tasks> -->
 
-	<task:scheduler id="myScheduler" pool-size="10" />
+	<!-- <task:scheduler id="myScheduler" pool-size="10" /> -->
 
 </beans:beans>
