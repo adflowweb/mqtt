@@ -174,7 +174,7 @@ public class MessageServiceImpl implements MessageService {
 		String msgId = null;
 
 		String issueId = interceptMapper.selectCashedUserId(appKey);
-		logger.debug("메시지 생서 아이디");
+		logger.debug("메시지 생성 아이디");
 		logger.debug(issueId);
 
 		Message msg = new Message();
@@ -214,6 +214,7 @@ public class MessageServiceImpl implements MessageService {
 				.execute(new DirectMsgHandlerBySessionCallback(jmsTemplate, msg));
 		if (result.equals("fail")) {
 			logger.debug("메시지 전송실패!!!");
+			msg.setStatus(StaticConfig.MESSAGE_STATUS_ABNORMAL);
 			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_539000,
 					"메시지 전송에 실패 하였습니다");
 		}

@@ -21,6 +21,9 @@ public class StaticConfig {
 	/** The Constant MESSAGE_STATUS_SEND. */
 	public static final int MESSAGE_STATUS_SEND = 1;
 
+	/** The Constant MESSAGE_STATUS_ABNORMAL. */
+	public static final int MESSAGE_STATUS_ABNORMAL = -99;
+
 	/** The Constant USER_STATUS_NORMAL. */
 	public static final int USER_STATUS_NORMAL = 0;
 

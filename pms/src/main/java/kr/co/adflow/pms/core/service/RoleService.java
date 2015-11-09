@@ -8,7 +8,7 @@ public interface RoleService {
 
 	public RoleListRes getRole() throws Exception;
 
-	public RoleRes createRole(RoleReq roleReq, String requsetUserId)
+	public RoleRes createRole(RoleReq roleReq, String requestUserId)
 			throws Exception;
 
 	public int updateRole(int groupCode, int apiCode, int updateApiCode)

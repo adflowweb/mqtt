@@ -22,7 +22,7 @@ public class RoleServiceImpl implements RoleService {
 	RoleMapper roleMapper;
 
 	@Override
-	public RoleRes createRole(RoleReq roleReq, String requsetUserId)
+	public RoleRes createRole(RoleReq roleReq, String requestUserId)
 			throws Exception {
 		// TODO Auto-generated method stub
 
@@ -33,7 +33,7 @@ public class RoleServiceImpl implements RoleService {
 		role.setApiName(roleReq.getApiName());
 		role.setApiUrl(roleReq.getApiUrl());
 		role.setGroupCode(roleReq.getGroupCode());
-		role.setIssueId(requsetUserId);
+		role.setIssueId(requestUserId);
 
 		int insertResult = roleMapper.insertRole(role);
 

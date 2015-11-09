@@ -183,7 +183,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void deleteUser(String userId, String requsetUserId)
+	public void deleteUser(String userId, String requestUserId)
 			throws Exception {
 		String selectUserId = userMapper.selectUserid(userId);
 		logger.debug(selectUserId);
@@ -201,7 +201,7 @@ public class UserServiceImpl implements UserService {
 
 		try {
 			userParam.get(0).setAction("deleteUser");
-			userParam.get(0).setIssueId(requsetUserId);
+			userParam.get(0).setIssueId(requestUserId);
 			userParam.get(0).setStatus(StaticConfig.USER_STATUS_NORMAL);
 			userMapper.logUserHistory(userParam.get(0));
 

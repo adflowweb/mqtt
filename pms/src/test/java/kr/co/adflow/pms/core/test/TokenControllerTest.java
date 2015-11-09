@@ -33,33 +33,33 @@ public class TokenControllerTest extends AbstractTestNGSpringContextTests {
 	@Autowired
 	TokenController controller;
 
-	// @Test(priority = 1)
-	// void tokenCreate() throws Exception {
-	//
-	// TokenReq tokenReq = new TokenReq();
-	// tokenReq.setDeviceId("테스트 디바이스 아이디1");
-	// tokenReq.setDeviceInfo("테스트 디바이스 정보");
-	// tokenReq.setUserId("테스트 유저 아이디1");
-	// tokenReq.setUserName("테스트 유저 네임");
-	//
-	// try {
-	// Response response = controller.createToken(
-	// "c84571f51d56e3e17735eea", tokenReq);
-	//
-	// String result = response.getStatus();
-	// logger.debug(result);
-	// System.out.println(result);
-	// Assert.assertEquals(result, "ok");
-	//
-	// } catch (TokenRunTimeException e) {
-	// // TODO Auto-generated catch block
-	// HashMap<String, String> map = e.getErrorMsg();
-	// System.out.println(map.get("errorCode"));
-	// System.out.println(map.get("errorMsg"));
-	// e.printStackTrace();
-	// }
-	//
-	// }
+	@Test(priority = 1)
+	void tokenCreate() throws Exception {
+
+		TokenReq tokenReq = new TokenReq();
+		tokenReq.setDeviceId("테스트케이스디바이스아이디");
+		tokenReq.setDeviceInfo("테스트케이스디바이스아이디");
+		tokenReq.setUserId("테스트케이스유저아이디");
+		tokenReq.setUserName("테스트케이스유저네임");
+
+		try {
+			Response response = controller.createToken(
+					"4072af51ae8439eee6aad57", tokenReq);
+
+			String result = response.getStatus();
+			logger.debug(result);
+			System.out.println(result);
+			Assert.assertEquals(result, "ok");
+
+		} catch (TokenRunTimeException e) {
+			// TODO Auto-generated catch block
+			HashMap<String, String> map = e.getErrorMsg();
+			System.out.println(map.get("errorCode"));
+			System.out.println(map.get("errorMsg"));
+			e.printStackTrace();
+		}
+
+	}
 
 	// @Test(priority = 2)
 	// void tokenValidate() throws Exception {
@@ -88,106 +88,106 @@ public class TokenControllerTest extends AbstractTestNGSpringContextTests {
 	//
 	// }
 	//
-	@Test(priority = 3)
-	void getToken() throws Exception {
-		TokenReq tokenReq = new TokenReq();
-		tokenReq.setDeviceId("테스트 디바이스 아이디");
-		tokenReq.setDeviceInfo("테스트 디바이스 정보");
-		tokenReq.setUserId("테스트 유저 아이디");
-		tokenReq.setUserName("테스트 유저 네임");
+	// @Test(priority = 3)
+	// void getToken() throws Exception {
+	// TokenReq tokenReq = new TokenReq();
+	// tokenReq.setDeviceId("테스트 디바이스 아이디");
+	// tokenReq.setDeviceInfo("테스트 디바이스 정보");
+	// tokenReq.setUserId("테스트 유저 아이디");
+	// tokenReq.setUserName("테스트 유저 네임");
+	//
+	// try {
+	// Response<TokenInfoRes> response = controller
+	// .getToken("4072af51ae8439eee6aad57");
+	//
+	// String result = response.getStatus();
+	// logger.debug(result);
+	// System.out.println(result);
+	// System.out.println(response.toString());
+	// Assert.assertEquals(result, "ok");
+	//
+	// } catch (TokenRunTimeException e) {
+	// // TODO Auto-generated catch block
+	// HashMap<String, String> map = e.getErrorMsg();
+	// System.out.println(map.get("errorCode"));
+	// System.out.println(map.get("errorMsg"));
+	// e.printStackTrace();
+	// }
+	//
+	// }
 
-		try {
-			Response<TokenInfoRes> response = controller
-					.getToken("c84571f51d56e3e17735eea");
-
-			String result = response.getStatus();
-			logger.debug(result);
-			System.out.println(result);
-			System.out.println(response.toString());
-			Assert.assertEquals(result, "ok");
-
-		} catch (TokenRunTimeException e) {
-			// TODO Auto-generated catch block
-			HashMap<String, String> map = e.getErrorMsg();
-			System.out.println(map.get("errorCode"));
-			System.out.println(map.get("errorMsg"));
-			e.printStackTrace();
-		}
-
-	}
-
-	@Test(priority = 4)
-	void getConnections() throws Exception {
-		TokenReq tokenReq = new TokenReq();
-		tokenReq.setDeviceId("테스트 디바이스 아이디");
-		tokenReq.setDeviceInfo("테스트 디바이스 정보");
-		tokenReq.setUserId("테스트 유저 아이디");
-		tokenReq.setUserName("테스트 유저 네임");
-		String token = "0eb3c476f80cfe5dee8cd56";
-		logger.debug("token:" + token);
-
-		String statusResult = null;
-		ConnectionManager connMan = MQEnvironment.getDefaultConnectionManager();
-		MQQueueManager qmgr = null;
-		PCFMessageAgent agent = null;
-		try {
-			qmgr = new MQQueueManager("MQTT", connMan);
-			agent = new PCFMessageAgent(qmgr);
-			PCFMessage request = new PCFMessage(
-					MQConstants.MQCMD_INQUIRE_CHANNEL_STATUS);
-			request.addParameter(MQConstants.MQCACH_CHANNEL_NAME, "*");
-			request.addParameter(MQConstants.MQIACH_CHANNEL_TYPE,
-					MQConstants.MQCHT_MQTT);
-			request.addParameter(MQConstants.MQCACH_CLIENT_ID, token);
-
-			PCFMessage[] response = agent.send(request);
-
-			int chStatus = (int) response[0]
-					.getParameterValue(MQConstants.MQIACH_CHANNEL_STATUS);
-			if (chStatus == 3) {
-
-				statusResult = "MQTT Connected";
-			} else {
-
-				statusResult = "MQTT Disconnected";
-			}
-
-		} catch (PCFException pcfe) {
-			if (pcfe.getMessage().indexOf("3065") > 0) {
-				logger.debug("해당 토큰관련 클라이언트가 Pending 메시지가 없을 경우 채널상태는 없음. -errorcode:3065");
-				statusResult = "MQTT Disconnected";
-			} else {
-				logger.debug("PCF error: " + pcfe);
-				statusResult = pcfe.toString();
-			}
-		} catch (MQException mqe) {
-			logger.error("MQException is", mqe);
-			throw mqe;
-		} catch (IOException ioe) {
-			logger.error("IOException is", ioe);
-			throw ioe;
-		} finally {
-			if (agent != null) {
-				try {
-					agent.disconnect();
-				} catch (MQException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					throw e;
-				}
-			}
-			if (qmgr != null) {
-				try {
-					qmgr.disconnect();
-				} catch (MQException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					throw e;
-				}
-			}
-		}
-
-	}
+//	@Test(priority = 4)
+//	void getConnections() throws Exception {
+//		TokenReq tokenReq = new TokenReq();
+//		tokenReq.setDeviceId("테스트 디바이스 아이디");
+//		tokenReq.setDeviceInfo("테스트 디바이스 정보");
+//		tokenReq.setUserId("테스트 유저 아이디");
+//		tokenReq.setUserName("테스트 유저 네임");
+//		String token = "0eb3c476f80cfe5dee8cd56";
+//		logger.debug("token:" + token);
+//
+//		String statusResult = null;
+//		ConnectionManager connMan = MQEnvironment.getDefaultConnectionManager();
+//		MQQueueManager qmgr = null;
+//		PCFMessageAgent agent = null;
+//		try {
+//			qmgr = new MQQueueManager("MQTT", connMan);
+//			agent = new PCFMessageAgent(qmgr);
+//			PCFMessage request = new PCFMessage(
+//					MQConstants.MQCMD_INQUIRE_CHANNEL_STATUS);
+//			request.addParameter(MQConstants.MQCACH_CHANNEL_NAME, "*");
+//			request.addParameter(MQConstants.MQIACH_CHANNEL_TYPE,
+//					MQConstants.MQCHT_MQTT);
+//			request.addParameter(MQConstants.MQCACH_CLIENT_ID, token);
+//
+//			PCFMessage[] response = agent.send(request);
+//
+//			int chStatus = (int) response[0]
+//					.getParameterValue(MQConstants.MQIACH_CHANNEL_STATUS);
+//			if (chStatus == 3) {
+//
+//				statusResult = "MQTT Connected";
+//			} else {
+//
+//				statusResult = "MQTT Disconnected";
+//			}
+//
+//		} catch (PCFException pcfe) {
+//			if (pcfe.getMessage().indexOf("3065") > 0) {
+//				logger.debug("해당 토큰관련 클라이언트가 Pending 메시지가 없을 경우 채널상태는 없음. -errorcode:3065");
+//				statusResult = "MQTT Disconnected";
+//			} else {
+//				logger.debug("PCF error: " + pcfe);
+//				statusResult = pcfe.toString();
+//			}
+//		} catch (MQException mqe) {
+//			logger.error("MQException is", mqe);
+//			throw mqe;
+//		} catch (IOException ioe) {
+//			logger.error("IOException is", ioe);
+//			throw ioe;
+//		} finally {
+//			if (agent != null) {
+//				try {
+//					agent.disconnect();
+//				} catch (MQException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//					throw e;
+//				}
+//			}
+//			if (qmgr != null) {
+//				try {
+//					qmgr.disconnect();
+//				} catch (MQException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//					throw e;
+//				}
+//			}
+//		}
+//
+//	}
 	//
 	// @Test(priority = 5)
 	// void getSubscriptions() throws Exception {

@@ -1,48 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testng-results skipped="0" failed="2" total="5" passed="3">
+<testng-results skipped="0" failed="1" total="1" passed="0">
   <reporter-output>
   </reporter-output>
-  <suite name="Default suite" duration-ms="9051" started-at="2015-11-09T04:48:35Z" finished-at="2015-11-09T04:48:44Z">
+  <suite name="Default suite" duration-ms="5654" started-at="2015-11-09T08:04:32Z" finished-at="2015-11-09T08:04:38Z">
     <groups>
     </groups>
-    <test name="Default test" duration-ms="9051" started-at="2015-11-09T04:48:35Z" finished-at="2015-11-09T04:48:44Z">
-      <class name="kr.co.adflow.pms.core.test.MessageControllerTest">
-        <test-method status="PASS" signature="springTestContextBeforeTestClass()[pri:0, instance:kr.co.adflow.pms.core.test.MessageControllerTest@51a212ed]" name="springTestContextBeforeTestClass" is-config="true" duration-ms="11" started-at="2015-11-09T13:48:35Z" finished-at="2015-11-09T13:48:35Z">
+    <test name="Default test" duration-ms="5654" started-at="2015-11-09T08:04:32Z" finished-at="2015-11-09T08:04:38Z">
+      <class name="kr.co.adflow.pms.core.test.TokenControllerTest">
+        <test-method status="PASS" signature="springTestContextBeforeTestClass()[pri:0, instance:kr.co.adflow.pms.core.test.TokenControllerTest@7377e4b0]" name="springTestContextBeforeTestClass" is-config="true" duration-ms="11" started-at="2015-11-09T17:04:32Z" finished-at="2015-11-09T17:04:32Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- springTestContextBeforeTestClass -->
-        <test-method status="PASS" signature="springTestContextPrepareTestInstance()[pri:0, instance:kr.co.adflow.pms.core.test.MessageControllerTest@51a212ed]" name="springTestContextPrepareTestInstance" is-config="true" duration-ms="4268" started-at="2015-11-09T13:48:35Z" depends-on-methods="org.springframework.test.context.testng.AbstractTestNGSpringContextTests.springTestContextBeforeTestClass" finished-at="2015-11-09T13:48:40Z">
+        <test-method status="PASS" signature="springTestContextPrepareTestInstance()[pri:0, instance:kr.co.adflow.pms.core.test.TokenControllerTest@7377e4b0]" name="springTestContextPrepareTestInstance" is-config="true" duration-ms="4156" started-at="2015-11-09T17:04:32Z" depends-on-methods="org.springframework.test.context.testng.AbstractTestNGSpringContextTests.springTestContextBeforeTestClass" finished-at="2015-11-09T17:04:37Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- springTestContextPrepareTestInstance -->
-        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.test.MessageControllerTest@51a212ed]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="1" started-at="2015-11-09T13:48:40Z" finished-at="2015-11-09T13:48:40Z">
-          <params>
-            <param index="0">
-              <value>
-                <![CDATA[void kr.co.adflow.pms.core.test.MessageControllerTest.messageSendTest() throws java.lang.Exception]]>
-              </value>
-            </param>
-          </params>
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- springTestContextBeforeTestMethod -->
-        <test-method status="FAIL" signature="messageSendTest()[pri:0, instance:kr.co.adflow.pms.core.test.MessageControllerTest@51a212ed]" name="messageSendTest" duration-ms="798" started-at="2015-11-09T13:48:40Z" finished-at="2015-11-09T13:48:40Z">
-          <exception class="org.springframework.jms.IllegalStateException">
+        <test-method status="FAIL" signature="tokenCreate()[pri:0, instance:kr.co.adflow.pms.core.test.TokenControllerTest@7377e4b0]" name="tokenCreate" duration-ms="1448" started-at="2015-11-09T17:04:37Z" finished-at="2015-11-09T17:04:38Z">
+          <exception class="java.lang.Exception">
             <message>
-              <![CDATA[JMSWMQ0018: 연결 모드 'Client' 및 호스트 이름 '112.223.76.75(11414)(11414)'을(를) 사용하여 큐 관리자 'MQTT'에 연결하는 데 실패했습니다.; nested exception is com.ibm.msg.client.jms.DetailedIllegalStateException: JMSWMQ0018: 연결 모드 'Client' 및 호스트 이름 '112.223.76.75(11414)(11414)'을(를) 사용하여 큐 관리자 'MQTT'에 연결하는 데 실패했습니다.
-큐 관리자가 시작되어 클라이언트 모드에서 실행 중인지 점검하고, 리스너가 실행 중인지 점검하십시오. 자세한 정보는 링크된 예외를 참조하십시오.; nested exception is com.ibm.mq.MQException: JMSCMQ0001: WebSphere MQ 호출에 실패했습니다. compcode '2'('MQCC_FAILED'), 이유 '2538'('MQRC_HOST_NOT_AVAILABLE')]]>
+              <![CDATA[API접근 권한이 없습니다]]>
             </message>
             <full-stacktrace>
-              <![CDATA[org.springframework.jms.IllegalStateException: JMSWMQ0018: 연결 모드 'Client' 및 호스트 이름 '112.223.76.75(11414)(11414)'을(를) 사용하여 큐 관리자 'MQTT'에 연결하는 데 실패했습니다.; nested exception is com.ibm.msg.client.jms.DetailedIllegalStateException: JMSWMQ0018: 연결 모드 'Client' 및 호스트 이름 '112.223.76.75(11414)(11414)'을(를) 사용하여 큐 관리자 'MQTT'에 연결하는 데 실패했습니다.
-큐 관리자가 시작되어 클라이언트 모드에서 실행 중인지 점검하고, 리스너가 실행 중인지 점검하십시오. 자세한 정보는 링크된 예외를 참조하십시오.; nested exception is com.ibm.mq.MQException: JMSCMQ0001: WebSphere MQ 호출에 실패했습니다. compcode '2'('MQCC_FAILED'), 이유 '2538'('MQRC_HOST_NOT_AVAILABLE')
-	at org.springframework.jms.support.JmsUtils.convertJmsAccessException(JmsUtils.java:279)
-	at org.springframework.jms.support.JmsAccessor.convertJmsAccessException(JmsAccessor.java:168)
-	at org.springframework.jms.core.JmsTemplate.execute(JmsTemplate.java:469)
-	at org.springframework.jms.core.JmsTemplate.execute(JmsTemplate.java:431)
-	at kr.co.adflow.pms.core.service.MessageServiceImpl.sendJMS(MessageServiceImpl.java:214)
-	at kr.co.adflow.pms.core.service.MessageServiceImpl.sendMessage(MessageServiceImpl.java:199)
-	at kr.co.adflow.pms.core.controller.MessageController.sendMessage(MessageController.java:136)
-	at kr.co.adflow.pms.core.test.MessageControllerTest.messageSendTest(MessageControllerTest.java:39)
+              <![CDATA[java.lang.Exception: API접근 권한이 없습니다
+	at kr.co.adflow.pms.core.util.CheckUtil.checkAuth(CheckUtil.java:106)
+	at kr.co.adflow.pms.core.controller.TokenController.createToken(TokenController.java:75)
+	at kr.co.adflow.pms.core.test.TokenControllerTest.tokenCreate(TokenControllerTest.java:46)
 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
@@ -74,258 +56,39 @@
 	at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:111)
 	at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:204)
 	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:175)
-Caused by: com.ibm.msg.client.jms.DetailedIllegalStateException: JMSWMQ0018: 연결 모드 'Client' 및 호스트 이름 '112.223.76.75(11414)(11414)'을(를) 사용하여 큐 관리자 'MQTT'에 연결하는 데 실패했습니다.
-큐 관리자가 시작되어 클라이언트 모드에서 실행 중인지 점검하고, 리스너가 실행 중인지 점검하십시오. 자세한 정보는 링크된 예외를 참조하십시오.
-	at com.ibm.msg.client.wmq.common.internal.Reason.reasonToException(Reason.java:479)
-	at com.ibm.msg.client.wmq.common.internal.Reason.createException(Reason.java:221)
-	at com.ibm.msg.client.wmq.internal.WMQConnection.<init>(WMQConnection.java:425)
-	at com.ibm.msg.client.wmq.factories.WMQConnectionFactory.createV7ProviderConnection(WMQConnectionFactory.java:6902)
-	at com.ibm.msg.client.wmq.factories.WMQConnectionFactory.createProviderConnection(WMQConnectionFactory.java:6277)
-	at com.ibm.msg.client.jms.admin.JmsConnectionFactoryImpl.createConnection(JmsConnectionFactoryImpl.java:285)
-	at com.ibm.mq.jms.MQConnectionFactory.createCommonConnection(MQConnectionFactory.java:6233)
-	at com.ibm.mq.jms.MQTopicConnectionFactory.createTopicConnection(MQTopicConnectionFactory.java:149)
-	at com.ibm.mq.jms.MQTopicConnectionFactory.createConnection(MQTopicConnectionFactory.java:226)
-	at org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter.doCreateConnection(UserCredentialsConnectionFactoryAdapter.java:175)
-	at org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter.createConnection(UserCredentialsConnectionFactoryAdapter.java:150)
-	at org.springframework.jms.connection.SingleConnectionFactory.doCreateConnection(SingleConnectionFactory.java:342)
-	at org.springframework.jms.connection.SingleConnectionFactory.initConnection(SingleConnectionFactory.java:288)
-	at org.springframework.jms.connection.SingleConnectionFactory.createConnection(SingleConnectionFactory.java:225)
-	at org.springframework.jms.support.JmsAccessor.createConnection(JmsAccessor.java:184)
-	at org.springframework.jms.core.JmsTemplate.execute(JmsTemplate.java:456)
-	... 36 more
-Caused by: com.ibm.mq.MQException: JMSCMQ0001: WebSphere MQ 호출에 실패했습니다. compcode '2'('MQCC_FAILED'), 이유 '2538'('MQRC_HOST_NOT_AVAILABLE')
-	at com.ibm.msg.client.wmq.common.internal.Reason.createException(Reason.java:209)
-	... 50 more
-Caused by: com.ibm.mq.jmqi.JmqiException: CC=2;RC=2538;AMQ9204: '112.223.76.75(11414)(11414)' 호스트로의 연결이 거부되었습니다. [1=com.ibm.mq.jmqi.JmqiException[CC=2;RC=2538;AMQ9205: 제공된 호스트명이 유효하지 않습니다. [3=112.223.76.75(11414),4=TCP]],3=112.223.76.75(11414)(11414),5=RemoteTCPConnection.parseConnectionName]
-	at com.ibm.mq.jmqi.remote.api.RemoteFAP.jmqiConnect(RemoteFAP.java:2053)
-	at com.ibm.mq.jmqi.remote.api.RemoteFAP.jmqiConnect(RemoteFAP.java:1226)
-	at com.ibm.mq.ese.jmqi.InterceptedJmqiImpl.jmqiConnect(InterceptedJmqiImpl.java:311)
-	at com.ibm.mq.ese.jmqi.ESEJMQI.jmqiConnect(ESEJMQI.java:337)
-	at com.ibm.msg.client.wmq.internal.WMQConnection.<init>(WMQConnection.java:345)
-	... 49 more
-Caused by: com.ibm.mq.jmqi.JmqiException: CC=2;RC=2538;AMQ9205: 제공된 호스트명이 유효하지 않습니다. [3=112.223.76.75(11414),4=TCP]
-	at com.ibm.mq.jmqi.remote.impl.RemoteTCPConnection.parseConnectionName(RemoteTCPConnection.java:342)
-	at com.ibm.mq.jmqi.remote.impl.RemoteTCPConnection.protocolConnect(RemoteTCPConnection.java:1078)
-	at com.ibm.mq.jmqi.remote.impl.RemoteConnection.connect(RemoteConnection.java:724)
-	at com.ibm.mq.jmqi.remote.impl.RemoteConnectionSpecification.getSessionFromNewConnection(RemoteConnectionSpecification.java:400)
-	at com.ibm.mq.jmqi.remote.impl.RemoteConnectionSpecification.getSession(RemoteConnectionSpecification.java:299)
-	at com.ibm.mq.jmqi.remote.impl.RemoteConnectionPool.getSession(RemoteConnectionPool.java:164)
-	at com.ibm.mq.jmqi.remote.api.RemoteFAP.jmqiConnect(RemoteFAP.java:1598)
-	... 53 more
 ]]>
             </full-stacktrace>
-          </exception> <!-- org.springframework.jms.IllegalStateException -->
+          </exception> <!-- java.lang.Exception -->
           <reporter-output>
           </reporter-output>
-        </test-method> <!-- messageSendTest -->
-        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.test.MessageControllerTest@51a212ed]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="1" started-at="2015-11-09T13:48:40Z" finished-at="2015-11-09T13:48:40Z">
+        </test-method> <!-- tokenCreate -->
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.test.TokenControllerTest@7377e4b0]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2015-11-09T17:04:37Z" finished-at="2015-11-09T17:04:37Z">
           <params>
             <param index="0">
               <value>
-                <![CDATA[void kr.co.adflow.pms.core.test.MessageControllerTest.messageSendTest() throws java.lang.Exception]]>
-              </value>
-            </param>
-          </params>
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- springTestContextAfterTestMethod -->
-        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.test.MessageControllerTest@51a212ed]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="1" started-at="2015-11-09T13:48:41Z" finished-at="2015-11-09T13:48:41Z">
-          <params>
-            <param index="0">
-              <value>
-                <![CDATA[void kr.co.adflow.pms.core.test.MessageControllerTest.getMessage() throws java.lang.Exception]]>
+                <![CDATA[void kr.co.adflow.pms.core.test.TokenControllerTest.tokenCreate() throws java.lang.Exception]]>
               </value>
             </param>
           </params>
           <reporter-output>
           </reporter-output>
         </test-method> <!-- springTestContextBeforeTestMethod -->
-        <test-method status="PASS" signature="getMessage()[pri:0, instance:kr.co.adflow.pms.core.test.MessageControllerTest@51a212ed]" name="getMessage" duration-ms="1481" started-at="2015-11-09T13:48:41Z" finished-at="2015-11-09T13:48:42Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- getMessage -->
-        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.test.MessageControllerTest@51a212ed]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="1" started-at="2015-11-09T13:48:42Z" finished-at="2015-11-09T13:48:42Z">
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.test.TokenControllerTest@7377e4b0]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="1" started-at="2015-11-09T17:04:38Z" finished-at="2015-11-09T17:04:38Z">
           <params>
             <param index="0">
               <value>
-                <![CDATA[void kr.co.adflow.pms.core.test.MessageControllerTest.getMessage() throws java.lang.Exception]]>
+                <![CDATA[void kr.co.adflow.pms.core.test.TokenControllerTest.tokenCreate() throws java.lang.Exception]]>
               </value>
             </param>
           </params>
           <reporter-output>
           </reporter-output>
         </test-method> <!-- springTestContextAfterTestMethod -->
-        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.test.MessageControllerTest@51a212ed]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="1" started-at="2015-11-09T13:48:42Z" finished-at="2015-11-09T13:48:42Z">
-          <params>
-            <param index="0">
-              <value>
-                <![CDATA[void kr.co.adflow.pms.core.test.MessageControllerTest.getStatistics() throws java.lang.Exception]]>
-              </value>
-            </param>
-          </params>
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- springTestContextBeforeTestMethod -->
-        <test-method status="PASS" signature="getStatistics()[pri:0, instance:kr.co.adflow.pms.core.test.MessageControllerTest@51a212ed]" name="getStatistics" duration-ms="1088" started-at="2015-11-09T13:48:42Z" finished-at="2015-11-09T13:48:43Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- getStatistics -->
-        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.test.MessageControllerTest@51a212ed]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="1" started-at="2015-11-09T13:48:43Z" finished-at="2015-11-09T13:48:43Z">
-          <params>
-            <param index="0">
-              <value>
-                <![CDATA[void kr.co.adflow.pms.core.test.MessageControllerTest.getStatistics() throws java.lang.Exception]]>
-              </value>
-            </param>
-          </params>
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- springTestContextAfterTestMethod -->
-        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.test.MessageControllerTest@51a212ed]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="1" started-at="2015-11-09T13:48:43Z" finished-at="2015-11-09T13:48:43Z">
-          <params>
-            <param index="0">
-              <value>
-                <![CDATA[void kr.co.adflow.pms.core.test.MessageControllerTest.getAckMessage() throws java.lang.Exception]]>
-              </value>
-            </param>
-          </params>
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- springTestContextBeforeTestMethod -->
-        <test-method status="PASS" signature="getAckMessage()[pri:0, instance:kr.co.adflow.pms.core.test.MessageControllerTest@51a212ed]" name="getAckMessage" duration-ms="852" started-at="2015-11-09T13:48:43Z" finished-at="2015-11-09T13:48:44Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- getAckMessage -->
-        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.test.MessageControllerTest@51a212ed]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="0" started-at="2015-11-09T13:48:44Z" finished-at="2015-11-09T13:48:44Z">
-          <params>
-            <param index="0">
-              <value>
-                <![CDATA[void kr.co.adflow.pms.core.test.MessageControllerTest.getAckMessage() throws java.lang.Exception]]>
-              </value>
-            </param>
-          </params>
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- springTestContextAfterTestMethod -->
-        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.test.MessageControllerTest@51a212ed]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2015-11-09T13:48:44Z" finished-at="2015-11-09T13:48:44Z">
-          <params>
-            <param index="0">
-              <value>
-                <![CDATA[void kr.co.adflow.pms.core.test.MessageControllerTest.messageSystemTest() throws java.lang.Exception]]>
-              </value>
-            </param>
-          </params>
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- springTestContextBeforeTestMethod -->
-        <test-method status="FAIL" signature="messageSystemTest()[pri:0, instance:kr.co.adflow.pms.core.test.MessageControllerTest@51a212ed]" name="messageSystemTest" duration-ms="502" started-at="2015-11-09T13:48:44Z" finished-at="2015-11-09T13:48:44Z">
-          <exception class="org.springframework.jms.IllegalStateException">
-            <message>
-              <![CDATA[JMSWMQ0018: 연결 모드 'Client' 및 호스트 이름 '112.223.76.75(11414)(11414)'을(를) 사용하여 큐 관리자 'MQTT'에 연결하는 데 실패했습니다.; nested exception is com.ibm.msg.client.jms.DetailedIllegalStateException: JMSWMQ0018: 연결 모드 'Client' 및 호스트 이름 '112.223.76.75(11414)(11414)'을(를) 사용하여 큐 관리자 'MQTT'에 연결하는 데 실패했습니다.
-큐 관리자가 시작되어 클라이언트 모드에서 실행 중인지 점검하고, 리스너가 실행 중인지 점검하십시오. 자세한 정보는 링크된 예외를 참조하십시오.; nested exception is com.ibm.mq.MQException: JMSCMQ0001: WebSphere MQ 호출에 실패했습니다. compcode '2'('MQCC_FAILED'), 이유 '2538'('MQRC_HOST_NOT_AVAILABLE')]]>
-            </message>
-            <full-stacktrace>
-              <![CDATA[org.springframework.jms.IllegalStateException: JMSWMQ0018: 연결 모드 'Client' 및 호스트 이름 '112.223.76.75(11414)(11414)'을(를) 사용하여 큐 관리자 'MQTT'에 연결하는 데 실패했습니다.; nested exception is com.ibm.msg.client.jms.DetailedIllegalStateException: JMSWMQ0018: 연결 모드 'Client' 및 호스트 이름 '112.223.76.75(11414)(11414)'을(를) 사용하여 큐 관리자 'MQTT'에 연결하는 데 실패했습니다.
-큐 관리자가 시작되어 클라이언트 모드에서 실행 중인지 점검하고, 리스너가 실행 중인지 점검하십시오. 자세한 정보는 링크된 예외를 참조하십시오.; nested exception is com.ibm.mq.MQException: JMSCMQ0001: WebSphere MQ 호출에 실패했습니다. compcode '2'('MQCC_FAILED'), 이유 '2538'('MQRC_HOST_NOT_AVAILABLE')
-	at org.springframework.jms.support.JmsUtils.convertJmsAccessException(JmsUtils.java:279)
-	at org.springframework.jms.support.JmsAccessor.convertJmsAccessException(JmsAccessor.java:168)
-	at org.springframework.jms.core.JmsTemplate.execute(JmsTemplate.java:469)
-	at org.springframework.jms.core.JmsTemplate.execute(JmsTemplate.java:431)
-	at kr.co.adflow.pms.core.service.MessageServiceImpl.sendJMS(MessageServiceImpl.java:214)
-	at kr.co.adflow.pms.core.service.MessageServiceImpl.sendMessage(MessageServiceImpl.java:199)
-	at kr.co.adflow.pms.core.controller.MessageController.sendSystemMessage(MessageController.java:255)
-	at kr.co.adflow.pms.core.test.MessageControllerTest.messageSystemTest(MessageControllerTest.java:105)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.lang.reflect.Method.invoke(Method.java:606)
-	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:84)
-	at org.testng.internal.MethodInvocationHelper$1.runTestMethod(MethodInvocationHelper.java:200)
-	at org.springframework.test.context.testng.AbstractTestNGSpringContextTests.run(AbstractTestNGSpringContextTests.java:158)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.lang.reflect.Method.invoke(Method.java:606)
-	at org.testng.internal.MethodInvocationHelper.invokeHookable(MethodInvocationHelper.java:212)
-	at org.testng.internal.Invoker.invokeMethod(Invoker.java:707)
-	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
-	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
-	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
-	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
-	at org.testng.TestRunner.privateRun(TestRunner.java:767)
-	at org.testng.TestRunner.run(TestRunner.java:617)
-	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
-	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
-	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
-	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
-	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
-	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
-	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1224)
-	at org.testng.TestNG.runSuitesLocally(TestNG.java:1149)
-	at org.testng.TestNG.run(TestNG.java:1057)
-	at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:111)
-	at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:204)
-	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:175)
-Caused by: com.ibm.msg.client.jms.DetailedIllegalStateException: JMSWMQ0018: 연결 모드 'Client' 및 호스트 이름 '112.223.76.75(11414)(11414)'을(를) 사용하여 큐 관리자 'MQTT'에 연결하는 데 실패했습니다.
-큐 관리자가 시작되어 클라이언트 모드에서 실행 중인지 점검하고, 리스너가 실행 중인지 점검하십시오. 자세한 정보는 링크된 예외를 참조하십시오.
-	at com.ibm.msg.client.wmq.common.internal.Reason.reasonToException(Reason.java:479)
-	at com.ibm.msg.client.wmq.common.internal.Reason.createException(Reason.java:221)
-	at com.ibm.msg.client.wmq.internal.WMQConnection.<init>(WMQConnection.java:425)
-	at com.ibm.msg.client.wmq.factories.WMQConnectionFactory.createV7ProviderConnection(WMQConnectionFactory.java:6902)
-	at com.ibm.msg.client.wmq.factories.WMQConnectionFactory.createProviderConnection(WMQConnectionFactory.java:6277)
-	at com.ibm.msg.client.jms.admin.JmsConnectionFactoryImpl.createConnection(JmsConnectionFactoryImpl.java:285)
-	at com.ibm.mq.jms.MQConnectionFactory.createCommonConnection(MQConnectionFactory.java:6233)
-	at com.ibm.mq.jms.MQTopicConnectionFactory.createTopicConnection(MQTopicConnectionFactory.java:149)
-	at com.ibm.mq.jms.MQTopicConnectionFactory.createConnection(MQTopicConnectionFactory.java:226)
-	at org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter.doCreateConnection(UserCredentialsConnectionFactoryAdapter.java:175)
-	at org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter.createConnection(UserCredentialsConnectionFactoryAdapter.java:150)
-	at org.springframework.jms.connection.SingleConnectionFactory.doCreateConnection(SingleConnectionFactory.java:342)
-	at org.springframework.jms.connection.SingleConnectionFactory.initConnection(SingleConnectionFactory.java:288)
-	at org.springframework.jms.connection.SingleConnectionFactory.createConnection(SingleConnectionFactory.java:225)
-	at org.springframework.jms.support.JmsAccessor.createConnection(JmsAccessor.java:184)
-	at org.springframework.jms.core.JmsTemplate.execute(JmsTemplate.java:456)
-	... 36 more
-Caused by: com.ibm.mq.MQException: JMSCMQ0001: WebSphere MQ 호출에 실패했습니다. compcode '2'('MQCC_FAILED'), 이유 '2538'('MQRC_HOST_NOT_AVAILABLE')
-	at com.ibm.msg.client.wmq.common.internal.Reason.createException(Reason.java:209)
-	... 50 more
-Caused by: com.ibm.mq.jmqi.JmqiException: CC=2;RC=2538;AMQ9204: '112.223.76.75(11414)(11414)' 호스트로의 연결이 거부되었습니다. [1=com.ibm.mq.jmqi.JmqiException[CC=2;RC=2538;AMQ9205: 제공된 호스트명이 유효하지 않습니다. [3=112.223.76.75(11414),4=TCP]],3=112.223.76.75(11414)(11414),5=RemoteTCPConnection.parseConnectionName]
-	at com.ibm.mq.jmqi.remote.api.RemoteFAP.jmqiConnect(RemoteFAP.java:2053)
-	at com.ibm.mq.jmqi.remote.api.RemoteFAP.jmqiConnect(RemoteFAP.java:1226)
-	at com.ibm.mq.ese.jmqi.InterceptedJmqiImpl.jmqiConnect(InterceptedJmqiImpl.java:311)
-	at com.ibm.mq.ese.jmqi.ESEJMQI.jmqiConnect(ESEJMQI.java:337)
-	at com.ibm.msg.client.wmq.internal.WMQConnection.<init>(WMQConnection.java:345)
-	... 49 more
-Caused by: com.ibm.mq.jmqi.JmqiException: CC=2;RC=2538;AMQ9205: 제공된 호스트명이 유효하지 않습니다. [3=112.223.76.75(11414),4=TCP]
-	at com.ibm.mq.jmqi.remote.impl.RemoteTCPConnection.parseConnectionName(RemoteTCPConnection.java:342)
-	at com.ibm.mq.jmqi.remote.impl.RemoteTCPConnection.protocolConnect(RemoteTCPConnection.java:1078)
-	at com.ibm.mq.jmqi.remote.impl.RemoteConnection.connect(RemoteConnection.java:724)
-	at com.ibm.mq.jmqi.remote.impl.RemoteConnectionSpecification.getSessionFromNewConnection(RemoteConnectionSpecification.java:400)
-	at com.ibm.mq.jmqi.remote.impl.RemoteConnectionSpecification.getSession(RemoteConnectionSpecification.java:299)
-	at com.ibm.mq.jmqi.remote.impl.RemoteConnectionPool.getSession(RemoteConnectionPool.java:164)
-	at com.ibm.mq.jmqi.remote.api.RemoteFAP.jmqiConnect(RemoteFAP.java:1598)
-	... 53 more
-]]>
-            </full-stacktrace>
-          </exception> <!-- org.springframework.jms.IllegalStateException -->
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- messageSystemTest -->
-        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.test.MessageControllerTest@51a212ed]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="1" started-at="2015-11-09T13:48:44Z" finished-at="2015-11-09T13:48:44Z">
-          <params>
-            <param index="0">
-              <value>
-                <![CDATA[void kr.co.adflow.pms.core.test.MessageControllerTest.messageSystemTest() throws java.lang.Exception]]>
-              </value>
-            </param>
-          </params>
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- springTestContextAfterTestMethod -->
-        <test-method status="PASS" signature="springTestContextAfterTestClass()[pri:0, instance:kr.co.adflow.pms.core.test.MessageControllerTest@51a212ed]" name="springTestContextAfterTestClass" is-config="true" duration-ms="1" started-at="2015-11-09T13:48:44Z" finished-at="2015-11-09T13:48:44Z">
+        <test-method status="PASS" signature="springTestContextAfterTestClass()[pri:0, instance:kr.co.adflow.pms.core.test.TokenControllerTest@7377e4b0]" name="springTestContextAfterTestClass" is-config="true" duration-ms="0" started-at="2015-11-09T17:04:38Z" finished-at="2015-11-09T17:04:38Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- springTestContextAfterTestClass -->
-      </class> <!-- kr.co.adflow.pms.core.test.MessageControllerTest -->
+      </class> <!-- kr.co.adflow.pms.core.test.TokenControllerTest -->
     </test> <!-- Default test -->
   </suite> <!-- Default suite -->
 </testng-results>

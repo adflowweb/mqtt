@@ -53,10 +53,9 @@
 
 	<!-- jmsConnectionFactory -->
 	<bean id="tJmsFactory" class="com.ibm.mq.jms.MQTopicConnectionFactory">
-		<property name="hostName" value="#{pms['mq.jms.hostname']}" />
-		<!-- <property name="connectionNameList" value="#{pms['mq.jms.hostname']}" 
-			/> -->
-		<property name="port" value="#{pms['mq.jms.port']}" />
+
+		<property name="connectionNameList"
+			value="#{pms['mq.jms.hostname']},#{pms['mq.jms.hostname.s']}" />
 		<property name="queueManager" value="#{pms['mq.jms.queue.manager']}" />
 		<property name="transportType" value="1" />
 		<property name="channel" value="#{pms['mq.jms.channel']}" />
@@ -103,10 +102,9 @@
 	<!-- </jms:listener-container> -->
 
 	<bean id="qJmsFactory" class="com.ibm.mq.jms.MQQueueConnectionFactory">
-		<property name="hostName" value="#{pms['mq.jms.hostname']}" />
-		<!-- <property name="connectionNameList" value="#{pms['mq.jms.hostname']}" 
-			/> -->
-		<property name="port" value="#{pms['mq.jms.port']}" />
+
+		<property name="connectionNameList"
+			value="#{pms['mq.jms.hostname']},#{pms['mq.jms.hostname.s']}" />
 		<property name="queueManager" value="#{pms['mq.jms.queue.manager']}" />
 		<property name="transportType" value="1" />
 		<property name="channel" value="#{pms['mq.jms.channel']}" />

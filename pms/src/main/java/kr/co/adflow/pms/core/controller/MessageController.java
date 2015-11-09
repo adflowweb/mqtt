@@ -4,7 +4,6 @@
 package kr.co.adflow.pms.core.controller;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
@@ -12,20 +11,16 @@ import javax.validation.Valid;
 import kr.co.adflow.pms.core.config.PmsConfig;
 import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.exception.MessageRunTimeException;
-import kr.co.adflow.pms.core.exception.TokenRunTimeException;
 import kr.co.adflow.pms.core.request.MessageReq;
 import kr.co.adflow.pms.core.response.AckRes;
 import kr.co.adflow.pms.core.response.MessageSendRes;
 import kr.co.adflow.pms.core.response.MessagesListRes;
 import kr.co.adflow.pms.core.response.StatisticsRes;
 import kr.co.adflow.pms.core.service.MessageService;
+import kr.co.adflow.pms.core.util.CheckUtil;
 import kr.co.adflow.pms.domain.Message;
-import kr.co.adflow.pms.domain.Token;
-import kr.co.adflow.pms.domain.mapper.InterceptMapper;
-import kr.co.adflow.pms.domain.mapper.TokenMapper;
 import kr.co.adflow.pms.response.Response;
 
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,13 +50,10 @@ public class MessageController extends BaseController {
 	private MessageService messageService;
 
 	@Autowired
-	private TokenMapper tokenMapper;
-
-	@Autowired
 	private PmsConfig pmsConfig;
 
 	@Autowired
-	private InterceptMapper interceptMapper;
+	private CheckUtil checkUtil;
 
 	/**
 	 * Send message.
@@ -160,25 +152,6 @@ public class MessageController extends BaseController {
 				+ ",getExpiry::" + msg.getExpiry() + ",getQos::" + msg.getQos()
 				+ ",getReceiver::" + msg.getReceiver());
 
-		// logger.debug(applicationKey + "의 권한 체크를 시작합니다!");
-		// Token tokenId = tokenMapper.selectUserid(applicationKey);
-		// String requsetUserId = tokenId.getUserId();
-		//
-		// List<Token> apiCode = tokenMapper.getApiCode(requsetUserId);
-		// boolean tokenAuthCheck = false;
-		// for (int i = 0; i < apiCode.size(); i++) {
-		//
-		// if (apiCode.get(i).getApiCode().equals(StaticConfig.API_CODE_534)) {
-		// tokenAuthCheck = true;
-		// }
-		// }
-		// if (tokenAuthCheck == false) {
-		// logger.debug(StaticConfig.API_CODE_534 + "에 대한 권한이 없습니다");
-		// throw new TokenRunTimeException(StaticConfig.ERROR_CODE_534401,
-		// "권한이 없습니다");
-		// }
-		// logger.debug(applicationKey + "에 대한 권한체크가 완료 되었습니다.");
-
 		if (msg.getReceiver() == null || msg.getReceiver().trim().length() == 0) {
 
 			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_534404,
@@ -274,26 +247,8 @@ public class MessageController extends BaseController {
 			@RequestParam Map<String, String> params,
 			@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String applicationKey)
 			throws Exception {
-		/* 권한 체크 시작************************** */
-		logger.debug(applicationKey + "의 권한 체크를 시작합니다!");
-		String requsetUserId = interceptMapper
-				.selectCashedUserId(applicationKey);
-
-		List<Token> apiCode = tokenMapper.getApiCode(requsetUserId);
-		boolean tokenAuthCheck = false;
-		for (int i = 0; i < apiCode.size(); i++) {
-
-			if (apiCode.get(i).getApiCode().equals(StaticConfig.API_CODE_531)) {
-				tokenAuthCheck = true;
-			}
-		}
-		if (tokenAuthCheck == false) {
-			logger.debug(StaticConfig.API_CODE_531 + "에 대한 권한이 없습니다");
-			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_531401,
-					"권한이 없습니다");
-		}
-		logger.debug(applicationKey + "에 대한 권한체크가 완료 되었습니다.");
-		/* 권한체크 끝***************************** */
+		String requestUserId = checkUtil.checkAuth(applicationKey,
+				StaticConfig.API_CODE_531);
 
 		if (params.get("iDisplayStart") == null
 				|| params.get("iDisplayStart").trim().length() == 0) {
@@ -332,7 +287,7 @@ public class MessageController extends BaseController {
 		Response<MessagesListRes> res = new Response<MessagesListRes>();
 		res.setStatus(StaticConfig.RESPONSE_STATUS_OK);
 		res.setData(messagesListRes);
-		res.setCode(StaticConfig.SUCCESS_CODE_530);
+		res.setCode(StaticConfig.SUCCESS_CODE_531);
 		res.setMessage("메시지 내역을 조회 하였습니다");
 
 		return res;
@@ -346,25 +301,8 @@ public class MessageController extends BaseController {
 			@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String applicationKey)
 			throws Exception {
 		/* 권한 체크 시작************************** */
-		logger.debug(applicationKey + "의 권한 체크를 시작합니다!");
-		String requsetUserId = interceptMapper
-				.selectCashedUserId(applicationKey);
-
-		List<Token> apiCode = tokenMapper.getApiCode(requsetUserId);
-		boolean tokenAuthCheck = false;
-		for (int i = 0; i < apiCode.size(); i++) {
-
-			if (apiCode.get(i).getApiCode().equals(StaticConfig.API_CODE_532)) {
-				tokenAuthCheck = true;
-			}
-		}
-		if (tokenAuthCheck == false) {
-			logger.debug(StaticConfig.API_CODE_532 + "에 대한 권한이없습니다");
-			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_532401,
-					"권한이 없습니다");
-		}
-		logger.debug(applicationKey + "에 대한 권한체크가 완료 되었습니다.");
-		/* 권한체크 끝***************************** */
+		String requestUserId = checkUtil.checkAuth(applicationKey,
+				StaticConfig.API_CODE_532);
 
 		if (params.get("cSearchDateStart") == null
 				|| params.get("cSearchDateStart").trim().length() == 0) {
@@ -397,26 +335,9 @@ public class MessageController extends BaseController {
 			@PathVariable String msgId,
 			@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String applicationKey)
 			throws Exception {
-		/* 권한 체크 시작************************** */
-		logger.debug(applicationKey + "의 권한 체크를 시작합니다!");
-		String requsetUserId = interceptMapper
-				.selectCashedUserId(applicationKey);
 
-		List<Token> apiCode = tokenMapper.getApiCode(requsetUserId);
-		boolean tokenAuthCheck = false;
-		for (int i = 0; i < apiCode.size(); i++) {
-
-			if (apiCode.get(i).getApiCode().equals(StaticConfig.API_CODE_533)) {
-				tokenAuthCheck = true;
-			}
-		}
-		if (tokenAuthCheck == false) {
-			logger.debug(StaticConfig.API_CODE_533 + "에 대한 권한이없습니다");
-			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_533401,
-					"권한이 없습니다");
-		}
-		logger.debug(applicationKey + "에 대한 권한체크가 완료 되었습니다.");
-		/* 권한체크 끝***************************** */
+		String requestUserId = checkUtil.checkAuth(applicationKey,
+				StaticConfig.API_CODE_533);
 
 		if (params.get("cSearchDateStart") == null
 				|| params.get("cSearchDateStart").trim().length() == 0) {

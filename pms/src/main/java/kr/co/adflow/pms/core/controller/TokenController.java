@@ -4,12 +4,10 @@
 package kr.co.adflow.pms.core.controller;
 
 import java.util.HashMap;
-import java.util.List;
 
 import javax.validation.Valid;
 
 import kr.co.adflow.pms.core.config.StaticConfig;
-import kr.co.adflow.pms.core.exception.MessageRunTimeException;
 import kr.co.adflow.pms.core.exception.TokenRunTimeException;
 import kr.co.adflow.pms.core.request.TokenReq;
 import kr.co.adflow.pms.core.response.SubscriptionsRes;
@@ -17,9 +15,8 @@ import kr.co.adflow.pms.core.response.TokenInfoRes;
 import kr.co.adflow.pms.core.response.TokenRes;
 import kr.co.adflow.pms.core.service.PCFService;
 import kr.co.adflow.pms.core.service.TokenService;
+import kr.co.adflow.pms.core.util.CheckUtil;
 import kr.co.adflow.pms.domain.Token;
-import kr.co.adflow.pms.domain.mapper.InterceptMapper;
-import kr.co.adflow.pms.domain.mapper.TokenMapper;
 import kr.co.adflow.pms.response.Response;
 
 import org.slf4j.Logger;
@@ -53,10 +50,7 @@ public class TokenController extends BaseController {
 	private PCFService pcfService;
 
 	@Autowired
-	private TokenMapper tokenMapper;
-
-	@Autowired
-	private InterceptMapper interceptMapper;
+	private CheckUtil checkUtil;
 
 	/**
 	 * 유저 인증후 토큰 발행.
@@ -71,26 +65,8 @@ public class TokenController extends BaseController {
 	public Response<TokenRes> createToken(
 			@RequestHeader(value = StaticConfig.HEADER_APPLICATION_KEY) String applicationKey,
 			@RequestBody @Valid TokenReq userInfo) throws Exception {
-		/* 권한 체크 시작************************** */
-		logger.debug(applicationKey + "의 권한 체크를 시작합니다!");
-		String requsetUserId = interceptMapper
-				.selectCashedUserId(applicationKey);
-
-		List<Token> apiCode = tokenMapper.getApiCode(requsetUserId);
-		boolean tokenAuthCheck = false;
-		for (int i = 0; i < apiCode.size(); i++) {
-
-			if (apiCode.get(i).getApiCode().equals(StaticConfig.API_CODE_510)) {
-				tokenAuthCheck = true;
-			}
-		}
-		if (tokenAuthCheck == false) {
-			logger.debug(StaticConfig.API_CODE_510 + "에 대한 권한이 없습니다");
-			throw new TokenRunTimeException(StaticConfig.ERROR_CODE_510401,
-					"권한이 없습니다");
-		}
-		logger.debug(applicationKey + "에 대한 권한체크가 완료 되었습니다.");
-		/* 권한체크 끝***************************** */
+		String requestUserId = checkUtil.checkAuth(applicationKey,
+				StaticConfig.API_CODE_510);
 
 		String userId = userInfo.getUserId();
 		String deivceId = userInfo.getDeviceId();
@@ -107,7 +83,7 @@ public class TokenController extends BaseController {
 
 		TokenRes tokenRes = null;
 
-		tokenRes = tokenService.createToken(userInfo, requsetUserId);
+		tokenRes = tokenService.createToken(userInfo, requestUserId);
 
 		Response<TokenRes> res = new Response<TokenRes>();
 		res.setStatus(StaticConfig.RESPONSE_STATUS_OK);
@@ -151,25 +127,9 @@ public class TokenController extends BaseController {
 	public Response validate(
 			@RequestHeader(value = StaticConfig.HEADER_APPLICATION_KEY) String applicationKey,
 			@PathVariable String token) throws Exception {
-		/* 권한 체크 시작************************** */
-		logger.debug(applicationKey + "의 권한 체크를 시작합니다!");
-		String requsetUserId = interceptMapper
-				.selectCashedUserId(applicationKey);
-		List<Token> apiCode = tokenMapper.getApiCode(requsetUserId);
-		boolean tokenAuthCheck = false;
-		for (int i = 0; i < apiCode.size(); i++) {
 
-			if (apiCode.get(i).getApiCode().equals(StaticConfig.API_CODE_511)) {
-				tokenAuthCheck = true;
-			}
-		}
-		if (tokenAuthCheck == false) {
-			logger.debug(StaticConfig.API_CODE_511 + "에 대한 권한이 없습니다");
-			throw new TokenRunTimeException(StaticConfig.ERROR_CODE_511401,
-					"권한이 없습니다");
-		}
-		logger.debug(applicationKey + "에 대한 권한체크가 완료 되었습니다.");
-		/* 권한체크 끝***************************** */
+		String requestUserId = checkUtil.checkAuth(applicationKey,
+				StaticConfig.API_CODE_511);
 		Response res = new Response();
 		boolean validateToken = tokenService.authToken(token);
 		if (validateToken == true) {
