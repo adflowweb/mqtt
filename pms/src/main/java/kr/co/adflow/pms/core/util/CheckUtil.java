@@ -88,10 +88,9 @@ public class CheckUtil {
 	public String checkAuth(String applicationKey, String staticApiCode)
 			throws Exception {
 
-		logger.debug("권한체크를 시작합니다!");
 		String requsetUserId = interceptMapper
 				.selectCashedUserId(applicationKey);
-
+		logger.debug(requsetUserId + "에 대한 권한체크를 시작합니다!");
 		List<Token> apiCode = tokenMapper.getApiCode(requsetUserId);
 		boolean tokenAuthCheck = false;
 		for (int i = 0; i < apiCode.size(); i++) {

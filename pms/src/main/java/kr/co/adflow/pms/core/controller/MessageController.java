@@ -104,10 +104,6 @@ public class MessageController extends BaseController {
 			msg.setMsgType(StaticConfig.MESSAGE_TYPE_USER);
 		}
 
-		// if (msg.isAck() == false) {
-		// msg.setAck(true);
-		// }
-
 		if (msg.getServiceId() == null
 				|| msg.getServiceId().trim().length() == 0) {
 
@@ -211,18 +207,6 @@ public class MessageController extends BaseController {
 
 			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_530500,
 					"시스템 메시지의 타입이 잘못되었습니다");
-			// String keepAliveTime = msg.getContent();
-			//
-			// try {
-			// msg.setContent("{\"keepAliveTime\":"
-			// + Integer.parseInt(keepAliveTime) + "}");
-			// } catch (Exception e) {
-			// e.printStackTrace();
-			// throw new MessageRunTimeException(
-			// StaticConfig.ERROR_CODE_534400,
-			// "잘못된 요청 입니다(content의 입력값을 확인해주세요)");
-			// }
-
 		}
 
 		Message msgSendData = messageService.sendMessage(msg, applicationKey);
@@ -300,7 +284,7 @@ public class MessageController extends BaseController {
 			@RequestParam Map<String, String> params,
 			@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String applicationKey)
 			throws Exception {
-		/* 권한 체크 시작************************** */
+
 		String requestUserId = checkUtil.checkAuth(applicationKey,
 				StaticConfig.API_CODE_532);
 
@@ -385,49 +369,5 @@ public class MessageController extends BaseController {
 		e.printStackTrace();
 		return res;
 	}
-
-	// @RequestMapping(value = "/messages/reservations", method =
-	// RequestMethod.GET)
-	// @ResponseBody
-	// public Response<Result<MessagesRes>> getResevationMessageList(
-	// @RequestParam Map<String, String> params,
-	// @RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String appKey)
-	// throws Exception {
-	//
-	// String sEcho = (String) params.get("sEcho");
-	// params.put("appKey", appKey);
-	//
-	// MessagesRes messagesRes = messageService
-	// .getResevationMessageList(params);
-	//
-	// messagesRes.setsEcho(sEcho);
-	//
-	// Result<MessagesRes> result = new Result<MessagesRes>();
-	// result.setSuccess(true);
-	// result.setData(messagesRes);
-	// @SuppressWarnings({ "unchecked", "rawtypes" })
-	// Response<Result<MessagesRes>> res = new Response(result);
-	// return res;
-	//
-	// }
-	//
-	// @RequestMapping(value = "/messages/cancel", method =
-	// RequestMethod.DELETE, consumes = StaticConfig.HEADER_CONTENT_TYPE,
-	// produces = StaticConfig.HEADER_CONTENT_TYPE)
-	// @ResponseBody
-	// public Response<Result<Integer>> cancelReservationList(
-	// @RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String appKey,
-	// @RequestBody ReservationCancelReq ids) throws Exception {
-	//
-	// Integer delCnt = messageService.cancelReservationList(appKey, ids);
-	//
-	// Result<Integer> result = new Result<Integer>();
-	// result.setSuccess(true);
-	//
-	// result.setData(delCnt);
-	// @SuppressWarnings({ "unchecked", "rawtypes" })
-	// Response<Result<Integer>> res = new Response(result);
-	// return res;
-	// }
 
 }

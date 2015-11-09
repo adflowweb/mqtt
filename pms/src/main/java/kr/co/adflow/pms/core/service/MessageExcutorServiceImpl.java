@@ -8,10 +8,8 @@ import java.util.List;
 
 import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.handler.DirectMsgHandlerBySessionCallback;
-import kr.co.adflow.pms.core.util.MessageTRLog;
 import kr.co.adflow.pms.domain.Message;
 import kr.co.adflow.pms.domain.mapper.AckMapper;
-import kr.co.adflow.pms.domain.mapper.CtlQMapper;
 import kr.co.adflow.pms.domain.mapper.MessageMapper;
 import kr.co.adflow.pms.domain.mapper.UserMapper;
 
@@ -44,14 +42,6 @@ public class MessageExcutorServiceImpl implements MessageExcutorService {
 	@Autowired
 	private JmsTemplate jmsTemplate;
 
-	/** The validation mapper. */
-	// @Autowired
-	// private ValidationMapper validationMapper;
-
-	/** The ctl q mapper. */
-	@Autowired
-	private CtlQMapper ctlQMapper;
-
 	/** The ack mapper. */
 	@Autowired
 	private AckMapper ackMapper;
@@ -75,11 +65,11 @@ public class MessageExcutorServiceImpl implements MessageExcutorService {
 			jmsTemplate.execute(new DirectMsgHandlerBySessionCallback(
 					jmsTemplate, msg));
 
-			try {
-				MessageTRLog.log(msg);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			// try {
+			// MessageTRLog.log(msg);
+			// } catch (Exception e) {
+			// e.printStackTrace();
+			// }
 			String msgId = msg.getMsgId();
 			msg.setMsgId(msgId);
 			msg.setStatus(StaticConfig.MESSAGE_STATUS_SEND);
