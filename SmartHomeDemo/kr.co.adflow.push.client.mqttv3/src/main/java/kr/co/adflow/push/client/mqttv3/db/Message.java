@@ -24,6 +24,7 @@ public class Message {
     private String token;
     private int agentAck;
     private int appAck;
+    private int msgType;
 
     public String getTopic() {
         return topic;
@@ -105,6 +106,14 @@ public class Message {
         this.appAck = appAck;
     }
 
+    public int getMsgType() {
+        return msgType;
+    }
+
+    public void setMsgType(int msgType) {
+        this.msgType = msgType;
+    }
+
     @Override
     public String toString() {
         return "Message{" +
@@ -118,6 +127,7 @@ public class Message {
                 ", token='" + token + '\'' +
                 ", agentAck=" + agentAck +
                 ", appAck=" + appAck +
+                ", msgType=" + msgType +
                 '}';
     }
 }
