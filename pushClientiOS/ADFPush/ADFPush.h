@@ -26,7 +26,8 @@
 ///[sk]
 @property (nonatomic, retain) id Responder;
 @property (nonatomic, strong) QueueFile *adfEnv;
-@property (nonatomic, strong) QueueFile *jobLogQF;
+@property (nonatomic, strong) QueueFile *adfTranLogQF;
+@property (nonatomic, strong) QueueFile *adfErrorLogQF;
 @property (nonatomic, retain) NSString *messageADF;
 ///[sk]
 
@@ -39,7 +40,7 @@
 - (void)connectMQTT;
 - (NSString *)callAck:(NSString *)msgId ackTime:(int)ackTime jobId:(int) jobId;
 - (void)agentAck:(NSString *)msgId ackTime:(int)ackTime ackType:(NSString *) ackType;
-- (void)addJobLog:(NSString *)jobName param1:(NSString *) param1 param2:(NSString *) param2 param3:(NSString *) param3;
+- (void)addJobLog:(NSString *)jobName param1:(NSString *) param1 param2:(NSString *) param2 jsonYn:(BOOL)jsonYn data:(NSString *) data jogTypeError:(BOOL) jobTypeError;
 - (NSString *)registerToken:(NSString *)token;
 - (NSString *)getTokenMQTT;
 - (NSString *)connectStateMQTT;

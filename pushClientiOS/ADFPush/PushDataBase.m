@@ -20,7 +20,7 @@
         [self dataBaseConnection:&pDataBase];     // 데이터베이스 연결합니다.
         if (pDataBase == nil) {
             NSLog(@"[ADFPush] initWithDataBase - Error Message : '%s'", sqlite3_errmsg(pDataBase));
-            [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseError" param1:@"initWithDataBase Error" param2:[NSString stringWithFormat:@"%s",sqlite3_errmsg(pDataBase)] param3:@""];
+            [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseError" param1:@"initWithDataBase Error" param2:@"" jsonYn:false data:[NSString stringWithFormat:@"%s",sqlite3_errmsg(pDataBase)] jogTypeError: true];
             return;
         }
         
@@ -33,7 +33,7 @@
             /* 테이블 생성 */
             if (sqlite3_prepare_v2(pDataBase, "CREATE TABLE job ( jobid INTEGER PRIMARY KEY AUTOINCREMENT, msgtype INTEGER, ack INTEGER, qos INTEGER,msgid TEXT, content TEXT, contenttype TEXT, topic TEXT, serviceid TEXT, issuetime INTEGER);", -1, &statement, NULL) != SQLITE_OK) {
                 NSLog(@"[ADFPush] initWithDataBase - TABLE CREATE ERROR: %s", sqlite3_errmsg(pDataBase));
-                [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseError" param1:@"initWithDataBase Error" param2:[NSString stringWithFormat:@"%s",sqlite3_errmsg(pDataBase)] param3:@""];
+                [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseError" param1:@"initWithDataBase Error" param2:@"" jsonYn:false data:[NSString stringWithFormat:@"%s",sqlite3_errmsg(pDataBase)] jogTypeError: true];
             }else {
                 sqlite3_step(statement);
                 NSLog(@"[ADFPush] job table CREATE OK");
@@ -43,8 +43,8 @@
         
     }
     @catch (NSException *exception) {
-        NSLog(@"exceptionName %@, reason %@", [exception name], [exception reason]);
-        [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseNSException" param1:@"initWithDataBase Error" param2:[exception name] param3:[exception reason]];
+        NSLog(@"[ADFPush ] initWithDataBase - NSException : %@", [exception description]);
+        [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseNSException" param1:@"initWithDataBase Error" param2:@"" jsonYn:false data:[exception description] jogTypeError: true];
     }
     @finally {
         sqlite3_reset(statement);   //객체 초기화
@@ -81,6 +81,7 @@
 - (int) insertJob:(JobBean *)job
 {
     sqlite3_stmt *statement = nil;
+    sqlite3_stmt *statement2 = nil;
     sqlite3 *pDataBase;
     int jobId = -1;
     
@@ -91,7 +92,7 @@
         [self dataBaseConnection:&pDataBase];     // 데이터베이스 연결합니다.
         if (pDataBase == nil) {
             NSLog(@"[ADFPush] insertJob - Error Message : '%s'", sqlite3_errmsg(pDataBase));
-            [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseError" param1:@"insertJob Error" param2:[NSString stringWithFormat:@"%s",sqlite3_errmsg(pDataBase)] param3:@""];
+            [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseError" param1:@"insertJob Error" param2:@"" jsonYn:false data:[NSString stringWithFormat:@"%s",sqlite3_errmsg(pDataBase)] jogTypeError: true];
             return -1;
         }
         
@@ -102,7 +103,7 @@
         {
             
             NSLog(@"[ADFPush] insertJob - Error Message : '%s'", sqlite3_errmsg(pDataBase));
-            [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseError" param1:@"insertJob Error" param2:[NSString stringWithFormat:@"%s",sqlite3_errmsg(pDataBase)] param3:@""];
+            [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseError" param1:@"insertJob Error" param2:@"" jsonYn:false data:[NSString stringWithFormat:@"%s",sqlite3_errmsg(pDataBase)] jogTypeError: true];
             //            sqlite3_close(pDataBase);   //데이터베이스를 닫는다
             //            pDataBase = nil;
             return -1;
@@ -127,7 +128,7 @@
         
         if( resultCode != SQLITE_DONE) {
             NSLog(@"[ADFPush] insertJob - Error Message select : '%s'", sqlite3_errmsg(pDataBase));
-            [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseError" param1:@"insertJob Error" param2:[NSString stringWithFormat:@"%s",sqlite3_errmsg(pDataBase)] param3:@""];
+            [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseError" param1:@"insertJob Error" param2:@"" jsonYn:false data:[NSString stringWithFormat:@"%s",sqlite3_errmsg(pDataBase)] jogTypeError: true];
             return -1;
         }
         
@@ -135,33 +136,34 @@
         const char *sql2 = "SELECT jobid FROM job where msgid = ?";
         
         // SQL Text를 prepared statement로 변환합니다.
-        if(sqlite3_prepare_v2(pDataBase, sql2, -1, &statement, NULL) != SQLITE_OK)
+        if(sqlite3_prepare_v2(pDataBase, sql2, -1, &statement2, NULL) != SQLITE_OK)
         {
             
             NSLog(@"[ADFPush] insertJob - Error Message : '%s'", sqlite3_errmsg(pDataBase));
-            [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseError" param1:@"insertJob SELECT Error" param2:[NSString stringWithFormat:@"%s",sqlite3_errmsg(pDataBase)] param3:@""];
+            [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseError" param1:@"insertJob SELECT Error" param2:@"" jsonYn:false data:[NSString stringWithFormat:@"%s",sqlite3_errmsg(pDataBase)] jogTypeError: true];
             return -1;
             
         }
         
         // 조건을 바인딩합니다.
-        sqlite3_bind_text(statement, 1, [job.msgId UTF8String], -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(statement2, 1, [job.msgId UTF8String], -1, SQLITE_TRANSIENT);
         
         //쿼리를 실행한다.
-        while(sqlite3_step(statement) == SQLITE_ROW) {
+        while(sqlite3_step(statement2) == SQLITE_ROW) {
             
-            jobId = sqlite3_column_int(statement,0);
+            jobId = sqlite3_column_int(statement2,0);
             
 //            NSLog(@"jobId : %d ", jobId);
         }
         
     }
     @catch (NSException *exception) {
-        NSLog(@"[ADFPush] insertJob - exceptionName %@, reason %@", [exception name], [exception reason]);
-        [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseNSException" param1:@"insertJob Error" param2:[exception name] param3:[exception reason]];
+        NSLog(@"[ADFPush ] insertJob - NSException : %@", [exception description]);
+        [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseNSException" param1:@"insertJob Error" param2:@"" jsonYn:false data:[exception description] jogTypeError: true];
     }
     @finally {
-        
+        sqlite3_reset(statement2);   //객체 초기화
+        sqlite3_finalize(statement2);  //객체를 닫는다
         sqlite3_reset(statement);   //객체 초기화
         sqlite3_finalize(statement);  //객체를 닫는다
         sqlite3_close(pDataBase);   //데이터베이스를 닫는다
@@ -187,7 +189,7 @@
         [self dataBaseConnection:&pDataBase];    // 데이터베이스 연결
         if (pDataBase == nil) {
             NSLog(@"[ADFPush] getJobList - Error Message : '%s'", sqlite3_errmsg(pDataBase));
-            [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseError" param1:@"getJobList Error" param2:[NSString stringWithFormat:@"%s",sqlite3_errmsg(pDataBase)] param3:@""];
+            [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseError" param1:@"getJobList Error" param2:@"" jsonYn:false data:[NSString stringWithFormat:@"%s",sqlite3_errmsg(pDataBase)] jogTypeError: true];
             return NULL;
         }
         
@@ -199,7 +201,7 @@
         {
             
             NSLog(@"[ADFPush] getJobList - Error Message : '%s'", sqlite3_errmsg(pDataBase));
-            [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseError" param1:@"getJobList Error" param2:[NSString stringWithFormat:@"%s",sqlite3_errmsg(pDataBase)] param3:@""];
+            [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseError" param1:@"getJobList Error" param2:@"" jsonYn:false data:[NSString stringWithFormat:@"%s",sqlite3_errmsg(pDataBase)] jogTypeError: true];
             sqlite3_close(pDataBase);   //데이터베이스를 닫는다
             pDataBase = nil;
             return NULL;
@@ -232,8 +234,8 @@
         
     }
     @catch (NSException *exception) {
-        NSLog(@"[ADFPush] getJobList - exceptionName %@, reason %@", [exception name], [exception reason]);
-        [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseNSException" param1:@"getJobList Error" param2:[exception name] param3:[exception reason]];
+        NSLog(@"[ADFPush ] getJobList - NSException : %@", [exception description]);
+        [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseNSException" param1:@"getJobList Error" param2:@"" jsonYn:false data:[exception description] jogTypeError: true];
     }
     @finally {
         sqlite3_reset(statement);   //객체 초기화
@@ -259,7 +261,7 @@
         [self dataBaseConnection:&pDataBase];     // 데이터베이스 연결합니다.
         if (pDataBase == nil) {
             NSLog(@"[ADFPush] deleteJob - Error Message : '%s'", sqlite3_errmsg(pDataBase));
-            [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseError" param1:@"deleteJob Error" param2:[NSString stringWithFormat:@"%s",sqlite3_errmsg(pDataBase)] param3:@""];
+            [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseError" param1:@"deleteJob Error" param2:@"" jsonYn:false data:[NSString stringWithFormat:@"%s",sqlite3_errmsg(pDataBase)] jogTypeError: true];
             return;
         }
         
@@ -270,7 +272,7 @@
         {
             
             NSLog(@"[ADFPush] deleteJob - Error Message : '%s'", sqlite3_errmsg(pDataBase));
-            [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseError" param1:@"deleteJob Error" param2:[NSString stringWithFormat:@"%s",sqlite3_errmsg(pDataBase)] param3:@""];
+            [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseError" param1:@"deleteJob Error" param2:@"" jsonYn:false data:[NSString stringWithFormat:@"%s",sqlite3_errmsg(pDataBase)] jogTypeError: true];
             //            sqlite3_close(pDataBase);   //데이터베이스를 닫는다
             //            pDataBase = nil;
             return;
@@ -288,14 +290,14 @@
         
         if( resultCode != SQLITE_DONE) {
             NSLog(@"[ADFPush] deleteJob - Error Message : '%s'", sqlite3_errmsg(pDataBase));
-            [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseError" param1:@"deleteJob Error" param2:[NSString stringWithFormat:@"%s",sqlite3_errmsg(pDataBase)] param3:@""];
+            [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseError" param1:@"deleteJob Error" param2:@"" jsonYn:false data:[NSString stringWithFormat:@"%s",sqlite3_errmsg(pDataBase)] jogTypeError: true];
             
         }
         
     }
     @catch (NSException *exception) {
-        NSLog(@"[ADFPush] deleteJob - exceptionName %@, reason %@", [exception name], [exception reason]);
-        [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseNSException" param1:@"deleteJob Error" param2:[exception name] param3:[exception reason]];
+        NSLog(@"[ADFPush ] deleteJob - NSException : %@", [exception description]);
+        [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseNSException" param1:@"deleteJob Error" param2:@"" jsonYn:false data:[exception description] jogTypeError: true];
     }
     @finally {
         
@@ -320,7 +322,7 @@
         [self dataBaseConnection:&pDataBase];     // 데이터베이스 연결합니다.
         if (pDataBase == nil) {
             NSLog(@"[ADFPush] deleteJobId - Error Message : '%s'", sqlite3_errmsg(pDataBase));
-            [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseError" param1:@"deleteJobId Error" param2:[NSString stringWithFormat:@"%s",sqlite3_errmsg(pDataBase)] param3:@""];
+            [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseError" param1:@"deleteJobId Error" param2:@"" jsonYn:false data:[NSString stringWithFormat:@"%s",sqlite3_errmsg(pDataBase)] jogTypeError: true];
             return;
         }
         
@@ -331,7 +333,7 @@
         {
             
             NSLog(@"[ADFPush] deleteJobId - Error Message : '%s'", sqlite3_errmsg(pDataBase));
-            [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseError" param1:@"deleteJobId Error" param2:[NSString stringWithFormat:@"%s",sqlite3_errmsg(pDataBase)] param3:@""];
+            [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseError" param1:@"deleteJobId Error" param2:@"" jsonYn:false data:[NSString stringWithFormat:@"%s",sqlite3_errmsg(pDataBase)] jogTypeError: true];
             //            sqlite3_close(pDataBase);   //데이터베이스를 닫는다
             //            pDataBase = nil;
             return;
@@ -349,14 +351,14 @@
         
         if( resultCode != SQLITE_DONE) {
             NSLog(@"[ADFPush] deleteJobId - Error Message : '%s'", sqlite3_errmsg(pDataBase));
-            [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseError" param1:@"deleteJobId Error" param2:[NSString stringWithFormat:@"%s",sqlite3_errmsg(pDataBase)] param3:@""];
+            [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseError" param1:@"deleteJobId Error" param2:@"" jsonYn:false data:[NSString stringWithFormat:@"%s",sqlite3_errmsg(pDataBase)] jogTypeError: true];
             
         }
         
     }
     @catch (NSException *exception) {
-        NSLog(@"[ADFPush] deleteJobId - exceptionName %@, reason %@", [exception name], [exception reason]);
-        [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseNSException" param1:@"deleteJobId Error" param2:[exception name] param3:[exception reason]];
+        NSLog(@"[ADFPush ] deleteJobId - NSException : %@", [exception description]);
+        [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseNSException" param1:@"deleteJobId Error" param2:@"" jsonYn:false data:[exception description] jogTypeError: true];
     }
     @finally {
         
@@ -382,7 +384,7 @@
         [self dataBaseConnection:&pDataBase];     // 데이터베이스 연결합니다.
         if (pDataBase == nil) {
             NSLog(@"[ADFPush] deleteJobAll - Error Message : '%s'", sqlite3_errmsg(pDataBase));
-            [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseError" param1:@"deleteJobAll Error" param2:[NSString stringWithFormat:@"%s",sqlite3_errmsg(pDataBase)] param3:@""];
+            [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseError" param1:@"deleteJobAll Error" param2:@"" jsonYn:false data:[NSString stringWithFormat:@"%s",sqlite3_errmsg(pDataBase)] jogTypeError: true];
             result = [NSString stringWithUTF8String:(char*)sqlite3_errmsg(pDataBase)];
             return result;
         }
@@ -394,7 +396,7 @@
         {
             
             NSLog(@"[ADFPush] deleteJobAll - Error Message : '%s'", sqlite3_errmsg(pDataBase));
-            [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseError" param1:@"deleteJobAll Error" param2:[NSString stringWithFormat:@"%s",sqlite3_errmsg(pDataBase)] param3:@""];
+            [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseError" param1:@"deleteJobAll Error" param2:@"" jsonYn:false data:[NSString stringWithFormat:@"%s",sqlite3_errmsg(pDataBase)] jogTypeError: true];
             result = [NSString stringWithUTF8String:(char*)sqlite3_errmsg(pDataBase)];
             return result;
             
@@ -407,7 +409,7 @@
         
         if( resultCode != SQLITE_DONE) {
             NSLog(@"[ADFPush] deleteJobAll - Error Message : '%s'", sqlite3_errmsg(pDataBase));
-            [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseError" param1:@"deleteJobAll Error" param2:[NSString stringWithFormat:@"%s",sqlite3_errmsg(pDataBase)] param3:@""];
+            [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseError" param1:@"deleteJobAll Error" param2:@"" jsonYn:false data:[NSString stringWithFormat:@"%s",sqlite3_errmsg(pDataBase)] jogTypeError: true];
             result = [NSString stringWithUTF8String:(char*)sqlite3_errmsg(pDataBase)];
             return result;
         }
@@ -415,8 +417,8 @@
         result = @"OK";
     }
     @catch (NSException *exception) {
-        NSLog(@"[ADFPush] deleteJobAll - exceptionName %@, reason %@", [exception name], [exception reason]);
-        [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseNSException" param1:@"deleteJobAll Error" param2:[exception name] param3:[exception reason]];
+        NSLog(@"[ADFPush ] deleteJobAll - NSException : %@", [exception description]);
+        [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseNSException" param1:@"deleteJobAll Error" param2:@"" jsonYn:false data:[exception description] jogTypeError: true];
         result = [NSString stringWithFormat:@"%@",exception];
     }
     @finally {
@@ -444,7 +446,7 @@
         [self dataBaseConnection:&pDataBase];    // 데이터베이스 연결
         if (pDataBase == nil) {
             NSLog(@"[ADFPush] getAck - Error Message : '%s'", sqlite3_errmsg(pDataBase));
-            [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseError" param1:@"getAck Error" param2:[NSString stringWithFormat:@"%s",sqlite3_errmsg(pDataBase)] param3:@""];
+            [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseError" param1:@"getAck Error" param2:@"" jsonYn:false data:[NSString stringWithFormat:@"%s",sqlite3_errmsg(pDataBase)] jogTypeError: true];
             return 2;
         }
         
@@ -456,7 +458,7 @@
         {
             
             NSLog(@"[ADFPush] getAck - Error Message : '%s'", sqlite3_errmsg(pDataBase));
-            [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseError" param1:@"getAck Error" param2:[NSString stringWithFormat:@"%s",sqlite3_errmsg(pDataBase)] param3:@""];
+            [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseError" param1:@"getAck Error" param2:@"" jsonYn:false data:[NSString stringWithFormat:@"%s",sqlite3_errmsg(pDataBase)] jogTypeError: true];
             return 2;
             
         }
@@ -473,8 +475,8 @@
         }
     }
     @catch (NSException *exception) {
-        NSLog(@"[ADFPush] getAck - exceptionName %@, reason %@", [exception name], [exception reason]);
-        [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseNSException" param1:@"getAck Error" param2:[exception name] param3:[exception reason]];
+        NSLog(@"[ADFPush ] getAck - NSException : %@", [exception description]);
+        [[ADFPush sharedADFPush] addJobLog:@"PushDataBaseNSException" param1:@"getAck Error" param2:@"" jsonYn:false data:[exception description] jogTypeError: true];
     }
     @finally {
         sqlite3_reset(statement);   //객체 초기화
