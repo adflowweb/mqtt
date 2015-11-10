@@ -1,4 +1,4 @@
-package kr.co.adflow.pms.core.pcf;
+package kr.co.adflow.pms.core.test;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,6 +10,7 @@ import kr.co.adflow.pms.core.response.MessageSendRes;
 import kr.co.adflow.pms.core.response.MessagesListRes;
 import kr.co.adflow.pms.core.response.StatisticsRes;
 import kr.co.adflow.pms.core.response.SubscriptionsRes;
+import kr.co.adflow.pms.domain.Message;
 import kr.co.adflow.pms.response.Response;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,4 +107,6 @@ public class MessageControllerTest extends AbstractTestNGSpringContextTests {
 		Assert.assertEquals(response.getStatus(), "ok");
 		System.out.println(response.toString());
 	}
+
+	
 }

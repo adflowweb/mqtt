@@ -96,9 +96,11 @@ public class PCFServiceImpl implements PCFService {
 		logger.debug("token:" + token);
 		String[] topicArr = null;
 		ConnectionManager connMan = MQEnvironment.getDefaultConnectionManager();
+		
 		MQQueueManager qmgr = null;
 		PCFMessageAgent agent = null;
 		try {
+			
 
 			qmgr = new MQQueueManager("MQTT", connMan);
 			agent = new PCFMessageAgent(qmgr);

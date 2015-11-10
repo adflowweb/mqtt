@@ -11,10 +11,8 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 
-import kr.co.adflow.pms.core.util.AckTRLog;
 import kr.co.adflow.pms.domain.Ack;
 import kr.co.adflow.pms.domain.mapper.AckMapper;
-import kr.co.adflow.pms.domain.mapper.CtlQMapper;
 import kr.co.adflow.pms.domain.mapper.UserMapper;
 
 import org.json.JSONObject;
@@ -37,10 +35,6 @@ public class AckMessageDrivenBean implements MessageListener {
 	/** The ack mapper. */
 	@Autowired
 	private AckMapper ackMapper;
-
-	/** The ctl q mapper. */
-	@Autowired
-	private CtlQMapper ctlQMapper;
 
 	/** The user mapper. */
 	@Autowired
@@ -70,20 +64,13 @@ public class AckMessageDrivenBean implements MessageListener {
 
 		Ack ack = this.getAck(body);
 
-		// message tran log
-		try {
-			AckTRLog.log(ack);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
 		int cnt = 0;
 
 		HashMap<String, Object> param = new HashMap<String, Object>();
 
 		param.put("msgId", ack.getMsgId());
 
-		logger.debug("callback param ::" + param.toString());
+		logger.debug("ack param ::" + param.toString());
 		try {
 
 			cnt = ackMapper.insertAck(ack);
@@ -95,35 +82,6 @@ public class AckMessageDrivenBean implements MessageListener {
 		}
 
 	}
-
-	/**
-	 * Gets the ctl q.
-	 * 
-	 * @param ack
-	 *            the ack
-	 * @return the ctl q
-	 */
-	// private CtlQ getCtlQ(Ack ack) {
-	// CtlQ ctlQ = new CtlQ();
-	//
-	// logger.debug("========== ack type: " + ack.getAckType());
-	// if (ack.getAckType().equals("pma")) {
-	// ctlQ.setExeType(StaticConfig.CONTROL_QUEUE_EXECUTOR_TYPE_CALLBACK_PMA);
-	// logger.debug("========== setExeType1: " + ctlQ.getExeType());
-	// } else {
-	// ctlQ.setExeType(StaticConfig.CONTROL_QUEUE_EXECUTOR_TYPE_CALLBACK_APP);
-	// logger.debug("========== setExeType2: " + ctlQ.getExeType());
-	// }
-	// logger.debug("========== setExeType3: " + ctlQ.getExeType());
-	//
-	// ctlQ.setTableName(ack.getKeyMon());
-	// ctlQ.setMsgId(ack.getMsgId());
-	// ctlQ.setIssueTime(new Date());
-	// ctlQ.setServerId(EXECUTOR_SERVER_ID);
-	// // ctlQ.setServerId("S01");
-	//
-	// return ctlQ;
-	// }
 
 	/**
 	 * Gets the ack.
@@ -138,15 +96,12 @@ public class AckMessageDrivenBean implements MessageListener {
 		String text = new String(body);
 		JSONObject msgObject = new JSONObject(text);
 
-		// ack.setKeyMon(this.getKeyMon(msgObject.getString("msgId")));
 		ack.setMsgId(msgObject.getString("msgId"));
 		ack.setAckType(msgObject.getString("ackType"));
 		ack.setTokenId(msgObject.getString("token"));
-	
 
 		ack.setAckTime(new Date(msgObject.getLong("ackTime")));
 		ack.setServerId(EXECUTOR_SERVER_ID);
-		// ack.setServerId("S01");
 
 		return ack;
 

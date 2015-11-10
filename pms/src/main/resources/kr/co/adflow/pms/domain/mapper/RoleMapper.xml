@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.adflow.pms.domain.mapper.RoleMapper">
+
+	<resultMap id="RoleResult" type="kr.co.adflow.pms.domain.Role">
+		<result property="groupCode" column="group_code" />
+		<result property="apiCode" column="api_code" />
+		<result property="apiUrl" column="api_url" />
+		<result property="apiName" column="api_name" />
+		<result property="apiMethod" column="api_method" />
+		<result property="issueTime" column="issue_time" />
+		<result property="issueId" column="issue_id" />
+
+	</resultMap>
+
+
+
+	<insert id="insertRole" parameterType="kr.co.adflow.pms.domain.Role">
+		INSERT INTO pms.role
+		(group_code
+		,api_code
+		,api_url
+		,api_method
+		,api_name
+		,issue_time
+		,issue_id
+		)
+		values(
+		#{groupCode},
+		#{apiCode},
+		#{apiName},
+		#{apiUrl},
+		#{apiMethod},
+		now(),
+		#{issueId}
+		)
+	</insert>
+
+	<select id="getRole" resultMap="RoleResult">
+		select * from pms.role
+
+	</select>
+
+	<update id="updateRole" parameterType="int">
+		UPDATE pms.role
+		SET
+		api_code = #{updateApiCode}
+		WHERE
+		group_code = #{groupCode} and
+		api_code=#{apiCode}
+	</update>
+
+
+	<delete id="deleteRole" parameterType="int">
+		DELETE FROM pms.role
+		WHERE
+		api_code = #{apiCode} and group_code=#{groupCode}
+	</delete>
+
+
+</mapper>	

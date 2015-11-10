@@ -5,7 +5,7 @@ public class StatisticsRes {
 	private int msgTotalCnt;
 	private int msgSuccessCnt;
 	private int msgFailCnt;
-	private int pmaAckCnt;
+	private int agentAckCnt;
 	private int appAckCnt;
 
 	public int getMsgTotalCnt() {
@@ -32,12 +32,12 @@ public class StatisticsRes {
 		this.msgFailCnt = msgFailCnt;
 	}
 
-	public int getPmaAckCnt() {
-		return pmaAckCnt;
+	public int getAgentAckCnt() {
+		return agentAckCnt;
 	}
 
-	public void setPmaAckCnt(int pmaAckCnt) {
-		this.pmaAckCnt = pmaAckCnt;
+	public void setAgentAckCnt(int agentAckCnt) {
+		this.agentAckCnt = agentAckCnt;
 	}
 
 	public int getAppAckCnt() {
@@ -51,8 +51,9 @@ public class StatisticsRes {
 	@Override
 	public String toString() {
 		return "StatisticsRes [msgTotalCnt=" + msgTotalCnt + ", msgSuccessCnt="
-				+ msgSuccessCnt + ", msgFailCnt=" + msgFailCnt + ", pmaAckCnt="
-				+ pmaAckCnt + ", appAckCnt=" + appAckCnt + "]";
+				+ msgSuccessCnt + ", msgFailCnt=" + msgFailCnt
+				+ ", agentAckCnt=" + agentAckCnt + ", appAckCnt=" + appAckCnt
+				+ "]";
 	}
 
 }

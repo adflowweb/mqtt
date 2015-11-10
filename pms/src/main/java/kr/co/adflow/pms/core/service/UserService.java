@@ -13,8 +13,8 @@ public interface UserService {
 
 	public UserInfoRes getUserInfo(String userId) throws Exception;
 
-	public void updateUser(UserReq userReq, String requsetUserId)
+	public void updateUser(UserReq userReq, String requestUserId)
 			throws Exception;
 
-	public void deleteUser(String userId, String requsetUserId) throws Exception;
+	public void deleteUser(String userId, String requestUserId) throws Exception;
 }

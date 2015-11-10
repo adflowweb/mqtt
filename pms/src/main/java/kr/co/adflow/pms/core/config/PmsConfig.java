@@ -17,6 +17,21 @@ public class PmsConfig {
 	@Value("#{pms['executor.server.id']}")
 	public String EXECUTOR_SERVER_ID; // = "S01";
 
+	/** The message header expiry default. */
+	@Value("#{pms['message.header.expiry.default']}")
+	public int MESSAGE_HEADER_EXPIRY_DEFAULT;// = 600000;
+
+	/** The message header qos default. */
+	@Value("#{pms['message.header.qos.default']}")
+	public int MESSAGE_HEADER_QOS_DEFAULT;// = 2;
+
+	/** The message service id default. */
+	@Value("#{pms['message.service.id.default']}")
+	public String MESSAGE_SERVICE_ID_DEFAULT;// = "kr.co.ktpowertel.push.mms";
+	/** The message ack default. */
+	@Value("#{pms['message.ack.default']}")
+	public boolean MESSAGE_ACK_DEFAULT;// = true;
+
 	// /** The executor server id. */
 	// @Value("#{pms['executor.server.id2']}")
 	// public String EXECUTOR_SERVER_ID2;
@@ -45,25 +60,13 @@ public class PmsConfig {
 	// @Value("#{pms['header.application.token.expired']}")
 	// public int HEADER_APPLICATION_TOKEN_EXPIRED; // = 180;
 
-	/** The message header type default. */
-	@Value("#{pms['message.header.type.default']}")
-	public int MESSAGE_HEADER_TYPE_DEFAULT;// = 10;
+	// /** The message header type default. */
+	// @Value("#{pms['message.header.type.default']}")
+	// public int MESSAGE_HEADER_TYPE_DEFAULT;// = 10;
 
-	/** The message header expiry default. */
-	@Value("#{pms['message.header.expiry.default']}")
-	public int MESSAGE_HEADER_EXPIRY_DEFAULT;// = 600000;
-
-	/** The message header qos default. */
-	@Value("#{pms['message.header.qos.default']}")
-	public int MESSAGE_HEADER_QOS_DEFAULT;// = 2;
-
-	/** The message size limit default. */
-	@Value("#{pms['message.size.limit.default']}")
-	public int MESSAGE_SIZE_LIMIT_DEFAULT;// = 1024*500; //500kb
-
-	/** The message service id default. */
-	@Value("#{pms['message.service.id.default']}")
-	public String MESSAGE_SERVICE_ID_DEFAULT;// = "kr.co.ktpowertel.push.mms";
+	// /** The message size limit default. */
+	// @Value("#{pms['message.size.limit.default']}")
+	// public int MESSAGE_SIZE_LIMIT_DEFAULT;// = 1024*500; //500kb
 
 	// /** The message service id userMessage. */
 	// @Value("#{pms['message.service.id.userMessage']}")
@@ -78,10 +81,6 @@ public class PmsConfig {
 	// /** The message service id userMessage. */
 	// @Value("#{pms['message.user.message.expiry.default']}")
 	// public int MESSAGE_USER_MESSAGE_EXPIRY_DEFAULT;// = 600000;
-
-	/** The message ack default. */
-	@Value("#{pms['message.ack.default']}")
-	public boolean MESSAGE_ACK_DEFAULT;// = true;
 
 	// @Value("#{pms['message.csv.limit.default']}")
 	// public int MESSAGE_CSV_LIMIT_DEFAULT;// = 100000

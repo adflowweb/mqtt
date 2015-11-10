@@ -42,6 +42,7 @@ public class DirectMsgHandlerBySessionCallback implements
 		String json = "";
 		byte[] byteArr = null;
 		try {
+
 			Destination destination = jmsTemplate.getDestinationResolver()
 					.resolveDestinationName(session, msg.getReceiver(), true);
 			producer = session.createProducer(destination);
@@ -52,7 +53,6 @@ public class DirectMsgHandlerBySessionCallback implements
 
 			msgObject.put("msgType", msg.getMsgType());
 			msgObject.put("msgId", msg.getMsgId());
-			// msgObject.put("issueId", msg.getIssueId());
 			msgObject.put("sender", msg.getIssueId());
 			msgObject.put("receiver", msg.getReceiver());
 			msgObject.put("issueTime", msg.getIssueTime());
@@ -65,6 +65,8 @@ public class DirectMsgHandlerBySessionCallback implements
 
 			if ("application/json".equals(msg.getContentType())) {
 				JSONObject contentObject = new JSONObject(msg.getContent());
+				logger.debug(contentObject.toString());
+				logger.debug("제이슨 오브젝트로 변경");
 				msgObject.put("content", contentObject);
 			} else {
 				msgObject.put("content", msg.getContent());
@@ -97,6 +99,7 @@ public class DirectMsgHandlerBySessionCallback implements
 			} catch (MessageRunTimeException ms) {
 				// TODO Auto-generated catch block
 				ms.printStackTrace();
+				return "fail";
 			}
 
 		} finally {
@@ -105,7 +108,7 @@ public class DirectMsgHandlerBySessionCallback implements
 				logger.debug("메시지프로듀서가제거되었습니다.");
 			}
 		}
-		return "";
+		return "success";
 	}
 
 }

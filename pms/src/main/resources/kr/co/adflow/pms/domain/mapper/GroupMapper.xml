@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.adflow.pms.domain.mapper.GroupMapper">
+
+	<resultMap id="GroupResult" type="kr.co.adflow.pms.domain.Group">
+		<result property="groupCode" column="group_code" />
+		<result property="groupName" column="group_name" />
+		<result property="groupDescription" column="group_description" />
+
+
+	</resultMap>
+
+
+
+	<insert id="insertGroup" parameterType="kr.co.adflow.pms.domain.Group">
+		INSERT INTO pms.group
+		(group_code
+		,group_name
+		,group_description
+		)
+		values(
+		#{groupCode},
+		#{groupName},
+		#{groupDescription}
+		)
+	</insert>
+
+	<select id="getGroup" resultMap="GroupResult">
+		select * from pms.group
+
+	</select>
+
+
+	<update id="updateGroup" parameterType="int">
+		UPDATE pms.group
+		SET
+		group_code = #{updateGroupCode}
+		WHERE
+		group_code = #{groupCode}
+	</update>
+
+	<delete id="deleteGroup" parameterType="int">
+		DELETE FROM pms.group
+		WHERE group_code = #{groupCode}
+	</delete>
+
+
+</mapper>	

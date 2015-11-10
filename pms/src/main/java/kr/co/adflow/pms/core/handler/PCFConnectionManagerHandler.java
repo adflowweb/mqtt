@@ -11,6 +11,9 @@ import java.util.Properties;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.ibm.mq.MQEnvironment;
 import com.ibm.mq.MQSimpleConnectionManager;
 
@@ -20,6 +23,9 @@ import com.ibm.mq.MQSimpleConnectionManager;
  */
 
 public class PCFConnectionManagerHandler extends HttpServlet {
+
+	private static final Logger logger = LoggerFactory
+			.getLogger(PCFConnectionManagerHandler.class);
 
 	public void init() throws ServletException {
 
@@ -35,17 +41,11 @@ public class PCFConnectionManagerHandler extends HttpServlet {
 
 			prop.load(bis);
 
-			// System.out.println("mq.pcf.hostname ::"+
-			// prop.getProperty("mq.pcf.hostname"));
-			// MQEnvironment.hostname = "14.63.216.249";
 			MQEnvironment.hostname = prop.getProperty("mq.pcf.hostname");
-			MQEnvironment.port = Integer.parseInt(prop
-					.getProperty("mq.pcf.port"));
 			MQEnvironment.channel = prop.getProperty("mq.pcf.channel");
 			MQEnvironment.userID = prop.getProperty("mq.pcf.userID");
 			MQEnvironment.password = prop.getProperty("mq.pcf.password");
 
-			// MQPoolToken token = MQEnvironment.addConnectionPoolToken();
 			MQSimpleConnectionManager connMan = new MQSimpleConnectionManager();
 			connMan.setActive(MQSimpleConnectionManager.MODE_ACTIVE);
 			connMan.setTimeout(3600000);
@@ -54,12 +54,10 @@ public class PCFConnectionManagerHandler extends HttpServlet {
 
 			MQEnvironment.setDefaultConnectionManager(connMan);
 
-			System.out.println("=== PCFConnectionManagerHandler Load OK ===");
-
+			logger.debug("=== PCFConnectionManagerHandler Load OK ===");
 		} catch (Exception mqe) {
-			System.err.println(mqe);
+			logger.error(mqe.toString());
 		}
 
 	}
-
 }

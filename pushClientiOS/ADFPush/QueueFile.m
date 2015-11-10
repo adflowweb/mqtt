@@ -237,7 +237,7 @@ void initialize(NSString *path, NSFileManager *fileManager)
 /** Adds an element to the end of the queue. */
 - (void)add:(NSData *)data
 {
-    int count = data.length;
+    int count = (int)data.length;
     [self expandIfNecessary:count];
 
     // Insert a new element after the current last element.

@@ -1,19 +1,14 @@
 package kr.co.adflow.pms.core.controller;
 
 import java.util.HashMap;
-import java.util.List;
 
 import kr.co.adflow.pms.core.config.StaticConfig;
-import kr.co.adflow.pms.core.exception.TokenRunTimeException;
 import kr.co.adflow.pms.core.exception.UserRunTimeException;
 import kr.co.adflow.pms.core.request.UserReq;
-import kr.co.adflow.pms.core.request.UserUpdateReq;
 import kr.co.adflow.pms.core.response.UserInfoRes;
 import kr.co.adflow.pms.core.response.UserRes;
-import kr.co.adflow.pms.core.response.UserUpdateRes;
 import kr.co.adflow.pms.core.service.UserService;
-import kr.co.adflow.pms.domain.Token;
-import kr.co.adflow.pms.domain.mapper.TokenMapper;
+import kr.co.adflow.pms.core.util.CheckUtil;
 import kr.co.adflow.pms.response.Response;
 
 import org.slf4j.Logger;
@@ -39,7 +34,7 @@ public class UserController extends BaseController {
 	private UserService userService;
 
 	@Autowired
-	private TokenMapper tokenMapper;
+	private CheckUtil checkUtil;
 
 	@RequestMapping(value = "/users", method = RequestMethod.POST, consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
 	@ResponseBody
@@ -49,24 +44,8 @@ public class UserController extends BaseController {
 
 		logger.debug("createUser");
 
-		logger.debug(applicationKey + "의 권한 체크를 시작합니다!");
-		Token tokenId = tokenMapper.selectUserid(applicationKey);
-		String requsetUserId = tokenId.getUserId();
-
-		List<Token> apiCode = tokenMapper.getApiCode(requsetUserId);
-		boolean tokenAuthCheck = false;
-		for (int i = 0; i < apiCode.size(); i++) {
-
-			if (apiCode.get(i).getApiCode().equals(StaticConfig.API_CODE_550)) {
-				tokenAuthCheck = true;
-			}
-		}
-		if (tokenAuthCheck == false) {
-			logger.debug(StaticConfig.API_CODE_550 + "에 대한 권한이 없습니다");
-			throw new UserRunTimeException(StaticConfig.ERROR_CODE_550401,
-					"권한이 없습니다");
-		}
-		logger.debug(applicationKey + "에 대한 권한체크가 완료되었습니다.");
+		String requestUserId = checkUtil.checkAuth(applicationKey,
+				StaticConfig.API_CODE_550);
 
 		String userId = userReq.getUserId();
 		String password = userReq.getPassword();
@@ -88,7 +67,7 @@ public class UserController extends BaseController {
 		}
 
 		Response<UserRes> res = new Response<UserRes>();
-		UserRes userRes = userService.createUser(userReq, requsetUserId);
+		UserRes userRes = userService.createUser(userReq, requestUserId);
 		res.setStatus(StaticConfig.RESPONSE_STATUS_OK);
 		res.setData(userRes);
 		res.setCode(StaticConfig.SUCCESS_CODE_550);
@@ -107,26 +86,8 @@ public class UserController extends BaseController {
 
 		logger.debug("getUserInfo");
 
-		/* 권한 체크 시작************************** */
-		logger.debug(applicationKey + "의 권한 체크를 시작합니다!");
-		Token tokenId = tokenMapper.selectUserid(applicationKey);
-		String requsetUserId = tokenId.getUserId();
-
-		List<Token> apiCode = tokenMapper.getApiCode(requsetUserId);
-		boolean tokenAuthCheck = false;
-		for (int i = 0; i < apiCode.size(); i++) {
-
-			if (apiCode.get(i).getApiCode().equals(StaticConfig.API_CODE_551)) {
-				tokenAuthCheck = true;
-			}
-		}
-		if (tokenAuthCheck == false) {
-			logger.debug(StaticConfig.API_CODE_551 + "에 대한 권한이 없습니다");
-			throw new UserRunTimeException(StaticConfig.ERROR_CODE_551401,
-					"권한이 없습니다");
-		}
-		logger.debug(applicationKey + "에 대한 권한체크가 완료되었습니다.");
-		/* 권한체크 끝***************************** */
+		String requestUserId = checkUtil.checkAuth(applicationKey,
+				StaticConfig.API_CODE_551);
 
 		UserInfoRes userInfoRes = userService.getUserInfo(userId);
 		Response<UserInfoRes> response = new Response<UserInfoRes>();
@@ -147,28 +108,10 @@ public class UserController extends BaseController {
 			throws Exception {
 
 		logger.debug("updateUser");
-		/* 권한 체크 시작************************** */
-		logger.debug(applicationKey + "의 권한 체크를 시작합니다!");
-		Token tokenId = tokenMapper.selectUserid(applicationKey);
-		String requsetUserId = tokenId.getUserId();
-
-		List<Token> apiCode = tokenMapper.getApiCode(requsetUserId);
-		boolean tokenAuthCheck = false;
-		for (int i = 0; i < apiCode.size(); i++) {
-
-			if (apiCode.get(i).getApiCode().equals(StaticConfig.API_CODE_552)) {
-				tokenAuthCheck = true;
-			}
-		}
-		if (tokenAuthCheck == false) {
-			logger.debug(StaticConfig.API_CODE_552 + "에 대한 권한이 없습니다");
-			throw new UserRunTimeException(StaticConfig.ERROR_CODE_552401,
-					"권한이 없습니다");
-		}
-		logger.debug(applicationKey + "에 대한 권한체크가 완료되었습니다.");
-		/* 권한체크 끝***************************** */
+		String requestUserId = checkUtil.checkAuth(applicationKey,
+				StaticConfig.API_CODE_552);
 		userReq.setUserId(userId);
-		userService.updateUser(userReq, requsetUserId);
+		userService.updateUser(userReq, requestUserId);
 		Response response = new Response();
 		response.setStatus(StaticConfig.RESPONSE_STATUS_OK);
 		response.setCode(StaticConfig.SUCCESS_CODE_552);
@@ -185,28 +128,10 @@ public class UserController extends BaseController {
 			throws Exception {
 
 		logger.debug("deleteUser");
-		/* 권한 체크 시작************************** */
-		logger.debug(applicationKey + "의 권한 체크를 시작합니다!");
-		Token tokenId = tokenMapper.selectUserid(applicationKey);
-		String requsetUserId = tokenId.getUserId();
+		String requestUserId = checkUtil.checkAuth(applicationKey,
+				StaticConfig.API_CODE_553);
 
-		List<Token> apiCode = tokenMapper.getApiCode(requsetUserId);
-		boolean tokenAuthCheck = false;
-		for (int i = 0; i < apiCode.size(); i++) {
-
-			if (apiCode.get(i).getApiCode().equals(StaticConfig.API_CODE_553)) {
-				tokenAuthCheck = true;
-			}
-		}
-		if (tokenAuthCheck == false) {
-			logger.debug(StaticConfig.API_CODE_553 + "에 대한 권한이 없습니다");
-			throw new UserRunTimeException(StaticConfig.ERROR_CODE_553401,
-					"권한이 없습니다");
-		}
-		logger.debug(applicationKey + "에 대한 권한체크가 완료되었습니다.");
-		/* 권한체크 끝***************************** */
-
-		userService.deleteUser(userId, requsetUserId);
+		userService.deleteUser(userId, requestUserId);
 		Response response = new Response();
 		response.setStatus(StaticConfig.RESPONSE_STATUS_OK);
 		response.setCode(StaticConfig.SUCCESS_CODE_553);
@@ -233,6 +158,7 @@ public class UserController extends BaseController {
 			res.setCode(StaticConfig.ERROR_CODE_559000);
 			res.setMessage(e.getMessage());
 		}
+		e.printStackTrace();
 		return res;
 	}
 }
