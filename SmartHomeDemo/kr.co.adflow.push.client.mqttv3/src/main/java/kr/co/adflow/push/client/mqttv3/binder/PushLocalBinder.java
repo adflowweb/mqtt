@@ -11,14 +11,13 @@ import android.os.Binder;
 import android.util.Log;
 
 import kr.co.adflow.push.client.mqttv3.service.PushService;
+import kr.co.adflow.push.client.mqttv3.util.DebugLog;
 
 /**
  * Created by nadir93 on 15. 10. 19..
  */
 public class PushLocalBinder extends Binder {
 
-    // Logger for this class.
-    private static final String TAG = "PushLocalBinder";
     /**
      *
      */
@@ -28,17 +27,17 @@ public class PushLocalBinder extends Binder {
      * @param pushService
      */
     public PushLocalBinder(PushService pushService) {
-        Log.d(TAG, "PushLocalBinder 생성자 시작(pushService=" + pushService + ")");
+        DebugLog.d("PushLocalBinder 생성자 시작(pushService=" + pushService + ")");
         this.pushService = pushService;
-        Log.d(TAG, "PushLocalBinder 생성자 종료()");
+        DebugLog.d("PushLocalBinder 생성자 종료()");
     }
 
     /**
      * @return
      */
     public PushService getService() {
-        Log.d(TAG, "getService 시작()");
-        Log.d(TAG, "getService 종료(pushService=" + pushService + ")");
+        DebugLog.d("getService 시작()");
+        DebugLog.d("getService 종료(pushService=" + pushService + ")");
         // Return this instance of LocalService so clients can call public methods
         return pushService;
     }

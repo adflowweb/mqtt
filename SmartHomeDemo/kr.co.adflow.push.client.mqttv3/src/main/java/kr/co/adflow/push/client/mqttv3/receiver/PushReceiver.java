@@ -18,10 +18,9 @@ import android.util.Log;
 
 import kr.co.adflow.push.client.mqttv3.BuildConfig;
 import kr.co.adflow.push.client.mqttv3.service.impl.PushServiceImpl;
+import kr.co.adflow.push.client.mqttv3.util.DebugLog;
 
 public class PushReceiver extends BroadcastReceiver {
-    // Logger for this class.
-    private static final String TAG = "PushReceiver";
 
     public PushReceiver() {
         super();
@@ -29,10 +28,10 @@ public class PushReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d(TAG, "onReceive 시작(context=" + context + ", intent=" + intent + ")");
+        DebugLog.d("onReceive 시작(context=" + context + ", intent=" + intent + ")");
 
         if (intent == null || intent.getAction() == null) {
-            Log.e(TAG, "action이 존재하지 않습니다");
+            DebugLog.e("action이 존재하지 않습니다");
             return;
         }
 
@@ -40,16 +39,16 @@ public class PushReceiver extends BroadcastReceiver {
             Bundle bundle = intent.getExtras();
             if (bundle != null) {
                 for (String key : bundle.keySet()) {
-                    Log.v(TAG, key + " : " + bundle.get(key));
+                    DebugLog.v(key + " : " + bundle.get(key));
                 }
             }
 
             if (intent.getAction().equals(
                     "android.intent.action.BOOT_COMPLETED")) {
-                Log.d(TAG, "부팅 완료작업을 시작합니다");
+                DebugLog.d("부팅 완료작업을 시작합니다");
 
                 //알람설정
-                Log.d(TAG, "keepAlive 알람을 설정합니다.");
+                DebugLog.d("keepAlive 알람을 설정합니다.");
                 AlarmManager service = (AlarmManager) context
                         .getSystemService(Context.ALARM_SERVICE);
                 Intent i = new Intent(context, PushReceiver.class);
@@ -59,8 +58,8 @@ public class PushReceiver extends BroadcastReceiver {
                 service.setRepeating(AlarmManager.RTC_WAKEUP,
                         System.currentTimeMillis(),
                         1000 * BuildConfig.ALARM_INTERVAL, pending);
-                Log.d(TAG, "keepAlive 알람이 설정되었습니다");
-                Log.d(TAG, "부팅 완료작업을 종료합니다");
+                DebugLog.d("keepAlive 알람이 설정되었습니다");
+                DebugLog.d("부팅 완료작업을 종료합니다");
             } else if (intent.getAction().equals(
                     "kr.co.adflow.push.service.KEEPALIVE")) {
                 //웨이크락 얻어오기
@@ -69,12 +68,12 @@ public class PushReceiver extends BroadcastReceiver {
                 PowerManager.WakeLock wakeLock = pm.newWakeLock(
                         PowerManager.PARTIAL_WAKE_LOCK, "ADFWakeLock");
                 PushServiceImpl.setWakeLock(wakeLock);
-                Log.d(TAG, "웨이크락상태=" + wakeLock.isHeld());
+                DebugLog.d("웨이크락상태=" + wakeLock.isHeld());
 
                 if (!wakeLock.isHeld()) {
                     wakeLock.acquire(BuildConfig.WAKE_LOCK_HOLD_TIME);
                     // ..screen will stay on during this section..
-                    Log.d(TAG, "웨이크락=" + wakeLock);
+                    DebugLog.d("웨이크락=" + wakeLock);
 
                     //서비스 호출
                     Intent i = new Intent(context, PushServiceImpl.class);
@@ -84,8 +83,9 @@ public class PushReceiver extends BroadcastReceiver {
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, "onReceive 처리중 에러발생", e);
+            DebugLog.e("onReceive 처리중 에러발생");
+            e.printStackTrace();
         }
-        Log.d(TAG, "onReceive 종료()");
+        DebugLog.d("onReceive 종료()");
     }
 }

@@ -18,14 +18,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import kr.co.adflow.push.client.mqttv3.BuildConfig;
+import kr.co.adflow.push.client.mqttv3.util.DebugLog;
 
 /**
  * Created by nadir93 on 15. 10. 21..
  */
 public class PushDBHelper extends SQLiteOpenHelper {
 
-    // TAG for debug
-    public static final String TAG = "PushDBHelper";
     // Database Version
     private static final int DATABASE_VERSION = 1;
     // Database Name
@@ -33,7 +32,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
     private static final String TABLE_MESSAGE = "message";
     //private static final String[] MESSAGE_COLUMNS = {"msgid", "serviceid", "topic", "payload", "qos", "ack",
     //        "broadcast", "acked", "broadcasted", "receivedate", "token"};
-    private static final String[] MESSAGE_COLUMNS = {"msgid", "serviceid", "topic", "payload", "qos", "ack", "receivedate", "token", "agentack", "appack"};
+    private static final String[] MESSAGE_COLUMNS = {"msgid", "serviceid", "topic", "payload", "qos", "ack", "receivedate", "token", "agentack", "appack", "msgType"};
     private static final String TABLE_JOB = "job";
     private static final String[] JOB_COLUMNS = {"id", "type", "content"};
     private static SimpleDateFormat sdf = new java.text.SimpleDateFormat(
@@ -44,8 +43,8 @@ public class PushDBHelper extends SQLiteOpenHelper {
      */
     public PushDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        Log.d(TAG, "PushDBHelper 생성자 시작(context=" + context + ")");
-        Log.d(TAG, "PushDBHelper 생성자 종료()");
+        DebugLog.d("PushDBHelper 생성자 시작(context=" + context + ")");
+        DebugLog.d("PushDBHelper 생성자 종료()");
     }
 
     /**
@@ -53,11 +52,11 @@ public class PushDBHelper extends SQLiteOpenHelper {
      */
     @Override
     public void onCreate(SQLiteDatabase db) {
-        Log.d(TAG, "onCreate시작(db=" + db + ")");
+        DebugLog.d("onCreate시작(db=" + db + ")");
 
         String CREATE_MESSAGE_TABLE = "CREATE TABLE message ( "
                 + "msgid TEXT, serviceid TEXT, topic TEXT, payload BLOB, qos INTEGER, ack INTEGER, "
-                + "receivedate TEXT, token TEXT, agentack INTEGER, appack INTEGER, broadcast INTEGER, PRIMARY KEY (msgid))";
+                + "receivedate TEXT, token TEXT, agentack INTEGER, appack INTEGER, broadcast INTEGER, msgType INTEGER, PRIMARY KEY (msgid))";
 
         // create message table
         db.execSQL(CREATE_MESSAGE_TABLE);
@@ -67,7 +66,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
         //create job table
         db.execSQL(CREATE_JOB_TABLE);
 
-        Log.d(TAG, "onCreate종료()");
+        DebugLog.d("onCreate종료()");
     }
 
     /**
@@ -77,7 +76,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
      */
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.d(TAG, "onUpgrade 시작(db=" + db + ", oldVersion=" + oldVersion
+        DebugLog.d("onUpgrade 시작(db=" + db + ", oldVersion=" + oldVersion
                 + ", newVersion=" + newVersion + ")");
         // Drop older message table if existed
         db.execSQL("DROP TABLE IF EXISTS message");
@@ -85,11 +84,11 @@ public class PushDBHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS job");
         // create fresh books table
         this.onCreate(db);
-        Log.d(TAG, "onUpgrade 종료()");
+        DebugLog.d("onUpgrade 종료()");
     }
 
     public synchronized void testQuery() throws Exception {
-        Log.d(TAG, "testQuery 시작()");
+        DebugLog.d("testQuery 시작()");
 
         // 1. get reference to writable DB
         SQLiteDatabase db = this.getWritableDatabase();
@@ -109,27 +108,27 @@ public class PushDBHelper extends SQLiteOpenHelper {
                 cursor.moveToFirst();
 
             int count = cursor.getCount();
-            Log.d(TAG, "레코드 갯수=" + count);
+            DebugLog.d("레코드 갯수=" + count);
 
             if (count == 0) {
-                Log.d(TAG, "testQuery 종료()");
+                DebugLog.d("testQuery 종료()");
                 return;
             }
 
             int i = 0;
             while (cursor.isAfterLast() == false) {
                 // 4. build req object
-                Log.d(TAG, "msgid=" + cursor.getString(0));
-                Log.d(TAG, "serviceid=" + cursor.getString(1));
-                Log.d(TAG, "topic=" + cursor.getString(2));
-                Log.d(TAG, "receivedate=" + cursor.getString(6));
-                Log.d(TAG, "token=" + cursor.getString(7));
+                DebugLog.d("msgid=" + cursor.getString(0));
+                DebugLog.d("serviceid=" + cursor.getString(1));
+                DebugLog.d("topic=" + cursor.getString(2));
+                DebugLog.d("receivedate=" + cursor.getString(6));
+                DebugLog.d("token=" + cursor.getString(7));
                 i++;
                 cursor.moveToNext();
             }
 
             // log
-            Log.d(TAG, "testQuery 종료()");
+            DebugLog.d("testQuery 종료()");
         } finally {
             db.close();
         }
@@ -140,7 +139,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
      * @throws Exception
      */
     public synchronized Job[] getJobList() throws Exception {
-        Log.d(TAG, "getJobList 시작()");
+        DebugLog.d("getJobList 시작()");
         // 1. get reference to readable DB
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -159,10 +158,10 @@ public class PushDBHelper extends SQLiteOpenHelper {
                 cursor.moveToFirst();
 
             int count = cursor.getCount();
-            Log.d(TAG, "할 일 갯수=" + count);
+            DebugLog.d("할 일 갯수=" + count);
 
             if (count == 0) {
-                Log.d(TAG, "getJobList 종료(할 일 없음)");
+                DebugLog.d("getJobList 종료(할 일 없음)");
                 return null;
             }
 
@@ -174,13 +173,13 @@ public class PushDBHelper extends SQLiteOpenHelper {
                 job[i].setId(cursor.getInt(0));
                 job[i].setType(cursor.getInt(1));
                 job[i].setContent(cursor.getString(2));
-                Log.d(TAG, "job[" + i + "]=" + job[i]);
+                DebugLog.d("job[" + i + "]=" + job[i]);
                 i++;
                 cursor.moveToNext();
             }
 
             // log
-            Log.d(TAG, "getJobList 종료(job=" + job + ")");
+            DebugLog.d("getJobList 종료(job=" + job + ")");
             // 5. return req
             return job;
         } finally {
@@ -196,7 +195,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
      */
     public synchronized int addJob(int type, String content)
             throws Exception {
-        Log.d(TAG, "addJob 시작(type=" + type + ", content="
+        DebugLog.d("addJob 시작(type=" + type + ", content="
                 + content + ")");
 
         // 1. get reference to writable DB
@@ -220,7 +219,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
             if (result.moveToFirst()) {
                 id = result.getInt(0);
             }
-            Log.d(TAG, "addJob 종료(id=" + id + ")");
+            DebugLog.d("addJob 종료(id=" + id + ")");
             return id;
         } finally {
             if (result != null) {
@@ -237,7 +236,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
      * @throws Exception
      */
     public synchronized Job getJob(int id) throws Exception {
-        Log.d(TAG, "getJob 시작(id=" + id + ")");
+        DebugLog.d("getJob 시작(id=" + id + ")");
         // 1. get reference to readable DB
         SQLiteDatabase db = this.getReadableDatabase();
         try {
@@ -261,7 +260,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
             //job.setTopic(cursor.getString(2));
             job.setContent(cursor.getString(3));
             // log
-            Log.d(TAG, "getJob 종료(job=" + job + ")");
+            DebugLog.d("getJob 종료(job=" + job + ")");
             // 5. return job
             return job;
         } finally {
@@ -272,8 +271,8 @@ public class PushDBHelper extends SQLiteOpenHelper {
     /**
      * @param id
      */
-    public synchronized void deteletJob(int id) {
-        Log.d(TAG, "deteletJob 시작(id=" + id + ")");
+    public synchronized void deteletJob(int id) throws Exception {
+        DebugLog.d("deteletJob 시작(id=" + id + ")");
         // 1. get reference to writable DB
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -284,7 +283,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
                     new String[]{String.valueOf(id)}); // selections
             // args
             // log
-            Log.d(TAG, "deteletJob 종료()");
+            DebugLog.d("deteletJob 종료()");
         } finally {
             // 3. close
             db.close();
@@ -302,9 +301,9 @@ public class PushDBHelper extends SQLiteOpenHelper {
      * @throws Exception
      */
     public synchronized void addMessage(String msgID, String serviceID, String topic,
-                                        byte[] payload, int qos, int ack, String token) throws Exception {
-        Log.d(TAG, "addMessage 시작(msgID=" + msgID + ", serviceID=" + serviceID + ", topic=" + topic
-                + ", payloadLength=" + payload.length + ", qos=" + qos + ", ack=" + ack + ", token=" + token + ")");
+                                        byte[] payload, int qos, int ack, String token, int msgType) throws Exception {
+        DebugLog.d("addMessage 시작(msgID=" + msgID + ", serviceID=" + serviceID + ", topic=" + topic
+                + ", payloadLength=" + payload.length + ", qos=" + qos + ", ack=" + ack + ", token=" + token + ", msgType=" + msgType + ")");
         // 1. get reference to writable DB
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -320,6 +319,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
             values.put("token", token);
             values.put("agentack", 0);
             values.put("appack", 0);
+            values.put("msgType", msgType);
             Date now = new Date();
             values.put("receivedate", sdf.format(now));
 
@@ -327,7 +327,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
             db.insertOrThrow(TABLE_MESSAGE, // table
                     null, // nullColumnHack
                     values);
-            Log.d(TAG, "addMessage 종료()");
+            DebugLog.d("addMessage 종료()");
         } finally {
             // 4. close
             db.close();
@@ -340,7 +340,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
      * @throws Exception
      */
     public synchronized Message getMessage(String msgId) throws Exception {
-        Log.d(TAG, "getMessage 시작()");
+        DebugLog.d("getMessage 시작()");
         // 1. get reference to readable DB
         SQLiteDatabase db = this.getReadableDatabase();
         try {
@@ -369,8 +369,9 @@ public class PushDBHelper extends SQLiteOpenHelper {
             msg.setToken(cursor.getString(7));
             msg.setAgentAck(cursor.getInt(8));
             msg.setAppAck(cursor.getInt(9));
+            msg.setMsgType(cursor.getInt(10));
             // log
-            Log.d(TAG, "getMessage 종료(msg=" + msg + ")");
+            DebugLog.d("getMessage 종료(msg=" + msg + ")");
             // 5. return user
             return msg;
         } finally {
@@ -383,7 +384,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
      * @throws Exception
      */
     public synchronized Message[] getBroadcastList() throws Exception {
-        Log.d(TAG, "getBroadcastList 시작()");
+        DebugLog.d("getBroadcastList 시작()");
         // 1. get reference to readable DB
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -391,7 +392,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
             // 2. build query
             Cursor cursor = db.query(TABLE_MESSAGE, // a. table
                     MESSAGE_COLUMNS, // b. column names
-                    " appack = 0 ", // c. selections
+                    " appack = 0 AND msgType < 200 ", // c. selections
                     null, // d. selections args
                     null, // e. group by
                     null, // f. having
@@ -402,10 +403,10 @@ public class PushDBHelper extends SQLiteOpenHelper {
                 cursor.moveToFirst();
 
             int count = cursor.getCount();
-            Log.d(TAG, "할 일 갯수=" + count);
+            DebugLog.d("할 일 갯수=" + count);
 
             if (count == 0) {
-                Log.d(TAG, "getBroadcastList 종료(할 일 없음)");
+                DebugLog.d("getBroadcastList 종료(할 일 없음)");
                 return null;
             }
 
@@ -424,14 +425,15 @@ public class PushDBHelper extends SQLiteOpenHelper {
                 message[i].setToken(cursor.getString(7));
                 message[i].setAgentAck(cursor.getInt(8));
                 message[i].setAppAck(cursor.getInt(9));
+                message[i].setMsgType(cursor.getInt(10));
 
-                Log.d(TAG, "message[" + i + "]=" + message[i]);
+                DebugLog.d("message[" + i + "]=" + message[i]);
                 i++;
                 cursor.moveToNext();
             }
 
             // log
-            Log.d(TAG, "getBroadcastList 종료(message=" + message + ")");
+            DebugLog.d("getBroadcastList 종료(message=" + message + ")");
             // 5. return req
             return message;
         } finally {
@@ -444,7 +446,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
      */
     public synchronized void deleteMessage(String msgId)
             throws Exception {
-        Log.d(TAG, "deleteMessage 시작(msgId=" + msgId + ")");
+        DebugLog.d("deleteMessage 시작(msgId=" + msgId + ")");
         // 1. get reference to writable DB
         SQLiteDatabase db = this.getWritableDatabase();
         try {
@@ -454,7 +456,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
                     new String[]{msgId}); // selections
             // args
             // log
-            Log.d(TAG, "deleteMessage 종료()");
+            DebugLog.d("deleteMessage 종료()");
         } finally {
             db.close();
         }
@@ -464,8 +466,8 @@ public class PushDBHelper extends SQLiteOpenHelper {
      * @param msgId
      * @return
      */
-    public synchronized int updateAgentAck(String msgId) {
-        Log.d(TAG, "updateAgentAck 시작(msgId=" + msgId + ")");
+    public synchronized int updateAgentAck(String msgId) throws Exception {
+        DebugLog.d("updateAgentAck 시작(msgId=" + msgId + ")");
 
         // 1. get reference to writable DB
         SQLiteDatabase db = this.getWritableDatabase();
@@ -474,7 +476,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
             ContentValues args = new ContentValues();
             args.put("agentack", 1);
             int count = db.update(TABLE_MESSAGE, args, " msgid = ? ", new String[]{msgId});
-            Log.d(TAG, "updateAgentAck 종료(count=" + count + ")");
+            DebugLog.d("updateAgentAck 종료(count=" + count + ")");
             return count;
         } finally {
             db.close();
@@ -485,8 +487,8 @@ public class PushDBHelper extends SQLiteOpenHelper {
      * @param msgId
      * @return
      */
-    public synchronized int updateAppAck(String msgId) {
-        Log.d(TAG, "updateAppAck 시작(msgId=" + msgId + ")");
+    public synchronized int updateAppAck(String msgId) throws Exception {
+        DebugLog.d("updateAppAck 시작(msgId=" + msgId + ")");
         // 1. get reference to writable DB
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -494,7 +496,7 @@ public class PushDBHelper extends SQLiteOpenHelper {
             ContentValues args = new ContentValues();
             args.put("appack", 1);
             int count = db.update(TABLE_MESSAGE, args, " msgid = ? ", new String[]{msgId});
-            Log.d(TAG, "updateAppAck 종료(count=" + count + ")");
+            DebugLog.d("updateAppAck 종료(count=" + count + ")");
             return count;
         } finally {
             db.close();
@@ -504,8 +506,8 @@ public class PushDBHelper extends SQLiteOpenHelper {
     /**
      *
      */
-    public synchronized void getMsgCount() {
-        Log.d(TAG, "getMsgCount시작()");
+    public synchronized void getMsgCount() throws Exception {
+        DebugLog.d("getMsgCount시작()");
         // 1. get reference to readable DB
         SQLiteDatabase db = this.getReadableDatabase();
         // 2. build query
@@ -523,9 +525,31 @@ public class PushDBHelper extends SQLiteOpenHelper {
 
         while (cursor.isAfterLast() == false) {
             // 4. build Topic object
-            Log.d(TAG, "getMsgCount종료(count=" + cursor.getString(0) + ")");
+            DebugLog.d("getMsgCount종료(count=" + cursor.getString(0) + ")");
             cursor.moveToNext();
         }
         db.close();
+    }
+
+    /**
+     * @throws Exception
+     */
+    public synchronized int deleteOldMessage(String msgId)
+            throws Exception {
+        DebugLog.d("deleteOldMessage 시작(msgId=" + msgId + ")");
+        // 1. get reference to writable DB
+        SQLiteDatabase db = this.getWritableDatabase();
+        try {
+            // 2. delete
+            int count = db.delete(TABLE_MESSAGE, // table name
+                    " msgid = ? ", // selections
+                    new String[]{msgId}); // selections
+            // args
+            // log
+            DebugLog.d("deleteOldMessage 종료(count=" + count + ")");
+            return count;
+        } finally {
+            db.close();
+        }
     }
 }

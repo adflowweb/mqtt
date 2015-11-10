@@ -12,32 +12,32 @@ import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import kr.co.adflow.push.client.mqttv3.util.DebugLog;
+
 /**
  * Created by nadir93 on 15. 10. 20..
  */
 public class PushBroadcaster {
 
-    // Logger for this class.
-    private static final String TAG = "PushBroadcaster";
     private Context context;
 
     /**
      * @param context
      */
     public PushBroadcaster(Context context) {
-        Log.d(TAG, "PushBroadcaster 생성자 시작(context=" + context + ")");
+        DebugLog.d("PushBroadcaster 생성자 시작(context=" + context + ")");
         this.context = context;
-        Log.d(TAG, "PushBroadcaster 생성자 종료()");
+        DebugLog.d("PushBroadcaster 생성자 종료()");
     }
 
     /**
      * @param intent
      * @throws Exception
      */
-    public void sendMessage(Intent intent) throws Exception {
-        Log.d(TAG, "sendMessage 시작(intent=" + intent + ")");
+    public void sendBroadcast(Intent intent) throws Exception {
+        DebugLog.d("sendBroadcast 시작(intent=" + intent + ")");
         //LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
         context.sendBroadcast(intent);
-        Log.d(TAG, "sendMessage 종료()");
+        DebugLog.d("sendBroadcast 종료()");
     }
 }

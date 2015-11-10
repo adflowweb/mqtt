@@ -25,6 +25,7 @@ import com.google.gson.GsonBuilder;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Date;
 
 import kr.co.adflow.push.client.mqttv3.BuildConfig;
@@ -35,6 +36,7 @@ import kr.co.adflow.push.client.mqttv3.domain.Data;
 import kr.co.adflow.push.client.mqttv3.domain.Response;
 import kr.co.adflow.push.client.mqttv3.receiver.PushReceiver;
 import kr.co.adflow.push.client.mqttv3.service.PushService;
+import kr.co.adflow.push.client.mqttv3.util.DebugLog;
 import kr.co.adflow.push.client.mqttv3.util.SharedPreferenceEntry;
 import kr.co.adflow.push.client.mqttv3.util.SharedPreferencesHelper;
 
@@ -42,9 +44,6 @@ import kr.co.adflow.push.client.mqttv3.util.SharedPreferencesHelper;
  * Created by nadir93 on 15. 10. 13..
  */
 public class PushServiceImpl extends Service implements PushService {
-
-    // Logger for this class.
-    private static final String TAG = "PushServiceImpl";
 
     public static final String SHARED_PREFERENCES_NAME = BuildConfig.SHARED_PREFERENCES_NAME;
     private static PushServiceImpl instance;
@@ -63,13 +62,13 @@ public class PushServiceImpl extends Service implements PushService {
      * 생성자
      */
     public PushServiceImpl() {
-        Log.d(TAG, "PushServiceImpl 생성자 시작()");
-        Log.d(TAG, "this : " + this);
+        DebugLog.d("PushServiceImpl 생성자 시작()");
+        DebugLog.d("this : " + this);
         instance = this;
         client = new Client(this);
         mBinder = new PushLocalBinder(this);
         broadcaster = new PushBroadcaster(this);
-        Log.d(TAG, "PushServiceImpl 생성자 종료()");
+        DebugLog.d("PushServiceImpl 생성자 종료()");
     }
 
     public static PushServiceImpl getInstance() {
@@ -78,34 +77,34 @@ public class PushServiceImpl extends Service implements PushService {
 
     @Override
     public IBinder onBind(Intent intent) {
-        Log.d(TAG, "onBind 시작(intent=" + intent + ")");
-        Log.d(TAG, "onBind 종료(binder=" + mBinder + ")");
+        DebugLog.d("onBind 시작(intent=" + intent + ")");
+        DebugLog.d("onBind 종료(binder=" + mBinder + ")");
         return mBinder;
     }
 
     @Override
     public void onCreate() {
-        Log.d(TAG, "onCreate 시작()");
+        DebugLog.d("onCreate 시작()");
         initSharedPreferences();
-        Log.d(TAG, "onCreate 종료()");
+        DebugLog.d("onCreate 종료()");
     }
 
     /**
      * preferences 초기화
      */
     private void initSharedPreferences() {
-        Log.d(TAG, "initSharedPreferences 시작()");
+        DebugLog.d("initSharedPreferences 시작()");
         SharedPreferences sharedPreferences = this.getSharedPreferences(SHARED_PREFERENCES_NAME,
                 Context.MODE_PRIVATE);
         // Instantiate a SharedPreferencesHelper.
         mSharedPreferencesHelper = new SharedPreferencesHelper(sharedPreferences);
-        Log.d(TAG, "initSharedPreferences 종료()");
+        DebugLog.d("initSharedPreferences 종료()");
     }
 
     @Override
     public void onStart(Intent intent, int startId) {
-        Log.d(TAG, "onStart 시작(intent=" + intent + ", startId=" + startId + ")");
-        Log.d(TAG, "onStart 종료()");
+        DebugLog.d("onStart 시작(intent=" + intent + ", startId=" + startId + ")");
+        DebugLog.d("onStart 종료()");
     }
 
     /**
@@ -116,11 +115,11 @@ public class PushServiceImpl extends Service implements PushService {
      */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(TAG, "onStartCommand 시작(intent=" + intent + ", flags=" + flags
+        DebugLog.d("onStartCommand 시작(intent=" + intent + ", flags=" + flags
                 + ", startId=" + startId + ")");
 
         if (intent == null) {
-            Log.v(TAG, "intent가 존재하지 않습니다");
+            DebugLog.v("intent가 존재하지 않습니다");
             return START_STICKY;
         }
 
@@ -128,22 +127,23 @@ public class PushServiceImpl extends Service implements PushService {
             Bundle bundle = intent.getExtras();
             if (bundle != null) {
                 for (String key : bundle.keySet()) {
-                    Log.v(TAG, key + " : " + bundle.get(key));
+                    DebugLog.v(key + " : " + bundle.get(key));
                 }
             }
 
             // action 분기처리
             if (intent.getAction().equals("kr.co.adflow.push.service.START")) {
-                Log.d(TAG, "푸시서비스를 시작합니다");
+                DebugLog.d("푸시서비스를 시작합니다");
                 // 설정 저장
+
+                // ArrayList<String> serverURIs = (ArrayList<String>) intent.getSerializableExtra("serverURIs");
                 SharedPreferenceEntry mqttInfo = new SharedPreferenceEntry(bundle.getString(SharedPreferenceEntry.TOKEN),
-                        bundle.getString(SharedPreferenceEntry.SERVER), bundle.getInt(SharedPreferenceEntry.PORT),
-                        bundle.getInt(SharedPreferenceEntry.KEEP_ALIVE), bundle.getBoolean(SharedPreferenceEntry.CLEAN_SESSION),
-                        bundle.getBoolean(SharedPreferenceEntry.SSL));
+                        (ArrayList<String>) bundle.getSerializable("serverURIs"),
+                        bundle.getInt(SharedPreferenceEntry.KEEP_ALIVE), bundle.getBoolean(SharedPreferenceEntry.CLEAN_SESSION));
                 mSharedPreferencesHelper.saveMqttInfo(mqttInfo);
 
                 // 알람 설정
-                Log.d(TAG, "알람을 설정합니다");
+                DebugLog.d("알람을 설정합니다");
                 AlarmManager service = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
                 Intent i = new Intent(getApplicationContext(), PushReceiver.class);
                 i.setAction("kr.co.adflow.push.service.KEEPALIVE");
@@ -152,11 +152,11 @@ public class PushServiceImpl extends Service implements PushService {
                 service.setRepeating(AlarmManager.RTC_WAKEUP,
                         System.currentTimeMillis() + (1000 * BuildConfig.ALARM_INTERVAL),
                         1000 * BuildConfig.ALARM_INTERVAL, pending);
-                Log.d(TAG, "알람이 설정되었습니다");
+                DebugLog.d("알람이 설정되었습니다");
 
                 // 푸시 시작
                 client.keepAlive();
-                Log.d(TAG, "푸시서비스가 시작되었습니다");
+                DebugLog.d("푸시서비스가 시작되었습니다");
             } else if (intent.getAction().equals(
                     "kr.co.adflow.push.service.KEEPALIVE")) {
                 client.keepAlive();
@@ -169,19 +169,20 @@ public class PushServiceImpl extends Service implements PushService {
 //                Log.d(TAG, "푸시서비스가 종료되었습니다");
 //            }
             else {
-                Log.e(TAG, "적절한 처리핸들러가 없습니다");
+                DebugLog.e("적절한 처리핸들러가 없습니다");
             }
         } catch (Exception e) {
-            Log.e(TAG, "onStartCommand 처리중 에러발생", e);
+            DebugLog.e("onStartCommand 처리중 에러발생");
+            e.printStackTrace();
         }
 
-        Log.d(TAG, "onStartCommand 종료(value=" + START_STICKY + ")");
+        DebugLog.d("onStartCommand 종료(value=" + START_STICKY + ")");
         return START_STICKY;
     }
 
     @Override
     public void onDestroy() {
-        Log.d(TAG, "onDestroy 시작()");
+        DebugLog.d("onDestroy 시작()");
 
         //알람 제거
         AlarmManager service = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
@@ -190,63 +191,63 @@ public class PushServiceImpl extends Service implements PushService {
         PendingIntent pending = PendingIntent.getBroadcast(getApplicationContext(), 0, i,
                 PendingIntent.FLAG_UPDATE_CURRENT);
         service.cancel(pending);
-        Log.d(TAG, "알람이 제거되었습니다");
+        DebugLog.d("알람이 제거되었습니다");
 
         //client 종료
         client.stop();
 
-        Log.d(TAG, "onDestroy 종료()");
+        DebugLog.d("onDestroy 종료()");
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        Log.d(TAG, "onConfigurationChanged 시작(newConfig=" + newConfig + ")");
-        Log.d(TAG, "onConfigurationChanged 종료()");
+        DebugLog.d("onConfigurationChanged 시작(newConfig=" + newConfig + ")");
+        DebugLog.d("onConfigurationChanged 종료()");
     }
 
     @Override
     public void onLowMemory() {
         super.onLowMemory();
-        Log.d(TAG, "onLowMemory 시작()");
-        Log.d(TAG, "onLowMemory 종료()");
+        DebugLog.d("onLowMemory 시작()");
+        DebugLog.d("onLowMemory 종료()");
     }
 
     @Override
     public void onTrimMemory(int level) {
         super.onTrimMemory(level);
-        Log.d(TAG, "onTrimMemory 시작(level=" + level + ")");
-        Log.d(TAG, "onTrimMemory 종료()");
+        DebugLog.d("onTrimMemory 시작(level=" + level + ")");
+        DebugLog.d("onTrimMemory 종료()");
 
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
-        Log.d(TAG, "onUnbind 시작(intent=" + intent + ")");
+        DebugLog.d("onUnbind 시작(intent=" + intent + ")");
         boolean value = super.onUnbind(intent);
-        Log.d(TAG, "onUnbind 종료(value=" + value + ")");
+        DebugLog.d("onUnbind 종료(value=" + value + ")");
         return value;
     }
 
     @Override
     public void onRebind(Intent intent) {
         super.onRebind(intent);
-        Log.d(TAG, "onRebind 시작(intent=" + intent + ")");
-        Log.d(TAG, "onRebind 종료()");
+        DebugLog.d("onRebind 시작(intent=" + intent + ")");
+        DebugLog.d("onRebind 종료()");
     }
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         super.onTaskRemoved(rootIntent);
-        Log.d(TAG, "onTaskRemoved 시작(rootIntent=" + rootIntent + ")");
-        Log.d(TAG, "onTaskRemoved 종료()");
+        DebugLog.d("onTaskRemoved 시작(rootIntent=" + rootIntent + ")");
+        DebugLog.d("onTaskRemoved 종료()");
     }
 
     @Override
     protected void dump(FileDescriptor fd, PrintWriter writer, String[] args) {
         super.dump(fd, writer, args);
-        Log.d(TAG, "dump 시작(fd=" + fd + ", writer=" + writer + ", args=" + args + ")");
-        Log.d(TAG, "dump 종료()");
+        DebugLog.d("dump 시작(fd=" + fd + ", writer=" + writer + ", args=" + args + ")");
+        DebugLog.d("dump 종료()");
     }
 
     /**
@@ -262,9 +263,9 @@ public class PushServiceImpl extends Service implements PushService {
      * @param lock
      */
     public static void setWakeLock(PowerManager.WakeLock lock) {
-        Log.d(TAG, "setWakeLock 시작(lock=" + lock + ")");
+        DebugLog.d("setWakeLock 시작(lock=" + lock + ")");
         wakeLock = lock;
-        Log.d(TAG, "setWakeLock 종료(wakeLock=" + wakeLock + ")");
+        DebugLog.d("setWakeLock 종료(wakeLock=" + wakeLock + ")");
     }
 
     /**
@@ -294,7 +295,7 @@ public class PushServiceImpl extends Service implements PushService {
      */
     @Override
     public String registerToken(String token, boolean rightAway) {
-        Log.d(TAG, "registerToken 시작(token=" + token + ", rightAway=" + rightAway + ")");
+        DebugLog.d("registerToken 시작(token=" + token + ", rightAway=" + rightAway + ")");
         String response = null;
         try {
 
@@ -326,10 +327,10 @@ public class PushServiceImpl extends Service implements PushService {
                 GsonBuilder builder = new GsonBuilder();
                 Gson gson = builder.create();
                 response = gson.toJson(res);
-                Log.d(TAG, "registerToken 종료(response=" + response + ")");
+                DebugLog.d("registerToken 종료(response=" + response + ")");
                 return response;
             } else {
-                Log.e(TAG, "토큰 등록이 실패하였습니다");
+                DebugLog.e("토큰 등록이 실패하였습니다");
                 /*{
                     "status": "fail",
                     "code": 101404,
@@ -346,12 +347,13 @@ public class PushServiceImpl extends Service implements PushService {
                 GsonBuilder builder = new GsonBuilder();
                 Gson gson = builder.create();
                 response = gson.toJson(res);
-                Log.d(TAG, "registerToken 종료(response=" + response + ")");
+                DebugLog.d("registerToken 종료(response=" + response + ")");
                 return response;
             }
         } catch (Exception e) {
             //e.printStackTrace();
-            Log.e(TAG, "토큰 등록 처리중 에러발생", e);
+            DebugLog.e("토큰 등록 처리중 에러발생");
+            e.printStackTrace();
             /*{
                 "status": "fail",
                 "code": 101500,
@@ -368,7 +370,7 @@ public class PushServiceImpl extends Service implements PushService {
             GsonBuilder builder = new GsonBuilder();
             Gson gson = builder.create();
             response = gson.toJson(res);
-            Log.d(TAG, "registerToken 종료(response=" + response + ")");
+            DebugLog.d("registerToken 종료(response=" + response + ")");
             return response;
         }
     }
@@ -382,7 +384,7 @@ public class PushServiceImpl extends Service implements PushService {
      */
     @Override
     public String getToken() {
-        Log.d(TAG, "getToken 시작()");
+        DebugLog.d("getToken 시작()");
         String response = null;
         try {
             SharedPreferenceEntry sharedPreferenceEntry = mSharedPreferencesHelper.getMqttInfo();
@@ -408,10 +410,10 @@ public class PushServiceImpl extends Service implements PushService {
                 GsonBuilder builder = new GsonBuilder();
                 Gson gson = builder.create();
                 response = gson.toJson(res);
-                Log.d(TAG, "getToken 종료(response=" + response + ")");
+                DebugLog.d("getToken 종료(response=" + response + ")");
                 return response;
             } else {
-                Log.e(TAG, "토큰이 존재하지 않습니다");
+                DebugLog.e("토큰이 존재하지 않습니다");
                 /*{
                     "status": "fail",
                     "code": 102404,
@@ -424,12 +426,13 @@ public class PushServiceImpl extends Service implements PushService {
                 GsonBuilder builder = new GsonBuilder();
                 Gson gson = builder.create();
                 response = gson.toJson(res);
-                Log.d(TAG, "getToken 종료(response=" + response + ")");
+                DebugLog.d("getToken 종료(response=" + response + ")");
                 return response;
             }
         } catch (Exception e) {
             //e.printStackTrace();
-            Log.e(TAG, "토큰 가져오기 처리중 에러발생", e);
+            DebugLog.e("토큰 가져오기 처리중 에러발생");
+            e.printStackTrace();
             /*{
                 "status": "fail",
                 "code": 102500,
@@ -442,7 +445,7 @@ public class PushServiceImpl extends Service implements PushService {
             GsonBuilder builder = new GsonBuilder();
             Gson gson = builder.create();
             response = gson.toJson(res);
-            Log.d(TAG, "getToken 종료(response=" + response + ")");
+            DebugLog.d("getToken 종료(response=" + response + ")");
             return response;
         }
     }
@@ -456,7 +459,7 @@ public class PushServiceImpl extends Service implements PushService {
      */
     @Override
     public String ping() {
-        Log.d(TAG, "ping 시작()");
+        DebugLog.d("ping 시작()");
         String response = null;
         try {
             client.ping();
@@ -474,11 +477,12 @@ public class PushServiceImpl extends Service implements PushService {
             GsonBuilder builder = new GsonBuilder();
             Gson gson = builder.create();
             response = gson.toJson(res);
-            Log.d(TAG, "ping 종료(response=" + response + ")");
+            DebugLog.d("ping 종료(response=" + response + ")");
             return response;
         } catch (Exception e) {
             //e.printStackTrace();
-            Log.e(TAG, "ping 처리중 에러발생", e);
+            DebugLog.e("ping 처리중 에러발생");
+            e.printStackTrace();
             /*{
                 "status": "fail",
                 "code": 105500,
@@ -491,7 +495,7 @@ public class PushServiceImpl extends Service implements PushService {
             GsonBuilder builder = new GsonBuilder();
             Gson gson = builder.create();
             response = gson.toJson(res);
-            Log.d(TAG, "ping 종료(response=" + response + ")");
+            DebugLog.d("ping 종료(response=" + response + ")");
             return response;
         }
     }
@@ -505,7 +509,7 @@ public class PushServiceImpl extends Service implements PushService {
      */
     @Override
     public String ack(String msgId, Date ackTime) {
-        Log.d(TAG, "ack 시작(msgId=" + msgId + ", ackTime=" + ackTime + ")");
+        DebugLog.d("ack 시작(msgId=" + msgId + ", ackTime=" + ackTime + ")");
         String response = null;
 
         try {
@@ -523,12 +527,13 @@ public class PushServiceImpl extends Service implements PushService {
             GsonBuilder builder = new GsonBuilder();
             Gson gson = builder.create();
             response = gson.toJson(res);
-            Log.d(TAG, "response : " + response);
-            Log.d(TAG, "ack 종료(response=" + response + ")");
+            DebugLog.d("response : " + response);
+            DebugLog.d("ack 종료(response=" + response + ")");
             return response;
         } catch (Exception e) {
             //e.printStackTrace();
-            Log.e(TAG, "ack 처리중 에러발생", e);
+            DebugLog.e("ack 처리중 에러발생");
+            e.printStackTrace();
 
             Response res = new Response();
             res.setStatus("fail");
@@ -537,8 +542,8 @@ public class PushServiceImpl extends Service implements PushService {
             GsonBuilder builder = new GsonBuilder();
             Gson gson = builder.create();
             response = gson.toJson(res);
-            Log.d(TAG, "response : " + response);
-            Log.d(TAG, "ack 종료(response=" + response + ")");
+            DebugLog.d("response : " + response);
+            DebugLog.d("ack 종료(response=" + response + ")");
             return response;
         }
     }
@@ -555,7 +560,7 @@ public class PushServiceImpl extends Service implements PushService {
      */
     @Override
     public String subscribe(String topic, int qos) {
-        Log.d(TAG, "subscribe 시작(토픽=" + topic + ", qos=" + qos + ")");
+        DebugLog.d("subscribe 시작(토픽=" + topic + ", qos=" + qos + ")");
         String response = null;
         try {
             client.subscribe(topic, qos);
@@ -571,12 +576,13 @@ public class PushServiceImpl extends Service implements PushService {
             GsonBuilder builder = new GsonBuilder();
             Gson gson = builder.create();
             response = gson.toJson(res);
-            Log.d(TAG, "response : " + response);
-            Log.d(TAG, "subscribe 종료(response=" + response + ")");
+            DebugLog.d("response : " + response);
+            DebugLog.d("subscribe 종료(response=" + response + ")");
             return response;
         } catch (Exception e) {
             //e.printStackTrace();
-            Log.e(TAG, "subscribe 처리중 에러발생 ", e);
+            DebugLog.e("subscribe 처리중 에러발생 ");
+            e.printStackTrace();
 
             Response res = new Response();
             res.setStatus("fail");
@@ -585,8 +591,8 @@ public class PushServiceImpl extends Service implements PushService {
             GsonBuilder builder = new GsonBuilder();
             Gson gson = builder.create();
             response = gson.toJson(res);
-            Log.d(TAG, "response : " + response);
-            Log.d(TAG, "subscribe 종료(response=" + response + ")");
+            DebugLog.d("response : " + response);
+            DebugLog.d("subscribe 종료(response=" + response + ")");
             return response;
         }
     }
@@ -602,7 +608,7 @@ public class PushServiceImpl extends Service implements PushService {
      */
     @Override
     public String unsubscribe(String topic) {
-        Log.d(TAG, "unsubscribe 시작(토픽=" + topic + ")");
+        DebugLog.d("unsubscribe 시작(토픽=" + topic + ")");
         String response = null;
         try {
             client.unsubscribe(topic);
@@ -618,12 +624,13 @@ public class PushServiceImpl extends Service implements PushService {
             GsonBuilder builder = new GsonBuilder();
             Gson gson = builder.create();
             response = gson.toJson(res);
-            Log.d(TAG, "response : " + response);
-            Log.d(TAG, "unsubscribe 종료(response=" + response + ")");
+            DebugLog.d("response : " + response);
+            DebugLog.d("unsubscribe 종료(response=" + response + ")");
             return response;
         } catch (Exception e) {
             //e.printStackTrace();
-            Log.e(TAG, "unsubscribe 처리중 에러발생 ", e);
+            DebugLog.e("unsubscribe 처리중 에러발생 ");
+            e.printStackTrace();
 
             Response res = new Response();
             res.setStatus("fail");
@@ -632,8 +639,8 @@ public class PushServiceImpl extends Service implements PushService {
             GsonBuilder builder = new GsonBuilder();
             Gson gson = builder.create();
             response = gson.toJson(res);
-            Log.d(TAG, "response : " + response);
-            Log.d(TAG, "unsubscribe 종료(response=" + response + ")");
+            DebugLog.d("response : " + response);
+            DebugLog.d("unsubscribe 종료(response=" + response + ")");
             return response;
         }
     }
@@ -647,16 +654,17 @@ public class PushServiceImpl extends Service implements PushService {
      */
     @Override
     public String getSubscriptions() {
-        Log.d(TAG, "getSubscriptions 시작()");
+        DebugLog.d("getSubscriptions 시작()");
         String response = null;
 
         try {
             response = client.getSubscriptions();
-            Log.d(TAG, "getSubscriptions 종료(response=" + response + ")");
+            DebugLog.d("getSubscriptions 종료(response=" + response + ")");
             return response;
         } catch (Exception e) {
             //e.printStackTrace();
-            Log.e(TAG, "getSubscriptions 처리중 에러발생", e);
+            DebugLog.e("getSubscriptions 처리중 에러발생");
+            e.printStackTrace();
 
             Response res = new Response();
             res.setStatus("fail");
@@ -665,7 +673,7 @@ public class PushServiceImpl extends Service implements PushService {
             GsonBuilder builder = new GsonBuilder();
             Gson gson = builder.create();
             response = gson.toJson(res);
-            Log.d(TAG, "getSubscriptions 종료(response=" + response + ")");
+            DebugLog.d("getSubscriptions 종료(response=" + response + ")");
             return response;
         }
     }
@@ -679,7 +687,7 @@ public class PushServiceImpl extends Service implements PushService {
      */
     @Override
     public String getSession() {
-        Log.d(TAG, "getSession 시작()");
+        DebugLog.d("getSession 시작()");
         String response = null;
         try {
 
@@ -689,6 +697,9 @@ public class PushServiceImpl extends Service implements PushService {
             //          "connected": true,
             //          "ssl": true,
             //          "token" : "1c7253e191334f1e9a09915"
+            //          "keepAlive" : 240
+            //          "server" : "push.skt.com"
+            //          "port" : 1883
             //      },
             //      "code": 111200,
             //      "message": "세션정보 가져오기가 완료되었습니다"
@@ -701,16 +712,20 @@ public class PushServiceImpl extends Service implements PushService {
             data.setConnected(client.isConnected());
             SharedPreferenceEntry mqttInfo = mSharedPreferencesHelper.getMqttInfo();
             data.setToken(mqttInfo.getToken());
-            data.setSsl(mqttInfo.isSsl());
+            //data.setSsl(mqttInfo.isSsl());
+            data.setKeepAlive(mqttInfo.getKeepAlive());
+            //data.setServer(mqttInfo.getServer());
+            //data.setPort(mqttInfo.getPort());
             res.setData(data);
             GsonBuilder builder = new GsonBuilder();
             Gson gson = builder.create();
             response = gson.toJson(res);
-            Log.d(TAG, "getSession 종료(response=" + response + ")");
+            DebugLog.d("getSession 종료(response=" + response + ")");
             return response;
         } catch (Exception e) {
             //e.printStackTrace();
-            Log.e(TAG, "getSession 처리중 에러발생", e);
+            DebugLog.e("getSession 처리중 에러발생");
+            e.printStackTrace();
 
             Response res = new Response();
             res.setStatus("fail");
@@ -719,7 +734,7 @@ public class PushServiceImpl extends Service implements PushService {
             GsonBuilder builder = new GsonBuilder();
             Gson gson = builder.create();
             response = gson.toJson(res);
-            Log.d(TAG, "getSession 종료(response=" + response + ")");
+            DebugLog.d("getSession 종료(response=" + response + ")");
             return response;
         }
     }
