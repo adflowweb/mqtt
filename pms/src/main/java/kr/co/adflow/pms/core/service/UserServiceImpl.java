@@ -3,6 +3,7 @@ package kr.co.adflow.pms.core.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import kr.co.adflow.pms.core.config.PmsConfig;
 import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.exception.TokenRunTimeException;
 import kr.co.adflow.pms.core.exception.UserRunTimeException;
@@ -42,6 +43,9 @@ public class UserServiceImpl implements UserService {
 	private UserMapper userMapper;
 
 	@Autowired
+	private PmsConfig pmsConfig;
+
+	@Autowired
 	private InterceptMapper interceptMapper;
 
 	@Autowired
@@ -61,6 +65,8 @@ public class UserServiceImpl implements UserService {
 		paramUser.setIssueId(requestId);
 		paramUser.setStatus(StaticConfig.USER_STATUS_NORMAL);
 		paramUser.setAction("Create User");
+		paramUser.setServerId(pmsConfig.EXECUTOR_SERVER_ID);
+
 		switch (userReq.getRole()) {
 		// 관리자
 		case 1:
@@ -72,7 +78,7 @@ public class UserServiceImpl implements UserService {
 			break;
 		}
 
-		userMapper.logUserHistory(paramUser);
+		// userMapper.logUserHistory(paramUser);
 
 		try {
 			userMapper.insertUser(paramUser);
@@ -80,6 +86,14 @@ public class UserServiceImpl implements UserService {
 			logger.debug(paramUser.getUserId() + "는 이미 등록된 유저 입니다.");
 			throw new UserRunTimeException(StaticConfig.ERROR_CODE_550500,
 					"이미 등록된 유저입니다");
+
+		}
+
+		try {
+			userMapper.logUserHistory(paramUser);
+		} catch (Exception e) {
+			throw new UserRunTimeException(StaticConfig.ERROR_CODE_550500,
+					"히스토리저장에 실패하였습니다");
 
 		}
 
@@ -117,14 +131,19 @@ public class UserServiceImpl implements UserService {
 		logger.debug("디바이스 등록 끝");
 		logger.debug("새로운 토큰 발급");
 		paramToken.setTokenId(KeyGenerator.generateToken(userReq.getUserId()));
-		int tokenResult = tokenMapper.insertToken(paramToken);
-		userRes.setToken(paramToken.getTokenId());
-		userRes.setUserId(paramToken.getUserId());
-		if (tokenResult < 1) {
 
+		int tokenResult = 0;
+		try {
+			tokenResult = tokenMapper.insertToken(paramToken);
+		} catch (Exception e) {
+			e.printStackTrace();
 			throw new UserRunTimeException(StaticConfig.ERROR_CODE_550500,
 					"토큰 생성에 실패 하였습니다");
+
 		}
+
+		userRes.setToken(paramToken.getTokenId());
+		userRes.setUserId(paramToken.getUserId());
 
 		logger.debug("새로운 토큰 발급 끝");
 
@@ -157,14 +176,25 @@ public class UserServiceImpl implements UserService {
 			userParam.setUserName(userReq.getUserName());
 		userParam.setStatus(StaticConfig.USER_STATUS_NORMAL);
 		userParam.setIssueId(requestUserId);
-
+		userParam.setServerId(pmsConfig.EXECUTOR_SERVER_ID);
 		userParam.setAction("updateUser");
-		userMapper.logUserHistory(userParam);
-		int updateRst = userMapper.updateUser(userParam);
 
-		if (updateRst < 1) {
+		int updateRst = 0;
+		try {
+			updateRst = userMapper.updateUser(userParam);
+		} catch (Exception e) {
+			e.printStackTrace();
 			throw new UserRunTimeException(StaticConfig.ERROR_CODE_552500,
 					"사용자 정보수정에 실패하였습니다");
+		}
+
+		try {
+			userMapper.logUserHistory(userParam);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new UserRunTimeException(StaticConfig.ERROR_CODE_552500,
+					"사용자히스토리 업데이트에 실패하였습니다");
+
 		}
 
 	}
@@ -203,6 +233,7 @@ public class UserServiceImpl implements UserService {
 			userParam.get(0).setAction("deleteUser");
 			userParam.get(0).setIssueId(requestUserId);
 			userParam.get(0).setStatus(StaticConfig.USER_STATUS_NORMAL);
+			userParam.get(0).setServerId(pmsConfig.EXECUTOR_SERVER_ID);
 			userMapper.logUserHistory(userParam.get(0));
 
 		} catch (Exception e) {

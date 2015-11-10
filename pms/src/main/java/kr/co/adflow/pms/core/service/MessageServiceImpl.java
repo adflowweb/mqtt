@@ -219,7 +219,25 @@ public class MessageServiceImpl implements MessageService {
 					"메시지 전송에 실패 하였습니다");
 		}
 		// DB message insert
-		messageMapper.insertMessage(msg);
+		try {
+			messageMapper.insertMessage(msg);
+		} catch (Exception e) {
+			e.printStackTrace();
+			if (result.equals("success")) {
+
+				throw new MessageRunTimeException(
+						StaticConfig.ERROR_CODE_539000,
+						"메시지발송에는 성공하였으나 DB에 저장하지못하였습니다.");
+
+			} else {
+
+				throw new MessageRunTimeException(
+						StaticConfig.ERROR_CODE_539000,
+						"메시지발송과 DB저장모두 실패하였습니다.");
+
+			}
+
+		}
 
 	}
 

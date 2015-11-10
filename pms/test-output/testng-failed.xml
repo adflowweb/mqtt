@@ -5,10 +5,10 @@
     <classes>
       <class name="kr.co.adflow.pms.core.test.TokenControllerTest">
         <methods>
-          <include name="getConnections"/>
           <include name="springTestContextAfterTestClass"/>
           <include name="springTestContextBeforeTestClass"/>
           <include name="springTestContextBeforeTestMethod"/>
+          <include name="getSubscriptions"/>
           <include name="springTestContextPrepareTestInstance"/>
           <include name="springTestContextAfterTestMethod"/>
         </methods>

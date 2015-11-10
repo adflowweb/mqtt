@@ -98,6 +98,7 @@
 		,issue_time
 		,issue_id
 		,last_access_time
+		,server_id
 		)
 		values(
 		#{userId}
@@ -106,6 +107,7 @@
 		,now()
 		,#{issueId}
 		,now()
+		,#{serverId}
 
 		)
 	</insert>

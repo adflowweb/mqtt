@@ -77,8 +77,9 @@ public class TokenServiceImpl implements TokenService {
 		// history 삭제
 		// userMapper.logUserHistory(user);
 
+		int insertResult = 0;
 		try {
-			userMapper.insertUser(user);
+			insertResult = userMapper.insertUser(user);
 		} catch (DuplicateKeyException e) {
 			logger.debug(user.getUserId() + "는 이미 등록된 유저 입니다.");
 
@@ -88,6 +89,7 @@ public class TokenServiceImpl implements TokenService {
 		paramToken.setUserId(userInfo.getUserId());
 		paramToken.setDeviceId(userInfo.getDeviceId());
 		paramToken.setIssueId(requestUserId);
+		paramToken.setServerId(pmsConfig.EXECUTOR_SERVER_ID);
 		TokenRes res = null;
 		res = new TokenRes();
 		Token rstToken = tokenMapper.getLatest(paramToken);
@@ -120,13 +122,12 @@ public class TokenServiceImpl implements TokenService {
 			paramToken.setTokenId(KeyGenerator.generateToken(userInfo
 					.getUserId()));
 			int tokenResult = tokenMapper.insertToken(paramToken);
-			res.setToken(paramToken.getTokenId());
 			if (tokenResult < 1) {
 
 				throw new TokenRunTimeException(StaticConfig.ERROR_CODE_510500,
 						"토큰 생성에 실패 하였습니다");
 			}
-
+			res.setToken(paramToken.getTokenId());
 			logger.debug("새로운 토큰 발급 끝");
 		}
 

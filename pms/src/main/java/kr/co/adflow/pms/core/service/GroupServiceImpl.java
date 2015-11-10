@@ -64,9 +64,9 @@ public class GroupServiceImpl implements GroupService {
 
 	@Override
 	public int deleteGroup(int groupCode) throws Exception {
-		// TODO Auto-generated method stub
+	
 		int deleteResult = groupMapper.deleteGroup(groupCode);
-		// TODO Auto-generated method stub
+		
 		if (deleteResult < 1) {
 			throw new GroupRunTimeException(StaticConfig.ERROR_CODE_573500,
 					"그룹코드 삭제에 실패하였습니다");
