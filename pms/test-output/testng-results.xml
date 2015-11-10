@@ -1,30 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testng-results skipped="0" failed="1" total="1" passed="0">
+<testng-results skipped="0" failed="1" total="2" passed="1">
   <reporter-output>
   </reporter-output>
-  <suite name="Default suite" duration-ms="5654" started-at="2015-11-09T08:04:32Z" finished-at="2015-11-09T08:04:38Z">
+  <suite name="Default suite" duration-ms="5905" started-at="2015-11-10T02:03:33Z" finished-at="2015-11-10T02:03:39Z">
     <groups>
     </groups>
-    <test name="Default test" duration-ms="5654" started-at="2015-11-09T08:04:32Z" finished-at="2015-11-09T08:04:38Z">
+    <test name="Default test" duration-ms="5905" started-at="2015-11-10T02:03:33Z" finished-at="2015-11-10T02:03:39Z">
       <class name="kr.co.adflow.pms.core.test.TokenControllerTest">
-        <test-method status="PASS" signature="springTestContextBeforeTestClass()[pri:0, instance:kr.co.adflow.pms.core.test.TokenControllerTest@7377e4b0]" name="springTestContextBeforeTestClass" is-config="true" duration-ms="11" started-at="2015-11-09T17:04:32Z" finished-at="2015-11-09T17:04:32Z">
+        <test-method status="PASS" signature="springTestContextBeforeTestClass()[pri:0, instance:kr.co.adflow.pms.core.test.TokenControllerTest@194c1752]" name="springTestContextBeforeTestClass" is-config="true" duration-ms="12" started-at="2015-11-10T11:03:33Z" finished-at="2015-11-10T11:03:33Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- springTestContextBeforeTestClass -->
-        <test-method status="PASS" signature="springTestContextPrepareTestInstance()[pri:0, instance:kr.co.adflow.pms.core.test.TokenControllerTest@7377e4b0]" name="springTestContextPrepareTestInstance" is-config="true" duration-ms="4156" started-at="2015-11-09T17:04:32Z" depends-on-methods="org.springframework.test.context.testng.AbstractTestNGSpringContextTests.springTestContextBeforeTestClass" finished-at="2015-11-09T17:04:37Z">
+        <test-method status="PASS" signature="springTestContextPrepareTestInstance()[pri:0, instance:kr.co.adflow.pms.core.test.TokenControllerTest@194c1752]" name="springTestContextPrepareTestInstance" is-config="true" duration-ms="4136" started-at="2015-11-10T11:03:33Z" depends-on-methods="org.springframework.test.context.testng.AbstractTestNGSpringContextTests.springTestContextBeforeTestClass" finished-at="2015-11-10T11:03:37Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- springTestContextPrepareTestInstance -->
-        <test-method status="FAIL" signature="tokenCreate()[pri:0, instance:kr.co.adflow.pms.core.test.TokenControllerTest@7377e4b0]" name="tokenCreate" duration-ms="1448" started-at="2015-11-09T17:04:37Z" finished-at="2015-11-09T17:04:38Z">
-          <exception class="java.lang.Exception">
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.test.TokenControllerTest@194c1752]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="1" started-at="2015-11-10T11:03:37Z" finished-at="2015-11-10T11:03:37Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[void kr.co.adflow.pms.core.test.TokenControllerTest.tokenValidate() throws java.lang.Exception]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextBeforeTestMethod -->
+        <test-method status="PASS" signature="tokenValidate()[pri:0, instance:kr.co.adflow.pms.core.test.TokenControllerTest@194c1752]" name="tokenValidate" duration-ms="1727" started-at="2015-11-10T11:03:37Z" finished-at="2015-11-10T11:03:39Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- tokenValidate -->
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.test.TokenControllerTest@194c1752]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="2" started-at="2015-11-10T11:03:39Z" finished-at="2015-11-10T11:03:39Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[void kr.co.adflow.pms.core.test.TokenControllerTest.tokenValidate() throws java.lang.Exception]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextAfterTestMethod -->
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.test.TokenControllerTest@194c1752]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="1" started-at="2015-11-10T11:03:39Z" finished-at="2015-11-10T11:03:39Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[void kr.co.adflow.pms.core.test.TokenControllerTest.getConnections() throws java.lang.Exception]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextBeforeTestMethod -->
+        <test-method status="FAIL" signature="getConnections()[pri:0, instance:kr.co.adflow.pms.core.test.TokenControllerTest@194c1752]" name="getConnections" duration-ms="1" started-at="2015-11-10T11:03:39Z" finished-at="2015-11-10T11:03:39Z">
+          <exception class="java.lang.NoSuchMethodError">
             <message>
-              <![CDATA[API접근 권한이 없습니다]]>
+              <![CDATA[com.ibm.mq.MQEnvironment.getDefaultConnectionManager()Ljavax/resource/spi/ConnectionManager;]]>
             </message>
             <full-stacktrace>
-              <![CDATA[java.lang.Exception: API접근 권한이 없습니다
-	at kr.co.adflow.pms.core.util.CheckUtil.checkAuth(CheckUtil.java:106)
-	at kr.co.adflow.pms.core.controller.TokenController.createToken(TokenController.java:75)
-	at kr.co.adflow.pms.core.test.TokenControllerTest.tokenCreate(TokenControllerTest.java:46)
+              <![CDATA[java.lang.NoSuchMethodError: com.ibm.mq.MQEnvironment.getDefaultConnectionManager()Ljavax/resource/spi/ConnectionManager;
+	at kr.co.adflow.pms.core.test.TokenControllerTest.getConnections(TokenControllerTest.java:130)
 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
@@ -58,33 +93,22 @@
 	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:175)
 ]]>
             </full-stacktrace>
-          </exception> <!-- java.lang.Exception -->
+          </exception> <!-- java.lang.NoSuchMethodError -->
           <reporter-output>
           </reporter-output>
-        </test-method> <!-- tokenCreate -->
-        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.test.TokenControllerTest@7377e4b0]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2015-11-09T17:04:37Z" finished-at="2015-11-09T17:04:37Z">
+        </test-method> <!-- getConnections -->
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.test.TokenControllerTest@194c1752]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="1" started-at="2015-11-10T11:03:39Z" finished-at="2015-11-10T11:03:39Z">
           <params>
             <param index="0">
               <value>
-                <![CDATA[void kr.co.adflow.pms.core.test.TokenControllerTest.tokenCreate() throws java.lang.Exception]]>
-              </value>
-            </param>
-          </params>
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- springTestContextBeforeTestMethod -->
-        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:kr.co.adflow.pms.core.test.TokenControllerTest@7377e4b0]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="1" started-at="2015-11-09T17:04:38Z" finished-at="2015-11-09T17:04:38Z">
-          <params>
-            <param index="0">
-              <value>
-                <![CDATA[void kr.co.adflow.pms.core.test.TokenControllerTest.tokenCreate() throws java.lang.Exception]]>
+                <![CDATA[void kr.co.adflow.pms.core.test.TokenControllerTest.getConnections() throws java.lang.Exception]]>
               </value>
             </param>
           </params>
           <reporter-output>
           </reporter-output>
         </test-method> <!-- springTestContextAfterTestMethod -->
-        <test-method status="PASS" signature="springTestContextAfterTestClass()[pri:0, instance:kr.co.adflow.pms.core.test.TokenControllerTest@7377e4b0]" name="springTestContextAfterTestClass" is-config="true" duration-ms="0" started-at="2015-11-09T17:04:38Z" finished-at="2015-11-09T17:04:38Z">
+        <test-method status="PASS" signature="springTestContextAfterTestClass()[pri:0, instance:kr.co.adflow.pms.core.test.TokenControllerTest@194c1752]" name="springTestContextAfterTestClass" is-config="true" duration-ms="0" started-at="2015-11-10T11:03:39Z" finished-at="2015-11-10T11:03:39Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- springTestContextAfterTestClass -->

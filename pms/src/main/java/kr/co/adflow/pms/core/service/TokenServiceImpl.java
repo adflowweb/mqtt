@@ -74,7 +74,8 @@ public class TokenServiceImpl implements TokenService {
 		user.setAction("Create User");
 		user.setServerId(pmsConfig.EXECUTOR_SERVER_ID);
 
-		userMapper.logUserHistory(user);
+		// history 삭제
+		// userMapper.logUserHistory(user);
 
 		try {
 			userMapper.insertUser(user);

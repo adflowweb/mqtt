@@ -55,11 +55,11 @@ function toggleAllBoxes() {
 <body>
 <h2 align='center'>Default test</h2><table border='1' align="center">
 <tr>
-<td>Tests passed/Failed/Skipped:</td><td>0/1/0</td>
+<td>Tests passed/Failed/Skipped:</td><td>1/1/0</td>
 </tr><tr>
-<td>Started on:</td><td>Mon Nov 09 17:04:32 KST 2015</td>
+<td>Started on:</td><td>Tue Nov 10 11:03:33 KST 2015</td>
 </tr>
-<tr><td>Total time:</td><td>5 seconds (5654 ms)</td>
+<tr><td>Total time:</td><td>5 seconds (5905 ms)</td>
 </tr><tr>
 <td>Included groups:</td><td></td>
 </tr><tr>
@@ -75,11 +75,9 @@ function toggleAllBoxes() {
 <td><b>Instance</b></td>
 </tr>
 <tr>
-<td title='kr.co.adflow.pms.core.test.TokenControllerTest.tokenCreate()'><b>tokenCreate</b><br>Test class: kr.co.adflow.pms.core.test.TokenControllerTest</td>
-<td><div><pre>java.lang.Exception: API접근 권한이 없습니다
-	at kr.co.adflow.pms.core.util.CheckUtil.checkAuth(CheckUtil.java:106)
-	at kr.co.adflow.pms.core.controller.TokenController.createToken(TokenController.java:75)
-	at kr.co.adflow.pms.core.test.TokenControllerTest.tokenCreate(TokenControllerTest.java:46)
+<td title='kr.co.adflow.pms.core.test.TokenControllerTest.getConnections()'><b>getConnections</b><br>Test class: kr.co.adflow.pms.core.test.TokenControllerTest</td>
+<td><div><pre>java.lang.NoSuchMethodError: com.ibm.mq.MQEnvironment.getDefaultConnectionManager()Ljavax/resource/spi/ConnectionManager;
+	at kr.co.adflow.pms.core.test.TokenControllerTest.getConnections(TokenControllerTest.java:130)
 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
@@ -111,11 +109,9 @@ function toggleAllBoxes() {
 	at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:111)
 	at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:204)
 	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:175)
-</pre></div><a href='#' onClick='toggleBox("stack-trace572831052", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
-<div class='stack-trace' id='stack-trace572831052'><pre>java.lang.Exception: API접근 권한이 없습니다
-	at kr.co.adflow.pms.core.util.CheckUtil.checkAuth(CheckUtil.java:106)
-	at kr.co.adflow.pms.core.controller.TokenController.createToken(TokenController.java:75)
-	at kr.co.adflow.pms.core.test.TokenControllerTest.tokenCreate(TokenControllerTest.java:46)
+</pre></div><a href='#' onClick='toggleBox("stack-trace1440347182", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace1440347182'><pre>java.lang.NoSuchMethodError: com.ibm.mq.MQEnvironment.getDefaultConnectionManager()Ljavax/resource/spi/ConnectionManager;
+	at kr.co.adflow.pms.core.test.TokenControllerTest.getConnections(TokenControllerTest.java:130)
 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
@@ -148,8 +144,21 @@ function toggleAllBoxes() {
 	at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:204)
 	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:175)
 </pre></div></td>
+<td>0</td>
+<td>kr.co.adflow.pms.core.test.TokenControllerTest@194c1752</td></tr>
+</table><p>
+<table width='100%' border='1' class='invocation-passed'>
+<tr><td colspan='4' align='center'><b>PASSED TESTS</b></td></tr>
+<tr><td><b>Test method</b></td>
+<td width="30%"><b>Exception</b></td>
+<td width="10%"><b>Time (seconds)</b></td>
+<td><b>Instance</b></td>
+</tr>
+<tr>
+<td title='kr.co.adflow.pms.core.test.TokenControllerTest.tokenValidate()'><b>tokenValidate</b><br>Test class: kr.co.adflow.pms.core.test.TokenControllerTest</td>
+<td></td>
 <td>1</td>
-<td>kr.co.adflow.pms.core.test.TokenControllerTest@7377e4b0</td></tr>
+<td>kr.co.adflow.pms.core.test.TokenControllerTest@194c1752</td></tr>
 </table><p>
 </body>
 </html>

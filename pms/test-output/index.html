@@ -48,7 +48,7 @@
               <ul>
                 <li>
                   <a href="#" class="navigator-link " panel-name="test-xml-Default_suite">
-                    <span>C:\Users\Administrator\AppData\Local\Temp\testng-eclipse-1312224778\testng-customsuite.xml</span>
+                    <span>C:\Users\Administrator\AppData\Local\Temp\testng-eclipse-1678124205\testng-customsuite.xml</span>
                   </a> <!-- navigator-link  -->
                 </li>
                 <li>
@@ -90,7 +90,7 @@
               <div class="suite-section-content">
                 <ul>
                   <li>
-                    <span class="method-stats">1 method, 1 failed,   </span>
+                    <span class="method-stats">2 methods, 1 failed,   1 passed</span>
                   </li>
                   <li>
                     <span class="method-list-title failed">Failed methods</span>
@@ -101,10 +101,24 @@
                     <div class="method-list-content failed suite-Default_suite">
                       <span>
                         <img width="3%" src="failed.png"/>
-                        <a href="#" class="method navigator-link" panel-name="suite-Default_suite" title="kr.co.adflow.pms.core.test.TokenControllerTest" hash-for-method="tokenCreate">tokenCreate</a> <!-- method navigator-link -->
+                        <a href="#" class="method navigator-link" panel-name="suite-Default_suite" title="kr.co.adflow.pms.core.test.TokenControllerTest" hash-for-method="getConnections">getConnections</a> <!-- method navigator-link -->
                       </span>
                       <br/>
                     </div> <!-- method-list-content failed suite-Default_suite -->
+                  </li>
+                  <li>
+                    <span class="method-list-title passed">Passed methods</span>
+                    <span class="show-or-hide-methods passed">
+                      <a href="#" panel-name="suite-Default_suite" class="hide-methods passed suite-Default_suite"> (hide)</a> <!-- hide-methods passed suite-Default_suite -->
+                      <a href="#" panel-name="suite-Default_suite" class="show-methods passed suite-Default_suite"> (show)</a> <!-- show-methods passed suite-Default_suite -->
+                    </span>
+                    <div class="method-list-content passed suite-Default_suite">
+                      <span>
+                        <img width="3%" src="passed.png"/>
+                        <a href="#" class="method navigator-link" panel-name="suite-Default_suite" title="kr.co.adflow.pms.core.test.TokenControllerTest" hash-for-method="tokenValidate">tokenValidate</a> <!-- method navigator-link -->
+                      </span>
+                      <br/>
+                    </div> <!-- method-list-content passed suite-Default_suite -->
                   </li>
                 </ul>
               </div> <!-- suite-section-content -->
@@ -124,13 +138,11 @@
             <div class="main-panel-content rounded-window-bottom">
               <div class="method">
                 <div class="method-content">
-                  <a name="tokenCreate">
-                  </a> <!-- tokenCreate -->
-                  <span class="method-name">tokenCreate</span>
-                  <div class="stack-trace">java.lang.Exception: API접근 권한이 없습니다
-	at kr.co.adflow.pms.core.util.CheckUtil.checkAuth(CheckUtil.java:106)
-	at kr.co.adflow.pms.core.controller.TokenController.createToken(TokenController.java:75)
-	at kr.co.adflow.pms.core.test.TokenControllerTest.tokenCreate(TokenControllerTest.java:46)
+                  <a name="getConnections">
+                  </a> <!-- getConnections -->
+                  <span class="method-name">getConnections</span>
+                  <div class="stack-trace">java.lang.NoSuchMethodError: com.ibm.mq.MQEnvironment.getDefaultConnectionManager()Ljavax/resource/spi/ConnectionManager;
+	at kr.co.adflow.pms.core.test.TokenControllerTest.getConnections(TokenControllerTest.java:130)
 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
@@ -168,10 +180,25 @@
               </div> <!-- method -->
             </div> <!-- main-panel-content rounded-window-bottom -->
           </div> <!-- suite-Default_suite-class-failed -->
+          <div class="suite-Default_suite-class-passed">
+            <div class="main-panel-header rounded-window-top">
+              <img src="passed.png"/>
+              <span class="class-name">kr.co.adflow.pms.core.test.TokenControllerTest</span>
+            </div> <!-- main-panel-header rounded-window-top -->
+            <div class="main-panel-content rounded-window-bottom">
+              <div class="method">
+                <div class="method-content">
+                  <a name="tokenValidate">
+                  </a> <!-- tokenValidate -->
+                  <span class="method-name">tokenValidate</span>
+                </div> <!-- method-content -->
+              </div> <!-- method -->
+            </div> <!-- main-panel-content rounded-window-bottom -->
+          </div> <!-- suite-Default_suite-class-passed -->
         </div> <!-- panel Default_suite -->
         <div panel-name="test-xml-Default_suite" class="panel">
           <div class="main-panel-header rounded-window-top">
-            <span class="header-content">C:\Users\Administrator\AppData\Local\Temp\testng-eclipse-1312224778\testng-customsuite.xml</span>
+            <span class="header-content">C:\Users\Administrator\AppData\Local\Temp\testng-eclipse-1678124205\testng-customsuite.xml</span>
           </div> <!-- main-panel-header rounded-window-top -->
           <div class="main-panel-content rounded-window-bottom">
             <pre>
@@ -220,11 +247,15 @@ data.addColumn('number', 'Number');
 data.addColumn('string', 'Method');
 data.addColumn('string', 'Class');
 data.addColumn('number', 'Time (ms)');
-data.addRows(1);
+data.addRows(2);
 data.setCell(0, 0, 0)
-data.setCell(0, 1, 'tokenCreate')
+data.setCell(0, 1, 'tokenValidate')
 data.setCell(0, 2, 'kr.co.adflow.pms.core.test.TokenControllerTest')
-data.setCell(0, 3, 1448);
+data.setCell(0, 3, 1727);
+data.setCell(1, 0, 1)
+data.setCell(1, 1, 'getConnections')
+data.setCell(1, 2, 'kr.co.adflow.pms.core.test.TokenControllerTest')
+data.setCell(1, 3, 1);
 window.suiteTableData['Default_suite']= { tableData: data, tableDiv: 'times-div-Default_suite'}
 return data;
 }
@@ -262,25 +293,37 @@ return data;
               </div> <!-- configuration-class before -->
               <div class="configuration-class before">
                 <span class="method-name">springTestContextPrepareTestInstance</span>
-                <span class="method-start">11 ms</span>
+                <span class="method-start">12 ms</span>
               </div> <!-- configuration-class before -->
               <div class="configuration-method before">
-                <span class="method-name">springTestContextBeforeTestMethod(void kr.co.adflow.pms.core.test.TokenControllerTest.tokenCreate() throws java.lang.Exception)</span>
-                <span class="method-start">4171 ms</span>
+                <span class="method-name">springTestContextBeforeTestMethod(void kr.co.adflow.pms.core.test.TokenControllerTest.tokenValidate() throws java.lang.Exception)</span>
+                <span class="method-start">4150 ms</span>
+              </div> <!-- configuration-method before -->
+              <div class="test-method">
+                <span class="method-name">tokenValidate</span>
+                <span class="method-start">4151 ms</span>
+              </div> <!-- test-method -->
+              <div class="configuration-method after">
+                <span class="method-name">springTestContextAfterTestMethod(void kr.co.adflow.pms.core.test.TokenControllerTest.tokenValidate() throws java.lang.Exception)</span>
+                <span class="method-start">5879 ms</span>
+              </div> <!-- configuration-method after -->
+              <div class="configuration-method before">
+                <span class="method-name">springTestContextBeforeTestMethod(void kr.co.adflow.pms.core.test.TokenControllerTest.getConnections() throws java.lang.Exception)</span>
+                <span class="method-start">5882 ms</span>
               </div> <!-- configuration-method before -->
               <div class="test-method">
                 <img src="failed.png">
                 </img>
-                <span class="method-name">tokenCreate</span>
-                <span class="method-start">4171 ms</span>
+                <span class="method-name">getConnections</span>
+                <span class="method-start">5883 ms</span>
               </div> <!-- test-method -->
               <div class="configuration-method after">
-                <span class="method-name">springTestContextAfterTestMethod(void kr.co.adflow.pms.core.test.TokenControllerTest.tokenCreate() throws java.lang.Exception)</span>
-                <span class="method-start">5640 ms</span>
+                <span class="method-name">springTestContextAfterTestMethod(void kr.co.adflow.pms.core.test.TokenControllerTest.getConnections() throws java.lang.Exception)</span>
+                <span class="method-start">5886 ms</span>
               </div> <!-- configuration-method after -->
               <div class="configuration-class after">
                 <span class="method-name">springTestContextAfterTestClass</span>
-                <span class="method-start">5642 ms</span>
+                <span class="method-start">5887 ms</span>
               </div> <!-- configuration-class after -->
           </div> <!-- main-panel-content rounded-window-bottom -->
         </div> <!-- panel -->
