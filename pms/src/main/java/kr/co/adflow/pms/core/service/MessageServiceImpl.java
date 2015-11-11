@@ -214,7 +214,7 @@ public class MessageServiceImpl implements MessageService {
 				.execute(new DirectMsgHandlerBySessionCallback(jmsTemplate, msg));
 		if (result.equals("fail")) {
 			logger.debug("메시지 전송실패!!!");
-			msg.setStatus(StaticConfig.MESSAGE_STATUS_ABNORMAL);
+
 			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_539000,
 					"메시지 전송에 실패 하였습니다");
 		}
@@ -228,12 +228,6 @@ public class MessageServiceImpl implements MessageService {
 				throw new MessageRunTimeException(
 						StaticConfig.ERROR_CODE_539000,
 						"메시지발송에는 성공하였으나 DB에 저장하지못하였습니다.");
-
-			} else {
-
-				throw new MessageRunTimeException(
-						StaticConfig.ERROR_CODE_539000,
-						"메시지발송과 DB저장모두 실패하였습니다.");
 
 			}
 

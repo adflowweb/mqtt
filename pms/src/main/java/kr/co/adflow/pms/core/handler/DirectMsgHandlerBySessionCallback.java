@@ -93,14 +93,7 @@ public class DirectMsgHandlerBySessionCallback implements
 			logger.debug("메시지가전송되었습니다.");
 		} catch (Exception e) {
 			e.printStackTrace();
-			try {
-				throw new MessageRunTimeException(
-						StaticConfig.ERROR_CODE_539000, "메시지 전송에 실패 하였습니다");
-			} catch (MessageRunTimeException ms) {
-				// TODO Auto-generated catch block
-				ms.printStackTrace();
-				return "fail";
-			}
+			return "fail";
 
 		} finally {
 			if (producer != null) {

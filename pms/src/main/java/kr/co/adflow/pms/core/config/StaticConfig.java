@@ -97,6 +97,7 @@ public class StaticConfig {
 
 	public final static String SUCCESS_CODE_530 = "530200";
 	public final static String ERROR_CODE_530401 = "530401";
+	public final static String ERROR_CODE_530400 = "530400";
 	public final static String ERROR_CODE_530404 = "530404";
 	public final static String ERROR_CODE_530500 = "530500";
 

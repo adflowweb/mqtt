@@ -21,6 +21,8 @@ import kr.co.adflow.pms.core.util.CheckUtil;
 import kr.co.adflow.pms.domain.Message;
 import kr.co.adflow.pms.response.Response;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,7 +96,7 @@ public class MessageController extends BaseController {
 		}
 		if (msg.getQos() < 0 || msg.getQos() > 2) {
 
-			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_530500,
+			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_530400,
 					"Qos 설정이 잘못 되었습니다");
 		}
 
@@ -119,6 +121,17 @@ public class MessageController extends BaseController {
 			logger.debug("expiry 시간이 입력되었습니다!" + msg.getExpiry());
 			long expiryTime = msg.getExpiry() * 1000;
 			msg.setExpiry(expiryTime);
+		}
+
+		if (msg.getContentType().equals("application/json")) {
+
+			try {
+				JSONObject jsonObject = new JSONObject(msg.getContent());
+			} catch (JSONException e) {
+				throw new MessageRunTimeException(
+						StaticConfig.ERROR_CODE_530400,
+						"JSON Object로 변경할수 없습니다. ContentType과 Content를 확인해주세요");
+			}
 		}
 
 		Message msgSendData = messageService.sendMessage(msg, appKey);
@@ -189,11 +202,36 @@ public class MessageController extends BaseController {
 
 		msg.setMsgType(msgType);
 		if (msgType == 200) {
+			logger.debug("KeepAlive Time 변경");
+
 			String keepAliveTime = msg.getContent();
+			if (!msg.getContentType().equals("application/json")) {
+				throw new MessageRunTimeException(
+						StaticConfig.ERROR_CODE_534400,
+						"잘못된 요청 입니다(contentType의 값을 application/json 으로 입력해주세요)");
+			}
 
 			try {
 				msg.setContent("{\"keepAliveTime\":"
 						+ Integer.parseInt(keepAliveTime) + "}");
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new MessageRunTimeException(
+						StaticConfig.ERROR_CODE_534400,
+						"잘못된 요청 입니다(content의 입력값을 확인해주세요)");
+			}
+
+		} else if (msgType == 201) {
+			logger.debug("Trace Log 업로드 요청 API");
+			String hostName = msg.getContent();
+			if (!msg.getContentType().equals("application/json")) {
+				throw new MessageRunTimeException(
+						StaticConfig.ERROR_CODE_534400,
+						"잘못된 요청 입니다(contentType의 값을 application/json 으로 입력해주세요)");
+			}
+
+			try {
+				msg.setContent("{\"hostInfo\":\"" + hostName + "\"}");
 			} catch (Exception e) {
 				e.printStackTrace();
 				throw new MessageRunTimeException(
