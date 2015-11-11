@@ -345,6 +345,26 @@ NSData *dataForString(NSString *text)
                 [pushDataDB insertJob:job];
                 
                 break;
+            
+            case 201:
+                
+                //mqttKeepAliveInterval setting
+                job = [[JobBean alloc]init];
+                
+                timestamp = [[NSDate date] timeIntervalSince1970];
+                [job setMsgType:[json[@"msgType"] intValue]];
+                [job setQos:qos];
+                content = [NSString stringWithFormat:@"{\"hostUrl\":\"%@\"}",json[@"content"][@"hostInfo"]];
+                [job setContent:content];
+                [job setMsgId:json[@"msgId"]];
+                [job setContentType:json[@"contentType"]];
+                [job setTopic:topic];
+                [job setServiceId:json[@"serviceId"]];
+                [job setIssueTime:timestamp];
+                
+                [pushDataDB insertJob:job];
+                
+                break;
                 
             default:
                 [[ADFPush sharedADFPush] addJobLog:@"JobError" param1:@"onMessageArrived msgType Error" param2:@"" jsonYn:true data:payload jogTypeError: true];
@@ -804,7 +824,7 @@ int MQTTKEEPALIVEINTERVAL;
             @try {
                 if (jobTypeError) {
                     QueueFile * adfErrorLogQF = [ [ADFPush sharedADFPush] adfErrorLogQF];
-                    if ([adfErrorLogQF size] > 3000) {
+                    if ([adfErrorLogQF size] > 1000) {
                         [adfErrorLogQF remove];
                     }
                     [adfErrorLogQF add:dataForString(result)];
@@ -916,7 +936,7 @@ int MQTTKEEPALIVEINTERVAL;
         int ackValue = [pushDataDB getAck:jobId]; //0=ackNo, 1=ackOK, 2=DB not found
 
         // Job Logging
-        [[ADFPush sharedADFPush] addJobLog:@"TranLog" param1:@"callAck" param2:msgId jsonYn:false data:@"" jogTypeError: false];
+        [[ADFPush sharedADFPush] addJobLog:@"TranLog" param1:@"callAck" param2:msgId jsonYn:false data:[NSString stringWithFormat:@"%d",ackTime] jogTypeError: false];
         
         if (ackValue == 1) {
             JobBean *job = [[JobBean alloc]init];
@@ -1016,6 +1036,7 @@ int MQTTKEEPALIVEINTERVAL;
     NSDictionary *dict=nil;
     NSDictionary *contentDict=nil;
     NSString *adfEnvJson;
+    NSString *hostUrl;
     int timestamp;
     
     for (int i=0; i < jobList.count; i++) {
@@ -1091,6 +1112,23 @@ int MQTTKEEPALIVEINTERVAL;
                 [[ADFPush sharedADFPush] addJobLog:@"TranLog" param1:@"keepAliveTime" param2:job.msgId jsonYn:false data:@"" jogTypeError: false];
                 
                 break;
+                
+            case 201:
+                
+                NSLog(@"===== content : %@",job.content);
+                
+                contentData = [job.content dataUsingEncoding:NSUTF8StringEncoding];
+                contentDict = [NSJSONSerialization JSONObjectWithData:contentData options:NSJSONReadingMutableContainers error:nil];
+                hostUrl = contentDict[@"hostUrl"];
+                NSLog(@"===== hostUrl : %@",hostUrl);
+                
+                
+                [self fileUpload:hostUrl];
+                [pushDataDB deleteJobId:job.jobId];
+                
+                break;
+                
+
             
             
             case 300:
@@ -1217,6 +1255,148 @@ int MQTTKEEPALIVEINTERVAL;
         return;
     }
     
+}
+
+-(void)fileUpload:(NSString *) hostUrl{
+    @try {
+        NSFileManager *FileManager;
+        FileManager = [NSFileManager defaultManager];
+        
+        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,
+                                                             NSUserDomainMask, YES);
+        NSString *documentsDirectory = [paths objectAtIndex:0];
+        
+        NSString *fileNameTran = @"adfTranLog.q";
+        NSString *fileNameTranNew = [NSString stringWithFormat:@"%@_backup",fileNameTran];
+        NSString *fileNameErr = @"adfErrorLog.q";
+        NSString *fileNameErrNew = [NSString stringWithFormat:@"%@_backup",fileNameErr];
+        
+        NSString *fileTranPath = [documentsDirectory stringByAppendingPathComponent:fileNameTran];
+        NSString *fileErrPath = [documentsDirectory stringByAppendingPathComponent:fileNameErr];
+        
+        /** 현재 디렉토리에 test.txt 파일이 있는지 검사 */
+        if ([FileManager fileExistsAtPath:fileTranPath] == NO) {
+//            NSLog(@"[1]%@ file not exist", fileNameTran);
+        } else {
+//            NSLog(@"[1]%@ file OK", fileNameTran);
+            NSString *fileTranNewPath =
+            [documentsDirectory stringByAppendingPathComponent:fileNameTranNew];
+            NSString *fileErrNewPath =
+            [documentsDirectory stringByAppendingPathComponent:fileNameErrNew];
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                /** test.txt 파일을 test2 밑에 new_test.txt로 복사 */
+                [FileManager copyItemAtPath:fileTranPath toPath:fileTranNewPath error:nil];
+                [FileManager copyItemAtPath:fileErrPath toPath:fileErrNewPath error:nil];
+                
+                if ([FileManager fileExistsAtPath:fileTranNewPath] == NO) {
+//                    NSLog(@"[2]%@ file not exist",fileTranNewPath);
+                } else {
+//                    NSLog(@"[2]%@ file OK",fileTranNewPath);
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        //file Read
+                        NSData *fileTranNewData = [FileManager contentsAtPath:fileTranNewPath];
+                        NSData *fileErrNewData = [FileManager contentsAtPath:fileErrNewPath];
+                        
+                        NSString *urlString = [NSString stringWithFormat:@"%@/cts/v1/users/%@",hostUrl,MQTTTOKEN];
+                        
+//                        NSLog(@"urlMu :%@", urlString);
+                        
+                        NSURL *url = [[NSURL alloc] initWithString:urlString];
+                        NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+                        
+                        //    [NSURLRequest setAllowsAnyHTTPSCertificate:YES forHost:[url host]];
+                        
+                        [request setURL:url];
+                        [request setHTTPMethod:@"POST"];
+                        
+                        //////////
+                        NSString *boundary = [NSString stringWithFormat:@"ADEDFEDFEDEDAAAAa1233448577888"];
+                        NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@", boundary];
+                        [request addValue:contentType forHTTPHeaderField:@"Content-type"];
+                        NSMutableData *body = [[NSMutableData data] init];
+                        
+                        ////////구분자 표시
+                        [body appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+                        
+                        ////// 첫번째 파일 전송
+                        [body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"file\"; filename=\"%@\"\r\n", fileNameTranNew] dataUsingEncoding:NSUTF8StringEncoding]];
+                        [body appendData:[[NSString stringWithFormat:@"Content-Type:application/octet-stream\r\n\r\n"] dataUsingEncoding:NSUTF8StringEncoding] ];
+                        
+//                        NSLog(@"전송 바이트1 : %lu", (unsigned long)[body length]);
+                        
+                        //////실제 전송할 파일내용
+                        [body appendData:[NSData dataWithData:fileTranNewData]];
+                        
+                        ////////구분자 표시
+                        [body appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+                        
+                        ////// 두번째 파일 전송
+                        [body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"file\"; filename=\"%@\"\r\n", fileNameErrNew] dataUsingEncoding:NSUTF8StringEncoding]];
+                        [body appendData:[[NSString stringWithFormat:@"Content-Type:application/octet-stream\r\n\r\n"] dataUsingEncoding:NSUTF8StringEncoding] ];
+                        
+//                        NSLog(@"전송 바이트2 : %lu", (unsigned long)[body length]);
+                        
+                        //////실제 전송할 파일내용
+                        [body appendData:[NSData dataWithData:fileErrNewData]];
+                        
+                        ////////구분자 표시
+                        [body appendData:[[NSString stringWithFormat:@"\r\n--%@--\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+                        
+                        
+                        
+                        [request setHTTPBody:body];
+                        
+//                        NSLog(@"전송 바이트3 : %lu", (unsigned long)[body length]);
+                        
+                        NSURLSession *session = [NSURLSession sharedSession];
+                        NSURLSessionDataTask *task = [session dataTaskWithRequest:request
+                                                                completionHandler:
+                                                      ^(NSData *data, NSURLResponse *response, NSError *error) {
+//                                                          if (error != nil) {
+////                                                              NSLog(@"[ADFPush] Error on load = %@", [error localizedDescription]);
+//                                                              
+//                                                          } else {
+//                                                              //HTTP 상태를 검사한다.
+//                                                              if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+//                                                                  NSHTTPURLResponse * httpResponse = (NSHTTPURLResponse *) response;
+//                                                                  
+//                                                                  if (httpResponse.statusCode != 200) {
+////                                                                      NSLog(@"[ADFPush] httpResponse statusCode  = %ld", (long) httpResponse.statusCode);
+//                                                                  }else{
+////                                                                      NSLog(@"[ADFPush] file upload OK");
+//                                                                  }
+//                                                              }
+//                                                          }
+                                                      }];
+                        
+                        [task resume];
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            ///// 복사된 파일 삭제
+                            [FileManager removeItemAtPath:fileTranNewPath error:nil];
+                            [FileManager removeItemAtPath:fileErrNewPath error:nil];
+//                            if ([FileManager fileExistsAtPath:fileTranNewPath] == NO) {
+//                                NSLog(@"[3]%@ file delete OK",fileTranNewPath);
+//                            } else {
+//                                NSLog(@"[3]%@ file delete Fail",fileTranNewPath);
+//                            }
+                            
+                        });
+                        
+                        
+                    });
+                    
+                    
+                }
+                
+            });
+            
+            
+        }
+    }
+    @catch (NSException *exception) {
+        NSLog(@"[ADFError] connectMQTT - NSException2: %@", [exception description]);
+    }
 }
 
 
