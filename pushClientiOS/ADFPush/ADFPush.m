@@ -271,6 +271,26 @@ NSData *dataForString(NSString *text)
         int msgType = [json[@"msgType"] intValue];
         int jobId;
         
+        // Agent Ack send
+        NSLog(@"job.ack : %d",[json[@"ack"] intValue]);
+        if ([json[@"ack"] intValue] > 0) {
+            
+            // job Table - agent ack insert
+            timestamp = [[NSDate date] timeIntervalSince1970];
+            job2 = [[JobBean alloc]init];
+            [job2 setMsgType:300];
+            [job2 setAck:[json[@"ack"] intValue]];
+            [job2 setQos:qos];
+            [job2 setContent:@""];
+            [job2 setMsgId:json[@"msgId"]];
+            [job2 setContentType:json[@"contentType"]];
+            [job2 setTopic:topic];
+            [job2 setServiceId:json[@"serviceId"]];
+            [job2 setIssueTime:timestamp];
+            
+            [pushDataDB insertJob:job2];
+        }
+        
         switch (msgType) {
             case 100:
                 
@@ -297,24 +317,6 @@ NSData *dataForString(NSString *text)
                     [[ADFPush sharedADFPush] addJobLog:@"JobError" param1:@"MessageArrived insert Job Error" param2:@"" jsonYn:true data:payload jogTypeError: true];
                     return;
                 }
-                
-                // Agent Ack send
-                if (job.ack > 0) {
-                    // job Table - agent ack insert
-                    job2 = [[JobBean alloc]init];
-                    [job2 setMsgType:300];
-                    [job2 setAck:[json[@"ack"] intValue]];
-                    [job2 setQos:qos];
-                    [job2 setContent:@""];
-                    [job2 setMsgId:json[@"msgId"]];
-                    [job2 setContentType:json[@"contentType"]];
-                    [job2 setTopic:topic];
-                    [job2 setServiceId:json[@"serviceId"]];
-                    [job2 setIssueTime:timestamp];
-                    
-                    [pushDataDB insertJob:job2];
-                }
-                
                 
                 // onMessageArrivedCallBack Call
                 tempMethord = @"onMessageArrivedCallBack:";
