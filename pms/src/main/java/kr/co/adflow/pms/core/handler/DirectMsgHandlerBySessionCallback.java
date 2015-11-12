@@ -36,7 +36,7 @@ public class DirectMsgHandlerBySessionCallback implements
 	@Override
 	public String doInJms(Session session) throws JMSException {
 		MessageProducer producer = null;
-
+		logger.debug("doInJms...");
 		logger.debug(msg.toString());
 
 		String json = "";
@@ -64,9 +64,9 @@ public class DirectMsgHandlerBySessionCallback implements
 			msgObject.put("serviceId", msg.getServiceId());
 
 			if ("application/json".equals(msg.getContentType())) {
+				logger.debug("contentType is application/json");
 				JSONObject contentObject = new JSONObject(msg.getContent());
-				logger.debug(contentObject.toString());
-				logger.debug("제이슨 오브젝트로 변경");
+				logger.debug("content.toString():" + contentObject.toString());
 				msgObject.put("content", contentObject);
 			} else {
 				msgObject.put("content", msg.getContent());
