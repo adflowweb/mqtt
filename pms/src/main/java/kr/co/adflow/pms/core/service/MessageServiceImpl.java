@@ -205,7 +205,7 @@ public class MessageServiceImpl implements MessageService {
 
 	// JMS Send and Message DB insert
 	public void sendJMS(Message msg) throws MessageRunTimeException {
-		logger.debug("발송정 입력값 시작");
+		logger.debug("발송전 입력값 시작");
 		logger.debug(msg.toString());
 		msg.setIssueTime(new Date());
 		// JMS message send
