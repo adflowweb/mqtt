@@ -44,8 +44,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class MessageController extends BaseController {
 
 	/** The Constant logger. */
-	private static final Logger logger = LoggerFactory
-			.getLogger(MessageController.class);
+	private static final Logger logger = LoggerFactory.getLogger(MessageController.class);
 
 	/** The push message service. */
 	@Autowired
@@ -70,34 +69,27 @@ public class MessageController extends BaseController {
 	 */
 	@RequestMapping(value = "/messages", method = RequestMethod.POST, consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
 	@ResponseBody
-	public Response<MessageSendRes> sendMessage(
-			@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String appKey,
+	public Response<MessageSendRes> sendMessage(@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String appKey,
 			@RequestBody @Valid MessageReq msg) throws Exception {
 
-		logger.debug("=== msg::{}", "getContentType::" + msg.getContentType()
-				+ ",getExpiry::" + msg.getExpiry() + ",getQos::" + msg.getQos()
-				+ ",getReceiver::" + msg.getReceiver());
+		logger.debug("=== msg::{}", "getContentType::" + msg.getContentType() + ",getExpiry::" + msg.getExpiry()
+				+ ",getQos::" + msg.getQos() + ",getReceiver::" + msg.getReceiver());
 
 		if (msg.getReceiver() == null || msg.getReceiver().trim().length() == 0) {
 
-			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_530404,
-					"Receiver 가 없습니다");
+			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_530404, "Receiver 가 없습니다");
 		}
-		if (msg.getContentType() == null
-				|| msg.getContentType().trim().length() == 0) {
+		if (msg.getContentType() == null || msg.getContentType().trim().length() == 0) {
 
-			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_530404,
-					"Content-Type 이 없습니다");
+			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_530404, "Content-Type 이 없습니다");
 		}
 		if (msg.getContent() == null || msg.getContent().trim().length() == 0) {
 
-			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_530404,
-					"Content 가 없습니다");
+			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_530404, "Content 가 없습니다");
 		}
 		if (msg.getQos() < 0 || msg.getQos() > 2) {
 
-			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_530400,
-					"Qos 설정이 잘못 되었습니다");
+			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_530400, "Qos 설정이 잘못 되었습니다");
 		}
 
 		if (msg.getMsgType() != 0) {
@@ -106,15 +98,13 @@ public class MessageController extends BaseController {
 			msg.setMsgType(StaticConfig.MESSAGE_TYPE_USER);
 		}
 
-		if (msg.getServiceId() == null
-				|| msg.getServiceId().trim().length() == 0) {
+		if (msg.getServiceId() == null || msg.getServiceId().trim().length() == 0) {
 
 			msg.setServiceId(pmsConfig.MESSAGE_SERVICE_ID_DEFAULT);
 		}
 
 		if (msg.getExpiry() == 0) {
-			logger.debug("expiry 시간이 입력되지 않아 기본 시간으로 세팅툅니다!"
-					+ pmsConfig.MESSAGE_HEADER_EXPIRY_DEFAULT);
+			logger.debug("expiry 시간이 입력되지 않아 기본 시간으로 세팅툅니다!" + pmsConfig.MESSAGE_HEADER_EXPIRY_DEFAULT);
 
 			msg.setExpiry(pmsConfig.MESSAGE_HEADER_EXPIRY_DEFAULT);
 		} else {
@@ -128,8 +118,7 @@ public class MessageController extends BaseController {
 			try {
 				JSONObject jsonObject = new JSONObject(msg.getContent());
 			} catch (JSONException e) {
-				throw new MessageRunTimeException(
-						StaticConfig.ERROR_CODE_530400,
+				throw new MessageRunTimeException(StaticConfig.ERROR_CODE_530400,
 						"JSON Object로 변경할수 없습니다. ContentType과 Content를 확인해주세요");
 			}
 		}
@@ -154,44 +143,35 @@ public class MessageController extends BaseController {
 	@ResponseBody
 	public Response<MessageSendRes> sendSystemMessage(
 			@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String applicationKey,
-			@RequestBody @Valid MessageReq msg, @PathVariable int msgType)
-			throws Exception {
+			@RequestBody @Valid MessageReq msg, @PathVariable int msgType) throws Exception {
 
-		logger.debug("=== msg::{}", "getContentType::" + msg.getContentType()
-				+ ",getExpiry::" + msg.getExpiry() + ",getQos::" + msg.getQos()
-				+ ",getReceiver::" + msg.getReceiver());
+		logger.debug("=== msg::{}", "getContentType::" + msg.getContentType() + ",getExpiry::" + msg.getExpiry()
+				+ ",getQos::" + msg.getQos() + ",getReceiver::" + msg.getReceiver());
 
 		if (msg.getReceiver() == null || msg.getReceiver().trim().length() == 0) {
 
-			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_534404,
-					"Receiver 가 없습니다");
+			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_534404, "Receiver 가 없습니다");
 		}
-		if (msg.getContentType() == null
-				|| msg.getContentType().trim().length() == 0) {
+		if (msg.getContentType() == null || msg.getContentType().trim().length() == 0) {
 
-			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_534404,
-					"Content-Type 이 없습니다");
+			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_534404, "Content-Type 이 없습니다");
 		}
 		if (msg.getContent() == null || msg.getContent().trim().length() == 0) {
 
-			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_534404,
-					"Content 가 없습니다");
+			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_534404, "Content 가 없습니다");
 		}
 		if (msg.getQos() < 0 || msg.getQos() > 2) {
 
-			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_530500,
-					"Qos 설정이 잘못 되었습니다");
+			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_530500, "Qos 설정이 잘못 되었습니다");
 		}
 
-		if (msg.getServiceId() == null
-				|| msg.getServiceId().trim().length() == 0) {
+		if (msg.getServiceId() == null || msg.getServiceId().trim().length() == 0) {
 
 			msg.setServiceId(pmsConfig.MESSAGE_SERVICE_ID_DEFAULT);
 		}
 
 		if (msg.getExpiry() == 0) {
-			logger.debug("expiry 시간이 입력되지 않아 기본 시간으로 세팅툅니다!"
-					+ pmsConfig.MESSAGE_HEADER_EXPIRY_DEFAULT);
+			logger.debug("expiry 시간이 입력되지 않아 기본 시간으로 세팅툅니다!" + pmsConfig.MESSAGE_HEADER_EXPIRY_DEFAULT);
 
 			msg.setExpiry(pmsConfig.MESSAGE_HEADER_EXPIRY_DEFAULT);
 		} else {
@@ -206,45 +186,36 @@ public class MessageController extends BaseController {
 
 			String keepAliveTime = msg.getContent();
 			if (!msg.getContentType().equals("application/json")) {
-				throw new MessageRunTimeException(
-						StaticConfig.ERROR_CODE_534400,
+				throw new MessageRunTimeException(StaticConfig.ERROR_CODE_534400,
 						"잘못된 요청 입니다(contentType의 값을 application/json 으로 입력해주세요)");
 			}
 
 			try {
-				msg.setContent("{\"keepAliveTime\":"
-						+ Integer.parseInt(keepAliveTime) + "}");
+				msg.setContent("{\"keepAliveTime\":" + Integer.parseInt(keepAliveTime) + "}");
 			} catch (Exception e) {
 				e.printStackTrace();
-				throw new MessageRunTimeException(
-						StaticConfig.ERROR_CODE_534400,
-						"잘못된 요청 입니다(content의 입력값을 확인해주세요)");
+				throw new MessageRunTimeException(StaticConfig.ERROR_CODE_534400, "잘못된 요청 입니다(content의 입력값을 확인해주세요)");
 			}
 
 		} else if (msgType == 201) {
 			logger.debug("Trace Log 업로드 요청 API");
 			String hostName = msg.getContent();
 			if (!msg.getContentType().equals("application/json")) {
-				throw new MessageRunTimeException(
-						StaticConfig.ERROR_CODE_534400,
+				throw new MessageRunTimeException(StaticConfig.ERROR_CODE_534400,
 						"잘못된 요청 입니다(contentType의 값을 application/json 으로 입력해주세요)");
 			}
 
-			try {
-				msg.setContent("{\"hostInfo\":\"" + hostName + "\"}");
-			} catch (Exception e) {
-				e.printStackTrace();
-				throw new MessageRunTimeException(
-						StaticConfig.ERROR_CODE_534400,
-						"잘못된 요청 입니다(content의 입력값을 확인해주세요)");
-			}
+			msg.setContent("{\"hostInfo\":\"" + hostName + "\"}");
 
+		} else if (msgType == 202) {
+			logger.debug("Server Ping 요청 API");
+		
+			
 		}
 
 		else {
 
-			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_530500,
-					"시스템 메시지의 타입이 잘못되었습니다");
+			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_530500, "시스템 메시지의 타입이 잘못되었습니다");
 		}
 
 		Message msgSendData = messageService.sendMessage(msg, applicationKey);
@@ -265,40 +236,27 @@ public class MessageController extends BaseController {
 
 	@RequestMapping(value = "/messages", method = RequestMethod.GET)
 	@ResponseBody
-	public Response<MessagesListRes> getMessageList(
-			@RequestParam Map<String, String> params,
-			@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String applicationKey)
-			throws Exception {
-		String requestUserId = checkUtil.checkAuth(applicationKey,
-				StaticConfig.API_CODE_531);
+	public Response<MessagesListRes> getMessageList(@RequestParam Map<String, String> params,
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String applicationKey) throws Exception {
+		String requestUserId = checkUtil.checkAuth(applicationKey, StaticConfig.API_CODE_531);
 
-		if (params.get("iDisplayStart") == null
-				|| params.get("iDisplayStart").trim().length() == 0) {
-			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_531404,
-					"조회 시작 번호가 없습니다");
+		if (params.get("iDisplayStart") == null || params.get("iDisplayStart").trim().length() == 0) {
+			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_531404, "조회 시작 번호가 없습니다");
 		}
-		if (params.get("iDisplayLength") == null
-				|| params.get("iDisplayLength").trim().length() == 0) {
-			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_531404,
-					"조회 길이가 없습니다");
+		if (params.get("iDisplayLength") == null || params.get("iDisplayLength").trim().length() == 0) {
+			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_531404, "조회 길이가 없습니다");
 		}
 
-		if (params.get("cSearchDateStart") == null
-				|| params.get("cSearchDateStart").trim().length() == 0) {
-			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_531404,
-					"시작 날짜가 없습니다");
+		if (params.get("cSearchDateStart") == null || params.get("cSearchDateStart").trim().length() == 0) {
+			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_531404, "시작 날짜가 없습니다");
 		}
 
-		if (params.get("cSearchDateEnd") == null
-				|| params.get("cSearchDateEnd").trim().length() == 0) {
-			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_531404,
-					"끝 날짜가 없습니다");
+		if (params.get("cSearchDateEnd") == null || params.get("cSearchDateEnd").trim().length() == 0) {
+			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_531404, "끝 날짜가 없습니다");
 		}
 
-		if (params.get("cSearchStatus") == null
-				|| params.get("cSearchStatus").trim().length() == 0) {
-			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_531404,
-					"조회 상태코드가 없습니다");
+		if (params.get("cSearchStatus") == null || params.get("cSearchStatus").trim().length() == 0) {
+			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_531404, "조회 상태코드가 없습니다");
 		}
 		String sEcho = (String) params.get("sEcho");
 		params.put("appKey", applicationKey);
@@ -318,24 +276,17 @@ public class MessageController extends BaseController {
 
 	@RequestMapping(value = "/messages/statistics", method = RequestMethod.GET)
 	@ResponseBody
-	public Response<StatisticsRes> getMessageStatistics(
-			@RequestParam Map<String, String> params,
-			@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String applicationKey)
-			throws Exception {
+	public Response<StatisticsRes> getMessageStatistics(@RequestParam Map<String, String> params,
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String applicationKey) throws Exception {
 
-		String requestUserId = checkUtil.checkAuth(applicationKey,
-				StaticConfig.API_CODE_532);
+		String requestUserId = checkUtil.checkAuth(applicationKey, StaticConfig.API_CODE_532);
 
-		if (params.get("cSearchDateStart") == null
-				|| params.get("cSearchDateStart").trim().length() == 0) {
-			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_532404,
-					"시작 날짜가 없습니다");
+		if (params.get("cSearchDateStart") == null || params.get("cSearchDateStart").trim().length() == 0) {
+			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_532404, "시작 날짜가 없습니다");
 		}
 
-		if (params.get("cSearchDateEnd") == null
-				|| params.get("cSearchDateEnd").trim().length() == 0) {
-			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_532404,
-					"끝 날짜가 없습니다");
+		if (params.get("cSearchDateEnd") == null || params.get("cSearchDateEnd").trim().length() == 0) {
+			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_532404, "끝 날짜가 없습니다");
 		}
 
 		StatisticsRes statisticsRes = messageService.getStatistics(params);
@@ -352,25 +303,17 @@ public class MessageController extends BaseController {
 
 	@RequestMapping(value = "/messages/ack/{msgId}", method = RequestMethod.GET)
 	@ResponseBody
-	public Response<AckRes> getAckMessage(
-			@RequestParam Map<String, String> params,
-			@PathVariable String msgId,
-			@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String applicationKey)
-			throws Exception {
+	public Response<AckRes> getAckMessage(@RequestParam Map<String, String> params, @PathVariable String msgId,
+			@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String applicationKey) throws Exception {
 
-		String requestUserId = checkUtil.checkAuth(applicationKey,
-				StaticConfig.API_CODE_533);
+		String requestUserId = checkUtil.checkAuth(applicationKey, StaticConfig.API_CODE_533);
 
-		if (params.get("cSearchDateStart") == null
-				|| params.get("cSearchDateStart").trim().length() == 0) {
-			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_533404,
-					"시작 날짜가 없습니다");
+		if (params.get("cSearchDateStart") == null || params.get("cSearchDateStart").trim().length() == 0) {
+			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_533404, "시작 날짜가 없습니다");
 		}
 
-		if (params.get("cSearchDateEnd") == null
-				|| params.get("cSearchDateEnd").trim().length() == 0) {
-			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_533404,
-					"끝 날짜가 없습니다");
+		if (params.get("cSearchDateEnd") == null || params.get("cSearchDateEnd").trim().length() == 0) {
+			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_533404, "끝 날짜가 없습니다");
 		}
 
 		AckRes ackRes = messageService.getAckMessage(params, msgId);
@@ -391,8 +334,7 @@ public class MessageController extends BaseController {
 		Response res = new Response();
 		res.setStatus(StaticConfig.RESPONSE_STATUS_FAIL);
 		if (e instanceof MessageRunTimeException) {
-			HashMap<String, String> errMap = ((MessageRunTimeException) e)
-					.getErrorMsg();
+			HashMap<String, String> errMap = ((MessageRunTimeException) e).getErrorMsg();
 			String errCode = errMap.get("errCode");
 			String errMsg = errMap.get("errMsg");
 			logger.error(errCode);
