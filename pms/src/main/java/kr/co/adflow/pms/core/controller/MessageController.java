@@ -181,9 +181,10 @@ public class MessageController extends BaseController {
 		}
 
 		msg.setMsgType(msgType);
-		if (msgType == 200) {
-			logger.debug("KeepAlive Time 변경");
 
+		switch (msgType) {
+		case 200:
+			logger.debug("KeepAlive Time 변경");
 			String keepAliveTime = msg.getContent();
 			if (!msg.getContentType().equals("application/json")) {
 				throw new MessageRunTimeException(StaticConfig.ERROR_CODE_534400,
@@ -197,25 +198,25 @@ public class MessageController extends BaseController {
 				throw new MessageRunTimeException(StaticConfig.ERROR_CODE_534400, "잘못된 요청 입니다(content의 입력값을 확인해주세요)");
 			}
 
-		} else if (msgType == 201) {
+			break;
+		case 201:
 			logger.debug("Trace Log 업로드 요청 API");
 			String hostName = msg.getContent();
 			if (!msg.getContentType().equals("application/json")) {
 				throw new MessageRunTimeException(StaticConfig.ERROR_CODE_534400,
 						"잘못된 요청 입니다(contentType의 값을 application/json 으로 입력해주세요)");
 			}
-
 			msg.setContent("{\"hostInfo\":\"" + hostName + "\"}");
 
-		} else if (msgType == 202) {
-			logger.debug("Server Ping 요청 API");
-		
-			
-		}
+			break;
+		// case 202:
+		// logger.debug("Server Ping 요청 API");
+		// break;
 
-		else {
+		default:
 
-			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_530500, "시스템 메시지의 타입이 잘못되었습니다");
+			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_530500, "시스템 메시지의 타입이 잘못되었습니다.");
+
 		}
 
 		Message msgSendData = messageService.sendMessage(msg, applicationKey);
