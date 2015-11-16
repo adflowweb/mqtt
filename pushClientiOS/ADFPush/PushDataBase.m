@@ -109,6 +109,13 @@
             return -1;
         }
         
+        if (job.contentType == nil) {
+            job.contentType = @"";
+        }
+        if (job.serviceId == nil) {
+            job.serviceId = @"";
+        }
+        
         // 조건을 바인딩합니다.
         sqlite3_bind_int(statement, 1, job.msgType);
         sqlite3_bind_int(statement, 2, job.ack);
