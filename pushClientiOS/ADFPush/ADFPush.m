@@ -502,7 +502,7 @@ int MQTTKEEPALIVEINTERVAL;
             
             MQTTHOSTS = json[@"hosts"];
             MQTTPORTS = json[@"ports"];
-            CLEANSESSION = json[@"cleanSession"];
+            CLEANSESSION = [json[@"cleanSesstion"]boolValue];
             MQTTTOKEN = json[@"token"];
             ADFPUSHHOST = json[@"adfPushServerUrl"];
             MQTTKEEPALIVEINTERVAL = [json[@"mqttKeepAliveInterval"] intValue];
