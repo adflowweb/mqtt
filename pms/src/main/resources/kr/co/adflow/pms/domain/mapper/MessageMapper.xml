@@ -72,6 +72,11 @@
 		AND a.msg_type=10
 	</select>
 
+	<select id="selectMsgIssueTime" parameterType="String" resultMap="MessageResult">
+		Select issue_time from pms.message where msg_id=#{msgId}
+
+	</select>
+
 	<select id="selectList" parameterType="Map" resultMap="MessageResult">
 		SELECT
 		a.group_id
@@ -241,7 +246,8 @@
 
 		WHERE
 		a.msg_id =a.msg_id
-		AND a.issue_time between #{dateStart} and #{dateEnd}
+		AND a.issue_time
+		between #{dateStart} and #{dateEnd}
 
 
 		<if test="msgType != null and msgType != 0">

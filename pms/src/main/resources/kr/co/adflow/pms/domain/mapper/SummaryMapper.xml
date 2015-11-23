@@ -30,12 +30,12 @@
 		FROM
 		pms.message a LEFT OUTER
 		JOIN
-		pms.ack b ON a.msg_id = b.msg_id AND
+		pms.ack b ON a.msg_id = b.msg_id AND a.issue_time=b.issue_time AND
 		b.ack_type = 'agent',
 		pms.message c
 		LEFT OUTER JOIN pms.ack d ON c.msg_id
-		= d.msg_id AND d.ack_type = 'app'
-		WHERE a.msg_id = c.msg_id and
+		= d.msg_id AND c.issue_time=d.issue_time AND d.ack_type = 'app' 
+		WHERE a.msg_id = c.msg_id AND a.issue_time = c.issue_time AND
 		a.issue_time between #{dateStart} and #{dateEnd}
 
 

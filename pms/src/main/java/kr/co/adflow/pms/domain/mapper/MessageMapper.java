@@ -250,5 +250,7 @@ public interface MessageMapper {
 	 * @return the Message
 	 */
 	List<Message> selectReservationMessage(String msgId);
+	
+	Message selectMsgIssueTime(String msgId);
 
 }

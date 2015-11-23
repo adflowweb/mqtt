@@ -13,7 +13,8 @@ import javax.jms.MessageListener;
 
 import kr.co.adflow.pms.domain.Ack;
 import kr.co.adflow.pms.domain.mapper.AckMapper;
-import kr.co.adflow.pms.domain.mapper.UserMapper;
+import kr.co.adflow.pms.domain.mapper.MessageMapper;
+
 
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -36,10 +37,9 @@ public class AckMessageDrivenBean implements MessageListener {
 	@Autowired
 	private AckMapper ackMapper;
 
-	/** The user mapper. */
 	@Autowired
-	private UserMapper userMapper;
-
+	private MessageMapper msgMapper; 
+	
 	/** The executor server id. */
 	@Value("#{pms['executor.server.id']}")
 	private String EXECUTOR_SERVER_ID;
@@ -69,7 +69,12 @@ public class AckMessageDrivenBean implements MessageListener {
 		HashMap<String, Object> param = new HashMap<String, Object>();
 
 		param.put("msgId", ack.getMsgId());
-
+		
+		//실제 메시지가 생성된시간을 입력 
+		kr.co.adflow.pms.domain.Message msg=  msgMapper.selectMsgIssueTime(ack.getMsgId());
+		ack.setIssueTime(msg.getIssueTime());
+		
+		
 		logger.debug("ack param ::" + param.toString());
 		try {
 

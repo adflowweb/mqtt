@@ -39,7 +39,7 @@
 		#{ackType},
 		#{tokenId},
 		#{ackTime},
-		now(),
+		#{issueTime},
 		#{serverId}
 		)
 	</insert>
