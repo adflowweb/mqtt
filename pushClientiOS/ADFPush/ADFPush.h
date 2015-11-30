@@ -24,6 +24,8 @@
 @property PushDataBase *pushDataDB;
 
 ///[sk]
+@property bool AUTOSUBSCRIBE;
+@property (nonatomic, strong) NSTimer *autoSubscribeAgentTimer;
 @property (nonatomic, retain) id Responder;
 @property (nonatomic, strong) QueueFile *adfEnv;
 @property (nonatomic, strong) QueueFile *adfTranLogQF;
