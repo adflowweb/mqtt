@@ -717,15 +717,19 @@ NSTimer *autoSubscribeAgentTimer = nil;
         // 2015-11-04 개발자 요청으로 isConnected 추가
         MqttClient *mClient = [[ADFPush sharedADFPush] client];
         if ([mClient isConnected]) {
-            if ([topicFilter isEqualToString:[NSString stringWithFormat:@"users/%@",MQTTTOKEN]]) {
-                NSString *tempMethord = @"unsubscribeCallBack:";
-                NSString * result = [NSString stringWithFormat:@"{\"status\": \"fail\",\"code\": 306402,\"data\" : {\"topic\" : \"%@\"}, \"message\": \"기본 토픽은 구독해제를 할 수 없습니다.\"}",topicFilter];
-                
-                [[ADFPush sharedADFPush] callBackSelector:tempMethord data:result];
-            } else {
-                NSLog(@"topicFilter=%@", topicFilter);
-                [client unsubscribe:topicFilter invocationContext:topicFilter onCompletion:[[UnsubscribeCallbacks alloc] init]];
-            }
+            
+            ////  기본 토픽 구독 해제 방지 로지 --> 사용 안하기로 함.
+//            if ([topicFilter isEqualToString:[NSString stringWithFormat:@"users/%@",MQTTTOKEN]]) {
+//                NSString *tempMethord = @"unsubscribeCallBack:";
+//                NSString * result = [NSString stringWithFormat:@"{\"status\": \"fail\",\"code\": 306402,\"data\" : {\"topic\" : \"%@\"}, \"message\": \"기본 토픽은 구독해제를 할 수 없습니다.\"}",topicFilter];
+//                
+//                [[ADFPush sharedADFPush] callBackSelector:tempMethord data:result];
+//            } else {
+//                [client unsubscribe:topicFilter invocationContext:topicFilter onCompletion:[[UnsubscribeCallbacks alloc] init]];
+//            }
+                       
+            [client unsubscribe:topicFilter invocationContext:topicFilter onCompletion:[[UnsubscribeCallbacks alloc] init]];
+            
         } else {
             NSString *tempMethord = @"unsubscribeCallBack:";
             NSString * result = [NSString stringWithFormat:@"{\"status\": \"fail\",\"code\": 306401,\"data\" : {\"topic\" : \"%@\"}, \"message\": \"MQTT 연결이 안되어 있습니다.\"}",topicFilter];
