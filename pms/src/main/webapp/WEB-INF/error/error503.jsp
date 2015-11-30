@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>500</title>
+<title>Internal Server Error</title>
 <style type="text/css">
 body {
 	background-image:
@@ -35,7 +35,7 @@ body {
 		<div class="row">
 			<div class="col-md-12">
 				<div class="error-template">
-      		     <h2>500 Internal Server Error</h2>
+      		     <h2>Internal Server Error</h2>
 					<div class="error-details">There was an error. Please try again later.</div>
 				
 				</div>

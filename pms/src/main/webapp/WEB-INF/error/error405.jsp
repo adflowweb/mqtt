@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>405</title>
+<title>Method Not Allowed</title>
 <style type="text/css">
 body {
 	background-image:
@@ -35,7 +35,7 @@ body {
 		<div class="row">
 			<div class="col-md-12">
 				<div class="error-template">
-      		     <h2>405 Method Not Allowed</h2>
+      		     <h2>Method Not Allowed</h2>
 					
 				
 				</div>

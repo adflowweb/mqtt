@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>404</title>
+<title>page not found</title>
 <style type="text/css">
 body {
 	background-image:
@@ -35,7 +35,7 @@ body {
 		<div class="row">
 			<div class="col-md-12">
 				<div class="error-template">
-      		     <h2>404 Not Found</h2>
+      		     <h2>Page Not Found</h2>
 					<div class="error-details">The requested URL was not found on this server.</div>
 				
 				</div>
