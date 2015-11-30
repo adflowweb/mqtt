@@ -90,7 +90,7 @@ public class TokenController extends BaseController {
 		res.setData(tokenRes);
 		res.setCode(StaticConfig.SUCCESS_CODE_510);
 		res.setMessage("토큰을 발급 하였습니다.");
-
+		logger.debug("토큰발급결과:"+res.toString());
 		return res;
 
 	}
