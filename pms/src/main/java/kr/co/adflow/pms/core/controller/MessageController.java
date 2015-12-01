@@ -113,15 +113,15 @@ public class MessageController extends BaseController {
 			msg.setExpiry(expiryTime);
 		}
 
-		if (msg.getContentType().equals("application/json")) {
-
-			try {
-				JSONObject jsonObject = new JSONObject(msg.getContent());
-			} catch (JSONException e) {
-				throw new MessageRunTimeException(StaticConfig.ERROR_CODE_530400,
-						"JSON Object로 변경할수 없습니다. ContentType과 Content를 확인해주세요");
-			}
-		}
+	//	if (msg.getContentType().equals("application/json")) {
+	//
+	//		try {
+	//			JSONObject jsonObject = new JSONObject(msg.getContent());
+	//		} catch (JSONException e) {
+	//			throw new MessageRunTimeException(StaticConfig.ERROR_CODE_530400,
+	//					"JSON Object로 변경할수 없습니다. ContentType과 Content를 확인해주세요");
+	//		}
+	//	}
 
 		Message msgSendData = messageService.sendMessage(msg, appKey);
 

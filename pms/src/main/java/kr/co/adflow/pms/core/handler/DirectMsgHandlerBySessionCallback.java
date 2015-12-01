@@ -63,7 +63,8 @@ public class DirectMsgHandlerBySessionCallback implements
 			msgObject.put("contentType", msg.getContentType());
 			msgObject.put("serviceId", msg.getServiceId());
 
-			if ("application/json".equals(msg.getContentType())) {
+			if ("application/json".equals(msg.getContentType())&&msg.getMsgType()>=200) {
+				logger.debug("메시지타입 200번이상:"+msg.getMsgType());
 				logger.debug("contentType is application/json");
 				JSONObject contentObject = new JSONObject(msg.getContent());
 				logger.debug("content.toString():" + contentObject.toString());
