@@ -65,6 +65,7 @@ public class TokenController extends BaseController {
 	public Response<TokenRes> createToken(
 			@RequestHeader(value = StaticConfig.HEADER_APPLICATION_KEY) String applicationKey,
 			@RequestBody @Valid TokenReq userInfo) throws Exception {
+		logger.debug("/token(POST)==========");
 		String requestUserId = checkUtil.checkAuth(applicationKey,
 				StaticConfig.API_CODE_510);
 
@@ -99,6 +100,7 @@ public class TokenController extends BaseController {
 	@RequestMapping(value = "/token/{token}", method = RequestMethod.GET)
 	public Response<TokenInfoRes> getToken(@PathVariable String token)
 			throws Exception {
+		logger.debug("/token/{token}(GET)==========");
 		logger.debug("token=" + token);
 		Response<TokenInfoRes> res = new Response<TokenInfoRes>();
 		Token tokenData = tokenService.getTokenInfo(token);
@@ -127,7 +129,7 @@ public class TokenController extends BaseController {
 	public Response validate(
 			@RequestHeader(value = StaticConfig.HEADER_APPLICATION_KEY) String applicationKey,
 			@PathVariable String token) throws Exception {
-
+		logger.debug("/validate/{token}(GET)==========");
 		String requestUserId = checkUtil.checkAuth(applicationKey,
 				StaticConfig.API_CODE_511);
 		Response res = new Response();
@@ -149,6 +151,7 @@ public class TokenController extends BaseController {
 	@RequestMapping(value = "/token/connection/{token}", method = RequestMethod.GET)
 	@ResponseBody
 	public Response getTokenStatus(@PathVariable String token) throws Exception {
+		logger.debug("/token/connection/{token}(GET)==========");
 		logger.debug("token:" + token);
 		Response res = new Response();
 		String tokenStatus = pcfService.getStatus(token);
@@ -173,6 +176,7 @@ public class TokenController extends BaseController {
 	public Response<SubscriptionsRes> getTopic(@PathVariable String token)
 
 	throws Exception {
+		logger.debug("/token/subscriptions/{token}(GET)==========");
 		logger.debug("token=" + token);
 
 		Response<SubscriptionsRes> res = new Response<SubscriptionsRes>();

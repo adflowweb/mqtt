@@ -42,7 +42,7 @@ public class UserController extends BaseController {
 			@RequestHeader(value = StaticConfig.HEADER_APPLICATION_KEY) String applicationKey,
 			@RequestBody UserReq userReq) throws Exception {
 
-		logger.debug("createUser");
+		logger.debug("/users(POST)==========");
 
 		String requestUserId = checkUtil.checkAuth(applicationKey,
 				StaticConfig.API_CODE_550);
@@ -84,7 +84,7 @@ public class UserController extends BaseController {
 			@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String applicationKey)
 			throws Exception {
 
-		logger.debug("getUserInfo");
+		logger.debug("/users/{userId}(GET)==========");
 
 		String requestUserId = checkUtil.checkAuth(applicationKey,
 				StaticConfig.API_CODE_551);
@@ -107,7 +107,7 @@ public class UserController extends BaseController {
 			@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String applicationKey)
 			throws Exception {
 
-		logger.debug("updateUser");
+		logger.debug("/users/{userId}(PUT)==========");
 		String requestUserId = checkUtil.checkAuth(applicationKey,
 				StaticConfig.API_CODE_552);
 		userReq.setUserId(userId);
@@ -127,7 +127,7 @@ public class UserController extends BaseController {
 			@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String applicationKey)
 			throws Exception {
 
-		logger.debug("deleteUser");
+		logger.debug("/users/{userId}(DELETE)==========");
 		String requestUserId = checkUtil.checkAuth(applicationKey,
 				StaticConfig.API_CODE_553);
 

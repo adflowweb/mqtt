@@ -71,7 +71,7 @@ public class MessageController extends BaseController {
 	@ResponseBody
 	public Response<MessageSendRes> sendMessage(@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String appKey,
 			@RequestBody @Valid MessageReq msg) throws Exception {
-
+		logger.debug("/messages(POST)==========");
 		logger.debug("=== msg::{}", "getContentType::" + msg.getContentType() + ",getExpiry::" + msg.getExpiry()
 				+ ",getQos::" + msg.getQos() + ",getReceiver::" + msg.getReceiver());
 
@@ -144,7 +144,7 @@ public class MessageController extends BaseController {
 	public Response<MessageSendRes> sendSystemMessage(
 			@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String applicationKey,
 			@RequestBody @Valid MessageReq msg, @PathVariable int msgType) throws Exception {
-
+		logger.debug("/system/messages/{msgType}(POST)==========");
 		logger.debug("=== msg::{}", "getContentType::" + msg.getContentType() + ",getExpiry::" + msg.getExpiry()
 				+ ",getQos::" + msg.getQos() + ",getReceiver::" + msg.getReceiver());
 
@@ -239,6 +239,7 @@ public class MessageController extends BaseController {
 	@ResponseBody
 	public Response<MessagesListRes> getMessageList(@RequestParam Map<String, String> params,
 			@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String applicationKey) throws Exception {
+		logger.debug("/messages(GET)==========");
 		String requestUserId = checkUtil.checkAuth(applicationKey, StaticConfig.API_CODE_531);
 
 		if (params.get("iDisplayStart") == null || params.get("iDisplayStart").trim().length() == 0) {
@@ -279,7 +280,7 @@ public class MessageController extends BaseController {
 	@ResponseBody
 	public Response<StatisticsRes> getMessageStatistics(@RequestParam Map<String, String> params,
 			@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String applicationKey) throws Exception {
-
+		logger.debug("/messages/statistics(GET)==========");
 		String requestUserId = checkUtil.checkAuth(applicationKey, StaticConfig.API_CODE_532);
 
 		if (params.get("cSearchDateStart") == null || params.get("cSearchDateStart").trim().length() == 0) {
@@ -306,7 +307,7 @@ public class MessageController extends BaseController {
 	@ResponseBody
 	public Response<AckRes> getAckMessage(@RequestParam Map<String, String> params, @PathVariable String msgId,
 			@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String applicationKey) throws Exception {
-
+		logger.debug("/messages/ack/{msgId}(GET)==========");
 		String requestUserId = checkUtil.checkAuth(applicationKey, StaticConfig.API_CODE_533);
 
 		if (params.get("cSearchDateStart") == null || params.get("cSearchDateStart").trim().length() == 0) {

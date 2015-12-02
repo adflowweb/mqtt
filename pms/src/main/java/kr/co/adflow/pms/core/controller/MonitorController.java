@@ -37,7 +37,7 @@ public class MonitorController extends BaseController {
 	public Response<ServerInfo> getServerInfo(
 			@RequestHeader(value = StaticConfig.HEADER_APPLICATION_KEY) String applicationKey)
 			throws Exception {
-
+		logger.debug("/server(GET)==========");
 		String requestUserId = checkUtil.checkAuth(applicationKey,
 				StaticConfig.API_CODE_590);
 

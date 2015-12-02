@@ -42,7 +42,7 @@ public class RoleController extends BaseController {
 			@RequestHeader(value = StaticConfig.HEADER_APPLICATION_KEY) String applicationKey,
 			@RequestBody RoleReq roleReq) throws Exception {
 
-		logger.debug("createRole");
+		logger.debug("/role(POST)==========");
 		logger.debug("권한크도 생성");
 		String requestUserId = checkUtil.checkAuth(applicationKey,
 				StaticConfig.API_CODE_580);
@@ -98,7 +98,7 @@ public class RoleController extends BaseController {
 			@RequestHeader(value = StaticConfig.HEADER_APPLICATION_KEY) String applicationKey)
 			throws Exception {
 
-		logger.debug("getRole");
+		logger.debug("/role(GET)==========");
 		logger.debug("권한크도 조회");
 		String requestUserId = checkUtil.checkAuth(applicationKey,
 				StaticConfig.API_CODE_581);
@@ -121,7 +121,7 @@ public class RoleController extends BaseController {
 			@PathVariable int groupCode, @PathVariable int apiCode,
 			@RequestBody RoleReq roleReq) throws Exception {
 
-		logger.debug("updateRole");
+		logger.debug("/role/{groupCode}/{apiCode}(PUT)==========");
 		logger.debug("권한크도수정");
 		String requestUserId = checkUtil.checkAuth(applicationKey,
 				StaticConfig.API_CODE_582);
@@ -145,7 +145,7 @@ public class RoleController extends BaseController {
 			@PathVariable int groupCode, @PathVariable int apiCode)
 			throws Exception {
 
-		logger.debug("deleteRole");
+		logger.debug("/role/{groupCode}/{apiCode}(DELETE)==========");
 		logger.debug("권한크도삭제");
 		String requestUserId = checkUtil.checkAuth(applicationKey,
 				StaticConfig.API_CODE_583);

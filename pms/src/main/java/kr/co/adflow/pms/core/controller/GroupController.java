@@ -42,7 +42,7 @@ public class GroupController extends BaseController {
 			@RequestHeader(value = StaticConfig.HEADER_APPLICATION_KEY) String applicationKey,
 			@RequestBody GroupReq groupReq) throws Exception {
 
-		logger.debug("createGroup");
+		logger.debug("/group(POST)==========");
 		logger.debug("그룹생성");
 		String requestUserId = checkUtil.checkAuth(applicationKey,
 				StaticConfig.API_CODE_570);
@@ -82,7 +82,7 @@ public class GroupController extends BaseController {
 			@RequestHeader(value = StaticConfig.HEADER_APPLICATION_KEY) String applicationKey)
 			throws Exception {
 
-		logger.debug("getGroup");
+		logger.debug("/group(GET)==========");
 		String requestUserId = checkUtil.checkAuth(applicationKey,
 				StaticConfig.API_CODE_571);
 		Response<GroupListRes> res = new Response<GroupListRes>();
@@ -102,7 +102,7 @@ public class GroupController extends BaseController {
 			@PathVariable int groupCode, @RequestBody GroupReq groupReq)
 			throws Exception {
 
-		logger.debug("updateGroup");
+		logger.debug("/group/{groupCode}(PUT)==========");
 		logger.debug("그룹수정");
 		String requestUserId = checkUtil.checkAuth(applicationKey,
 				StaticConfig.API_CODE_572);
@@ -130,7 +130,7 @@ public class GroupController extends BaseController {
 			@RequestHeader(value = StaticConfig.HEADER_APPLICATION_KEY) String applicationKey,
 			@PathVariable int groupCode) throws Exception {
 
-		logger.debug("deleteGroup");
+		logger.debug("/group/{groupCode}(DELETE)==========");
 		logger.debug("그룹수정");
 		String requestUserId = checkUtil.checkAuth(applicationKey,
 				StaticConfig.API_CODE_572);
