@@ -71,7 +71,7 @@ public class DateUtil {
 
 		cal.add(Calendar.MONTH, month);
 
-		return DateUtil.getDate(cal.getTime(), "YYYYMM");
+		return DateUtil.getDate(cal.getTime(), "yyyyMM");
 	}
 	
 	/**
@@ -87,7 +87,7 @@ public class DateUtil {
 
 		cal.add(Calendar.DATE, day);
 
-		return DateUtil.getDate(cal.getTime(), "YYYYMMdd");
+		return DateUtil.getDate(cal.getTime(), "yyyyMMdd");
 	}
 	
 	
@@ -112,7 +112,7 @@ public class DateUtil {
 		cal.setTime(date);
 		cal.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
 		cal.add(Calendar.DATE, day);
-		return DateUtil.getDate(cal.getTime(), "YYYYMMdd");
+		return DateUtil.getDate(cal.getTime(), "yyyyMMdd");
 	}
 
 	/**
@@ -146,7 +146,7 @@ public class DateUtil {
 	 * @return the yyyymmddhhmmss
 	 */
 	public static String getDateTime(Date date) {
-		return DateUtil.getDate(date, "YYYYMMddHHmmss");
+		return DateUtil.getDate(date, "yyyyMMddHHmmss");
 	}
 	
 	/**
@@ -156,7 +156,7 @@ public class DateUtil {
 	 * @return the yyyymmddhhmmss
 	 */
 	public static String getDateTimeSvc(Date date) {
-		return DateUtil.getDate(date, "YYYY.MM.dd. aa hh:mm:ss");
+		return DateUtil.getDate(date, "yyyy.MM.dd. aa hh:mm:ss");
 	}
 	
 
