@@ -34,10 +34,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @Controller
 public class TokenController {
-	
+
 	/** The Constant logger. */
-	private static final Logger logger = LoggerFactory
-			.getLogger(TokenController.class);
+	private static final Logger logger = LoggerFactory.getLogger(TokenController.class);
 
 	/** The token service. */
 	@Resource
@@ -46,9 +45,11 @@ public class TokenController {
 	/**
 	 * 토큰정보가져오기.
 	 *
-	 * @param token the token
+	 * @param token
+	 *            the token
 	 * @return the response
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	@RequestMapping(value = "tokens/{token}", method = RequestMethod.GET)
 	@ResponseBody
@@ -65,9 +66,11 @@ public class TokenController {
 	/**
 	 * 토큰 발행하기.
 	 *
-	 * @param token the token
+	 * @param token
+	 *            the token
 	 * @return the response
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	@RequestMapping(value = "tokens", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
@@ -87,11 +90,11 @@ public class TokenController {
 
 		User user = new User();
 		user.setUserID(token.getUserID());
-		
-		//KTP-skip-start
-//		user.setDeviceID(token.getDeviceID());
-		//KTP-skip-end
-		
+
+		// KTP-skip-start
+		// user.setDeviceID(token.getDeviceID());
+		// KTP-skip-end
+
 		Token rst = tokenService.post(user);
 		Result<Token> result = new Result<Token>();
 		result.setSuccess(true);
@@ -104,9 +107,11 @@ public class TokenController {
 	/**
 	 * 토큰유효성체크.
 	 *
-	 * @param token the token
+	 * @param token
+	 *            the token
 	 * @return the response
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	@RequestMapping(value = "validate/{token}", method = RequestMethod.GET)
 	@ResponseBody
@@ -121,13 +126,15 @@ public class TokenController {
 		return res;
 	}
 
-	//140829 <kicho> - start
+	// 140829 <kicho> - start
 	/**
 	 * userID로 토큰정보 삭제하기.
 	 *
-	 * @param token the token
+	 * @param token
+	 *            the token
 	 * @return the response
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	@RequestMapping(value = "tokensByUser/{userID}", method = RequestMethod.DELETE)
 	@ResponseBody
@@ -146,14 +153,16 @@ public class TokenController {
 		logger.debug("response=" + res);
 		return res;
 	}
-	//140829 <kicho> - end
-	
+	// 140829 <kicho> - end
+
 	/**
 	 * 토큰정보 삭제하기.
 	 *
-	 * @param token the token
+	 * @param token
+	 *            the token
 	 * @return the response
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	@RequestMapping(value = "token/{token}", method = RequestMethod.DELETE)
 	@ResponseBody
@@ -172,14 +181,16 @@ public class TokenController {
 		logger.debug("response=" + res);
 		return res;
 	}
-	
-	//140902 <kicho> - start
+
+	// 140902 <kicho> - start
 	/**
 	 * 여러 토큰 가져오기.
 	 *
-	 * @param userID the user id
+	 * @param userID
+	 *            the user id
 	 * @return the multi by user
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	@RequestMapping(value = "tokenMulti/{userID}", method = RequestMethod.GET)
 	@ResponseBody
@@ -202,7 +213,7 @@ public class TokenController {
 		logger.debug("response=" + res);
 		return res;
 	}
-	//140902 <kicho> - end
+	// 140902 <kicho> - end
 
 	@RequestMapping(value = "tokens/ufmi/{ufmi}", method = RequestMethod.GET)
 	@ResponseBody
@@ -225,14 +236,16 @@ public class TokenController {
 		logger.debug("response=" + res);
 		return res;
 	}
-	
-	//140902 <kicho> - start
+
+	// 140902 <kicho> - start
 	/**
 	 * 토큰정보가져오기.
 	 *
-	 * @param userID the user id
+	 * @param userID
+	 *            the user id
 	 * @return the by user
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	@RequestMapping(value = "tokensByUser/{userID}", method = RequestMethod.GET)
 	@ResponseBody
@@ -255,13 +268,14 @@ public class TokenController {
 		logger.debug("response=" + res);
 		return res;
 	}
-	
-	//140902 <kicho> - end
+
+	// 140902 <kicho> - end
 
 	/**
 	 * 예외처리.
 	 *
-	 * @param e the e
+	 * @param e
+	 *            the e
 	 * @return the response
 	 */
 	@ExceptionHandler(Exception.class)

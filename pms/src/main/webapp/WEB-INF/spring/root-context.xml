@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:aop="http://www.springframework.org/schema/aop"
-	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
-	xmlns:jee="http://www.springframework.org/schema/jee"
-	xmlns:tx="http://www.springframework.org/schema/tx"
-	xmlns:jms="http://www.springframework.org/schema/jms"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc" xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:jms="http://www.springframework.org/schema/jms"
 	xmlns:util="http://www.springframework.org/schema/util"
 	xsi:schemaLocation="http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.1.xsd
 		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-4.0.xsd
@@ -17,10 +14,11 @@
 
 
 	<!-- Root Context: defines shared resources visible to all other web components -->
-	
-	<util:properties id="pms" location="file:${user.home}/pms/config.properties" /> 
 
-<!-- ds Pms -->
+	<util:properties id="pms"
+		location="file:${user.home}/pms/config.properties" />
+
+	<!-- ds Pms -->
 	<bean id="dataSourcePms" class="org.springframework.jndi.JndiObjectFactoryBean"
 		scope="singleton">
 		<property name="jndiName">
@@ -33,8 +31,8 @@
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSourcePms" />
 	</bean>
-	
-		<bean id="sqlSessionFactoryPms" class="org.mybatis.spring.SqlSessionFactoryBean">
+
+	<bean id="sqlSessionFactoryPms" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSourcePms" />
 		<property name="typeAliasesPackage" value="kr.co.adflow.pms.domain.mapper" />
 		<property name="mapperLocations"
@@ -45,13 +43,14 @@
 		<property name="basePackage" value="kr.co.adflow.pms.domain.mapper" />
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactoryPms" />
 	</bean>
-	
+
 	<bean id="sqlSessionPms" class="org.mybatis.spring.SqlSessionTemplate">
 		<constructor-arg name="sqlSessionFactory" ref="sqlSessionFactoryPms" />
 	</bean>
-	
+
 	<!-- ds Push -->
-	<bean id="dataSourcePush" class="org.springframework.jndi.JndiObjectFactoryBean" scope="singleton">
+	<bean id="dataSourcePush" class="org.springframework.jndi.JndiObjectFactoryBean"
+		scope="singleton">
 		<property name="jndiName">
 			<value>java:comp/env/jdbc/push</value>
 		</property>
@@ -62,8 +61,8 @@
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSourcePush" />
 	</bean>
-	
-		<bean id="sqlSessionFactoryPush" class="org.mybatis.spring.SqlSessionFactoryBean">
+
+	<bean id="sqlSessionFactoryPush" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSourcePush" />
 		<property name="typeAliasesPackage" value="kr.co.adflow.pms.domain.push.mapper" />
 		<property name="mapperLocations"
@@ -74,7 +73,7 @@
 		<property name="basePackage" value="kr.co.adflow.pms.domain.push.mapper" />
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactoryPush" />
 	</bean>
-	
+
 	<bean id="sqlSessionPush" class="org.mybatis.spring.SqlSessionTemplate">
 		<constructor-arg name="sqlSessionFactory" ref="sqlSessionFactoryPush" />
 	</bean>
@@ -82,9 +81,13 @@
 
 	<!-- jmsConnectionFactory -->
 	<bean id="tJmsFactory" class="com.ibm.mq.jms.MQTopicConnectionFactory">
-		<property name="hostName" value="#{pms['mq.jms.hostname']}" />
-		<property name="port" value="#{pms['mq.jms.port']}" />
-		<property name="queueManager" value="#{pms['mq.jms.queue.manager']}" />
+		<property name="connectionNameList"
+			value="#{pms['mq.jms.hostname1']},#{pms['mq.jms.hostname5']},#{pms['mq.jms.hostname2']},#{pms['mq.jms.hostname6']},#{pms['mq.jms.hostname3']},#{pms['mq.jms.hostname7']},#{pms['mq.jms.hostname4']},#{pms['mq.jms.hostname8']}," />
+		<!-- <property name="connectionNameList" -->
+		<!-- value="#{pms['mq.jms.hostname5']},#{pms['mq.jms.hostname5']},#{pms['mq.jms.hostname5']},#{pms['mq.jms.hostname5']},#{pms['mq.jms.hostname5']},#{pms['mq.jms.hostname5']},#{pms['mq.jms.hostname5']},#{pms['mq.jms.hostname1']}," 
+			/> -->
+
+		<property name="queueManager" value="*" />
 		<property name="transportType" value="1" />
 		<property name="channel" value="#{pms['mq.jms.channel']}" />
 	</bean>
@@ -119,55 +122,162 @@
 			<value>true</value>
 		</property>
 	</bean>
-	
-<!-- 	<jms:listener-container> -->
 
-<!--     <jms:listener destination="queue.orders" ref="orderService" method="placeOrder"/> -->
+	<!-- <jms:listener-container> -->
 
-<!--     <jms:listener destination="queue.confirmations" ref="confirmationLogger" method="log"/> -->
+	<!-- <jms:listener destination="queue.orders" ref="orderService" method="placeOrder"/> -->
 
-<!--    </jms:listener-container> -->
+	<!-- <jms:listener destination="queue.confirmations" ref="confirmationLogger" 
+		method="log"/> -->
 
-	<bean id="qJmsFactory" class="com.ibm.mq.jms.MQQueueConnectionFactory">
-		<property name="hostName" value="#{pms['mq.jms.hostname']}" />
-		<property name="port" value="#{pms['mq.jms.port']}" />
-		<property name="queueManager" value="#{pms['mq.jms.queue.manager']}" />
+	<!-- </jms:listener-container> -->
+
+
+	<!-- 1번 ack queue -->
+	<bean id="qJmsFactory01" class="com.ibm.mq.jms.MQQueueConnectionFactory">
+		<property name="connectionNameList"
+			value="#{pms['mq.jms.hostname1']},#{pms['mq.jms.hostname5']}," />
+		<property name="queueManager" value="*" />
 		<property name="transportType" value="1" />
 		<property name="channel" value="#{pms['mq.jms.channel']}" />
 	</bean>
-	
-	<bean id="qJmsCredentialsConnectionFactory"
+
+	<bean id="qJmsCredentialsConnectionFactory01"
 		class="org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter">
-		<property name="targetConnectionFactory" ref="qJmsFactory" />
+		<property name="targetConnectionFactory" ref="qJmsFactory01" />
 		<property name="username" value="#{pms['mq.jms.username']}" />
 		<property name="password" value="#{pms['mq.jms.password']}" />
 	</bean>
-	
-		<bean id="qJmsConnectionFactory"
+
+	<bean id="qJmsConnectionFactory01"
 		class="org.springframework.jms.connection.CachingConnectionFactory">
-		<property name="targetConnectionFactory" ref="qJmsCredentialsConnectionFactory" />
+		<property name="targetConnectionFactory" ref="qJmsCredentialsConnectionFactory01" />
 		<property name="sessionCacheSize" value="#{pms['mq.jms.session.cache.size']}" />
 
 	</bean>
-	
 
-	<bean id="qJmsContainer"
+
+	<bean id="qJmsContainer01"
 		class="org.springframework.jms.listener.DefaultMessageListenerContainer">
-		<property name="connectionFactory" ref="qJmsConnectionFactory" />
+		<property name="connectionFactory" ref="qJmsConnectionFactory01" />
 		<property name="destination" ref="qJmsDestination" />
 		<property name="messageListener" ref="ackMessageDrivenBean" />
 	</bean>
-	
+
+
+	<!-- 2번 ack queue -->
+	<bean id="qJmsFactory02" class="com.ibm.mq.jms.MQQueueConnectionFactory">
+		<property name="connectionNameList"
+			value="#{pms['mq.jms.hostname2']},#{pms['mq.jms.hostname6']}," />
+		<property name="queueManager" value="*" />
+		<property name="transportType" value="1" />
+		<property name="channel" value="#{pms['mq.jms.channel']}" />
+	</bean>
+
+	<bean id="qJmsCredentialsConnectionFactory02"
+		class="org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter">
+		<property name="targetConnectionFactory" ref="qJmsFactory02" />
+		<property name="username" value="#{pms['mq.jms.username']}" />
+		<property name="password" value="#{pms['mq.jms.password']}" />
+	</bean>
+
+	<bean id="qJmsConnectionFactory02"
+		class="org.springframework.jms.connection.CachingConnectionFactory">
+		<property name="targetConnectionFactory" ref="qJmsCredentialsConnectionFactory02" />
+		<property name="sessionCacheSize" value="#{pms['mq.jms.session.cache.size']}" />
+
+	</bean>
+
+
+	<bean id="qJmsContainer02"
+		class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+		<property name="connectionFactory" ref="qJmsConnectionFactory02" />
+		<property name="destination" ref="qJmsDestination" />
+		<property name="messageListener" ref="ackMessageDrivenBean" />
+	</bean>
+
+
+	<!-- 3번 ack queue -->
+	<bean id="qJmsFactory03" class="com.ibm.mq.jms.MQQueueConnectionFactory">
+		<property name="connectionNameList"
+			value="#{pms['mq.jms.hostname3']},#{pms['mq.jms.hostname7']}," />
+		<property name="queueManager" value="*" />
+		<property name="transportType" value="1" />
+		<property name="channel" value="#{pms['mq.jms.channel']}" />
+	</bean>
+
+	<bean id="qJmsCredentialsConnectionFactory03"
+		class="org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter">
+		<property name="targetConnectionFactory" ref="qJmsFactory03" />
+		<property name="username" value="#{pms['mq.jms.username']}" />
+		<property name="password" value="#{pms['mq.jms.password']}" />
+	</bean>
+
+	<bean id="qJmsConnectionFactory03"
+		class="org.springframework.jms.connection.CachingConnectionFactory">
+		<property name="targetConnectionFactory" ref="qJmsCredentialsConnectionFactory03" />
+		<property name="sessionCacheSize" value="#{pms['mq.jms.session.cache.size']}" />
+
+	</bean>
+
+
+	<bean id="qJmsContainer03"
+		class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+		<property name="connectionFactory" ref="qJmsConnectionFactory03" />
+		<property name="destination" ref="qJmsDestination" />
+		<property name="messageListener" ref="ackMessageDrivenBean" />
+	</bean>
+
+
+
+
+	<!-- 4번 ack queue -->
+	<bean id="qJmsFactory04" class="com.ibm.mq.jms.MQQueueConnectionFactory">
+		<property name="connectionNameList"
+			value="#{pms['mq.jms.hostname4']},#{pms['mq.jms.hostname8']}," />
+		<property name="queueManager" value="*" />
+		<property name="transportType" value="1" />
+		<property name="channel" value="#{pms['mq.jms.channel']}" />
+	</bean>
+
+	<bean id="qJmsCredentialsConnectionFactory04"
+		class="org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter">
+		<property name="targetConnectionFactory" ref="qJmsFactory04" />
+		<property name="username" value="#{pms['mq.jms.username']}" />
+		<property name="password" value="#{pms['mq.jms.password']}" />
+	</bean>
+
+	<bean id="qJmsConnectionFactory04"
+		class="org.springframework.jms.connection.CachingConnectionFactory">
+		<property name="targetConnectionFactory" ref="qJmsCredentialsConnectionFactory04" />
+		<property name="sessionCacheSize" value="#{pms['mq.jms.session.cache.size']}" />
+
+	</bean>
+
+
+	<bean id="qJmsContainer04"
+		class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+		<property name="connectionFactory" ref="qJmsConnectionFactory04" />
+		<property name="destination" ref="qJmsDestination" />
+		<property name="messageListener" ref="ackMessageDrivenBean" />
+	</bean>
+
+
+
+
+	<!-- ack message driven bean -->
 	<bean id="ackMessageDrivenBean" class="kr.co.adflow.pms.core.handler.AckMessageDrivenBean"></bean>
-	
+
+	<!-- ack queue name -->
 	<bean id="qJmsDestination" class="com.ibm.mq.jms.MQQueue">
 		<property name="baseQueueName">
 			<value>#{pms['mq.jms.ack.queue.name']}</value>
 		</property>
 	</bean>
-	
- 
-  <!-- Creates the JSR-303 Validator -->
-  <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
+
+
+	<!-- Creates the JSR-303 Validator -->
+	<bean id="validator"
+		class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
 
 </beans>

@@ -17,6 +17,8 @@ import kr.co.adflow.push.service.HAService;
 import kr.co.adflow.push.service.UserService;
 
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 // TODO: Auto-generated Javadoc
@@ -24,8 +26,7 @@ import org.springframework.stereotype.Component;
 public class SessionCleanHandler implements Runnable {
 
 	/** The Constant logger. */
-	private static final org.slf4j.Logger logger = LoggerFactory
-			.getLogger(SessionCleanHandler.class);
+	private static final org.slf4j.Logger logger = LoggerFactory.getLogger(SessionCleanHandler.class);
 
 	/** The Constant CONFIG_PROPERTIES. */
 	private static final String CONFIG_PROPERTIES = "/config.properties";
@@ -41,7 +42,9 @@ public class SessionCleanHandler implements Runnable {
 			e.printStackTrace();
 		}
 	}
-	
+
+	public static String PROVISIONINGURL = prop.getProperty("pro.url");
+
 	/** The first. */
 	private static boolean first = true; // thread name 세팅용
 
@@ -50,10 +53,8 @@ public class SessionCleanHandler implements Runnable {
 
 	/** The sessionclean interval. */
 	private int sessioncleanInterval = Integer.parseInt(prop.getProperty("sc.check.interval"));
-	
+
 	private int lastAccessLimit = Integer.parseInt(prop.getProperty("sc.last.access.limit"));
-	
-	
 
 	/** The SessonClean looper. */
 	private ScheduledExecutorService SessonCleanLooper;
@@ -62,10 +63,14 @@ public class SessionCleanHandler implements Runnable {
 	@Resource
 	private UserService sessioncleanService;
 
+	@Autowired
+	private ZookeeperHandler zookeeperHandler;
+
 	/**
 	 * initialize.
 	 *
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	@PostConstruct
 	public void initIt() throws Exception {
@@ -73,9 +78,10 @@ public class SessionCleanHandler implements Runnable {
 		logger.info("SessonClean처리유무=" + sessionclean);
 		if (sessionclean) {
 			SessonCleanLooper = Executors.newScheduledThreadPool(1);
-			SessonCleanLooper.scheduleWithFixedDelay(this, 0, sessioncleanInterval,
-					TimeUnit.MINUTES);
+			SessonCleanLooper.scheduleWithFixedDelay(this, 0, 10, TimeUnit.SECONDS);
+			logger.debug("session clean change..10!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 			logger.info("SessonCleanLooper가시작되었습니다.");
+
 		}
 		logger.info("SessonCleanHandler초기화종료()");
 	}
@@ -83,24 +89,34 @@ public class SessionCleanHandler implements Runnable {
 	/**
 	 * 모든리소스정리.
 	 *
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	@PreDestroy
 	public void cleanUp() throws Exception {
 		logger.info("cleanUp시작()");
 		if (sessionclean) {
 			SessonCleanLooper.shutdown();
+
 			logger.info("SessonCleanLooper가종료되었습니다.");
 		}
 		logger.info("cleanUp종료()");
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Runnable#run()
 	 */
 	@Override
 	public void run() {
 		logger.debug("SessonCleanCheck시작()");
+		// TODO:추후삭제
+		logger.debug("리더인지 확인:");
+		if (!zookeeperHandler.getLeader()) {
+			logger.debug("리더가 아님");
+			return;
+		}
 		if (first) {
 			final String orgName = Thread.currentThread().getName();
 			Thread.currentThread().setName("SessonCleanPrecessing " + orgName);

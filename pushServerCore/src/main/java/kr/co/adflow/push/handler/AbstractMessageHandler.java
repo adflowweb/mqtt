@@ -36,10 +36,9 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 // @Component
 public class AbstractMessageHandler implements Runnable {
-	
+
 	/** The Constant logger. */
-	private static final org.slf4j.Logger logger = LoggerFactory
-			.getLogger(AbstractMessageHandler.class);
+	private static final org.slf4j.Logger logger = LoggerFactory.getLogger(AbstractMessageHandler.class);
 
 	/** The Constant CONFIG_PROPERTIES. */
 	private static final String CONFIG_PROPERTIES = "/config.properties";
@@ -49,8 +48,7 @@ public class AbstractMessageHandler implements Runnable {
 
 	static {
 		try {
-			prop.load(AbstractMessageHandler.class
-					.getResourceAsStream(CONFIG_PROPERTIES));
+			prop.load(AbstractMessageHandler.class.getResourceAsStream(CONFIG_PROPERTIES));
 			logger.debug("속성값=" + prop);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -59,31 +57,27 @@ public class AbstractMessageHandler implements Runnable {
 
 	// 메시지처리 유무
 	/** The msg process. */
-	private boolean msgProcess = Boolean.parseBoolean(prop
-			.getProperty("message.enable"));
+	private boolean msgProcess = Boolean.parseBoolean(prop.getProperty("message.enable"));
 	// 메시지처리주기
 	/** The message interval. */
-	private int messageInterval = Integer.parseInt(prop
-			.getProperty("message.process.interval"));
+	private int messageInterval = Integer.parseInt(prop.getProperty("message.process.interval"));
 
 	// apns key file
 	/** The apns key file. */
 	protected String apnsKeyFile = prop.getProperty("apns.key.file");
 
 	/** The apns key file password. */
-	protected String apnsKeyFilePassword = prop
-			.getProperty("apns.key.password");
+	protected String apnsKeyFilePassword = prop.getProperty("apns.key.password");
 
 	/** The apns production. */
-	protected boolean apnsProduction = Boolean.parseBoolean(prop
-			.getProperty("apns.production"));
+	protected boolean apnsProduction = Boolean.parseBoolean(prop.getProperty("apns.production"));
 
 	/** The first. */
 	private static boolean first = true;
 
 	/** The mqtt service. */
-	@Resource
-	MqttService mqttService;
+	// @Resource
+	// MqttService mqttService;
 
 	/** The ha service. */
 	@Resource
@@ -105,7 +99,8 @@ public class AbstractMessageHandler implements Runnable {
 	/**
 	 * initialize.
 	 *
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	@PostConstruct
 	public void initIt() throws Exception {
@@ -114,8 +109,7 @@ public class AbstractMessageHandler implements Runnable {
 		logger.info("메시지처리유무=" + msgProcess);
 		if (msgProcess) {
 			messageLooper = Executors.newScheduledThreadPool(1);
-			messageLooper.scheduleWithFixedDelay(this, messageInterval,
-					messageInterval, TimeUnit.SECONDS);
+			messageLooper.scheduleWithFixedDelay(this, messageInterval, messageInterval, TimeUnit.SECONDS);
 			logger.info("메시지핸들러가시작되었습니다.");
 		}
 
@@ -126,7 +120,8 @@ public class AbstractMessageHandler implements Runnable {
 	/**
 	 * 모든리소스정리.
 	 *
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	@PreDestroy
 	public void cleanUp() throws Exception {
@@ -162,11 +157,11 @@ public class AbstractMessageHandler implements Runnable {
 		logger.debug("메시지처리시작()");
 
 		try {
-			String errMsg = mqttService.getErrorMsg();
+			// String errMsg = mqttService.getErrorMsg();
+			String errMsg = "";
 			if (errMsg == null) {
 				// mqtt connection이 정상일때만 처리함
-				List<Message> list = (List<Message>) msgMapper
-						.getUndeliveredMsgs();
+				List<Message> list = (List<Message>) msgMapper.getUndeliveredMsgs();
 				for (Message msg : list) {
 					try {
 						logger.debug("msg=" + msg);
@@ -176,14 +171,14 @@ public class AbstractMessageHandler implements Runnable {
 							// 즉시전송메시지
 							logger.debug("즉시전송대상입니다.발송을시작합니다.");
 							publish(msg);
-							
-							//KTP-skip-start
-//							if (msg.getType() < 100) {
-//								// command message 제외
-//								// apns 발송
-//								sendAPNS(msg);
-//							}
-							//KTP-skip-end
+
+							// KTP-skip-start
+							// if (msg.getType() < 100) {
+							// // command message 제외
+							// // apns 발송
+							// sendAPNS(msg);
+							// }
+							// KTP-skip-end
 
 						} else {
 							// 예약메시지
@@ -191,13 +186,13 @@ public class AbstractMessageHandler implements Runnable {
 							if (msg.getReservation().before(new Date())) {
 								logger.debug("예약발송을시작합니다.");
 								publish(msg);
-								
-								//KTP-skip-start
-//								if (msg.getType() < 100) {
-//									// apns 발송
-//									sendAPNS(msg);
-//								}
-								//KTP-skip-end
+
+								// KTP-skip-start
+								// if (msg.getType() < 100) {
+								// // apns 발송
+								// sendAPNS(msg);
+								// }
+								// KTP-skip-end
 							}
 						}
 					} catch (MqttException e) {
@@ -226,97 +221,98 @@ public class AbstractMessageHandler implements Runnable {
 		logger.debug("메시지처리종료()");
 	}
 
-	//KTP-skip-start
-//	private void sendAPNS(Message msg) throws Exception {
-//		logger.debug("sendAPNS시작(msg=" + msg + ")");
-//		// send apns
-//		if (msg.getReceiver().equals("/users")) {
-//			// 전체메시지
-//			logger.debug("전체메시APNS전송시작");
-//			// device 테이블에서 apns token 리스트를 가져온다.
-//			DeviceMapper deviceMapper = sqlSession
-//					.getMapper(DeviceMapper.class);
-//			Device[] devices = deviceMapper.getAllAppleDevices();
-//			// 가져온리스트로 apns를 발송한다.
-//			Message message = msgMapper.get(msg.getId());
-//			logger.debug("message(컨텐츠포함)=" + message);
-//
-//			JSONObject obj = (JSONObject) parser.parse(message.getContent());
-//			JSONObject noti = (JSONObject) (obj.get("notification"));
-//			String title = (String) (noti.get("contentTitle"));
-//			logger.debug("title=" + title);
-//
-//			for (int i = 0; i < devices.length; i++) {
-//				logger.debug("apnsSend. apnsToken=" + devices[i].getApnsToken());
-//				Push.combined(title, devices[i].getUnRead() + 1, "default",
-//						apnsKeyFile, apnsKeyFilePassword, apnsProduction,
-//						devices[i].getApnsToken());
-//				logger.debug("APNS완료.userID=" + devices[i].getUserID()
-//						+ ", deivceID=" + devices[i].getDeviceID()
-//						+ ", unreadCount=" + (devices[i].getUnRead() + 1));
-//				deviceMapper.increaseUnread(devices[i].getUserID(),
-//						devices[i].getDeviceID());
-//				logger.debug("unread카운트증가완료");
-//			}
-//			logger.debug("전체메시APNS전송종료");
-//
-//		} else if (msg.getReceiver().startsWith("/groups")) {
-//			logger.debug("그룹메시지APNS전송시작");
-//			DeviceMapper deviceMapper = sqlSession
-//					.getMapper(DeviceMapper.class);
-////			sendGroupAPNS(deviceMapper, msg);
-//			logger.debug("그룹메시지APNS전송종료");
-//		} else {
-//			logger.debug("개인메시지APNS전송시작");
-//			// 개인메시지
-//			// device 테이블에서 apns token이 있는지 확인후
-//			// 있으면 apns발송 아니면 스킵한다.
-//			DeviceMapper deviceMapper = sqlSession
-//					.getMapper(DeviceMapper.class);
-//			String userID = msg.getReceiver().substring(7);
-//			logger.debug("userID=" + userID);
-//			Device[] devices = deviceMapper.getAppleDevicesByUser(userID);
-//
-//			Message message = msgMapper.get(msg.getId());
-//			logger.debug("message(컨텐츠포함)=" + message);
-//
-//			JSONObject obj = (JSONObject) parser.parse(message.getContent());
-//			JSONObject noti = (JSONObject) (obj.get("notification"));
-//			String title = (String) (noti.get("contentTitle"));
-//			logger.debug("title=" + title);
-//
-//			for (int i = 0; i < devices.length; i++) {
-//				logger.debug("apnsSend. apnsToken=" + devices[i].getApnsToken());
-//				Push.combined(title, devices[i].getUnRead() + 1, "default",
-//						apnsKeyFile, apnsKeyFilePassword, apnsProduction,
-//						devices[i].getApnsToken());
-//				logger.debug("APNS완료.userID=" + userID + ", deivceID="
-//						+ devices[i].getDeviceID() + ", unreadCount="
-//						+ (devices[i].getUnRead() + 1));
-//				deviceMapper.increaseUnread(userID, devices[i].getDeviceID());
-//				logger.debug("unread카운트증가완료");
-//			}
-//		}
-//		logger.debug("sendAPNS종료()");
-//	}
-	//KTP-skip-end
-
+	// KTP-skip-start
+	// private void sendAPNS(Message msg) throws Exception {
+	// logger.debug("sendAPNS시작(msg=" + msg + ")");
+	// // send apns
+	// if (msg.getReceiver().equals("/users")) {
+	// // 전체메시지
+	// logger.debug("전체메시APNS전송시작");
+	// // device 테이블에서 apns token 리스트를 가져온다.
+	// DeviceMapper deviceMapper = sqlSession
+	// .getMapper(DeviceMapper.class);
+	// Device[] devices = deviceMapper.getAllAppleDevices();
+	// // 가져온리스트로 apns를 발송한다.
+	// Message message = msgMapper.get(msg.getId());
+	// logger.debug("message(컨텐츠포함)=" + message);
+	//
+	// JSONObject obj = (JSONObject) parser.parse(message.getContent());
+	// JSONObject noti = (JSONObject) (obj.get("notification"));
+	// String title = (String) (noti.get("contentTitle"));
+	// logger.debug("title=" + title);
+	//
+	// for (int i = 0; i < devices.length; i++) {
+	// logger.debug("apnsSend. apnsToken=" + devices[i].getApnsToken());
+	// Push.combined(title, devices[i].getUnRead() + 1, "default",
+	// apnsKeyFile, apnsKeyFilePassword, apnsProduction,
+	// devices[i].getApnsToken());
+	// logger.debug("APNS완료.userID=" + devices[i].getUserID()
+	// + ", deivceID=" + devices[i].getDeviceID()
+	// + ", unreadCount=" + (devices[i].getUnRead() + 1));
+	// deviceMapper.increaseUnread(devices[i].getUserID(),
+	// devices[i].getDeviceID());
+	// logger.debug("unread카운트증가완료");
+	// }
+	// logger.debug("전체메시APNS전송종료");
+	//
+	// } else if (msg.getReceiver().startsWith("/groups")) {
+	// logger.debug("그룹메시지APNS전송시작");
+	// DeviceMapper deviceMapper = sqlSession
+	// .getMapper(DeviceMapper.class);
+	//// sendGroupAPNS(deviceMapper, msg);
+	// logger.debug("그룹메시지APNS전송종료");
+	// } else {
+	// logger.debug("개인메시지APNS전송시작");
+	// // 개인메시지
+	// // device 테이블에서 apns token이 있는지 확인후
+	// // 있으면 apns발송 아니면 스킵한다.
+	// DeviceMapper deviceMapper = sqlSession
+	// .getMapper(DeviceMapper.class);
+	// String userID = msg.getReceiver().substring(7);
+	// logger.debug("userID=" + userID);
+	// Device[] devices = deviceMapper.getAppleDevicesByUser(userID);
+	//
+	// Message message = msgMapper.get(msg.getId());
+	// logger.debug("message(컨텐츠포함)=" + message);
+	//
+	// JSONObject obj = (JSONObject) parser.parse(message.getContent());
+	// JSONObject noti = (JSONObject) (obj.get("notification"));
+	// String title = (String) (noti.get("contentTitle"));
+	// logger.debug("title=" + title);
+	//
+	// for (int i = 0; i < devices.length; i++) {
+	// logger.debug("apnsSend. apnsToken=" + devices[i].getApnsToken());
+	// Push.combined(title, devices[i].getUnRead() + 1, "default",
+	// apnsKeyFile, apnsKeyFilePassword, apnsProduction,
+	// devices[i].getApnsToken());
+	// logger.debug("APNS완료.userID=" + userID + ", deivceID="
+	// + devices[i].getDeviceID() + ", unreadCount="
+	// + (devices[i].getUnRead() + 1));
+	// deviceMapper.increaseUnread(userID, devices[i].getDeviceID());
+	// logger.debug("unread카운트증가완료");
+	// }
+	// }
+	// logger.debug("sendAPNS종료()");
+	// }
+	// KTP-skip-end
 
 	/**
 	 * Publish.
 	 *
-	 * @param msg the msg
-	 * @throws Exception the exception
+	 * @param msg
+	 *            the msg
+	 * @throws Exception
+	 *             the exception
 	 */
 	private void publish(Message msg) throws Exception {
 		logger.debug("publish시작(msg=" + msg + ")");
 		Message message = msgMapper.get(msg.getId());
 		logger.debug("message(컨텐츠포함)=" + message);
-		IMqttDeliveryToken token = mqttService.publish(message);
+		// IMqttDeliveryToken token = mqttService.publish(message);
 
 		// 토큰과 유저아이디를 hashmap에 저장한다
 
-		logger.debug("메시지를전송하였습니다.token=" + token);
+		// logger.debug("메시지를전송하였습니다.token=" + token);
 		// 모니터링용 송신 메시지 처리건수 계산 추가해야함
 
 		// 전송후 db(issue) update

@@ -25,8 +25,7 @@ import org.springframework.stereotype.Component;
 public class MessageSendExecutor {
 
 	/** The Constant logger. */
-	private static final Logger logger = LoggerFactory
-			.getLogger(MessageSendExecutor.class);
+	private static final Logger logger = LoggerFactory.getLogger(MessageSendExecutor.class);
 
 	/** The message send service. */
 	@Autowired
@@ -39,7 +38,7 @@ public class MessageSendExecutor {
 	/** The pms config. */
 	@Autowired
 	private PmsConfig pmsConfig;
-	
+
 	private String hostname;
 	private String serverId;
 
@@ -48,26 +47,25 @@ public class MessageSendExecutor {
 	 * Send message array.
 	 */
 	public void sendMessageArray() {
-		//logger.info("sendMessageArray execute time is {}", new Date());
+		// logger.info("sendMessageArray execute time is {}", new Date());
 
-		
-//		int executorSendLimit = 1000;
-//		if(this.serverId == null){
-//			this.serverId = pmsConfig.EXECUTOR_SERVER_ID1;
-//			if (this.serverId == null) {
-//				if(this.hostname == null) {
-//					this.hostname = readHostname();
-//				}
-//				this.serverId = this.hostname + "01";
-//			}else {
-//				executorSendLimit = pmsConfig.EXECUTOR_SEND_LIMIT;
-//			}
-//			
-//		}
-//		messageSendService.sendMessageArray(this.serverId, executorSendLimit);
-		
-		messageSendService.sendMessageArray(pmsConfig.EXECUTOR_SERVER_ID1,
-				pmsConfig.EXECUTOR_SEND_LIMIT);
+		// int executorSendLimit = 1000;
+		// if(this.serverId == null){
+		// this.serverId = pmsConfig.EXECUTOR_SERVER_ID1;
+		// if (this.serverId == null) {
+		// if(this.hostname == null) {
+		// this.hostname = readHostname();
+		// }
+		// this.serverId = this.hostname + "01";
+		// }else {
+		// executorSendLimit = pmsConfig.EXECUTOR_SEND_LIMIT;
+		// }
+		//
+		// }
+		// messageSendService.sendMessageArray(this.serverId,
+		// executorSendLimit);
+
+		messageSendService.sendMessageArray(pmsConfig.EXECUTOR_SERVER_ID, pmsConfig.EXECUTOR_SEND_LIMIT);
 
 	}
 
@@ -76,39 +74,37 @@ public class MessageSendExecutor {
 	 * Send reservation message array.
 	 */
 	public void sendReservationMessageArray() {
-		//logger.info("sendReservationMessageArray execute time is {}",
-		//		new Date());
+		// logger.info("sendReservationMessageArray execute time is {}",
+		// new Date());
 
-//		int executorSendLimit = 1000;
-//		if(this.serverId == null){
-//			this.serverId = pmsConfig.EXECUTOR_SERVER_ID1;
-//			if (this.serverId == null) {
-//				if(this.hostname == null) {
-//					this.hostname = readHostname();
-//				}
-//				this.serverId = this.hostname + "01";
-//			}else {
-//				executorSendLimit = pmsConfig.EXECUTOR_SEND_LIMIT;
-//			}
-//			
-//		}
-//		
-//		messageSendService.sendReservationMessageArray(serverId, executorSendLimit);
-		
-		messageSendService.sendReservationMessageArray(
-				pmsConfig.EXECUTOR_SERVER_ID1, pmsConfig.EXECUTOR_SEND_LIMIT);
+		// int executorSendLimit = 1000;
+		// if(this.serverId == null){
+		// this.serverId = pmsConfig.EXECUTOR_SERVER_ID1;
+		// if (this.serverId == null) {
+		// if(this.hostname == null) {
+		// this.hostname = readHostname();
+		// }
+		// this.serverId = this.hostname + "01";
+		// }else {
+		// executorSendLimit = pmsConfig.EXECUTOR_SEND_LIMIT;
+		// }
+		//
+		// }
+		//
+		// messageSendService.sendReservationMessageArray(serverId,
+		// executorSendLimit);
+
+		messageSendService.sendReservationMessageArray(pmsConfig.EXECUTOR_SERVER_ID, pmsConfig.EXECUTOR_SEND_LIMIT);
 
 	}
-	
-	
+
 	/**
 	 * Send message array.
 	 */
 	public void sendMessageArray2() {
-		//logger.info("sendMessageArray execute time is {}", new Date());
+		// logger.info("sendMessageArray execute time is {}", new Date());
 
-		messageSendService.sendMessageArray(pmsConfig.EXECUTOR_SERVER_ID2,
-				pmsConfig.EXECUTOR_SEND_LIMIT);
+		messageSendService.sendMessageArray(pmsConfig.EXECUTOR_SERVER_ID, pmsConfig.EXECUTOR_SEND_LIMIT);
 
 	}
 
@@ -116,22 +112,20 @@ public class MessageSendExecutor {
 	 * Send reservation message array.
 	 */
 	public void sendReservationMessageArray2() {
-		//logger.info("sendReservationMessageArray execute time is {}",
-		//		new Date());
+		// logger.info("sendReservationMessageArray execute time is {}",
+		// new Date());
 
-		messageSendService.sendReservationMessageArray(
-				pmsConfig.EXECUTOR_SERVER_ID2, pmsConfig.EXECUTOR_SEND_LIMIT);
+		messageSendService.sendReservationMessageArray(pmsConfig.EXECUTOR_SERVER_ID, pmsConfig.EXECUTOR_SEND_LIMIT);
 
 	}
-	
+
 	/**
 	 * Send message array.
 	 */
 	public void sendMessageArray3() {
-		//logger.info("sendMessageArray execute time is {}", new Date());
+		// logger.info("sendMessageArray execute time is {}", new Date());
 
-		messageSendService.sendMessageArray(pmsConfig.EXECUTOR_SERVER_ID3,
-				pmsConfig.EXECUTOR_SEND_LIMIT);
+		messageSendService.sendMessageArray(pmsConfig.EXECUTOR_SERVER_ID, pmsConfig.EXECUTOR_SEND_LIMIT);
 
 	}
 
@@ -139,90 +133,21 @@ public class MessageSendExecutor {
 	 * Send reservation message array.
 	 */
 	public void sendReservationMessageArray3() {
-		//logger.info("sendReservationMessageArray execute time is {}",
-		//		new Date());
+		// logger.info("sendReservationMessageArray execute time is {}",
+		// new Date());
 
-		messageSendService.sendReservationMessageArray(
-				pmsConfig.EXECUTOR_SERVER_ID3, pmsConfig.EXECUTOR_SEND_LIMIT);
-
-	}
-	
-	/**
-	 * Send message array.
-	 */
-	public void sendMessageArray4() {
-		//logger.info("sendMessageArray execute time is {}", new Date());
-
-		messageSendService.sendMessageArray(pmsConfig.EXECUTOR_SERVER_ID4,
-				pmsConfig.EXECUTOR_SEND_LIMIT);
+		messageSendService.sendReservationMessageArray(pmsConfig.EXECUTOR_SERVER_ID, pmsConfig.EXECUTOR_SEND_LIMIT);
 
 	}
-
-	/**
-	 * Send reservation message array.
-	 */
-	public void sendReservationMessageArray4() {
-		//logger.info("sendReservationMessageArray execute time is {}",
-		//		new Date());
-
-		messageSendService.sendReservationMessageArray(
-				pmsConfig.EXECUTOR_SERVER_ID4, pmsConfig.EXECUTOR_SEND_LIMIT);
-
-	}
-
-	/**
-	 * Send message array.
-	 */
-	public void sendMessageArray5() {
-		//logger.info("sendMessageArray execute time is {}", new Date());
-
-		messageSendService.sendMessageArray(pmsConfig.EXECUTOR_SERVER_ID5,
-				pmsConfig.EXECUTOR_SEND_LIMIT);
-
-	}
-
-	/**
-	 * Send reservation message array.
-	 */
-	public void sendReservationMessageArray5() {
-		//logger.info("sendReservationMessageArray execute time is {}",
-		//		new Date());
-
-		messageSendService.sendReservationMessageArray(
-				pmsConfig.EXECUTOR_SERVER_ID5, pmsConfig.EXECUTOR_SEND_LIMIT);
-
-	}
-	
-	public void sendMessageArray6() {
-		//logger.info("sendMessageArray execute time is {}", new Date());
-
-		messageSendService.sendMessageArray(pmsConfig.EXECUTOR_SERVER_ID6,
-				pmsConfig.EXECUTOR_SEND_LIMIT);
-
-	}
-
-	/**
-	 * Send reservation message array.
-	 */
-	public void sendReservationMessageArray6() {
-		//logger.info("sendReservationMessageArray execute time is {}",
-		//		new Date());
-
-		messageSendService.sendReservationMessageArray(
-				pmsConfig.EXECUTOR_SERVER_ID6, pmsConfig.EXECUTOR_SEND_LIMIT);
-
-	}
-	
 
 	// @Scheduled(cron=PmsConfig.EXECUTOR_CALLBACK_CRON)
 	/**
 	 * Send callback.
 	 */
 	public void sendCallback() {
-		//logger.info("sendCallback execute time is {}", new Date());
+		// logger.info("sendCallback execute time is {}", new Date());
 
-		messageSendService.sendCallback(pmsConfig.EXECUTOR_SERVER_ID1,
-				pmsConfig.EXECUTOR_SEND_LIMIT);
+		messageSendService.sendCallback(pmsConfig.EXECUTOR_SERVER_ID, pmsConfig.EXECUTOR_SEND_LIMIT);
 
 	}
 
@@ -235,7 +160,7 @@ public class MessageSendExecutor {
 
 		String name = DateUtil.getYYYYMM(1);
 
-		//logger.info("createTable1");
+		// logger.info("createTable1");
 
 		try {
 			tableMgtMapper.selectMessage(name);
@@ -260,7 +185,7 @@ public class MessageSendExecutor {
 			tableMgtMapper.createAck(name);
 			logger.info("createAck");
 		}
-		
+
 		logger.info("createTable4");
 		try {
 			tableMgtMapper.selectGroupMessage(name);
@@ -271,15 +196,15 @@ public class MessageSendExecutor {
 		}
 
 	}
-	
-	public String  readHostname() {
+
+	public String readHostname() {
 		String lineStr = "";
 		String hName = "";
 		Process process;
 		try {
 			process = Runtime.getRuntime().exec("hostname");
 			BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
-			while((lineStr = br.readLine()) != null){
+			while ((lineStr = br.readLine()) != null) {
 				hName = lineStr;
 			}
 		} catch (Exception e) {

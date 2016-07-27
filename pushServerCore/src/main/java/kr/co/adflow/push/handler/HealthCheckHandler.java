@@ -13,11 +13,11 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 
-import kr.co.adflow.push.service.HAService;
-import kr.co.adflow.push.service.MqttService;
-
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import kr.co.adflow.push.service.HAService;
+import kr.co.adflow.push.service.MqttService;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -30,8 +30,7 @@ import org.springframework.stereotype.Component;
 public class HealthCheckHandler implements Runnable {
 
 	/** The Constant logger. */
-	private static final org.slf4j.Logger logger = LoggerFactory
-			.getLogger(HealthCheckHandler.class);
+	private static final org.slf4j.Logger logger = LoggerFactory.getLogger(HealthCheckHandler.class);
 
 	/** The Constant CONFIG_PROPERTIES. */
 	private static final String CONFIG_PROPERTIES = "/config.properties";
@@ -41,8 +40,7 @@ public class HealthCheckHandler implements Runnable {
 
 	static {
 		try {
-			prop.load(HealthCheckHandler.class
-					.getResourceAsStream(CONFIG_PROPERTIES));
+			prop.load(HealthCheckHandler.class.getResourceAsStream(CONFIG_PROPERTIES));
 			logger.debug("속성값=" + prop);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -53,19 +51,17 @@ public class HealthCheckHandler implements Runnable {
 	private static boolean first = true; // thread name 세팅용
 
 	/** The health check. */
-	private boolean healthCheck = Boolean.parseBoolean(prop
-			.getProperty("health.enable"));
+	private boolean healthCheck = Boolean.parseBoolean(prop.getProperty("health.enable"));
 
 	/** The health check interval. */
-	private int healthCheckInterval = Integer.parseInt(prop
-			.getProperty("health.check.interval"));
+	private int healthCheckInterval = Integer.parseInt(prop.getProperty("health.check.interval"));
 
 	/** The health check looper. */
 	private ScheduledExecutorService healthCheckLooper;
 
 	/** The mqtt service. */
-	@Resource
-	private MqttService mqttService;
+	// @Resource
+	// private MqttService mqttService;
 
 	/** The ha service. */
 	@Resource
@@ -74,7 +70,8 @@ public class HealthCheckHandler implements Runnable {
 	/**
 	 * initialize.
 	 *
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	@PostConstruct
 	public void initIt() throws Exception {
@@ -82,8 +79,7 @@ public class HealthCheckHandler implements Runnable {
 		logger.info("헬스체크처리유무=" + healthCheck);
 		if (healthCheck) {
 			healthCheckLooper = Executors.newScheduledThreadPool(1);
-			healthCheckLooper.scheduleWithFixedDelay(this, 0,
-					healthCheckInterval, TimeUnit.SECONDS);
+			healthCheckLooper.scheduleWithFixedDelay(this, 0, healthCheckInterval, TimeUnit.SECONDS);
 			logger.info("healthCheckLooper가시작되었습니다.");
 		}
 		logger.info("HealthCheckHandler초기화종료()");
@@ -92,7 +88,8 @@ public class HealthCheckHandler implements Runnable {
 	/**
 	 * 모든리소스정리.
 	 *
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	@PreDestroy
 	public void cleanUp() throws Exception {
@@ -104,7 +101,9 @@ public class HealthCheckHandler implements Runnable {
 		logger.info("cleanUp종료()");
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Runnable#run()
 	 */
 	@Override
@@ -127,11 +126,11 @@ public class HealthCheckHandler implements Runnable {
 		logger.debug("healthCheck시작()");
 		try {
 			// mqtt connection 헬스체크
-			mqttService.healthCheck();
+			// mqttService.healthCheck();
 			// 모니터링용 수신 메시지 처리건수 계산
-			mqttService.generateTPS();
+			// mqttService.generateTPS();
 		} catch (Exception e) {
-			mqttService.setError(e.toString());
+			// mqttService.setError(e.toString());
 			logger.error("에러발생", e);
 		}
 		logger.debug("healthCheck종료()");

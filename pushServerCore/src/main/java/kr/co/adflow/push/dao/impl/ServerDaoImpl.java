@@ -9,17 +9,6 @@ import java.lang.management.MemoryUsage;
 import java.net.InetAddress;
 import java.util.ArrayList;
 
-import javax.annotation.Resource;
-
-import kr.co.adflow.push.dao.ServerDao;
-import kr.co.adflow.push.domain.CPU;
-import kr.co.adflow.push.domain.Disk;
-import kr.co.adflow.push.domain.Heap;
-import kr.co.adflow.push.domain.Memory;
-import kr.co.adflow.push.domain.ServerInfo;
-import kr.co.adflow.push.service.MqttService;
-import kr.co.adflow.push.executor.TpsExceutor;
-
 import org.hyperic.sigar.CpuPerc;
 import org.hyperic.sigar.FileSystem;
 import org.hyperic.sigar.FileSystemUsage;
@@ -30,6 +19,15 @@ import org.hyperic.sigar.SigarException;
 import org.hyperic.sigar.SigarLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
+
+import kr.co.adflow.push.dao.ServerDao;
+import kr.co.adflow.push.domain.CPU;
+import kr.co.adflow.push.domain.Disk;
+import kr.co.adflow.push.domain.Heap;
+import kr.co.adflow.push.domain.Memory;
+import kr.co.adflow.push.domain.ServerInfo;
+import kr.co.adflow.push.executor.TpsExceutor;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -38,19 +36,18 @@ import org.slf4j.LoggerFactory;
  * @author nadir93
  * @date 2014. 4. 14.
  */
-// @Repository
+@Repository
 public class ServerDaoImpl implements ServerDao {
 
 	/** The Constant logger. */
-	private static final Logger logger = LoggerFactory
-			.getLogger(ServerDaoImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(ServerDaoImpl.class);
 
 	/** The Constant sigar. */
 	private static final Sigar sigar = new Sigar();
 
 	/** The mqtt service. */
-	@Resource
-	MqttService mqttService;
+	// @Resource
+	// MqttService mqttService;
 
 	/*
 	 * (non-Javadoc)
@@ -60,8 +57,8 @@ public class ServerDaoImpl implements ServerDao {
 	@Override
 	public ServerInfo get() throws Exception {
 		logger.debug("get시작()");
-//		ServerInfo res = new ServerInfo(mqttService.isConnected(),
-//				mqttService.getErrorMsg());
+		// ServerInfo res = new ServerInfo(mqttService.isConnected(),
+		// mqttService.getErrorMsg());
 
 		ServerInfo res = new ServerInfo();
 		// 서버정보 가져오기
@@ -96,8 +93,8 @@ public class ServerDaoImpl implements ServerDao {
 		CpuPerc cpu = sigar.getCpuPerc();
 		// logCPUInfo(cpu);
 
-		CPU cpuInfo = new CPU(cpu.getUser(), cpu.getSys(), cpu.getIdle(),
-				cpu.getWait(), cpu.getNice(), cpu.getCombined(), cpu.getIrq());
+		CPU cpuInfo = new CPU(cpu.getUser(), cpu.getSys(), cpu.getIdle(), cpu.getWait(), cpu.getNice(),
+				cpu.getCombined(), cpu.getIrq());
 		if (SigarLoader.IS_LINUX) {
 			cpuInfo.setSoftIrq(cpu.getSoftIrq());
 			cpuInfo.setStolen(cpu.getStolen());
@@ -136,10 +133,8 @@ public class ServerDaoImpl implements ServerDao {
 
 		// get memory
 		Mem mem = sigar.getMem();
-		Memory memory = new Memory(mem.getActualFree() / 1024 / 1024,
-				mem.getActualUsed() / 1024 / 1024, mem.getFree() / 1024 / 1024,
-				mem.getRam(), mem.getTotal() / 1024 / 1024,
-				mem.getUsed() / 1024 / 1024);
+		Memory memory = new Memory(mem.getActualFree() / 1024 / 1024, mem.getActualUsed() / 1024 / 1024,
+				mem.getFree() / 1024 / 1024, mem.getRam(), mem.getTotal() / 1024 / 1024, mem.getUsed() / 1024 / 1024);
 		logger.debug("memory=" + memory);
 		res.setMemory(memory);
 
@@ -163,13 +158,9 @@ public class ServerDaoImpl implements ServerDao {
 		// nonHeap.getInit(), nonHeap.getUsed(), nonHeap.getCommitted(),
 		// nonHeap.getMax()));
 
-		Heap heapInfo = new Heap(heap.getInit() / 1024 / 1024,
-				heap.getUsed() / 1024 / 1024,
-				heap.getCommitted() / 1024 / 1024, heap.getMax() / 1024 / 1024,
-				nonHeap.getInit() / 1024 / 1024,
-				nonHeap.getUsed() / 1024 / 1024,
-				nonHeap.getCommitted() / 1024 / 1024,
-				nonHeap.getMax() / 1024 / 1024);
+		Heap heapInfo = new Heap(heap.getInit() / 1024 / 1024, heap.getUsed() / 1024 / 1024,
+				heap.getCommitted() / 1024 / 1024, heap.getMax() / 1024 / 1024, nonHeap.getInit() / 1024 / 1024,
+				nonHeap.getUsed() / 1024 / 1024, nonHeap.getCommitted() / 1024 / 1024, nonHeap.getMax() / 1024 / 1024);
 		logger.debug("heapInfo=" + heapInfo);
 		res.setHeap(heapInfo);
 
@@ -189,32 +180,32 @@ public class ServerDaoImpl implements ServerDao {
 		res.setDisk(disk);
 
 		// get tps
-		double tps = mqttService.getTps();
-		res.setTps(tps);
-		logger.debug("tps=" + tps);
+		// double tps = mqttService.getTps();
+		// res.setTps(tps);
+		// logger.debug("tps=" + tps);
 
-		logger.debug("canonicalHostName="
-				+ InetAddress.getLocalHost().getCanonicalHostName());
+		logger.debug("canonicalHostName=" + InetAddress.getLocalHost().getCanonicalHostName());
 
 		res.setHostName(InetAddress.getLocalHost().getHostName());
 		res.setIpAddress(InetAddress.getLocalHost().getHostAddress());
 
 		logger.debug("get종료()");
-		
-		//get digAcount, precheck TPS 
-		logger.debug("Dao digTps::"+TpsExceutor.digTps);
-		logger.debug("Dao preTps::"+TpsExceutor.preTps);
-		
+
+		// get digAcount, precheck TPS
+		logger.debug("Dao digTps::" + TpsExceutor.digTps);
+		logger.debug("Dao preTps::" + TpsExceutor.preTps);
+
 		res.setTpsDigAccount(TpsExceutor.digTps);
 		res.setTpsPreckeck(TpsExceutor.preTps);
-		
+
 		return res;
 	}
 
 	/**
 	 * Log cpu info.
 	 *
-	 * @param cpu the cpu
+	 * @param cpu
+	 *            the cpu
 	 */
 	private void logCPUInfo(CpuPerc cpu) {
 		logger.debug("UserTime=" + CpuPerc.format(cpu.getUser()));
@@ -233,7 +224,8 @@ public class ServerDaoImpl implements ServerDao {
 	/**
 	 * Make disk info.
 	 *
-	 * @param fs the fs
+	 * @param fs
+	 *            the fs
 	 * @return the disk
 	 */
 	public Disk makeDiskInfo(FileSystem fs) {
@@ -244,8 +236,7 @@ public class ServerDaoImpl implements ServerDao {
 			if (fs instanceof NfsFileSystem) {
 				NfsFileSystem nfs = (NfsFileSystem) fs;
 				if (!nfs.ping()) {
-					System.out.println("getUnreachableMessage="
-							+ nfs.getUnreachableMessage());
+					System.out.println("getUnreachableMessage=" + nfs.getUnreachableMessage());
 					return null;
 				}
 			}
@@ -296,14 +287,17 @@ public class ServerDaoImpl implements ServerDao {
 	/**
 	 * Format size.
 	 *
-	 * @param size the size
+	 * @param size
+	 *            the size
 	 * @return the string
 	 */
 	private String formatSize(long size) {
 		return Sigar.formatSize(size * 1024);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see kr.co.adflow.push.dao.ServerDao#post()
 	 */
 	@Override
@@ -311,7 +305,9 @@ public class ServerDaoImpl implements ServerDao {
 		// return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see kr.co.adflow.push.dao.ServerDao#put()
 	 */
 	@Override
@@ -319,7 +315,9 @@ public class ServerDaoImpl implements ServerDao {
 		// return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see kr.co.adflow.push.dao.ServerDao#delete()
 	 */
 	@Override

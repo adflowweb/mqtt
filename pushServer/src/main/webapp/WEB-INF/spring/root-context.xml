@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 	http://www.springframework.org/schema/util 
-    http://www.springframework.org/schema/util/spring-util-3.0.xsd"
-	>
-	
-	
-	<!-- <util:properties id="code" location="file:${user.home}/config_#{systemProperties['env']}.properties" /> -->
-	<util:properties id="pcs" location="classpath:config.properties"/>
+    http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+
+	<!-- <util:properties id="code" location="file:${user.home}/config_#{systemProperties['env']}.properties" 
+		/> -->
+	<util:properties id="pcs" location="classpath:config.properties" />
 
 	<!-- Root Context: defines shared resources visible to all other web components -->
 
@@ -46,12 +45,14 @@
 		<constructor-arg name="sqlSessionFactory" ref="sqlSessionFactory" />
 	</bean>
 
-	
-<!-- jmsConnectionFactory -->
+
+	<!-- jmsConnectionFactory -->
 	<bean id="jmsFactory" class="com.ibm.mq.jms.MQTopicConnectionFactory">
-		<property name="hostName" value="#{pcs['mq.jms.host']}" />
-		<property name="port" value="#{pcs['mq.jms.port']}" />
-		<property name="queueManager" value="#{pcs['mq.jms.queue.manager']}" />
+		<!-- <property name="hostName" value="#{pcs['mq.jms.hostname']}" /> -->
+		<!-- <property name="port" value="#{pcs['mq.jms.port']}" /> -->
+		<property name="connectionNameList"
+			value="#{pcs['mq.jms.hostname1']},#{pcs['mq.jms.hostname5']},#{pcs['mq.jms.hostname2']},#{pcs['mq.jms.hostname6']},#{pcs['mq.jms.hostname3']},#{pcs['mq.jms.hostname7']},#{pcs['mq.jms.hostname4']},#{pcs['mq.jms.hostname8']}," />
+		<property name="queueManager" value="*" />
 		<property name="transportType" value="1" />
 		<property name="channel" value="#{pcs['mq.jms.channel']}" />
 	</bean>
@@ -85,5 +86,5 @@
 		<property name="pubSubDomain">
 			<value>true</value>
 		</property>
-	</bean>	
+	</bean>
 </beans>

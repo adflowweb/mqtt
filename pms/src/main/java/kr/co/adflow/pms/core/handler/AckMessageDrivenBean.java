@@ -36,8 +36,7 @@ import org.springframework.beans.factory.annotation.Value;
 public class AckMessageDrivenBean implements MessageListener {
 
 	/** The Constant logger. */
-	private static final Logger logger = LoggerFactory
-			.getLogger(AckMessageDrivenBean.class);
+	private static final Logger logger = LoggerFactory.getLogger(AckMessageDrivenBean.class);
 
 	/** The ack mapper. */
 	@Autowired
@@ -46,25 +45,24 @@ public class AckMessageDrivenBean implements MessageListener {
 	/** The ctl q mapper. */
 	@Autowired
 	private CtlQMapper ctlQMapper;
-	
+
 	/** The user mapper. */
 	@Autowired
 	private UserMapper userMapper;
-	
 
 	/** The executor server id. */
-	@Value("#{pms['executor.server.id1']}")
+	@Value("#{pms['executor.server.id']}")
 	private String EXECUTOR_SERVER_ID;
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see javax.jms.MessageListener#onMessage(javax.jms.Message)
 	 */
 	public void onMessage(Message message) {
 
 		logger.debug("Message Driven Bean: New Message");
-		
-		
-		
+
 		byte[] body = null;
 		try {
 			body = new byte[(int) ((BytesMessage) message).getBodyLength()];
@@ -73,74 +71,72 @@ public class AckMessageDrivenBean implements MessageListener {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		Ack ack = this.getAck(body);
-		
-		//message tran log
+
+		// message tran log
 		try {
 			AckTRLog.log(ack);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		
+
 		int cnt = 0;
-		
+
 		// Mgs type check
 		HashMap<String, Object> param = new HashMap<String, Object>();
 
 		// param.put("keyMon", DateUtil.getYYYYMM());
 		param.put("keyMon", ack.getKeyMon());
 		param.put("msgId", ack.getMsgId());
-		
-		logger.debug("callback param ::"+param.toString());
+
+		logger.debug("callback param ::" + param.toString());
 		try {
 			String callbackUrl = userMapper.selectCallbackUrl(param);
 
-			logger.debug("callback URL ::"+callbackUrl);
-			
-			//callback check
+			logger.debug("callback URL ::" + callbackUrl);
+
+			// callback check
 			if (callbackUrl != null && callbackUrl.trim().length() > 0) {
-				
+
 				// 관제 message
 				cnt = ackMapper.insertAck(ack);
 				ctlQMapper.insertQ(this.getCtlQ(ack));
-				logger.debug("ctl_q ADD::"+ack.toString());
-				
-			} else{
-				
+				logger.debug("ctl_q ADD::" + ack.toString());
+
+			} else {
+
 				cnt = ackMapper.insertAck(ack);
-				
+
 			}
 			logger.debug("ack result : {}", cnt);
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
-		
 
 	}
 
 	/**
 	 * Gets the ctl q.
 	 *
-	 * @param ack the ack
+	 * @param ack
+	 *            the ack
 	 * @return the ctl q
 	 */
 	private CtlQ getCtlQ(Ack ack) {
 		CtlQ ctlQ = new CtlQ();
 
-		logger.debug("========== ack type: "+ack.getAckType());
+		logger.debug("========== ack type: " + ack.getAckType());
 		if (ack.getAckType().equals("pma")) {
 			ctlQ.setExeType(StaticConfig.CONTROL_QUEUE_EXECUTOR_TYPE_CALLBACK_PMA);
-			logger.debug("========== setExeType1: "+ctlQ.getExeType());
+			logger.debug("========== setExeType1: " + ctlQ.getExeType());
 		} else {
 			ctlQ.setExeType(StaticConfig.CONTROL_QUEUE_EXECUTOR_TYPE_CALLBACK_APP);
-			logger.debug("========== setExeType2: "+ctlQ.getExeType());
+			logger.debug("========== setExeType2: " + ctlQ.getExeType());
 		}
-		logger.debug("========== setExeType3: "+ctlQ.getExeType());
-		
+		logger.debug("========== setExeType3: " + ctlQ.getExeType());
+
 		ctlQ.setTableName(ack.getKeyMon());
 		ctlQ.setMsgId(ack.getMsgId());
 		ctlQ.setIssueTime(new Date());
@@ -153,7 +149,8 @@ public class AckMessageDrivenBean implements MessageListener {
 	/**
 	 * Gets the ack.
 	 *
-	 * @param body the body
+	 * @param body
+	 *            the body
 	 * @return the ack
 	 */
 	private Ack getAck(byte[] body) {
@@ -177,7 +174,8 @@ public class AckMessageDrivenBean implements MessageListener {
 	/**
 	 * Gets the key mon.
 	 *
-	 * @param string the string
+	 * @param string
+	 *            the string
 	 * @return the key mon
 	 */
 	private String getKeyMon(String string) {

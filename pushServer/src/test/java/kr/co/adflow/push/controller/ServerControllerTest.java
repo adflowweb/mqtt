@@ -16,32 +16,32 @@ import org.testng.annotations.Test;
 @ContextConfiguration("file:src/test/resources/applicationContext.xml")
 public class ServerControllerTest extends AbstractTestNGSpringContextTests {
 
-	private static final org.slf4j.Logger logger = LoggerFactory
-			.getLogger(ServerControllerTest.class);
-
-	@Autowired
-	ServerController serverController;
-
-	@BeforeClass
-	void beforeclass() throws Exception {
-		// mqttClient 초기연결시간 기다림
-		Thread.sleep(1000);
-	}
-
-	/**
-	 * 서버정보 가져오기 테스트
-	 * 
-	 * @throws Exception
-	 */
-	@Test()
-	void 서버정보가져오기테스트() throws Exception {
-		logger.debug("==========서버정보가져오기테스트시작()==========");
-		Response res = serverController.get();
-		logger.debug("호출결과=" + res);
-		ServerInfo data = (ServerInfo) res.getResult().getData();
-		assertNotNull(data.getCpu());
-		// data.getCpu().
-		// assertTrue(data.isAvailable());
-		logger.debug("==========서버정보가져오기테스트종료()==========");
-	}
+	// private static final org.slf4j.Logger logger = LoggerFactory
+	// .getLogger(ServerControllerTest.class);
+	//
+	// @Autowired
+	// ServerController serverController;
+	//
+	// @BeforeClass
+	// void beforeclass() throws Exception {
+	// // mqttClient 초기연결시간 기다림
+	// Thread.sleep(1000);
+	// }
+	//
+	// /**
+	// * 서버정보 가져오기 테스트
+	// *
+	// * @throws Exception
+	// */
+	// @Test()
+	// void 서버정보가져오기테스트() throws Exception {
+	// logger.debug("==========서버정보가져오기테스트시작()==========");
+	// Response res = serverController.get();
+	// logger.debug("호출결과=" + res);
+	// ServerInfo data = (ServerInfo) res.getResult().getData();
+	// assertNotNull(data.getCpu());
+	// // data.getCpu().
+	// // assertTrue(data.isAvailable());
+	// logger.debug("==========서버정보가져오기테스트종료()==========");
+	// }
 }

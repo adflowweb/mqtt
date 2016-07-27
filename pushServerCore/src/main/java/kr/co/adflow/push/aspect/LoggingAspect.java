@@ -21,34 +21,38 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 public class LoggingAspect {
-	
+
 	/** The logger. */
 	Logger logger;
 
 	/**
 	 * Log before.
 	 *
-	 * @param joinPoint the join point
+	 * @param joinPoint
+	 *            the join point
 	 */
 	@Before("execution(* kr.co.adflow.push..*.*(..))")
 	public void logBefore(JoinPoint joinPoint) {
-		logger = LoggerFactory.getLogger(joinPoint.getSignature()
-				.getDeclaringTypeName());
-		if (logger.isDebugEnabled())
-		logger.debug(joinPoint.getSignature().getName() + "시작");
+		logger = LoggerFactory.getLogger(joinPoint.getSignature().getDeclaringTypeName());
+		if (logger.isDebugEnabled()) {
+
+		}
+		// logger.debug(joinPoint.getSignature().getName() + "시작");
 	}
 
 	/**
 	 * Log after.
 	 *
-	 * @param joinPoint the join point
+	 * @param joinPoint
+	 *            the join point
 	 */
 	@After("execution(* kr.co.adflow.push..*.*(..))")
 	public void logAfter(JoinPoint joinPoint) {
-		logger = LoggerFactory.getLogger(joinPoint.getSignature()
-				.getDeclaringTypeName());
-		if (logger.isDebugEnabled())
-		logger.debug(joinPoint.getSignature().getName() + "종료");
+		logger = LoggerFactory.getLogger(joinPoint.getSignature().getDeclaringTypeName());
+		if (logger.isDebugEnabled()) {
+
+		}
+		// logger.debug(joinPoint.getSignature().getName() + "종료");
 	}
 
 }

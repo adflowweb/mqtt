@@ -34,8 +34,7 @@ import org.springframework.stereotype.Service;
 public class SvcAdmServiceImpl implements SvcAdmService {
 
 	/** The Constant logger. */
-	private static final Logger logger = LoggerFactory
-			.getLogger(SvcAdmServiceImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(SvcAdmServiceImpl.class);
 
 	/** The intercept mapper. */
 	@Autowired
@@ -44,8 +43,7 @@ public class SvcAdmServiceImpl implements SvcAdmService {
 	/** The message mapper. */
 	@Autowired
 	private MessageMapper messageMapper;
-	
-	
+
 	/** The ctl q mapper. */
 	@Autowired
 	private CtlQMapper ctlQMapper;
@@ -58,12 +56,15 @@ public class SvcAdmServiceImpl implements SvcAdmService {
 	@Autowired
 	private PmsConfig pmsConfig;
 
-	/* (non-Javadoc)
-	 * @see kr.co.adflow.pms.adm.service.SvcAdmService#sendMessage(java.lang.String, kr.co.adflow.pms.adm.request.MessageReq)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * kr.co.adflow.pms.adm.service.SvcAdmService#sendMessage(java.lang.String,
+	 * kr.co.adflow.pms.adm.request.MessageReq)
 	 */
 	@Override
-	public List<Map<String, String>> sendMessage(String appKey,
-			MessageReq message) {
+	public List<Map<String, String>> sendMessage(String appKey, MessageReq message) {
 		// String[] msgIdArray = null;
 
 		List<Map<String, String>> resultList = null;
@@ -71,11 +72,11 @@ public class SvcAdmServiceImpl implements SvcAdmService {
 		// 1. get userId by appKey
 		String issueId = interceptMapper.selectCashedUserId(appKey);
 
-//		if (message.getContent().getBytes().length > this
-//				.getMessageSizeLimit(issueId)) {
-//			throw new RuntimeException(" message body size limit over :"
-//					+ this.getMessageSizeLimit(issueId));
-//		}
+		// if (message.getContent().getBytes().length > this
+		// .getMessageSizeLimit(issueId)) {
+		// throw new RuntimeException(" message body size limit over :"
+		// + this.getMessageSizeLimit(issueId));
+		// }
 		// 2. get max count by userId
 		// 3. check max count
 		// if (userMapper.getMsgCntLimit(issueId) <
@@ -88,7 +89,7 @@ public class SvcAdmServiceImpl implements SvcAdmService {
 		Message msg = new Message();
 		msg.setKeyMon(DateUtil.getYYYYMM());
 
-		msg.setServerId(pmsConfig.EXECUTOR_SERVER_ID1);
+		msg.setServerId(pmsConfig.EXECUTOR_SERVER_ID);
 
 		if (message.getMsgType() == 0) {
 			msg.setMsgType(pmsConfig.MESSAGE_HEADER_TYPE_DEFAULT);
@@ -111,8 +112,7 @@ public class SvcAdmServiceImpl implements SvcAdmService {
 		msg.setIssueId(issueId);
 		msg.setUpdateId(issueId);
 
-		if (message.getServiceId() == null
-				|| message.getServiceId().trim().length() == 0) {
+		if (message.getServiceId() == null || message.getServiceId().trim().length() == 0) {
 			msg.setServiceId(pmsConfig.MESSAGE_SERVICE_ID_DEFAULT);
 		} else {
 			msg.setServiceId(message.getServiceId());
@@ -134,16 +134,16 @@ public class SvcAdmServiceImpl implements SvcAdmService {
 
 		msg.setResendMaxCount(message.getResendMaxCount());
 		msg.setResendInterval(message.getResendInterval());
-		
-		//WEB:0, P-Talk1.0:1, P-Talk2.0:2
+
+		// WEB:0, P-Talk1.0:1, P-Talk2.0:2
 		msg.setSendTerminalType(0);
-				
+
 		// message size
 		if (message.getContentLength() == null) {
 			message.setContentLength(0);
 		}
 		msg.setMsgSize(message.getContentLength());
-		
+
 		// TMS:0, MMS:1
 		if (message.isMms()) {
 			msg.setMediaType(1);
@@ -155,8 +155,6 @@ public class SvcAdmServiceImpl implements SvcAdmService {
 			}
 
 		}
-		
-		
 
 		String[] receivers = message.getReceivers();
 
@@ -167,7 +165,7 @@ public class SvcAdmServiceImpl implements SvcAdmService {
 		// i);
 		// }
 		// }
-		
+
 		// User Message false = 0
 		msg.setRetained(0);
 
@@ -182,18 +180,18 @@ public class SvcAdmServiceImpl implements SvcAdmService {
 			msg.setReceiverTopic(receivers[i]);
 			msg.setMsgId(this.getMsgId());
 
-//			// MEMO 여러 건일때 0 번째 msgId 를 대표로 groupId에 추가
-//			if (i == 0) {
-//				groupId = msg.getMsgId();
-//			}
-//			msg.setGroupId(groupId);
-			
-			//group topic check
-			if (receivers[i].subSequence(0, 5).equals("mms/P")&&receivers[i].indexOf("g") > 0) {
+			// // MEMO 여러 건일때 0 번째 msgId 를 대표로 groupId에 추가
+			// if (i == 0) {
+			// groupId = msg.getMsgId();
+			// }
+			// msg.setGroupId(groupId);
+
+			// group topic check
+			if (receivers[i].subSequence(0, 5).equals("mms/P") && receivers[i].indexOf("g") > 0) {
 				msg.setGroupId(receivers[i]);
 				msg.setReceiverTopic(receivers[i]);
 			}
-			
+
 			// MEMO resend msg 인 경우 resendId 에 msgId 추가
 			if (msg.getResendCount() > 0) {
 				msg.setResendId(msg.getMsgId());
@@ -202,8 +200,8 @@ public class SvcAdmServiceImpl implements SvcAdmService {
 			}
 
 			msg.setStatus(StaticConfig.MESSAGE_STATUS_SENDING);
-			
-			//reservation message check
+
+			// reservation message check
 			if (msg.isReservation()) {
 				messageMapper.insertReservationMessage(msg);
 			} else {
@@ -211,7 +209,7 @@ public class SvcAdmServiceImpl implements SvcAdmService {
 				messageMapper.insertContent(msg);
 				ctlQMapper.insertQ(this.getCtlQ(msg));
 			}
-			
+
 			msgMap.put("msgId", msg.getMsgId());
 			msgMap.put("receiver", msg.getReceiver());
 
@@ -225,34 +223,34 @@ public class SvcAdmServiceImpl implements SvcAdmService {
 	/**
 	 * Gets the message size limit.
 	 *
-	 * @param userId the user id
+	 * @param userId
+	 *            the user id
 	 * @return the message size limit
 	 */
 	private int getMessageSizeLimit(String userId) {
-		return checkUtil.getMessageSizeLimit(interceptMapper
-				.getCashedMessageSizeLimit(userId));
+		return checkUtil.getMessageSizeLimit(interceptMapper.getCashedMessageSizeLimit(userId));
 	}
 
 	/**
 	 * Gets the message expiry.
 	 *
-	 * @param userId the user id
+	 * @param userId
+	 *            the user id
 	 * @return the message expiry
 	 */
 	private int getMessageExpiry(String userId) {
-		return checkUtil.getMessageExpiry(interceptMapper
-				.getCashedMessageExpiry(userId));
+		return checkUtil.getMessageExpiry(interceptMapper.getCashedMessageExpiry(userId));
 	}
 
 	/**
 	 * Gets the message qos.
 	 *
-	 * @param userId the user id
+	 * @param userId
+	 *            the user id
 	 * @return the message qos
 	 */
 	private int getMessageQos(String userId) {
-		return checkUtil.getMessageQos(interceptMapper
-				.getCashedMessageQos(userId));
+		return checkUtil.getMessageQos(interceptMapper.getCashedMessageQos(userId));
 	}
 
 	/**
@@ -263,11 +261,12 @@ public class SvcAdmServiceImpl implements SvcAdmService {
 	private String getMsgId() {
 		return KeyGenerator.generateMsgId();
 	}
-	
+
 	/**
 	 * Gets the ctl q.
 	 *
-	 * @param msg the msg
+	 * @param msg
+	 *            the msg
 	 * @return the ctl q
 	 */
 	private CtlQ getCtlQ(Message msg) {

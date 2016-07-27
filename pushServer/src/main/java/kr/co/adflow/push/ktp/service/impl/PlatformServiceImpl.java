@@ -42,8 +42,7 @@ import org.springframework.stereotype.Service;
 public class PlatformServiceImpl implements PlatformService {
 
 	/** The Constant logger. */
-	private static final Logger logger = LoggerFactory
-			.getLogger(PlatformServiceImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(PlatformServiceImpl.class);
 
 	/** The Constant CMD_KEEP_ALIVE_TIME. */
 	private static final int CMD_KEEP_ALIVE_TIME = 102;
@@ -58,17 +57,17 @@ public class PlatformServiceImpl implements PlatformService {
 	private static final int CMD_PTT_UPDATE = 105;
 
 	/** The Constant CMD_USER_MESSAGE. */
-	//private static final int CMD_USER_MESSAGE = 10;
+	// private static final int CMD_USER_MESSAGE = 10;
 	private static final int CMD_USER_MESSAGE = 106;
 
 	/** The Constant DIG_ACCOUNT_INFO_INTENT_NAME. */
 	private static final String DIG_ACCOUNT_INFO_ACTION_NAME = "kr.co.ktpowertel.push.digAccountInfo";
-	
+
 	private static final String FW_INFO_ACTION_NAME = "kr.co.ktpowertel.push.fwUpdateInfo";
 
 	/** The Constant DIG_USER_MESSAGE_INTENT_NAME. */
 	private static final String USER_MESSAGE_ACTION_NAME = "kr.co.ktpowertel.push.userMessage";
-	
+
 	private static final String PMA_USER_MESSAGE_ACTION_NAME = "kr.co.ktpowertel.push.pma";
 
 	private static final String CONTENT_TYPE_JSON = "application/json";
@@ -89,31 +88,32 @@ public class PlatformServiceImpl implements PlatformService {
 	private final static int TIME_TO_LIVE = 3000;
 
 	// private @Value("#{code['precheck.time.to.live']}") int TIME_TO_LIVE;
-	
+
 	private int postMessage(Message message) {
-		
+
 		int cnt = 0;
-		
+
 		try {
 			cnt = messageDao.post(message);
-			if (cnt < 1) throw new Exception();
+			if (cnt < 1)
+				throw new Exception();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-			
-		return cnt;	
-		
+
+		return cnt;
+
 	}
-	
-//	@Scheduled(fixedDelay = 3600000)
-//	 // 1시마다수행
-//	 public void doSomething() {
-//	 ConnectionFactory cf = jmsTemplate.getConnectionFactory();
-//	 System.out.println("connectionFactory=" + cf);
-//	 CachingConnectionFactory ccf = (CachingConnectionFactory) cf;
-//	 ccf.resetConnection();
-//	 System.out.println("connectionFactoryResetted");
-//	 }
+
+	// @Scheduled(fixedDelay = 3600000)
+	// // 1시마다수행
+	// public void doSomething() {
+	// ConnectionFactory cf = jmsTemplate.getConnectionFactory();
+	// System.out.println("connectionFactory=" + cf);
+	// CachingConnectionFactory ccf = (CachingConnectionFactory) cf;
+	// ccf.resetConnection();
+	// System.out.println("connectionFactoryResetted");
+	// }
 
 	/*
 	 * (non-Javadoc)
@@ -124,22 +124,21 @@ public class PlatformServiceImpl implements PlatformService {
 	 */
 	public void sendPrecheck(String topicName) {
 
-//		jmsTemplate.execute(topicName, new PreCheckHandler(TIME_TO_LIVE));
-	
-//	String thread = Thread.currentThread().getName();
-//	long time = System.currentTimeMillis(); 
-//	SimpleDateFormat dayTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
-//	String str = dayTime.format(new Date(time));
-//		System.out.println(str+"-[START]["+thread+"]topicName::"+topicName);
-		
-		
-		jmsTemplate.execute(new PreCheckHandlerBySessionCallback(jmsTemplate,
-				topicName, TIME_TO_LIVE));
-		
-//		time = System.currentTimeMillis(); 
-//		 dayTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
-//		 str = dayTime.format(new Date(time));
-//		System.out.println(str+"-[END  ]["+thread+"]topicName::"+topicName);
+		// jmsTemplate.execute(topicName, new PreCheckHandler(TIME_TO_LIVE));
+
+		// String thread = Thread.currentThread().getName();
+		// long time = System.currentTimeMillis();
+		// SimpleDateFormat dayTime = new SimpleDateFormat("yyyy-MM-dd
+		// HH:mm:ss:SSS");
+		// String str = dayTime.format(new Date(time));
+		// System.out.println(str+"-[START]["+thread+"]topicName::"+topicName);
+
+		jmsTemplate.execute(new PreCheckHandlerBySessionCallback(jmsTemplate, topicName, TIME_TO_LIVE));
+
+		// time = System.currentTimeMillis();
+		// dayTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
+		// str = dayTime.format(new Date(time));
+		// System.out.println(str+"-[END ]["+thread+"]topicName::"+topicName);
 	}
 
 	/*
@@ -165,9 +164,10 @@ public class PlatformServiceImpl implements PlatformService {
 		try {
 			int cnt = this.postMessage(message);
 
-//			jmsTemplate.execute(fwInfo.getReceiver(), new DirectMsgHandler(message));
-			
-			jmsTemplate.execute(new DirectMsgHandlerBySessionCallback(jmsTemplate,message));
+			// jmsTemplate.execute(fwInfo.getReceiver(), new
+			// DirectMsgHandler(message));
+
+			jmsTemplate.execute(new DirectMsgHandlerBySessionCallback(jmsTemplate, message));
 
 			message.setStatus(Message.STATUS_PUSH_SENT);
 			message.setIssue(new Date());
@@ -201,17 +201,18 @@ public class PlatformServiceImpl implements PlatformService {
 		message.setReceiver(digInfo.getReceiver());
 		message.setContentType(digInfo.getContentType());
 		message.setContent(digInfo.getContent());
-		
-		//2015-05-26 - expiry time => 24hour
+
+		// 2015-05-26 - expiry time => 24hour
 		long expiryTime = 1000 * 60 * 60 * 24;
 		message.setExpiry(expiryTime);
 
 		try {
 
 			int cnt = this.postMessage(message);
-			
-//			jmsTemplate.execute(digInfo.getReceiver(), new DirectMsgHandler(message));
-			jmsTemplate.execute(new DirectMsgHandlerBySessionCallback(jmsTemplate,message));
+
+			// jmsTemplate.execute(digInfo.getReceiver(), new
+			// DirectMsgHandler(message));
+			jmsTemplate.execute(new DirectMsgHandlerBySessionCallback(jmsTemplate, message));
 
 			message.setStatus(Message.STATUS_PUSH_SENT);
 			message.setIssue(new Date());
@@ -239,10 +240,10 @@ public class PlatformServiceImpl implements PlatformService {
 		try {
 			int cnt = this.postMessage(message);
 
-//			jmsTemplate.execute(message.getReceiver(), new DirectMsgHandler(message));
-			jmsTemplate.execute(new DirectMsgHandlerBySessionCallback(jmsTemplate,message));
-			
-			
+			// jmsTemplate.execute(message.getReceiver(), new
+			// DirectMsgHandler(message));
+			jmsTemplate.execute(new DirectMsgHandlerBySessionCallback(jmsTemplate, message));
+
 			message.setStatus(Message.STATUS_PUSH_SENT);
 			message.setIssue(new Date());
 			messageDao.putIssue(message);
@@ -278,8 +279,9 @@ public class PlatformServiceImpl implements PlatformService {
 		try {
 			int cnt = this.postMessage(message);
 
-//			jmsTemplate.execute(keepAliveTime.getReceiver(),new DirectMsgHandler(message));
-			jmsTemplate.execute(new DirectMsgHandlerBySessionCallback(jmsTemplate,message));
+			// jmsTemplate.execute(keepAliveTime.getReceiver(),new
+			// DirectMsgHandler(message));
+			jmsTemplate.execute(new DirectMsgHandlerBySessionCallback(jmsTemplate, message));
 
 			message.setStatus(Message.STATUS_PUSH_SENT);
 			message.setIssue(new Date());
@@ -293,7 +295,7 @@ public class PlatformServiceImpl implements PlatformService {
 		}
 
 	}
-	
+
 	private long getMillisExpiryTime(int sec) {
 		return sec * 1000;
 	}
@@ -301,9 +303,8 @@ public class PlatformServiceImpl implements PlatformService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * kr.co.adflow.push.ktp.service.PlatformService#sendUserMessage(kr.co.adflow
-	 * .push.domain.ktp.request.UserMessage)
+	 * @see kr.co.adflow.push.ktp.service.PlatformService#sendUserMessage(kr.co.
+	 * adflow .push.domain.ktp.request.UserMessage)
 	 */
 	public void sendUserMessage(UserMessage userMessage) {
 
@@ -316,7 +317,7 @@ public class PlatformServiceImpl implements PlatformService {
 
 			message.setQos(userMessage.getQos());
 			message.setExpiry(this.getMillisExpiryTime(userMessage.getExpiry()));
-			//message.setAck(true);
+			// message.setAck(true);
 			message.setSender(userMessage.getSender());
 			message.setReceiver(userMessage.getReceiver());
 			message.setContentType(userMessage.getContentType());
@@ -324,8 +325,9 @@ public class PlatformServiceImpl implements PlatformService {
 
 			int cnt = this.postMessage(message);
 
-//			jmsTemplate.execute(message.getReceiver(), new DirectMsgHandler(message));
-			jmsTemplate.execute(new DirectMsgHandlerBySessionCallback(jmsTemplate,message));
+			// jmsTemplate.execute(message.getReceiver(), new
+			// DirectMsgHandler(message));
+			jmsTemplate.execute(new DirectMsgHandlerBySessionCallback(jmsTemplate, message));
 
 			message.setStatus(Message.STATUS_PUSH_SENT);
 			message.setIssue(new Date());

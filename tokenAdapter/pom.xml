@@ -87,6 +87,7 @@
 			<artifactId>domain</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
+
 	</dependencies>
 	<build>
 		<plugins>
@@ -97,6 +98,20 @@
 				<configuration>
 					<source>1.6</source>
 					<target>1.6</target>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>fully.qualified.MainClass</mainClass>
+						</manifest>
+					</archive>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -115,17 +130,17 @@
 			<id>dev</id>
 			<properties>
 				<!-- 푸시서버주소 -->
-				<server.ip>127.0.0.1</server.ip>
+				<server.ip>14.63.217.141</server.ip>
 				<!-- 푸시서버포트 -->
-				<server.port>8080</server.port>
+				<server.port>38080</server.port>
 				<!-- 어플리케이션 로깅레벨 -->
 				<log.level>debug</log.level>
 				<!-- rest api version -->
 				<api.version>v1</api.version>
 				<!-- rest api key -->
-				<api.key>devServer2</api.key>
+				<api.key>KTPJAAS</api.key>
 				<!-- 인증유무 -->
-				<auth>false</auth>
+				<auth>true</auth>
 			</properties>
 		</profile>
 		<!-- Production environment @ production server -->
@@ -151,4 +166,22 @@
 			</properties>
 		</profile>
 	</profiles>
+	<distributionManagement>
+		<repository>
+			<id>releases</id>
+			<name>Releases Repository</name>
+			<url>http://14.63.217.141:5051/nexus/content/repositories/releases</url>
+
+		</repository>
+
+
+
+
+
+		<snapshotRepository>
+			<id>snapshots</id>
+			<name>Snapshots Repository</name>
+			<url>http://14.63.217.141:5051/nexus/content/repositories/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
 </project>

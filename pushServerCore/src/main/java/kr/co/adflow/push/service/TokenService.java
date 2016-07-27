@@ -18,71 +18,83 @@ public interface TokenService {
 	/**
 	 * Gets the.
 	 *
-	 * @param token the token
+	 * @param token
+	 *            the token
 	 * @return the token
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	Token get(String token) throws Exception;
 
 	/**
 	 * Post.
 	 *
-	 * @param user the user
+	 * @param user
+	 *            the user
 	 * @return the token
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	Token post(User user) throws Exception;
 
 	/**
 	 * Put.
 	 *
-	 * @param token the token
+	 * @param token
+	 *            the token
 	 * @return the int
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	int put(Token token) throws Exception;
 
 	/**
 	 * Delete.
 	 *
-	 * @param token the token
+	 * @param token
+	 *            the token
 	 * @return the int
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	int delete(String token) throws Exception;
 
 	/**
 	 * Validate.
 	 *
-	 * @param token the token
+	 * @param token
+	 *            the token
 	 * @return true, if successful
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	boolean validate(String token) throws Exception;
-	
-	
-	
-	//140901 - update:kicho -start
+
+	// 140901 - update:kicho -start
 	/**
 	 * Gets the by user.
 	 *
-	 * @param userID the user id
+	 * @param userID
+	 *            the user id
 	 * @return the by user
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	Token[] getByUser(String userID) throws Exception;
-	//140901 - update:kicho -end
-	
-	//140901 - update:kicho -start
+	// 140901 - update:kicho -end
+
+	// 140901 - update:kicho -start
 	/**
 	 * Gets the multi by user.
 	 *
-	 * @param userID the user id
+	 * @param userID
+	 *            the user id
 	 * @return the multi by user
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	Token[] getMultiByUser(String userID) throws Exception;
-	//140901 - update:kicho -end
+	// 140901 - update:kicho -end
 
 	Token[] getMultiByUfmi(String ufmi) throws Exception;
 }

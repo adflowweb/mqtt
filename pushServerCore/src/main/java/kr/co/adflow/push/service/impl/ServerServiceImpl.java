@@ -5,12 +5,12 @@ package kr.co.adflow.push.service.impl;
 
 import javax.annotation.Resource;
 
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
 import kr.co.adflow.push.dao.ServerDao;
 import kr.co.adflow.push.domain.ServerInfo;
 import kr.co.adflow.push.service.ServerService;
-
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 // TODO: Auto-generated Javadoc
 /**

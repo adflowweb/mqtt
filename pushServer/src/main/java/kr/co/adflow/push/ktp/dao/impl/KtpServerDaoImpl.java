@@ -10,8 +10,7 @@ import org.springframework.stereotype.Repository;
 /**
  * The Class KtpServerDaoImpl.
  */
-@Repository
-public class KtpServerDaoImpl extends ServerDaoImpl{
-	
+
+public class KtpServerDaoImpl {
 
 }

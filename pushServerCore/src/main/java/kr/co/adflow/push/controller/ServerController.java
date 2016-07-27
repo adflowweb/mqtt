@@ -8,10 +8,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import kr.co.adflow.push.domain.Response;
-import kr.co.adflow.push.domain.Result;
-import kr.co.adflow.push.service.ServerService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -19,6 +15,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import kr.co.adflow.push.domain.Response;
+import kr.co.adflow.push.domain.Result;
+import kr.co.adflow.push.service.ServerService;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -29,10 +29,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @Controller
 public class ServerController {
-	
+
 	/** The Constant logger. */
-	private static final Logger logger = LoggerFactory
-			.getLogger(ServerController.class);
+	private static final Logger logger = LoggerFactory.getLogger(ServerController.class);
 
 	/** The server service. */
 	@Resource
@@ -45,7 +44,8 @@ public class ServerController {
 	 * : { available: true, message : "" } } }.
 	 *
 	 * @return the response
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	@RequestMapping(value = "server", method = RequestMethod.GET)
 	@ResponseBody
@@ -61,7 +61,8 @@ public class ServerController {
 	/**
 	 * 예외처리.
 	 *
-	 * @param e the e
+	 * @param e
+	 *            the e
 	 * @return the response
 	 */
 	@ExceptionHandler(Exception.class)

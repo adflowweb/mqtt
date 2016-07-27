@@ -45,17 +45,16 @@ import org.springframework.stereotype.Service;
 public class PushMessageServiceImpl implements PushMessageService {
 
 	/** The Constant logger. */
-	private static final Logger logger = LoggerFactory
-			.getLogger(PushMessageServiceImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(PushMessageServiceImpl.class);
 
 	/** The message mapper. */
 	@Autowired
 	private MessageMapper messageMapper;
-	
+
 	/** The user mapper. */
 	@Autowired
 	private UserMapper userMapper;
-	
+
 	/** The intercept mapper. */
 	@Autowired
 	private InterceptMapper interceptMapper;
@@ -80,17 +79,19 @@ public class PushMessageServiceImpl implements PushMessageService {
 	@Autowired
 	private PmsConfig pmsConfig;
 
-	
-
-	
-	/* (non-Javadoc)
-	 * @see kr.co.adflow.pms.svc.service.PushMessageService#sendMessage(java.lang.String, kr.co.adflow.pms.svc.request.MessageReq)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * kr.co.adflow.pms.svc.service.PushMessageService#sendMessage(java.lang.
+	 * String, kr.co.adflow.pms.svc.request.MessageReq)
 	 */
 	@Override
-	public List<Map<String, String>> sendMessage(String appKey,
-			MessageReq message) throws Exception{
-		logger.debug("=== appKey::{}, MessageReq={}",appKey,"getContentType::"+message.getContentType()+",getResendInterval::"+message.getResendInterval()
-				+",getResendMaxCount::"+message.getResendMaxCount()+",getReservationTime::"+message.getReservationTime());
+	public List<Map<String, String>> sendMessage(String appKey, MessageReq message) throws Exception {
+		logger.debug("=== appKey::{}, MessageReq={}", appKey,
+				"getContentType::" + message.getContentType() + ",getResendInterval::" + message.getResendInterval()
+						+ ",getResendMaxCount::" + message.getResendMaxCount() + ",getReservationTime::"
+						+ message.getReservationTime());
 
 		// String[] msgIdArray = null;
 
@@ -99,21 +100,22 @@ public class PushMessageServiceImpl implements PushMessageService {
 		// 1. get userId by appKey
 		String issueId = interceptMapper.selectCashedUserId(appKey);
 
-		//message size limit skip 
-//		if (message.getContent().getBytes().length > this
-//				.getMessageSizeLimit(issueId)) {
-//			throw new RuntimeException(" message body size limit over :"
-//					+ this.getMessageSizeLimit(issueId));
-//			throw new PmsRuntimeException("invalid auth");
-//			
-//		}
+		// message size limit skip
+		// if (message.getContent().getBytes().length > this
+		// .getMessageSizeLimit(issueId)) {
+		// throw new RuntimeException(" message body size limit over :"
+		// + this.getMessageSizeLimit(issueId));
+		// throw new PmsRuntimeException("invalid auth");
+		//
+		// }
 		// 2. get max count by userId
 		// 3. check max count
 		// msgCntLimit disable
-//		if (userMapper.getMsgCntLimit(issueId) < message.getReceivers().length) {
-//			throw new RuntimeException(
-//					"send message count is message count limit over ");
-//		}
+		// if (userMapper.getMsgCntLimit(issueId) <
+		// message.getReceivers().length) {
+		// throw new RuntimeException(
+		// "send message count is message count limit over ");
+		// }
 
 		Message msg = new Message();
 		msg.setKeyMon(DateUtil.getYYYYMM());
@@ -131,7 +133,7 @@ public class PushMessageServiceImpl implements PushMessageService {
 		msg.setContent(message.getContent());
 		msg.setFileFormat(message.getFileFormat());
 		msg.setFileName(message.getFileName());
-		
+
 		if (message.getReservationTime() != null) {
 			msg.setReservationTime(message.getReservationTime());
 			msg.setReservation(true);
@@ -139,17 +141,16 @@ public class PushMessageServiceImpl implements PushMessageService {
 
 		msg.setResendMaxCount(message.getResendMaxCount());
 		msg.setResendInterval(message.getResendInterval());
-		
-		
-		//WEB:0, P-Talk1.0:1, P-Talk2.0:2
+
+		// WEB:0, P-Talk1.0:1, P-Talk2.0:2
 		msg.setSendTerminalType(0);
-		
+
 		// message size
 		if (message.getContentLength() == null) {
 			message.setContentLength(0);
 		}
 		msg.setMsgSize(message.getContentLength());
-		
+
 		// TMS:0, MMS:1
 		if (message.isMms()) {
 			msg.setMediaType(1);
@@ -161,27 +162,25 @@ public class PushMessageServiceImpl implements PushMessageService {
 			}
 
 		}
-				
 
 		String[] receivers = message.getReceivers();
 
 		// msgIdArray = new String[receivers.length];
 
 		for (int i = 0; i < receivers.length; i++) {
-			logger.debug("=== receivers[{}]::{}",i,receivers[i]);
-			
-			//group topic check
-			if (!(receivers[i].subSequence(0, 5).equals("mms/P")&&receivers[i].indexOf("g") > 0)) {
+			logger.debug("=== receivers[{}]::{}", i, receivers[i]);
+
+			// group topic check
+			if (!(receivers[i].subSequence(0, 5).equals("mms/P") && receivers[i].indexOf("g") > 0)) {
 
 				if (!userValidator.validRequestValue(receivers[i])) {
-//					throw new RuntimeException(
-//							"receivers formatting error count : " + i);
+					// throw new RuntimeException(
+					// "receivers formatting error count : " + i);
 					throw new PmsRuntimeException("receivers formatting error count : " + i);
 				}
 
 			}
-			
-			
+
 		}
 
 		resultList = new ArrayList<Map<String, String>>(receivers.length);
@@ -193,14 +192,14 @@ public class PushMessageServiceImpl implements PushMessageService {
 			msgMap = new HashMap<String, String>();
 			msg.setReceiver(receivers[i]);
 			msg.setMsgId(this.getMsgId());
-//			// MEMO 여러 건일때 0 번째 msgId 를 대표로 groupId에 추가
-//			if (i == 0) {
-//				groupId = msg.getMsgId();
-//			}
-//			msg.setGroupId(groupId);
-			
-			//group topic check
-			if (receivers[i].subSequence(0, 5).equals("mms/P")&&receivers[i].indexOf("g") > 0) {
+			// // MEMO 여러 건일때 0 번째 msgId 를 대표로 groupId에 추가
+			// if (i == 0) {
+			// groupId = msg.getMsgId();
+			// }
+			// msg.setGroupId(groupId);
+
+			// group topic check
+			if (receivers[i].subSequence(0, 5).equals("mms/P") && receivers[i].indexOf("g") > 0) {
 				msg.setGroupId(receivers[i]);
 				msg.setReceiverTopic(receivers[i]);
 			}
@@ -213,8 +212,8 @@ public class PushMessageServiceImpl implements PushMessageService {
 			}
 
 			msg.setStatus(StaticConfig.MESSAGE_STATUS_SENDING);
-			
-			//reservation message check
+
+			// reservation message check
 			if (msg.isReservation()) {
 				messageMapper.insertReservationMessage(msg);
 			} else {
@@ -222,8 +221,7 @@ public class PushMessageServiceImpl implements PushMessageService {
 				messageMapper.insertContent(msg);
 				ctlQMapper.insertQ(this.getCtlQ(msg));
 			}
-			
-			
+
 			msgMap.put("msgId", msg.getMsgId());
 			msgMap.put("receiver", msg.getReceiver());
 
@@ -233,16 +231,16 @@ public class PushMessageServiceImpl implements PushMessageService {
 
 		return resultList;
 	}
-	
-	
-	
-	/* (non-Javadoc)
-	 * @see kr.co.adflow.pms.svc.service.PushMessageService#sendMessage(java.lang.String, kr.co.adflow.pms.svc.request.MessageReq)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * kr.co.adflow.pms.svc.service.PushMessageService#sendMessage(java.lang.
+	 * String, kr.co.adflow.pms.svc.request.MessageReq)
 	 */
 	@Override
-	public List<Map<String, String>> sendAddressMessage(String appKey,
-			AddressMessageReq addressMsg) throws Exception{
-
+	public List<Map<String, String>> sendAddressMessage(String appKey, AddressMessageReq addressMsg) throws Exception {
 
 		// String[] msgIdArray = null;
 
@@ -266,8 +264,7 @@ public class PushMessageServiceImpl implements PushMessageService {
 		msg.setContentType(addressMsg.getContentType());
 		msg.setFileFormat(addressMsg.getFileFormat());
 		msg.setFileName(addressMsg.getFileName());
-		
-		
+
 		if (addressMsg.getReservationTime() != null) {
 			msg.setReservationTime(addressMsg.getReservationTime());
 			msg.setReservation(true);
@@ -275,31 +272,29 @@ public class PushMessageServiceImpl implements PushMessageService {
 
 		msg.setResendMaxCount(addressMsg.getResendMaxCount());
 		msg.setResendInterval(addressMsg.getResendInterval());
-		
-		
-		//WEB:0, P-Talk1.0:1, P-Talk2.0:2
+
+		// WEB:0, P-Talk1.0:1, P-Talk2.0:2
 		msg.setSendTerminalType(0);
-		
-		
+
 		for (AddressMessage addressMessage : addressMsg.getAddressMessageArray()) {
-			//group topic check
-			if (!(addressMessage.getReceiver().subSequence(0, 5).equals("mms/P")&&addressMessage.getReceiver().indexOf("g") > 0)) {
+			// group topic check
+			if (!(addressMessage.getReceiver().subSequence(0, 5).equals("mms/P")
+					&& addressMessage.getReceiver().indexOf("g") > 0)) {
 
 				if (!userValidator.validRequestValue(addressMessage.getReceiver())) {
-//					throw new RuntimeException(
-//							"receivers formatting error count : " + i);
+					// throw new RuntimeException(
+					// "receivers formatting error count : " + i);
 					throw new PmsRuntimeException("receivers formatting error : " + addressMessage.getReceiver());
 				}
 
 			}
 		}
-				
 
 		resultList = new ArrayList<Map<String, String>>(addressMsg.getAddressMessageArray().length);
 
 		String groupId = null;
 		Map<String, String> msgMap = null;
-		
+
 		for (AddressMessage adressMessage : addressMsg.getAddressMessageArray()) {
 			msgMap = new HashMap<String, String>();
 			msg.setReceiver(adressMessage.getReceiver());
@@ -310,7 +305,7 @@ public class PushMessageServiceImpl implements PushMessageService {
 				adressMessage.setContentLength(0);
 			}
 			msg.setMsgSize(adressMessage.getContentLength());
-			
+
 			// TMS:0, MMS:1
 			if (addressMsg.isMms()) {
 				msg.setMediaType(1);
@@ -323,15 +318,15 @@ public class PushMessageServiceImpl implements PushMessageService {
 
 			}
 
-			
-//			// MEMO 여러 건일때 0 번째 msgId 를 대표로 groupId에 추가
-//			if (i == 0) {
-//				groupId = msg.getMsgId();
-//			}
-//			msg.setGroupId(groupId);
-			
-			//group topic check
-			if (adressMessage.getReceiver().subSequence(0, 5).equals("mms/P")&&adressMessage.getReceiver().indexOf("g") > 0) {
+			// // MEMO 여러 건일때 0 번째 msgId 를 대표로 groupId에 추가
+			// if (i == 0) {
+			// groupId = msg.getMsgId();
+			// }
+			// msg.setGroupId(groupId);
+
+			// group topic check
+			if (adressMessage.getReceiver().subSequence(0, 5).equals("mms/P")
+					&& adressMessage.getReceiver().indexOf("g") > 0) {
 				msg.setGroupId(adressMessage.getReceiver());
 				msg.setReceiverTopic(adressMessage.getReceiver());
 			}
@@ -344,8 +339,8 @@ public class PushMessageServiceImpl implements PushMessageService {
 			}
 
 			msg.setStatus(StaticConfig.MESSAGE_STATUS_SENDING);
-			
-			//reservation message check
+
+			// reservation message check
 			if (msg.isReservation()) {
 				messageMapper.insertReservationMessage(msg);
 			} else {
@@ -353,49 +348,48 @@ public class PushMessageServiceImpl implements PushMessageService {
 				messageMapper.insertContent(msg);
 				ctlQMapper.insertQ(this.getCtlQ(msg));
 			}
-			
-			
+
 			msgMap.put("msgId", msg.getMsgId());
 			msgMap.put("receiver", msg.getReceiver());
 
 			resultList.add(msgMap);
 			logger.info("message id :: {}", msg.getMsgId());
 		}
-		
+
 		return resultList;
 	}
 
-
 	private String getServerId() {
 		// pmsConfig.EXECUTOR_SERVER_ID
-		
+
 		String result = null;
-		
+
 		long mod = System.nanoTime() % 3;
-		if (mod == 0) {
-			result = pmsConfig.EXECUTOR_SERVER_ID1;
-		} else if (mod == 1) {
-			result = pmsConfig.EXECUTOR_SERVER_ID2;			
-		} else if (mod == 2) {
-			result = pmsConfig.EXECUTOR_SERVER_ID3;			
-		} 
-		
-//		else if (mod == 3) {
-//			result = pmsConfig.EXECUTOR_SERVER_ID4;			
-//		} else if (mod == 4) {
-//			result = pmsConfig.EXECUTOR_SERVER_ID5;			
-//		} else {
-//			result = pmsConfig.EXECUTOR_SERVER_ID6;
-//		}
-		
-		
+		// if (mod == 0) {
+		// result = pmsConfig.EXECUTOR_SERVER_ID1;
+		// } else if (mod == 1) {
+		// result = pmsConfig.EXECUTOR_SERVER_ID2;
+		// } else if (mod == 2) {
+		// result = pmsConfig.EXECUTOR_SERVER_ID3;
+		// }
+		//
+		// else if (mod == 3) {
+		// result = pmsConfig.EXECUTOR_SERVER_ID4;
+		// } else if (mod == 4) {
+		// result = pmsConfig.EXECUTOR_SERVER_ID5;
+		// } else {
+		// result = pmsConfig.EXECUTOR_SERVER_ID6;
+		// }
+
+		result = pmsConfig.EXECUTOR_SERVER_ID;
 		return result;
 	}
 
 	/**
 	 * Gets the ctl q.
 	 *
-	 * @param msg the msg
+	 * @param msg
+	 *            the msg
 	 * @return the ctl q
 	 */
 	private CtlQ getCtlQ(Message msg) {
@@ -425,12 +419,15 @@ public class PushMessageServiceImpl implements PushMessageService {
 		return KeyGenerator.generateMsgId();
 	}
 
-	/* (non-Javadoc)
-	 * @see kr.co.adflow.pms.svc.service.PushMessageService#getMessageResult(kr.co.adflow.pms.svc.request.MessageIdsReq, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * kr.co.adflow.pms.svc.service.PushMessageService#getMessageResult(kr.co.
+	 * adflow.pms.svc.request.MessageIdsReq, java.lang.String)
 	 */
 	@Override
-	public List<MessageResult> getMessageResult(MessageIdsReq msgIds,
-			String appKey)  throws Exception{
+	public List<MessageResult> getMessageResult(MessageIdsReq msgIds, String appKey) throws Exception {
 
 		List<MessageResult> resultList = null;
 
@@ -471,19 +468,24 @@ public class PushMessageServiceImpl implements PushMessageService {
 	/**
 	 * Gets the key mon.
 	 *
-	 * @param msgIds the msg ids
+	 * @param msgIds
+	 *            the msg ids
 	 * @return the key mon
 	 */
-	private String getKeyMon(String[] msgIds)  throws Exception{
+	private String getKeyMon(String[] msgIds) throws Exception {
 		if (msgIds.length < 1) {
-//			throw new RuntimeException("msgId not found");
+			// throw new RuntimeException("msgId not found");
 			throw new PmsRuntimeException("msgId not found");
 		}
 		return msgIds[0].substring(0, 6);
 	}
 
-	/* (non-Javadoc)
-	 * @see kr.co.adflow.pms.svc.service.PushMessageService#validPhoneNo(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * kr.co.adflow.pms.svc.service.PushMessageService#validPhoneNo(java.lang.
+	 * String)
 	 */
 	@Override
 	public Boolean validPhoneNo(String phoneNo) {
@@ -493,15 +495,20 @@ public class PushMessageServiceImpl implements PushMessageService {
 	/**
 	 * Gets the push user id.
 	 *
-	 * @param phoneNo the phone no
+	 * @param phoneNo
+	 *            the phone no
 	 * @return the push user id
 	 */
 	private String getPushUserId(String phoneNo) {
 		return userValidator.getRegstPhoneNo(phoneNo);
 	}
 
-	/* (non-Javadoc)
-	 * @see kr.co.adflow.pms.svc.service.PushMessageService#validUfmiNo(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * kr.co.adflow.pms.svc.service.PushMessageService#validUfmiNo(java.lang.
+	 * String)
 	 */
 	@Override
 	public Boolean validUfmiNo(String ufmiNo) {
@@ -511,46 +518,52 @@ public class PushMessageServiceImpl implements PushMessageService {
 	/**
 	 * Gets the push ufmi.
 	 *
-	 * @param ufmiNo the ufmi no
+	 * @param ufmiNo
+	 *            the ufmi no
 	 * @return the push ufmi
 	 */
 	private String getPushUfmi(String ufmiNo) {
 		return userValidator.getRegstUfmiNo(ufmiNo);
 	}
 
-	/* (non-Javadoc)
-	 * @see kr.co.adflow.pms.svc.service.PushMessageService#cancelMessage(java.lang.String, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * kr.co.adflow.pms.svc.service.PushMessageService#cancelMessage(java.lang.
+	 * String, java.lang.String)
 	 */
 	@Override
 	public Integer cancelMessage(String appKey, String msgId) {
 
 		String issueId = interceptMapper.selectCashedUserId(appKey);
 
-//		Message msg = new Message();
-//		msg.setKeyMon(this.getKeyMon(msgId));
-//		msg.setMsgId(msgId);
-//		msg.setUpdateId(issueId);
-//		msg.setStatus(StaticConfig.MESSAGE_STATUS_RESEVATION_CANCEL);
-		
+		// Message msg = new Message();
+		// msg.setKeyMon(this.getKeyMon(msgId));
+		// msg.setMsgId(msgId);
+		// msg.setUpdateId(issueId);
+		// msg.setStatus(StaticConfig.MESSAGE_STATUS_RESEVATION_CANCEL);
+
 		Message msg;
 		String keyMon = DateUtil.getYYYYMM();
 		List<Message> list = messageMapper.selectReservationMessage(msgId);
 		msg = list.get(0);
-//		msg = messageMapper.selectReservationMessage(msgId);
+		// msg = messageMapper.selectReservationMessage(msgId);
 		msg.setKeyMon(keyMon);
 		msg.setStatus(StaticConfig.MESSAGE_STATUS_RESEVATION_CANCEL);
 		int cnt = messageMapper.insertMessageRV(msg);
 		messageMapper.insertContent(msg);
 		messageMapper.deleteReservationMessage(msgId);
 
-//		return messageMapper.cancelMessage(msg);
+		// return messageMapper.cancelMessage(msg);
 		return cnt;
 	}
 
 	/**
 	 * Gets the key mon.
 	 *
-	 * @param msgId the msg id
+	 * @param msgId
+	 *            the msg id
 	 * @return the key mon
 	 */
 	private String getKeyMon(String msgId) {
@@ -561,50 +574,52 @@ public class PushMessageServiceImpl implements PushMessageService {
 	/**
 	 * Gets the message size limit.
 	 *
-	 * @param userId the user id
+	 * @param userId
+	 *            the user id
 	 * @return the message size limit
 	 */
 	private int getMessageSizeLimit(String userId) {
-		return checkUtil.getMessageSizeLimit(interceptMapper
-				.getCashedMessageSizeLimit(userId));
+		return checkUtil.getMessageSizeLimit(interceptMapper.getCashedMessageSizeLimit(userId));
 	}
 
 	/**
 	 * Gets the message expiry.
 	 *
-	 * @param userId the user id
+	 * @param userId
+	 *            the user id
 	 * @return the message expiry
 	 */
 	private int getMessageExpiry(String userId) {
-		return checkUtil.getMessageExpiry(interceptMapper
-				.getCashedMessageExpiry(userId));
+		return checkUtil.getMessageExpiry(interceptMapper.getCashedMessageExpiry(userId));
 	}
 
 	/**
 	 * Gets the message qos.
 	 *
-	 * @param userId the user id
+	 * @param userId
+	 *            the user id
 	 * @return the message qos
 	 */
 	private int getMessageQos(String userId) {
-		return checkUtil.getMessageQos(interceptMapper
-				.getCashedMessageQos(userId));
+		return checkUtil.getMessageQos(interceptMapper.getCashedMessageQos(userId));
 	}
-	
+
 	/**
 	 * Gets the int.
 	 *
-	 * @param string the string
+	 * @param string
+	 *            the string
 	 * @return the int
 	 */
 	private int getInt(String string) {
 		return Integer.parseInt(string);
 	}
-	
+
 	/**
 	 * Gets the date.
 	 *
-	 * @param string the string
+	 * @param string
+	 *            the string
 	 * @return the date
 	 */
 	private Date getDate(String string) {

@@ -1,80 +1,89 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans:beans xmlns="http://www.springframework.org/schema/mvc"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:beans="http://www.springframework.org/schema/beans"
 	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:task="http://www.springframework.org/schema/task"
-	xmlns:c="http://www.springframework.org/schema/c"
+	xmlns:task="http://www.springframework.org/schema/task" xmlns:c="http://www.springframework.org/schema/c"
 	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
 		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.1.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-	<!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
-	
-	<context:component-scan base-package="kr.co.adflow.pms"/>
+	<!-- DispatcherServlet Context: defines this servlet's request-processing 
+		infrastructure -->
+
+	<context:component-scan base-package="kr.co.adflow.pms" />
 	<!-- Enables the Spring MVC @Controller programming model -->
 	<annotation-driven validator="validator" />
 
-<interceptors>
-    <interceptor>
-        <mapping path="/svc/*" />
-        <beans:bean class="kr.co.adflow.pms.svc.filter.SeviceInterceptor"/> 
-    </interceptor>
-    <interceptor>
-        <mapping path="/adm/cmm/**" />
-        <beans:bean class="kr.co.adflow.pms.adm.filter.CommonInterceptor"/> 
-    </interceptor>     
-    <interceptor>
-        <mapping path="/adm/sys/**" />
-        <beans:bean class="kr.co.adflow.pms.adm.filter.SystemInterceptor"/> 
-    </interceptor>  
-    <interceptor>
-        <mapping path="/adm/svc/**" />
-        <beans:bean class="kr.co.adflow.pms.adm.filter.SvcInterceptor"/> 
-    </interceptor>   
-    <interceptor>
-        <mapping path="/adm/svcadm/**" />
-        <beans:bean class="kr.co.adflow.pms.adm.filter.SvcAdmInterceptor"/> 
-    </interceptor>           
-    <interceptor>
-        <mapping path="/svcadm/**" />
-        <beans:bean class="kr.co.adflow.pms.inf.filter.SvcAdmInterceptor"/> 
-    </interceptor>           
-<!--     <interceptor>
-        <mapping path="/inf/**" />
-        <beans:bean class="kr.co.adflow.pms.inf.filter.InterfaceInterceptor"/> 
-    </interceptor>    -->
-    <interceptor>
-        <mapping path="/users/**" />
-        <beans:bean class="kr.co.adflow.pms.users.filter.UserInterceptor"/> 
-    </interceptor>         
-</interceptors>
+	<interceptors>
+		<interceptor>
+			<mapping path="/svc/*" />
+			<beans:bean class="kr.co.adflow.pms.svc.filter.SeviceInterceptor" />
+		</interceptor>
+		<interceptor>
+			<mapping path="/adm/cmm/**" />
+			<beans:bean class="kr.co.adflow.pms.adm.filter.CommonInterceptor" />
+		</interceptor>
+		<interceptor>
+			<mapping path="/adm/sys/**" />
+			<beans:bean class="kr.co.adflow.pms.adm.filter.SystemInterceptor" />
+		</interceptor>
+		<interceptor>
+			<mapping path="/adm/svc/**" />
+			<beans:bean class="kr.co.adflow.pms.adm.filter.SvcInterceptor" />
+		</interceptor>
+		<interceptor>
+			<mapping path="/adm/svcadm/**" />
+			<beans:bean class="kr.co.adflow.pms.adm.filter.SvcAdmInterceptor" />
+		</interceptor>
+		<interceptor>
+			<mapping path="/svcadm/**" />
+			<beans:bean class="kr.co.adflow.pms.inf.filter.SvcAdmInterceptor" />
+		</interceptor>
+		<!-- <interceptor> <mapping path="/inf/**" /> <beans:bean class="kr.co.adflow.pms.inf.filter.InterfaceInterceptor"/> 
+			</interceptor> -->
+		<interceptor>
+			<mapping path="/users/**" />
+			<beans:bean class="kr.co.adflow.pms.users.filter.UserInterceptor" />
+		</interceptor>
+	</interceptors>
 
-<beans:bean id="restTemplate" class="org.springframework.web.client.RestTemplate"/>
+	<beans:bean id="restTemplate" class="org.springframework.web.client.RestTemplate" />
 
-	<!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory -->
+	<!-- Handles HTTP GET requests for /resources/** by efficiently serving 
+		up static resources in the ${webappRoot}/resources directory -->
 	<resources mapping="/resources/**" location="/resources/" />
 
-	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
-	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+	<!-- Resolves views selected for rendering by @Controllers to .jsp resources 
+		in the /WEB-INF/views directory -->
+	<beans:bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<beans:property name="prefix" value="/WEB-INF/views/" />
 		<beans:property name="suffix" value=".jsp" />
 	</beans:bean>
-	
-	
+
+
 	<task:scheduled-tasks scheduler="myScheduler">
-    <task:scheduled ref="messageSendExecutor" method="sendMessageArray" fixed-delay="#{pms['executor.delay.time']}" />
-    <task:scheduled ref="messageSendExecutor" method="sendReservationMessageArray" fixed-delay="#{pms['executor.delay.time']}"/>
-    <task:scheduled ref="messageSendExecutor" method="sendMessageArray2" fixed-delay="#{pms['executor.delay.time2']}" />
-    <task:scheduled ref="messageSendExecutor" method="sendReservationMessageArray2" fixed-delay="#{pms['executor.delay.time2']}"/>
-    <task:scheduled ref="messageSendExecutor" method="sendMessageArray3" fixed-delay="#{pms['executor.delay.time3']}" />
-    <task:scheduled ref="messageSendExecutor" method="sendReservationMessageArray3" fixed-delay="#{pms['executor.delay.time3']}"/>
-    <task:scheduled ref="messageSendExecutor" method="sendCallback" fixed-delay="#{pms['executor.delay.time']}"/>
-    <task:scheduled ref="tableCreateExecutor" method="createTable" cron="#{pms['executor.createtable.cron']}"/>
-	<task:scheduled ref="cDRCreateExecutor" method="createCDR" cron="#{pms['executor.createCDR.cron']}"/>
+		<task:scheduled ref="messageSendExecutor" method="sendMessageArray"
+			fixed-delay="#{pms['executor.delay.time']}" />
+	<task:scheduled ref="messageSendExecutor" method="sendReservationMessageArray"
+		fixed-delay="#{pms['executor.delay.time']}" />
+	<!-- <task:scheduled ref="messageSendExecutor" method="sendMessageArray2" -->
+	<!-- fixed-delay="#{pms['executor.delay.time2']}" /> -->
+	<!-- <task:scheduled ref="messageSendExecutor" method="sendReservationMessageArray2" -->
+	<!-- fixed-delay="#{pms['executor.delay.time2']}" /> -->
+	<!-- <task:scheduled ref="messageSendExecutor" method="sendMessageArray3" -->
+	<!-- fixed-delay="#{pms['executor.delay.time3']}" /> -->
+	<!-- <task:scheduled ref="messageSendExecutor" method="sendReservationMessageArray3" -->
+	<!-- fixed-delay="#{pms['executor.delay.time3']}" /> -->
+	<!-- <task:scheduled ref="messageSendExecutor" method="sendCallback" -->
+	<!-- fixed-delay="#{pms['executor.delay.time']}" /> -->
+		<task:scheduled ref="tableCreateExecutor" method="createTable"
+			cron="#{pms['executor.createtable.cron']}" />
+		<task:scheduled ref="cDRCreateExecutor" method="createCDR"
+			cron="#{pms['executor.createCDR.cron']}" />
 	</task:scheduled-tasks>
 
-	<task:scheduler id="myScheduler" pool-size="10"/>
+	<task:scheduler id="myScheduler" pool-size="10" />
 
 </beans:beans>

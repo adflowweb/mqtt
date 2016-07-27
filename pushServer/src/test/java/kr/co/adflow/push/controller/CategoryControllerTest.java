@@ -15,45 +15,45 @@ import org.testng.annotations.Test;
 @Test
 @ContextConfiguration("file:src/test/resources/applicationContext.xml")
 public class CategoryControllerTest extends AbstractTestNGSpringContextTests {
-	private static final org.slf4j.Logger logger = LoggerFactory
-			.getLogger(CategoryControllerTest.class);
-
-	@BeforeClass
-	void beforeclass() throws Exception {
-	}
-
-	@AfterClass
-	void afterclass() throws Exception {
-	}
-
-	/**
-	 * 카테고리생성테스트
-	 * 
-	 * @throws Exception
-	 */
-	@Test(priority = 1)
-	void 카테고리생성테스트() throws Exception {
-
-	}
-
-	/**
-	 * 카테고리삭제테스트
-	 * 
-	 * @throws Exception
-	 */
-	@Test(priority = 3)
-	void 카테고리삭제테스트() throws Exception {
-
-	}
-
-	/**
-	 * 카테고리가져오기테스트
-	 * 
-	 * @throws Exception
-	 */
-	@Test(priority = 2)
-	void 카테고리가져오기테스트() throws Exception {
-
-	}
+	// private static final org.slf4j.Logger logger = LoggerFactory
+	// .getLogger(CategoryControllerTest.class);
+	//
+	// @BeforeClass
+	// void beforeclass() throws Exception {
+	// }
+	//
+	// @AfterClass
+	// void afterclass() throws Exception {
+	// }
+	//
+	// /**
+	// * 카테고리생성테스트
+	// *
+	// * @throws Exception
+	// */
+	// @Test(priority = 1)
+	// void 카테고리생성테스트() throws Exception {
+	//
+	// }
+	//
+	// /**
+	// * 카테고리삭제테스트
+	// *
+	// * @throws Exception
+	// */
+	// @Test(priority = 3)
+	// void 카테고리삭제테스트() throws Exception {
+	//
+	// }
+	//
+	// /**
+	// * 카테고리가져오기테스트
+	// *
+	// * @throws Exception
+	// */
+	// @Test(priority = 2)
+	// void 카테고리가져오기테스트() throws Exception {
+	//
+	// }
 
 }
