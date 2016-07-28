@@ -241,95 +241,98 @@ public class UserMessageServiceImpl implements UserMessageService {
 	 * kr.co.adflow.pms.svc.service.UserMessageService#sendMessage(java.lang.
 	 * String, kr.co.adflow.pms.svc.request.MessageReq)
 	 */
-	@Override
-	public Integer groupListCnt(String groupTopic) throws Exception {
-
-		logger.debug("=== groupTopic::{}", groupTopic);
-		// PCFConnectionManagerHandler.PCFConnectionManager();
-
-		Integer resultCnt = null;
-		ConnectionManager connMan = MQEnvironment.getDefaultConnectionManager();
-		MQQueueManager qmgr = null;
-		PCFMessageAgent agent = null;
-		try {
-			qmgr = new MQQueueManager("MQTT", connMan);
-
-			// PCFMessageAgent agent = new PCFMessageAgent(qmgr);
-			// PCFMessage request = new
-			// PCFMessage(MQConstants.MQCMD_INQUIRE_SUB_STATUS);
-			// request.addParameter(MQConstants.MQCACF_SUB_NAME, "*");
-			//
-			// request.addFilterParameter(MQConstants.MQCA_TOPIC_STRING,MQConstants.MQCFOP_EQUAL,
-			// groupTopic);
-			//
-			// long start;
-			// long stop;
-			// start = System.currentTimeMillis();
-			// PCFMessage[] responses;
-			// responses = agent.send(request);
-			//
-			// stop = System.currentTimeMillis();
-			// System.out.println("elapsedTime=" + (stop - start) + "ms");
-			// System.out.println("responses.length=" + responses.length);
-			//
-			// String token;
-			// int point = 0;
-			// for (int i = 0; i < responses.length; i++) {
-			// token =
-			// (String)responses[i].getParameterValue(MQConstants.MQCACF_SUB_NAME);
-			// point = token.indexOf(":");
-			// token = token.substring(0, token.indexOf(":"));
-			// System.out.println(i+":"+token);
-			// System.out.println("ufmi ::"+pushMapper.getUfmi(token));
-			// }
-			//
-			//
-			// resultCnt = responses.length;
-
-			agent = new PCFMessageAgent(qmgr);
-			PCFMessage request = new PCFMessage(MQConstants.MQCMD_INQUIRE_TOPIC_STATUS);
-			request.addParameter(MQConstants.MQCA_TOPIC_STRING, groupTopic);
-
-			long start;
-			long stop;
-			start = System.currentTimeMillis();
-			PCFMessage[] responses;
-			responses = agent.send(request);
-
-			stop = System.currentTimeMillis();
-			logger.debug("elapsedTime=" + (stop - start) + "ms");
-			logger.debug("responses.length=" + responses.length);
-
-			resultCnt = (Integer) responses[0].getParameterValue(MQConstants.MQIA_SUB_COUNT);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw e;
-		} finally {
-			if (agent != null) {
-				try {
-					agent.disconnect();
-				} catch (MQException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					throw e;
-				}
-			}
-			if (qmgr != null) {
-				try {
-					qmgr.disconnect();
-				} catch (MQException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					throw e;
-				}
-			}
-
-		}
-
-		return resultCnt;
-
-	}
+	// @Override
+	// public Integer groupListCnt(String groupTopic) throws Exception {
+	//
+	// logger.debug("=== groupTopic::{}", groupTopic);
+	// // PCFConnectionManagerHandler.PCFConnectionManager();
+	//
+	// Integer resultCnt = null;
+	// ConnectionManager connMan = MQEnvironment.getDefaultConnectionManager();
+	// MQQueueManager qmgr = null;
+	// PCFMessageAgent agent = null;
+	// try {
+	// qmgr = new MQQueueManager("MQTT", connMan);
+	//
+	// // PCFMessageAgent agent = new PCFMessageAgent(qmgr);
+	// // PCFMessage request = new
+	// // PCFMessage(MQConstants.MQCMD_INQUIRE_SUB_STATUS);
+	// // request.addParameter(MQConstants.MQCACF_SUB_NAME, "*");
+	// //
+	// //
+	// request.addFilterParameter(MQConstants.MQCA_TOPIC_STRING,MQConstants.MQCFOP_EQUAL,
+	// // groupTopic);
+	// //
+	// // long start;
+	// // long stop;
+	// // start = System.currentTimeMillis();
+	// // PCFMessage[] responses;
+	// // responses = agent.send(request);
+	// //
+	// // stop = System.currentTimeMillis();
+	// // System.out.println("elapsedTime=" + (stop - start) + "ms");
+	// // System.out.println("responses.length=" + responses.length);
+	// //
+	// // String token;
+	// // int point = 0;
+	// // for (int i = 0; i < responses.length; i++) {
+	// // token =
+	// // (String)responses[i].getParameterValue(MQConstants.MQCACF_SUB_NAME);
+	// // point = token.indexOf(":");
+	// // token = token.substring(0, token.indexOf(":"));
+	// // System.out.println(i+":"+token);
+	// // System.out.println("ufmi ::"+pushMapper.getUfmi(token));
+	// // }
+	// //
+	// //
+	// // resultCnt = responses.length;
+	//
+	// agent = new PCFMessageAgent(qmgr);
+	// PCFMessage request = new
+	// PCFMessage(MQConstants.MQCMD_INQUIRE_TOPIC_STATUS);
+	// request.addParameter(MQConstants.MQCA_TOPIC_STRING, groupTopic);
+	//
+	// long start;
+	// long stop;
+	// start = System.currentTimeMillis();
+	// PCFMessage[] responses;
+	// responses = agent.send(request);
+	//
+	// stop = System.currentTimeMillis();
+	// logger.debug("elapsedTime=" + (stop - start) + "ms");
+	// logger.debug("responses.length=" + responses.length);
+	//
+	// resultCnt = (Integer)
+	// responses[0].getParameterValue(MQConstants.MQIA_SUB_COUNT);
+	//
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// throw e;
+	// } finally {
+	// if (agent != null) {
+	// try {
+	// agent.disconnect();
+	// } catch (MQException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// throw e;
+	// }
+	// }
+	// if (qmgr != null) {
+	// try {
+	// qmgr.disconnect();
+	// } catch (MQException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// throw e;
+	// }
+	// }
+	//
+	// }
+	//
+	// return resultCnt;
+	//
+	// }
 
 	/*
 	 * (non-Javadoc)
@@ -338,97 +341,105 @@ public class UserMessageServiceImpl implements UserMessageService {
 	 * kr.co.adflow.pms.svc.service.UserMessageService#sendMessage(java.lang.
 	 * String, kr.co.adflow.pms.svc.request.MessageReq)
 	 */
-	public List<GroupMessage> groupList(String groupTopic, String keyMon, String msgId, String appKey)
-			throws Exception {
-
-		logger.debug("=== parm::{}",
-				"groupTopic::" + groupTopic + ",keyMon::" + keyMon + ",msgId::" + msgId + ",appKey::" + appKey);
-
-		// PCFConnectionManagerHandler.PCFConnectionManager();
-
-		int resultCnt = 0;
-		List<GroupMessage> list = new ArrayList<GroupMessage>();
-		ConnectionManager connMan = MQEnvironment.getDefaultConnectionManager();
-		MQQueueManager qmgr = null;
-		PCFMessageAgent agent = null;
-		try {
-			qmgr = new MQQueueManager("MQTT", connMan);
-
-			agent = new PCFMessageAgent(qmgr);
-			PCFMessage request = new PCFMessage(MQConstants.MQCMD_INQUIRE_SUB_STATUS);
-			request.addParameter(MQConstants.MQCACF_SUB_NAME, "*");
-
-			request.addFilterParameter(MQConstants.MQCA_TOPIC_STRING, MQConstants.MQCFOP_EQUAL, groupTopic);
-
-			long start;
-			long stop;
-			start = System.currentTimeMillis();
-			PCFMessage[] responses;
-			responses = agent.send(request);
-
-			stop = System.currentTimeMillis();
-			logger.debug("elapsedTime=" + (stop - start) + "ms");
-			logger.debug("responses.length=" + responses.length);
-
-			String token;
-			String ufmi;
-			int point = 0;
-			for (int i = 0; i < responses.length; i++) {
-				GroupMessage groupMessage = new GroupMessage();
-				groupMessage.setKeyMon(keyMon);
-				groupMessage.setMsgId(msgId);
-				token = (String) responses[i].getParameterValue(MQConstants.MQCACF_SUB_NAME);
-				point = token.indexOf(":");
-				token = token.substring(0, token.indexOf(":"));
-				groupMessage.setReceiverTokenId(token);
-
-				logger.debug(i + ":" + token);
-				ufmi = pushMapper.getUfmi(token);
-				groupMessage.setReceiverUfmi(ufmi);
-
-				logger.debug("=== groupMessage::{}",
-						"getKeyMon::" + groupMessage.getKeyMon() + ",getMsgId::" + groupMessage.getMsgId()
-								+ ",getReceiverTokenId::" + groupMessage.getReceiverTokenId() + ",getReceiverUfmi::"
-								+ groupMessage.getReceiverUfmi());
-				if (ufmi != null && !token.equals(appKey)) {
-					list.add(groupMessage);
-				} else {
-					logger.info("Group message self skip - token ::{}  appkey ::{}", token, appKey);
-				}
-
-			}
-
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw e;
-
-		} catch (MQException e) {
-			e.printStackTrace();
-			throw e;
-		} finally {
-			if (agent != null) {
-				try {
-					agent.disconnect();
-				} catch (MQException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					throw e;
-				}
-			}
-			if (qmgr != null) {
-				try {
-					qmgr.disconnect();
-				} catch (MQException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					throw e;
-				}
-			}
-
-		}
-
-		return list;
-	}
+	// public List<GroupMessage> groupList(String groupTopic, String keyMon,
+	// String msgId, String appKey)
+	// throws Exception {
+	//
+	// logger.debug("=== parm::{}",
+	// "groupTopic::" + groupTopic + ",keyMon::" + keyMon + ",msgId::" + msgId +
+	// ",appKey::" + appKey);
+	//
+	// // PCFConnectionManagerHandler.PCFConnectionManager();
+	//
+	// int resultCnt = 0;
+	// List<GroupMessage> list = new ArrayList<GroupMessage>();
+	// ConnectionManager connMan = MQEnvironment.getDefaultConnectionManager();
+	// MQQueueManager qmgr = null;
+	// PCFMessageAgent agent = null;
+	// try {
+	// qmgr = new MQQueueManager("MQTT", connMan);
+	//
+	// agent = new PCFMessageAgent(qmgr);
+	// PCFMessage request = new
+	// PCFMessage(MQConstants.MQCMD_INQUIRE_SUB_STATUS);
+	// request.addParameter(MQConstants.MQCACF_SUB_NAME, "*");
+	//
+	// request.addFilterParameter(MQConstants.MQCA_TOPIC_STRING,
+	// MQConstants.MQCFOP_EQUAL, groupTopic);
+	//
+	// long start;
+	// long stop;
+	// start = System.currentTimeMillis();
+	// PCFMessage[] responses;
+	// responses = agent.send(request);
+	//
+	// stop = System.currentTimeMillis();
+	// logger.debug("elapsedTime=" + (stop - start) + "ms");
+	// logger.debug("responses.length=" + responses.length);
+	//
+	// String token;
+	// String ufmi;
+	// int point = 0;
+	// for (int i = 0; i < responses.length; i++) {
+	// GroupMessage groupMessage = new GroupMessage();
+	// groupMessage.setKeyMon(keyMon);
+	// groupMessage.setMsgId(msgId);
+	// token = (String)
+	// responses[i].getParameterValue(MQConstants.MQCACF_SUB_NAME);
+	// point = token.indexOf(":");
+	// token = token.substring(0, token.indexOf(":"));
+	// groupMessage.setReceiverTokenId(token);
+	//
+	// logger.debug(i + ":" + token);
+	// ufmi = pushMapper.getUfmi(token);
+	// groupMessage.setReceiverUfmi(ufmi);
+	//
+	// logger.debug("=== groupMessage::{}",
+	// "getKeyMon::" + groupMessage.getKeyMon() + ",getMsgId::" +
+	// groupMessage.getMsgId()
+	// + ",getReceiverTokenId::" + groupMessage.getReceiverTokenId() +
+	// ",getReceiverUfmi::"
+	// + groupMessage.getReceiverUfmi());
+	// if (ufmi != null && !token.equals(appKey)) {
+	// list.add(groupMessage);
+	// } else {
+	// logger.info("Group message self skip - token ::{} appkey ::{}", token,
+	// appKey);
+	// }
+	//
+	// }
+	//
+	// } catch (IOException e) {
+	// e.printStackTrace();
+	// throw e;
+	//
+	// } catch (MQException e) {
+	// e.printStackTrace();
+	// throw e;
+	// } finally {
+	// if (agent != null) {
+	// try {
+	// agent.disconnect();
+	// } catch (MQException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// throw e;
+	// }
+	// }
+	// if (qmgr != null) {
+	// try {
+	// qmgr.disconnect();
+	// } catch (MQException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// throw e;
+	// }
+	// }
+	//
+	// }
+	//
+	// return list;
+	// }
 
 	private String getServerId() {
 		// pmsConfig.EXECUTOR_SERVER_ID

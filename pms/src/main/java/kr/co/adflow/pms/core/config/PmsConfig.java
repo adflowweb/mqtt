@@ -17,6 +17,9 @@ public class PmsConfig {
 	@Value("#{pms['executor.server.id']}")
 	public String EXECUTOR_SERVER_ID; // = "S01";
 
+	@Value("#{pms['executor.server.id2']}")
+	public String EXECUTOR_SERVER_ID2; // = "S01";
+
 	/** The executor delay time. */
 	@Value("#{pms['executor.delay.time']}")
 	public int EXECUTOR_DELAY_TIME;// = 10000;
@@ -80,6 +83,15 @@ public class PmsConfig {
 	/** The cdr.db.max.row. */
 	@Value("#{pms['cdr.db.max.row']}")
 	public int CDR_DB_MAX_ROW;// = 1000;
+
+	@Value("#{pms['zookeeper.url']}")
+	public String ZOOKEEPER_URL;
+
+	@Value("#{pms['zookeeper.node']}")
+	public String ZOOKEEPER_NODE;
+
+	@Value("#{pms['zookeeper.id']}")
+	public String ZOOKEEPER_ID;
 
 	// /** The mq.pcf.hostname. */
 	// @Value("#{pms['mq.pcf.hostname']}")

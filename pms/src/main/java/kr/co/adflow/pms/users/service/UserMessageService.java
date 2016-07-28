@@ -14,20 +14,23 @@ public interface UserMessageService {
 	/**
 	 * Send message.
 	 *
-	 * @param appKey the app key
-	 * @param msg the msg
+	 * @param appKey
+	 *            the app key
+	 * @param msg
+	 *            the msg
 	 * @return the list
 	 */
 	public int sendMessage(MessageReq msg, String appKey) throws Exception;
-	
-	
+
 	/**
 	 * Send message.
 	 *
-	 * @param appKey the app key
-	 * @param msg the msg
+	 * @param appKey
+	 *            the app key
+	 * @param msg
+	 *            the msg
 	 * @return the list
 	 */
-	public Integer groupListCnt(String groupTopic) throws Exception;
+	// public Integer groupListCnt(String groupTopic) throws Exception;
 
 }

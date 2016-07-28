@@ -3,6 +3,7 @@
  */
 package kr.co.adflow.pms.core.executor;
 
+import kr.co.adflow.pms.core.handler.ZookeeperHandler;
 import kr.co.adflow.pms.core.util.DateUtil;
 import kr.co.adflow.pms.domain.mapper.TableMgtMapper;
 
@@ -19,18 +20,26 @@ import org.springframework.stereotype.Component;
 public class TableCreateExecutor {
 
 	/** The Constant logger. */
-	private static final Logger logger = LoggerFactory
-			.getLogger(TableCreateExecutor.class);
+	private static final Logger logger = LoggerFactory.getLogger(TableCreateExecutor.class);
 
 	/** The table mgt mapper. */
 	@Autowired
 	private TableMgtMapper tableMgtMapper;
+
+	@Autowired
+	ZookeeperHandler zookeeperHandler;
 
 	/**
 	 * Creates the table.
 	 */
 	public void createTable() {
 
+		if (!zookeeperHandler.getLeader()) {
+			logger.debug("현재 리더가 아닙니다!");
+			return;
+		}
+
+		logger.debug("현재 리더 입니다!");
 		String name = DateUtil.getYYYYMM(1);
 
 		logger.info("createTable1");
@@ -58,7 +67,7 @@ public class TableCreateExecutor {
 			tableMgtMapper.createAck(name);
 			logger.info("createAck");
 		}
-		
+
 		logger.info("createTable4");
 		try {
 			tableMgtMapper.selectGroupMessage(name);

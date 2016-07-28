@@ -927,26 +927,27 @@ public class SvcController extends BaseController {
 	 * @return the response
 	 * @throws Exception the exception
 	 */
-	@RequestMapping(value = "/subscribe/count", method = RequestMethod.GET, produces = StaticConfig.HEADER_CONTENT_TYPE)
-	@ResponseBody
-	public Response<Result<Integer>> getgroupsListCnt(
-			@RequestParam("topic") String topic) throws Exception {
-
-		logger.debug("=== topic ::"+ topic);
-
-		Integer resultCnt = userMessageService.groupListCnt (topic);
-
-		Result<Integer> result = new Result<Integer>();
-		result.setSuccess(true);
-
-		result.setData(resultCnt);
-		@SuppressWarnings({ "unchecked", "rawtypes" })
-		Response<Result<Integer>> res = new Response(result);
-		
-		logger.debug("=== resultCnt :{}", resultCnt);
-		return res;
-
-	}
+	// @RequestMapping(value = "/subscribe/count", method = RequestMethod.GET,
+	// produces = StaticConfig.HEADER_CONTENT_TYPE)
+	// @ResponseBody
+	// public Response<Result<Integer>> getgroupsListCnt(
+	// @RequestParam("topic") String topic) throws Exception {
+	//
+	// logger.debug("=== topic ::"+ topic);
+	//
+	// Integer resultCnt = userMessageService.groupListCnt (topic);
+	//
+	// Result<Integer> result = new Result<Integer>();
+	// result.setSuccess(true);
+	//
+	// result.setData(resultCnt);
+	// @SuppressWarnings({ "unchecked", "rawtypes" })
+	// Response<Result<Integer>> res = new Response(result);
+	//
+	// logger.debug("=== resultCnt :{}", resultCnt);
+	// return res;
+	//
+	// }
 	
 
 }
