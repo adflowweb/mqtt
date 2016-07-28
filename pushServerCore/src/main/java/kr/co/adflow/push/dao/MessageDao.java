@@ -17,57 +17,68 @@ import kr.co.adflow.push.domain.ktp.MsgParams;
  * @date 2014. 4. 14.
  */
 public interface MessageDao {
-	
+
 	/**
 	 * Gets the.
 	 *
-	 * @param msgID the msg id
+	 * @param msgID
+	 *            the msg id
 	 * @return the message
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
-	Message get(int msgID) throws Exception;
+	Message get(String msgID) throws Exception;
 
 	/**
 	 * Post.
 	 *
-	 * @param msg the msg
+	 * @param msg
+	 *            the msg
 	 * @return the int
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	int post(Message msg) throws Exception;
 
 	/**
 	 * Put.
 	 *
-	 * @param msg the msg
+	 * @param msg
+	 *            the msg
 	 * @return the int
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	int put(Message msg) throws Exception;
-	
+
 	/**
 	 * Put issue.
 	 *
-	 * @param msg the msg
+	 * @param msg
+	 *            the msg
 	 * @return the int
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	int putIssue(Message msg) throws Exception;
 
 	/**
 	 * Delete.
 	 *
-	 * @param msgID the msg id
+	 * @param msgID
+	 *            the msg id
 	 * @return the int
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
-	int delete(int msgID) throws Exception;
+	int delete(String msgID) throws Exception;
 
 	/**
 	 * Gets the reservation msgs.
 	 *
 	 * @return the reservation msgs
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	Message[] getReservationMsgs() throws Exception;
 
@@ -75,15 +86,17 @@ public interface MessageDao {
 	 * Gets the delivered msgs.
 	 *
 	 * @return the delivered msgs
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	Message[] getDeliveredMsgs() throws Exception;
-	
+
 	/**
 	 * Gets the Message List.
 	 *
 	 * @return the MessagesRes
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	MessagesRes getMessageList(MsgParams msgParams) throws Exception;
 }

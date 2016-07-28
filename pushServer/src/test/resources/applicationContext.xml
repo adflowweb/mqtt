@@ -25,23 +25,22 @@
 		</property> <property name="resourceRef" value="true" /> </bean> -->
 
 	<tx:annotation-driven />
+
+
 	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
 		<property name="driverClass" value="com.mysql.jdbc.Driver" />
 		<property name="url"
-			value="jdbc:mysql://localhost:3306/push?useUnicode=true&amp;characterEncoding=utf8" />
+			value="jdbc:mysql://14.63.217.141:13306/push?useUnicode=true&amp;characterEncoding=utf8" />
 		<property name="username" value="root" />
 		<property name="password" value="passw0rd" />
 	</bean>
 
-<!-- 	<bean id="dataSourceBSBank"
-		class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
-		<property name="driverClass" value="com.mysql.jdbc.Driver" />
-		<property name="url"
-			value="jdbc:mysql://localhost:3306/push?useUnicode=true&amp;characterEncoding=utf8" />
-		<property name="username" value="root" />
-		<property name="password" value="passw0rd" />
-	</bean> -->
+	<!-- <bean id="dataSourceBSBank" class="org.springframework.jdbc.datasource.SimpleDriverDataSource"> 
+		<property name="driverClass" value="com.mysql.jdbc.Driver" /> <property name="url" 
+		value="jdbc:mysql://localhost:3306/push?useUnicode=true&amp;characterEncoding=utf8" 
+		/> <property name="username" value="root" /> <property name="password" value="passw0rd" 
+		/> </bean> -->
 
 
 
@@ -51,10 +50,8 @@
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 
-<!-- 	<bean id="transactionManagerBSBank"
-		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-		<property name="dataSource" ref="dataSourceBSBank" />
-	</bean> -->
+	<!-- <bean id="transactionManagerBSBank" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"> 
+		<property name="dataSource" ref="dataSourceBSBank" /> </bean> -->
 
 	<!-- <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean"> 
 		<property name="dataSource" ref="dataSource" /> <property name="typeAliasesPackage" 
@@ -68,21 +65,60 @@
 		<property name="mapperLocations" value="classpath:kr/co/adflow/push/mapper/*.xml" />
 	</bean>
 
-<!-- 	<bean id="bsBanksqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-		<property name="dataSource" ref="dataSourceBSBank" />
-		아래부분은 매핑할 xml파일이 있는 패키지경로를 설정한다.
-		<property name="typeAliasesPackage" value="kr.co.adflow.push.ktp.mapper" />
-		<property name="mapperLocations"
-			value="classpath:kr/co/adflow/push/ktp/mapper/*.xml" />
-	</bean> -->
+	<!-- <bean id="bsBanksqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean"> 
+		<property name="dataSource" ref="dataSourceBSBank" /> 아래부분은 매핑할 xml파일이 있는 
+		패키지경로를 설정한다. <property name="typeAliasesPackage" value="kr.co.adflow.push.ktp.mapper" 
+		/> <property name="mapperLocations" value="classpath:kr/co/adflow/push/ktp/mapper/*.xml" 
+		/> </bean> -->
 
 	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
 		<constructor-arg name="sqlSessionFactory" ref="sqlSessionFactory" />
 	</bean>
 
-<!-- 	<bean id="bsBanksqlSession" class="org.mybatis.spring.SqlSessionTemplate">
-		<constructor-arg name="sqlSessionFactory" ref="bsBanksqlSessionFactory" />
-	</bean> -->
+	<!-- <bean id="bsBanksqlSession" class="org.mybatis.spring.SqlSessionTemplate"> 
+		<constructor-arg name="sqlSessionFactory" ref="bsBanksqlSessionFactory" /> 
+		</bean> -->
+
+	<!-- jmsConnectionFactory -->
+	<bean id="jmsFactory" class="com.ibm.mq.jms.MQTopicConnectionFactory">
+		<!-- <property name="hostName" value="#{pcs['mq.jms.hostname']}" /> -->
+		<!-- <property name="port" value="#{pcs['mq.jms.port']}" /> -->
+		<property name="connectionNameList" value="14.63.217.141(14142)" />
+		<property name="queueManager" value="*" />
+		<property name="transportType" value="1" />
+		<property name="channel" value="ADFlowJMS" />
+	</bean>
+
+	<bean id="userCredentialsConnectionFactory"
+		class="org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter">
+		<property name="targetConnectionFactory" ref="jmsFactory" />
+		<property name="username" value="adflow" />
+		<property name="password" value="!ADFlow@" />
+	</bean>
+
+	<!-- springConnectionFactory -->
+	<bean id="springConnectionFactory"
+		class="org.springframework.jms.connection.CachingConnectionFactory">
+		<property name="targetConnectionFactory" ref="userCredentialsConnectionFactory" />
+		<property name="sessionCacheSize" value="5" />
+
+	</bean>
+
+	<!-- dynamicDestinationResolver -->
+	<bean id="jmsDestinationResolver"
+		class="org.springframework.jms.support.destination.DynamicDestinationResolver">
+	</bean>
+
+	<!-- jmsTemplate -->
+	<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory" ref="springConnectionFactory" />
+		<property name="destinationResolver">
+			<ref bean="jmsDestinationResolver" />
+		</property>
+		<property name="pubSubDomain">
+			<value>true</value>
+		</property>
+	</bean>
 
 	<context:component-scan base-package="kr.co.adflow" />
 </beans>

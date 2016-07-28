@@ -15,6 +15,7 @@ import kr.co.adflow.push.domain.ktp.request.DigInfo;
 import kr.co.adflow.push.domain.ktp.request.FwInfo;
 import kr.co.adflow.push.domain.ktp.request.KeepAliveTime;
 import kr.co.adflow.push.domain.ktp.request.Precheck;
+import kr.co.adflow.push.domain.ktp.request.SessionClean;
 import kr.co.adflow.push.domain.ktp.request.Ufmi;
 import kr.co.adflow.push.domain.ktp.request.UpdateUfmi;
 import kr.co.adflow.push.domain.ktp.request.UserID;
@@ -132,6 +133,31 @@ public class PlatformController {
 		List<String> messages = new ArrayList<String>();
 		messages.add("receiver=" + keepAliveTime.getReceiver());
 		messages.add("content=" + keepAliveTime.getContent());
+
+		result.setInfo(messages);
+		Response res = new Response(result);
+		logger.info("response={}", res);
+		return res;
+	}
+
+	@RequestMapping(value = "devices/sessionClean", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
+	@ResponseBody
+	public Response sessionClean(@RequestBody SessionClean sessionClean) throws Exception {
+
+		if (sessionClean.getSender() == null || sessionClean.getSender().trim().length() == 0) {
+			throw new PushException("Sender is empty.");
+		}
+		if (sessionClean.getReceiver() == null || sessionClean.getReceiver().trim().length() == 0) {
+			throw new PushException("Receiver is empty.");
+		}
+
+		platformService.sessionCleanClient(sessionClean);
+
+		Result result = new Result();
+		result.setSuccess(true);
+		List<String> messages = new ArrayList<String>();
+		messages.add("receiver=" + sessionClean.getReceiver());
+		messages.add("sender=" + sessionClean.getSender());
 
 		result.setInfo(messages);
 		Response res = new Response(result);

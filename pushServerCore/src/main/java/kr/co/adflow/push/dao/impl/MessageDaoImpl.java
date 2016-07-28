@@ -28,8 +28,7 @@ import org.springframework.stereotype.Component;
 public class MessageDaoImpl implements MessageDao {
 
 	/** The Constant logger. */
-	private static final org.slf4j.Logger logger = LoggerFactory
-			.getLogger(MessageDaoImpl.class);
+	private static final org.slf4j.Logger logger = LoggerFactory.getLogger(MessageDaoImpl.class);
 
 	/** The sql session. */
 	@Autowired
@@ -41,7 +40,7 @@ public class MessageDaoImpl implements MessageDao {
 	 * @see kr.co.adflow.push.dao.MessageDAO#get(java.lang.String)
 	 */
 	@Override
-	public Message get(int msgID) throws Exception {
+	public Message get(String msgID) throws Exception {
 		logger.debug("get시작(msgID=" + msgID + ")");
 		MessageMapper msgMapper = sqlSession.getMapper(MessageMapper.class);
 		Message msg = msgMapper.get(msgID);
@@ -62,6 +61,8 @@ public class MessageDaoImpl implements MessageDao {
 		// db 저장
 		MessageMapper msgMapper = sqlSession.getMapper(MessageMapper.class);
 		int count = msgMapper.postMsg(msg);
+		logger.debug("메시지 내용");
+		logger.debug(msg.getContent());
 		logger.debug("msg=" + msg);
 		msgMapper.postContent(msg);
 		logger.debug("post종료(count=" + count + ")");
@@ -85,10 +86,12 @@ public class MessageDaoImpl implements MessageDao {
 		logger.debug("put종료(count=" + count + ")");
 		return count;
 	}
-	
-	
-	/* (non-Javadoc)
-	 * @see kr.co.adflow.push.dao.MessageDao#putIssue(kr.co.adflow.push.domain.Message)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see kr.co.adflow.push.dao.MessageDao#putIssue(kr.co.adflow.push.domain.
+	 * Message)
 	 */
 	public int putIssue(Message msg) throws Exception {
 		logger.debug("put시작(msg=" + msg + ")");
@@ -101,14 +104,13 @@ public class MessageDaoImpl implements MessageDao {
 		return count;
 	}
 
-
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see kr.co.adflow.push.dao.MessageDAO#delete(java.lang.String)
 	 */
 	@Override
-	public int delete(int msgID) throws Exception {
+	public int delete(String msgID) throws Exception {
 		logger.debug("delete시작(msgID=" + msgID + ")");
 		MessageMapper messageMapper = sqlSession.getMapper(MessageMapper.class);
 		int result = messageMapper.deleteMsg(msgID);
@@ -116,7 +118,9 @@ public class MessageDaoImpl implements MessageDao {
 		return result;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see kr.co.adflow.push.dao.MessageDao#getReservationMsgs()
 	 */
 	@Override
@@ -128,7 +132,9 @@ public class MessageDaoImpl implements MessageDao {
 		return msg;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see kr.co.adflow.push.dao.MessageDao#getDeliveredMsgs()
 	 */
 	@Override
@@ -139,17 +145,19 @@ public class MessageDaoImpl implements MessageDao {
 		logger.debug("getDeliveredMsgs종료(" + msg + ")");
 		return msg;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see kr.co.adflow.push.dao.MessageDao#getMessageList()
 	 */
 	@Override
 	public MessagesRes getMessageList(MsgParams msgParams) throws Exception {
 		logger.debug("getDeliveredMsgs시작()");
-		
+
 		MessagesRes res;
 		MessageMapper msgMapper = sqlSession.getMapper(MessageMapper.class);
-		
+
 		int cnt = msgMapper.getMessageListCnt(msgParams);
 		logger.debug("cnt :::::::{}", cnt);
 
@@ -160,7 +168,7 @@ public class MessageDaoImpl implements MessageDao {
 		res.setRecordsFiltered(cnt);
 		res.setRecordsTotal(cnt);
 		res.setData(list);
-		
+
 		return res;
 	}
 }

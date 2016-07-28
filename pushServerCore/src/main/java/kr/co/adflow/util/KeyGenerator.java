@@ -3,8 +3,7 @@
  */
 package kr.co.adflow.util;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.security.SecureRandom;
 import java.util.UUID;
 
 import org.slf4j.LoggerFactory;
@@ -38,4 +37,9 @@ public class KeyGenerator {
 		return DateUtil.getYYYYMM() + id;
 	}
 
+	public static void main(String[] args) {
+
+		SecureRandom random = new SecureRandom();
+		System.out.println(System.currentTimeMillis());
+	}
 }

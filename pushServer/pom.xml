@@ -510,7 +510,7 @@
 				<zookeeper.id>dev1</zookeeper.id>
 				<zookeeper.node>/latch_test321</zookeeper.node>
 
-				<pro.url>14.63.217.141:38083</pro.url>
+
 
 
 			</properties>

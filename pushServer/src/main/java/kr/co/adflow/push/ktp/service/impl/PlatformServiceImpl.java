@@ -17,6 +17,7 @@ import kr.co.adflow.push.domain.Message;
 import kr.co.adflow.push.domain.ktp.request.DigInfo;
 import kr.co.adflow.push.domain.ktp.request.FwInfo;
 import kr.co.adflow.push.domain.ktp.request.KeepAliveTime;
+import kr.co.adflow.push.domain.ktp.request.SessionClean;
 import kr.co.adflow.push.domain.ktp.request.Ufmi;
 import kr.co.adflow.push.domain.ktp.request.UserID;
 import kr.co.adflow.push.domain.ktp.request.UserMessage;
@@ -25,6 +26,7 @@ import kr.co.adflow.push.ktp.sender.DirectMsgHandlerBySessionCallback;
 import kr.co.adflow.push.ktp.sender.PreCheckHandler;
 import kr.co.adflow.push.ktp.sender.PreCheckHandlerBySessionCallback;
 import kr.co.adflow.push.ktp.service.PlatformService;
+import kr.co.adflow.util.KeyGenerator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,10 +62,13 @@ public class PlatformServiceImpl implements PlatformService {
 	// private static final int CMD_USER_MESSAGE = 10;
 	private static final int CMD_USER_MESSAGE = 106;
 
+	private static final int CMD_SESSION_CLEAN = 107;
+
 	/** The Constant DIG_ACCOUNT_INFO_INTENT_NAME. */
 	private static final String DIG_ACCOUNT_INFO_ACTION_NAME = "kr.co.ktpowertel.push.digAccountInfo";
 
 	private static final String FW_INFO_ACTION_NAME = "kr.co.ktpowertel.push.fwUpdateInfo";
+	private static final String SESSION_CLEAN_ACTION_NAME = "kr.co.ktpowertel.push.sessionClean";
 
 	/** The Constant DIG_USER_MESSAGE_INTENT_NAME. */
 	private static final String USER_MESSAGE_ACTION_NAME = "kr.co.ktpowertel.push.userMessage";
@@ -152,6 +157,7 @@ public class PlatformServiceImpl implements PlatformService {
 
 		Message message = new Message();
 
+		message.setId(KeyGenerator.generateMsgId());
 		message.setType(CMD_FW_UPGRADE);
 		message.setQos(DeliveryMode.PERSISTENT);
 		message.setStatus(Message.STATUS_WAIT_FOR_SENDING);
@@ -191,7 +197,7 @@ public class PlatformServiceImpl implements PlatformService {
 	public void modifyDigInfo(DigInfo digInfo) {
 
 		Message message = new Message();
-
+		message.setId(KeyGenerator.generateMsgId());
 		message.setType(CMD_PTT_UPDATE);
 		message.setStatus(Message.STATUS_WAIT_FOR_SENDING);
 		message.setQos(DeliveryMode.PERSISTENT);
@@ -233,7 +239,7 @@ public class PlatformServiceImpl implements PlatformService {
 	 * .push.domain.Message)
 	 */
 	public void sendMessage(Message message) {
-
+		message.setId(KeyGenerator.generateMsgId());
 		message.setStatus(Message.STATUS_WAIT_FOR_SENDING);
 		message.setIssue(new Date());
 
@@ -265,7 +271,7 @@ public class PlatformServiceImpl implements PlatformService {
 	public void modifyKeepAliveTime(KeepAliveTime keepAliveTime) {
 
 		Message message = new Message();
-
+		message.setId(KeyGenerator.generateMsgId());
 		message.setType(CMD_KEEP_ALIVE_TIME);
 		message.setStatus(Message.STATUS_WAIT_FOR_SENDING);
 		message.setQos(DeliveryMode.PERSISTENT);
@@ -275,6 +281,39 @@ public class PlatformServiceImpl implements PlatformService {
 		message.setReceiver(keepAliveTime.getReceiver());
 		message.setContentType(CONTENT_TYPE_JSON);
 		message.setContent(keepAliveTime.getContent());
+
+		try {
+			int cnt = this.postMessage(message);
+
+			// jmsTemplate.execute(keepAliveTime.getReceiver(),new
+			// DirectMsgHandler(message));
+			jmsTemplate.execute(new DirectMsgHandlerBySessionCallback(jmsTemplate, message));
+
+			message.setStatus(Message.STATUS_PUSH_SENT);
+			message.setIssue(new Date());
+			messageDao.putIssue(message);
+
+		} catch (Exception e) {
+			// TODO runtime exception 처리 필요
+			logger.error("error is {}", e);
+			throw new RuntimeException(e);
+
+		}
+
+	}
+
+	public void sessionCleanClient(SessionClean sessionClean) {
+
+		Message message = new Message();
+		message.setId(KeyGenerator.generateMsgId());
+		message.setType(CMD_SESSION_CLEAN);
+		message.setStatus(Message.STATUS_WAIT_FOR_SENDING);
+		message.setQos(DeliveryMode.PERSISTENT);
+		message.setIssue(new Date());
+		message.setServiceID(SESSION_CLEAN_ACTION_NAME);
+		message.setSender(sessionClean.getSender());
+		message.setReceiver(sessionClean.getReceiver());
+		message.setContent(sessionClean.getContent());
 
 		try {
 			int cnt = this.postMessage(message);
@@ -311,6 +350,7 @@ public class PlatformServiceImpl implements PlatformService {
 		try {
 
 			Message message = new Message();
+			message.setId(KeyGenerator.generateMsgId());
 			message.setType(CMD_USER_MESSAGE);
 			message.setServiceID(USER_MESSAGE_ACTION_NAME);
 			message.setStatus(Message.STATUS_WAIT_FOR_SENDING);

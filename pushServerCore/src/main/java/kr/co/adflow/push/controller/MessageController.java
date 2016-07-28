@@ -37,8 +37,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class MessageController {
 
 	/** The Constant logger. */
-	private static final Logger logger = LoggerFactory
-			.getLogger(MessageController.class);
+	private static final Logger logger = LoggerFactory.getLogger(MessageController.class);
 
 	/** The msg service. */
 	@Resource
@@ -47,9 +46,11 @@ public class MessageController {
 	/**
 	 * 메시지 전송하기.
 	 *
-	 * @param msg the msg
+	 * @param msg
+	 *            the msg
 	 * @return the response
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	@RequestMapping(value = "messages", method = RequestMethod.POST)
 	@ResponseBody
@@ -73,7 +74,8 @@ public class MessageController {
 	 * 메시지 전송하기 테스트.
 	 *
 	 * @return the response
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	@RequestMapping(value = "sendMsgTest", method = RequestMethod.GET)
 	@ResponseBody
@@ -83,15 +85,9 @@ public class MessageController {
 		msg.setReceiver("/users/kicho");
 		String jsonString = "{\"notification\":{\"notificationStyle\":1,\"contentTitle\":\"교육장소공지\","
 				+ "\"contentText\":\"메시지전송테스트.\", \"ticker\":\"부산은행교육장소알림장소: 수림연수원 시간: 3월 22일 오전: 12시\","
-				+ "\"summaryText\":\"장소: 수림연수원 시간: 3월 22일 오전: "
-				+ (int) (Math.random() * 100)
-				+ "시\", \"image\":\""
-				+ "encodedStr"
-				+ "\"},"
-				+ "\"event\":{\"title\":\"부산은행교육\", \"location\":\"수림연수원\", \"desc\":\"\","
-				+ "\"year\":\"2014\", \"month\":\"2\","
-				+ "\"day\":\"22\"}"
-				+ "}";
+				+ "\"summaryText\":\"장소: 수림연수원 시간: 3월 22일 오전: " + (int) (Math.random() * 100) + "시\", \"image\":\""
+				+ "encodedStr" + "\"}," + "\"event\":{\"title\":\"부산은행교육\", \"location\":\"수림연수원\", \"desc\":\"\","
+				+ "\"year\":\"2014\", \"month\":\"2\"," + "\"day\":\"22\"}" + "}";
 		msg.setContent(jsonString);
 		msg.setQos(1);
 		// msg.setSms(true);
@@ -113,7 +109,8 @@ public class MessageController {
 	 * 메시지 전송하기 테스트.
 	 *
 	 * @return the response
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	@RequestMapping(value = "sendSMSMsgTest", method = RequestMethod.GET)
 	@ResponseBody
@@ -123,15 +120,9 @@ public class MessageController {
 		msg.setReceiver("/users/kicho");
 		String jsonString = "{\"notification\":{\"notificationStyle\":1,\"contentTitle\":\"교육장소공지\","
 				+ "\"contentText\":\"메시지전송테스트.\", \"ticker\":\"부산은행교육장소알림장소: 수림연수원 시간: 3월 22일 오전: 12시\","
-				+ "\"summaryText\":\"장소: 수림연수원 시간: 3월 22일 오전: "
-				+ (int) (Math.random() * 100)
-				+ "시\", \"image\":\""
-				+ "encodedStr"
-				+ "\"},"
-				+ "\"event\":{\"title\":\"부산은행교육\", \"location\":\"수림연수원\", \"desc\":\"\","
-				+ "\"year\":\"2014\", \"month\":\"2\","
-				+ "\"day\":\"22\"}"
-				+ "}";
+				+ "\"summaryText\":\"장소: 수림연수원 시간: 3월 22일 오전: " + (int) (Math.random() * 100) + "시\", \"image\":\""
+				+ "encodedStr" + "\"}," + "\"event\":{\"title\":\"부산은행교육\", \"location\":\"수림연수원\", \"desc\":\"\","
+				+ "\"year\":\"2014\", \"month\":\"2\"," + "\"day\":\"22\"}" + "}";
 		msg.setContent(jsonString);
 		msg.setQos(1);
 		msg.setSms(true);
@@ -153,9 +144,11 @@ public class MessageController {
 	/**
 	 * 메시지 수정하기.
 	 *
-	 * @param msg the msg
+	 * @param msg
+	 *            the msg
 	 * @return the response
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	@RequestMapping(value = "messages", method = RequestMethod.PUT)
 	@ResponseBody
@@ -178,13 +171,15 @@ public class MessageController {
 	/**
 	 * 메시지 삭제하기.
 	 *
-	 * @param msgID the msg id
+	 * @param msgID
+	 *            the msg id
 	 * @return the response
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	@RequestMapping(value = "messages/{msgID}", method = RequestMethod.DELETE)
 	@ResponseBody
-	public Response delete(@PathVariable int msgID) throws Exception {
+	public Response delete(@PathVariable String msgID) throws Exception {
 		logger.debug("메시지번호=" + msgID);
 		final int count = msgService.delete(msgID);
 		Result result = new Result();
@@ -203,13 +198,15 @@ public class MessageController {
 	/**
 	 * 메시지 가져오기.
 	 *
-	 * @param msgID the msg id
+	 * @param msgID
+	 *            the msg id
 	 * @return the response
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	@RequestMapping(value = "messages/{msgID}", method = RequestMethod.GET)
 	@ResponseBody
-	public Response<Message> get(@PathVariable int msgID) throws Exception {
+	public Response<Message> get(@PathVariable String msgID) throws Exception {
 		logger.debug("msgID=" + msgID);
 		Message msg = msgService.get(msgID);
 		logger.debug("메시지=" + msg);
@@ -221,40 +218,36 @@ public class MessageController {
 		return res;
 	}
 
-//	/**
-//	 * 전체 메시지 가져오기.
-//	 *
-//	 * @return the msgs
-//	 * @throws Exception the exception
-//	 */
-//	@RequestMapping(value = "messages", method = RequestMethod.GET)
-//	@ResponseBody
-//	public Response<Message[]> getMsgs() throws Exception {
-//		Message[] msg = msgService.getMsgs();
-//		logger.debug("메시지=" + msg);
-//		Result<Message[]> result = new Result<Message[]>();
-//		result.setSuccess(true);
-//		result.setData(msg);
-//		Response<Message[]> res = new Response<Message[]>(result);
-//		logger.debug("response=" + res);
-//		return res;
-//	}
-	
-	
+	// /**
+	// * 전체 메시지 가져오기.
+	// *
+	// * @return the msgs
+	// * @throws Exception the exception
+	// */
+	// @RequestMapping(value = "messages", method = RequestMethod.GET)
+	// @ResponseBody
+	// public Response<Message[]> getMsgs() throws Exception {
+	// Message[] msg = msgService.getMsgs();
+	// logger.debug("메시지=" + msg);
+	// Result<Message[]> result = new Result<Message[]>();
+	// result.setSuccess(true);
+	// result.setData(msg);
+	// Response<Message[]> res = new Response<Message[]>(result);
+	// logger.debug("response=" + res);
+	// return res;
+	// }
 
-
-	
 	/**
 	 * 발송 메시지 가져오기.
 	 *
 	 * @return the delivered msgs
-	 * @throws Exception the exception
-	 */	
+	 * @throws Exception
+	 *             the exception
+	 */
 	@RequestMapping(value = "messages", params = "type=sent", method = RequestMethod.GET)
 	@ResponseBody
 	public Response<Message[]> getDeliveredMsgs(
-	/* @RequestParam(value = "type", required = true) String type */)
-			throws Exception {
+	/* @RequestParam(value = "type", required = true) String type */) throws Exception {
 		Result<Message[]> result = new Result<Message[]>();
 		result.setSuccess(true);
 		// if (type.equals("reservation")) {
@@ -273,48 +266,44 @@ public class MessageController {
 		logger.debug("response=" + res);
 		return res;
 	}
-	
-	
-	
+
 	/**
 	 * 전체 메시지 가져오기.
 	 *
 	 * @return the delivered msgs
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	@RequestMapping(value = "messages", method = RequestMethod.GET)
 	@ResponseBody
-	public Response<Result<MessagesRes>> getMessageList(
-			@RequestParam Map<String, String> params)
-			throws Exception {
-		
+	public Response<Result<MessagesRes>> getMessageList(@RequestParam Map<String, String> params) throws Exception {
+
 		String sEcho = (String) params.get("sEcho");
-		
+
 		MessagesRes messagesRes = msgService.getMessageList(params);
 		messagesRes.setsEcho(sEcho);
-		
+
 		Result<MessagesRes> result = new Result<MessagesRes>();
 		result.setSuccess(true);
 		result.setData(messagesRes);
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		Response<Result<MessagesRes>> res = new Response(result);
-		
+
 		return res;
-	
+
 	}
-	
 
 	/**
 	 * 예약 메시지 가져오기.
 	 *
 	 * @return the reserved msgs
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	@RequestMapping(value = "messages", params = "type=reservation", method = RequestMethod.GET)
 	@ResponseBody
 	public Response<Message[]> getReservedMsgs(
-	/* @RequestParam(value = "type", required = true) String type */)
-			throws Exception {
+	/* @RequestParam(value = "type", required = true) String type */) throws Exception {
 		Result<Message[]> result = new Result<Message[]>();
 		result.setSuccess(true);
 		// if (type.equals("reservation")) {
@@ -337,7 +326,8 @@ public class MessageController {
 	/**
 	 * 예외처리.
 	 *
-	 * @param e the e
+	 * @param e
+	 *            the e
 	 * @return the response
 	 */
 	@ExceptionHandler(Exception.class)

@@ -29,18 +29,19 @@ import org.springframework.stereotype.Service;
 public class MessageServiceImpl implements MessageService {
 
 	/** The Constant logger. */
-	private static final org.slf4j.Logger logger = LoggerFactory
-			.getLogger(MessageServiceImpl.class);
+	private static final org.slf4j.Logger logger = LoggerFactory.getLogger(MessageServiceImpl.class);
 
 	/** The message dao. */
 	@Resource
 	MessageDao messageDao;
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see kr.co.adflow.push.service.MessageService#get(int)
 	 */
 	@Override
-	public Message get(int messageID) throws Exception {
+	public Message get(String messageID) throws Exception {
 		logger.debug("get시작(msg=" + messageID + ")");
 		Message msg = messageDao.get(messageID);
 		logger.debug("get종료(msg=" + msg + ")");
@@ -83,14 +84,16 @@ public class MessageServiceImpl implements MessageService {
 	 * @see kr.co.adflow.push.service.MessageService#delete(int)
 	 */
 	@Override
-	public int delete(int msgID) throws Exception {
+	public int delete(String msgID) throws Exception {
 		logger.debug("delete시작(msgID=" + msgID + ")");
 		int count = messageDao.delete(msgID);
 		logger.debug("delete종료(updates=" + count + ")");
 		return count;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see kr.co.adflow.push.service.MessageService#getMsgs()
 	 */
 	@Override
@@ -98,7 +101,9 @@ public class MessageServiceImpl implements MessageService {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see kr.co.adflow.push.service.MessageService#getDeliveredMsgs()
 	 */
 	@Override
@@ -108,17 +113,18 @@ public class MessageServiceImpl implements MessageService {
 		logger.debug("getDeliveredMsgs종료(msg=" + msg + ")");
 		return msg;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see kr.co.adflow.push.service.MessageService#getMessageList()
 	 */
 	@Override
 	public MessagesRes getMessageList(Map<String, String> params) throws Exception {
 		logger.debug("getDeliveredMsgs시작()");
-		
-		
+
 		MsgParams msgParams = new MsgParams();
-		
+
 		msgParams.setiDisplayStart(this.getInt(params.get("iDisplayStart")));
 		msgParams.setiDisplayLength(this.getInt(params.get("iDisplayLength")));
 
@@ -130,14 +136,16 @@ public class MessageServiceImpl implements MessageService {
 		} else {
 			msgParams.setType(this.getInt(params.get("cSearchType")));
 		}
-		
+
 		logger.debug("=== msgParams::" + msgParams.toString());
 		MessagesRes msg = messageDao.getMessageList(msgParams);
 		logger.debug("getDeliveredMsgs종료(msg=" + msg + ")");
 		return msg;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see kr.co.adflow.push.service.MessageService#getReservationMsgs()
 	 */
 	@Override
@@ -147,31 +155,34 @@ public class MessageServiceImpl implements MessageService {
 		logger.debug("getReservationMsgs종료(msg=" + msg + ")");
 		return msg;
 	}
-	
+
 	/**
 	 * Gets the int.
 	 *
-	 * @param string the string
+	 * @param string
+	 *            the string
 	 * @return the int
 	 */
 	private int getInt(String string) {
 		return Integer.parseInt(string);
 	}
-	
+
 	/**
 	 * Gets the date.
 	 *
-	 * @param string the string
+	 * @param string
+	 *            the string
 	 * @return the date
 	 */
 	private Date getDate(String string) {
 		return this.fromISODateString(string);
 	}
-	
+
 	/**
 	 * From iso date string.
 	 *
-	 * @param isoDateString the iso date string
+	 * @param isoDateString
+	 *            the iso date string
 	 * @return the date
 	 */
 	public static Date fromISODateString(String isoDateString) {
@@ -179,8 +190,7 @@ public class MessageServiceImpl implements MessageService {
 			return null;
 		}
 
-		Calendar calendar = javax.xml.bind.DatatypeConverter
-				.parseDateTime(isoDateString);
+		Calendar calendar = javax.xml.bind.DatatypeConverter.parseDateTime(isoDateString);
 
 		return calendar.getTime();
 	}

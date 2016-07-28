@@ -3,7 +3,7 @@
      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
      "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.co.adflow.push.mapper.MessageMapper">
-	<select id="get" parameterType="int"
+	<select id="get" parameterType="java.lang.String"
 		resultType="kr.co.adflow.push.domain.Message">
 		SELECT * FROM message a, content b WHERE a.id = b.id
 		and
@@ -53,59 +53,68 @@
 		]]>
 		<!-- and reservation is not null -->
 	</select>
-	
-	
-	<select id="getMessageListCnt" parameterType="kr.co.adflow.push.domain.ktp.MsgParams" resultType="Integer">
-		SELECT 
-		   COUNT(*)
+
+
+	<select id="getMessageListCnt" parameterType="kr.co.adflow.push.domain.ktp.MsgParams"
+		resultType="Integer">
+		SELECT
+		COUNT(*)
 		FROM
-		    message
+		message
 		WHERE
 		issue IS NOT NULL
 		<if test="type != 0">
-		AND type = #{type}
+			AND type = #{type}
 		</if>
 		<if test="type == 0">
-		AND type IN ( 102,104,105)
+			AND type IN ( 102,104,105)
 		</if>
 		<if test="dateStart != null ">
-		AND issue <![CDATA[>]]>  #{dateStart}
+			AND issue <![CDATA[>]]>
+			#{dateStart}
 		</if>
 		<if test="dateEnd != null ">
-		AND issue <![CDATA[<]]> #{dateEnd}
-		</if>		
+			AND issue <![CDATA[<]]>
+			#{dateEnd}
+		</if>
 		<if test="receiver != null and receiver != ''">
-		AND receiver = #{receiver}
+			AND receiver = #{receiver}
 		</if>
 	</select>
-	
-	<select id="getMessageList" parameterType="kr.co.adflow.push.domain.ktp.MsgParams" resultMap="MessageResult">
-		SELECT 
-		   type, id, sender, receiver, issue, issueSms, sms, timeout, qos, retained, reservation,  status, serviceID
+
+	<select id="getMessageList" parameterType="kr.co.adflow.push.domain.ktp.MsgParams"
+		resultMap="MessageResult">
+		SELECT
+		type, id, sender, receiver, issue, issueSms, sms, timeout, qos,
+		retained,
+		reservation, status, serviceID
 		FROM
-		    message
+		message
 		WHERE
-		issue IS NOT NULL
+		issue IS NOT
+		NULL
 		<if test="type != 0">
-		AND type = #{type}
+			AND type = #{type}
 		</if>
 		<if test="type == 0">
-		AND type IN ( 102,104,105)
+			AND type IN ( 102,104,105,107)
 		</if>
 		<if test="dateStart != null ">
-		AND issue <![CDATA[>]]>  #{dateStart}
+			AND issue <![CDATA[>]]>
+			#{dateStart}
 		</if>
 		<if test="dateEnd != null ">
-		AND issue <![CDATA[<]]> #{dateEnd}
-		</if>		
+			AND issue <![CDATA[<]]>
+			#{dateEnd}
+		</if>
 		<if test="receiver != null and receiver != ''">
-		AND receiver = #{receiver}
+			AND receiver = #{receiver}
 		</if>
 
 		ORDER BY issue DESC
 		limit #{iDisplayStart} , #{iDisplayLength}
 	</select>
-	
+
 
 	<select id="getReservationMsgs" resultMap="MessageResult">
 		select * from message a, content b where a.id = b.id and reservation
@@ -122,8 +131,9 @@
 
 	<insert id="postMsg" parameterType="kr.co.adflow.push.domain.Message">
 		INSERT INTO
-		message (sender, receiver, sms, timeOut, qos, retained,
+		message (id,sender, receiver, sms, timeOut, qos, retained,
 		reservation, type, status, serviceID,issue) values(
+		#{id},
 		#{sender},
 		#{receiver},
 		#{sms},
@@ -135,10 +145,11 @@
 		#{serviceID},
 		#{issue}
 		)
-		<selectKey keyProperty="id" resultType="Integer" order="AFTER">
-			SELECT
-			LAST_INSERT_ID()
-		</selectKey>
+		<!-- <selectKey keyProperty="id" resultType="java.lang.String" -->
+		<!-- order="AFTER"> -->
+		<!-- SELECT -->
+		<!-- LAST_INSERT_ID() -->
+		<!-- </selectKey> -->
 	</insert>
 
 	<update id="putMsg" parameterType="kr.co.adflow.push.domain.Message">
@@ -210,7 +221,7 @@
 		#{id}
 	</select>
 
-	<delete id="deleteMsg" parameterType="java.lang.Integer">
+	<delete id="deleteMsg" parameterType="java.lang.String">
 		DELETE from
 		message
 		WHERE

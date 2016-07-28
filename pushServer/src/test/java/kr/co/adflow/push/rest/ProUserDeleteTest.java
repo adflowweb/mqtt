@@ -19,12 +19,12 @@ import org.testng.annotations.Test;
 
 @Test
 public class ProUserDeleteTest {
-	CloseableHttpClient closeableHttpClient = null;
-	PoolingHttpClientConnectionManager poolingConnectionManager = null;
-	HttpClientBuilder httpClientBulider = null;
-	HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = null;
-	RestTemplate restTemplate = null;
-	List<HttpMessageConverter<?>> messageConverters = null;
+//	CloseableHttpClient closeableHttpClient = null;
+//	PoolingHttpClientConnectionManager poolingConnectionManager = null;
+//	HttpClientBuilder httpClientBulider = null;
+//	HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = null;
+//	RestTemplate restTemplate = null;
+//	List<HttpMessageConverter<?>> messageConverters = null;
 
 	@BeforeClass
 	void createConnectionPool() {
@@ -73,21 +73,24 @@ public class ProUserDeleteTest {
 	@Test(priority = 1)
 	void getUserNewTemplate() throws Exception {
 		// http://14.63.217.141:8083/user/:id
-		System.out.println("테스트 시작");
-		RestTemplate newRestTemplate = new RestTemplate();
-		String url = "http://14.63.217.141:38083/user/+821027547219?token=123456789";
-		MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
-		headers.add("Content-Type", "application/json");
-		headers.add("accept-version", "1.0.0");
-		HttpEntity entity = new HttpEntity(headers);
-		long startTime = System.currentTimeMillis();
-		ResponseEntity<String> response = newRestTemplate.exchange(url, HttpMethod.DELETE, entity, String.class);
-		HttpStatus httpStatus = response.getStatusCode();
-		System.out.println(httpStatus.value());
-		org.testng.Assert.assertEquals(httpStatus.value(), 200);
-		long stopTime = System.currentTimeMillis();
-		long resultTime = stopTime - startTime;
-		System.out.println("걸린시간:" + resultTime + "ms");
+		// System.out.println("테스트 시작");
+		// RestTemplate newRestTemplate = new RestTemplate();
+		// String url =
+		// "http://14.63.217.141:38083/user/+821027547219?token=123456789";
+		// MultiValueMap<String, String> headers = new
+		// LinkedMultiValueMap<String, String>();
+		// headers.add("Content-Type", "application/json");
+		// headers.add("accept-version", "1.0.0");
+		// HttpEntity entity = new HttpEntity(headers);
+		// long startTime = System.currentTimeMillis();
+		// ResponseEntity<String> response = newRestTemplate.exchange(url,
+		// HttpMethod.DELETE, entity, String.class);
+		// HttpStatus httpStatus = response.getStatusCode();
+		// System.out.println(httpStatus.value());
+		// org.testng.Assert.assertEquals(httpStatus.value(), 200);
+		// long stopTime = System.currentTimeMillis();
+		// long resultTime = stopTime - startTime;
+		// System.out.println("걸린시간:" + resultTime + "ms");
 		// }
 
 	}
