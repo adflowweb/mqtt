@@ -105,6 +105,30 @@ public class UserServiceImpl implements UserService {
 	}
 
 	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see kr.co.adflow.push.service.UserService#delete(java.lang.String)
+	 */
+	@Override
+	public int deleteAdmin(String userID) throws Exception {
+		logger.debug("delete시작(userID=" + userID + ")");
+
+		// 140901 <kicho> -start
+		// 해당 토큰을 읽어와 삭제.
+		Token[] tokens = tokenService.getByUser(userID);
+		int resultToken = 0;
+
+		for (int i = 0; i < tokens.length; i++) {
+			resultToken = tokenDao.delete(tokens[i].getTokenID());
+		}
+		// 140901 <kicho> -end
+
+		int result = userDao.delete(userID);
+		logger.debug("delete종료(result=" + result + ")");
+		return result;
+	}
+
+	/*
 	 * 푸시사용자 로그인
 	 * 
 	 * (non-Javadoc)

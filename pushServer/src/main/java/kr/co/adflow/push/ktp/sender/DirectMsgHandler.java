@@ -36,8 +36,7 @@ public class DirectMsgHandler implements ProducerCallback<Object> {
 	}
 
 	/** The Constant logger. */
-	private static final Logger logger = LoggerFactory
-			.getLogger(DirectMsgHandler.class);
+	private static final Logger logger = LoggerFactory.getLogger(DirectMsgHandler.class);
 
 	/*
 	 * (non-Javadoc)
@@ -47,8 +46,7 @@ public class DirectMsgHandler implements ProducerCallback<Object> {
 	 * javax.jms.MessageProducer)
 	 */
 	@Override
-	public Object doInJms(Session session, MessageProducer producer)
-			throws JMSException {
+	public Object doInJms(Session session, MessageProducer producer) throws JMSException {
 
 		producer.setTimeToLive(msg.getExpiry());
 		producer.setDeliveryMode(msg.getQos());
@@ -83,20 +81,18 @@ public class DirectMsgHandler implements ProducerCallback<Object> {
 			bytesMessage.writeBytes(byteArr);
 
 			producer.send(bytesMessage);
-			
-			
 
 		} catch (JSONException e) {
 			e.printStackTrace();
 		} finally {
-//			if (producer != null) {
-//				try {
-//					producer.close();
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//
-//			}
+			// if (producer != null) {
+			// try {
+			// producer.close();
+			// } catch (Exception e) {
+			// e.printStackTrace();
+			// }
+			//
+			// }
 		}
 		return byteArr;
 	}

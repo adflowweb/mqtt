@@ -58,6 +58,8 @@ public interface TokenService {
 	 *             the exception
 	 */
 	int delete(String token) throws Exception;
+	
+	
 
 	/**
 	 * Validate.

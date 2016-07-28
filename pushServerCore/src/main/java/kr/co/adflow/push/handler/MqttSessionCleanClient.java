@@ -56,9 +56,6 @@ public class MqttSessionCleanClient {
 	/** The Constant logger. */
 	private static final org.slf4j.Logger logger = LoggerFactory.getLogger(MqttSessionCleanClient.class);
 
-	// 23 character 로 제한됨
-	/** The Constant CLIENT_ID_LENGTH. */
-	private static final int CLIENT_ID_LENGTH = 23;
 	public static int MQCONNCOUNT = 0;
 
 	/** The prop. */
@@ -75,9 +72,6 @@ public class MqttSessionCleanClient {
 
 	/** The Constant MQTT_PACKAGE. */
 	public static final String MQTT_PACKAGE = "org.eclipse.paho.client.mqttv3";
-
-	/** The Constant TOPIC. */
-	private static final String[] TOPIC = prop.getProperty("topic").split(",");
 
 	/** The Constant SERVERURL. */
 	public static final String[] SERVERURL = prop.getProperty("mq.server.url").split(",");

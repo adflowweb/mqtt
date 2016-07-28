@@ -23,15 +23,14 @@ import org.springframework.stereotype.Repository;
 public class UserDaoImpl implements UserDao {
 
 	/** The Constant logger. */
-	private static final org.slf4j.Logger logger = LoggerFactory
-			.getLogger(UserDaoImpl.class);
+	private static final org.slf4j.Logger logger = LoggerFactory.getLogger(UserDaoImpl.class);
 	// Autowired를 사용하여 sqlSession을 사용할수 있다.
 	/** The sql session. */
 	@Autowired
 	private SqlSession sqlSession;
 
-//	@Resource
-//	private LdapAuthDao ldap;
+	// @Resource
+	// private LdapAuthDao ldap;
 
 	/*
 	 * (non-Javadoc)
@@ -96,16 +95,18 @@ public class UserDaoImpl implements UserDao {
 	@Override
 	public boolean auth(User user) throws Exception {
 		logger.debug("auth시작(user=" + user + ")");
-		 UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
-		 boolean rst = userMapper.auth(user);
+		UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+		boolean rst = userMapper.auth(user);
 
 		// ldap 인증
-//		boolean rst = ldap.auth(user.getUserID(), user.getPassword());
-//		logger.debug("auth종료(result=" + rst + ")");
+		// boolean rst = ldap.auth(user.getUserID(), user.getPassword());
+		// logger.debug("auth종료(result=" + rst + ")");
 		return rst;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see kr.co.adflow.push.dao.UserDao#getAdmin()
 	 */
 	@Override
@@ -117,22 +118,24 @@ public class UserDaoImpl implements UserDao {
 		return users;
 	}
 
-	//KTP-skip-start
-//	@Override
-//	public int putWithoutRole(User user) throws Exception {
-//		logger.debug("putWithoutRole시작(user=" + user + ")");
-//		UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
-//		int result = userMapper.putWithoutRole(user);
-//		logger.debug("putWithoutRole종료(result=" + result + ")");
-//		return result;
-//	}
-	//KTP-skip-end
-	
-	//140901 <kicho> - start
+	// KTP-skip-start
+	// @Override
+	// public int putWithoutRole(User user) throws Exception {
+	// logger.debug("putWithoutRole시작(user=" + user + ")");
+	// UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+	// int result = userMapper.putWithoutRole(user);
+	// logger.debug("putWithoutRole종료(result=" + result + ")");
+	// return result;
+	// }
+	// KTP-skip-end
+
+	// 140901 <kicho> - start
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see kr.co.adflow.push.dao.UserDAO#changePassword(kr.co.adflow.push.domain.User)
+	 * @see
+	 * kr.co.adflow.push.dao.UserDAO#changePassword(kr.co.adflow.push.domain.
+	 * User)
 	 */
 	@Override
 	public int changePassword(User user) throws Exception {
@@ -142,5 +145,6 @@ public class UserDaoImpl implements UserDao {
 		logger.debug("changePassword종료(result=" + result + ")");
 		return result;
 	}
-	//140901 <kicho> - end
+	// 140901 <kicho> - end
+
 }

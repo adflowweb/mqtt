@@ -390,56 +390,13 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<properties>
-				<!-- subscribe 해야하는 토픽 -->
-				<topic>/push/poll,/push/ack,/push/group,/push/badge</topic>
 
-				<!-- ibm mq 서버주소 -->
+
+				<!-- session clean client ssl -->
 				<mq.server.ssl>true</mq.server.ssl>
 
-				<!-- ibm mq 서버주소 -->
-				<!-- <mq.server.url>tcp://adflow.net:3881,tcp://adflow.net:3882</mq.server.url> -->
-				<!-- <mq.server.url>tcp://adflow.net:1883</mq.server.url> -->
 				<mq.server.url>ssl://14.63.217.141:18831,ssl://14.63.217.141:18832,ssl://14.63.217.141:18833,ssl://14.63.217.141:18834,ssl://14.63.217.141:28831,ssl://14.63.217.141:28832,ssl://14.63.217.141:28833,ssl://14.63.217.141:28834</mq.server.url>
 
-
-				<!-- SMS 서버주소 -->
-				<!-- <sms.server.url>127.0.0.1</sms.server.url> -->
-
-				<!-- SMS 서버포트 -->
-				<!-- <sms.server.port>3000</sms.server.port> -->
-
-				<!-- LDAP 서버주소 -->
-				<!-- <ldap.server.enable>false</ldap.server.enable> -->
-
-				<!-- LDAP 서버주소 -->
-				<!-- <ldap.server.url>130.10.0.32</ldap.server.url> -->
-
-				<!-- <apns.key.file>/Users/nadir93/tmp/cho_push.p12</apns.key.file> -->
-
-				<!-- <apns.key.password>test1234</apns.key.password> -->
-
-				<!-- <apns.production>false</apns.production> -->
-
-				<!-- 헬스체크여부 -->
-				<health.enable>fasle</health.enable>
-
-				<!-- healthCheck interval (second) -->
-				<health.check.interval>10</health.check.interval>
-
-				<!-- messageProcess enable/disable -->
-				<message.enable>false</message.enable>
-
-				<!-- messageProcess interval (second) -->
-				<message.process.interval>15</message.process.interval>
-
-				<!--SMS process enable/disable -->
-				<!-- <sms.enable>false</sms.enable> -->
-
-				<!-- SMS processing interval (second) -->
-				<!-- <sms.process.interval>30</sms.process.interval> -->
-
-				<!-- SMS sending channel processing interval (second) -->
-				<!-- <sendChannel.process.interval>60</sendChannel.process.interval> -->
 
 				<!-- mqtt client socket connect timeout (second) -->
 				<connection.timeout>10</connection.timeout>
@@ -453,41 +410,8 @@
 				<!-- paho logging level -->
 				<paho.log.level>SEVERE</paho.log.level>
 
-				<!-- 유니크한 클라이언트아이디 -->
-				<clientid>${env.HOSTNAME}</clientid>
-
 				<!-- application log level 설정 -->
 				<log.level>debug</log.level>
-
-				<db.driverClass>com.mysql.jdbc.Driver</db.driverClass>
-				<db.connectionURL>jdbc:mysql://172.27.0.100:13306/push?useUnicode=true<![CDATA[&amp;]]>characterEncoding=utf8
-				</db.connectionURL>
-				<db.username>adflow</db.username>
-				<db.password>!ADFlow@</db.password>
-				<db.maxActive>20</db.maxActive>
-				<db.maxIdle>10</db.maxIdle>
-				<db.maxWait>10000</db.maxWait>
-				<db.validationQuery>SELECT 1</db.validationQuery>
-				<db.validationInterval>30000</db.validationInterval>
-				<db.testWhileIdle>true</db.testWhileIdle>
-				<db.testOnBorrow>false</db.testOnBorrow>
-
-				<db.table.affiliate>affiliate</db.table.affiliate>
-				<db.table.user>emp</db.table.user>
-				<db.table.department>department</db.table.department>
-				<db.sql.getUsersByName>CONCAT('%', #{name}, '%')</db.sql.getUsersByName>
-
-				<!-- mq pcf info -->
-				<mq.pcf.id>adflow</mq.pcf.id>
-				<mq.pcf.password>!ADFlow@</mq.pcf.password>
-				<mq.pcf.port>1414</mq.pcf.port>
-				<mq.pcf.channel>ADFlowPCF</mq.pcf.channel>
-				<mq.pcf.host>14.63.217.141</mq.pcf.host>
-				<mq.pcf.maxconnections>50</mq.pcf.maxconnections>
-
-				<!-- Redis info -->
-				<jedis.expire>86400</jedis.expire>
-				<jedis.hosts>localhost</jedis.hosts>
 
 				<!-- mq jms info -->
 				<mq.jms.id>adflow</mq.jms.id>
@@ -518,53 +442,12 @@
 		<profile>
 			<id>test</id>
 			<properties>
-				<!-- subscribe 해야하는 토픽 -->
-				<topic>/push/poll,/push/ack,/push/group,/push/badge</topic>
 
-				<!-- ibm mq 서버주소 -->
+				<!-- session clean client ssl -->
 				<mq.server.ssl>true</mq.server.ssl>
 
 				<!-- ibm mq 서버주소 -->
 				<mq.server.url>ssl://14.63.217.141:28831,ssl://14.63.217.141:18832,ssl://14.63.217.141:28833,ssl://14.63.217.141:18834</mq.server.url>
-
-				<!-- SMS 서버주소 -->
-				<sms.server.url>130.80.101.48</sms.server.url>
-
-				<!-- SMS 서버포트 -->
-				<sms.server.port>3000</sms.server.port>
-
-				<!-- LDAP 서버주소 -->
-				<ldap.server.enable>true</ldap.server.enable>
-
-				<!-- LDAP 서버주소 -->
-				<ldap.server.url>adpusan.co.kr</ldap.server.url>
-
-				<apns.key.file>d:/temp/bsbankpush/keyfile/cho_push.p12</apns.key.file>
-
-				<apns.key.password>test1234</apns.key.password>
-
-				<apns.production>false</apns.production>
-
-				<!-- 헬스체크여부 -->
-				<health.enable>true</health.enable>
-
-				<!-- healthCheck interval (second) -->
-				<health.check.interval>10</health.check.interval>
-
-				<!-- messageProcess enable/disable -->
-				<message.enable>true</message.enable>
-
-				<!-- messageProcess interval (second) -->
-				<message.process.interval>15</message.process.interval>
-
-				<!--SMS process enable/disable -->
-				<sms.enable>true</sms.enable>
-
-				<!-- SMS processing interval (second) -->
-				<sms.process.interval>30</sms.process.interval>
-
-				<!-- SMS sending channel processing interval (second) -->
-				<sendChannel.process.interval>60</sendChannel.process.interval>
 
 				<!-- mqtt client socket connect timeout (second) -->
 				<connection.timeout>10</connection.timeout>
@@ -578,41 +461,11 @@
 				<!-- paho logging level -->
 				<paho.log.level>SEVERE</paho.log.level>
 
-				<!-- 유니크한 클라이언트아이디 -->
-				<clientid>${env.HOSTNAME}</clientid>
-
 				<!-- application log level 설정 -->
 				<log.level>debug</log.level>
 
-				<!-- zookeeper -->
-
-				<db.driverClass>oracle.jdbc.OracleDriver</db.driverClass>
-				<db.connectionURL>jdbc:oracle:thin:@130.12.4.151:1621:DODSDB</db.connectionURL>
-				<db.username>MBO_AP</db.username>
-				<db.password>MBO99AP</db.password>
-				<db.maxActive>20</db.maxActive>
-				<db.maxIdle>10</db.maxIdle>
-				<db.maxWait>10000</db.maxWait>
-				<db.validationQuery>select 1 from dual</db.validationQuery>
-				<db.validationInterval>30000</db.validationInterval>
-				<db.testWhileIdle>true</db.testWhileIdle>
-				<db.testOnBorrow>false</db.testOnBorrow>
-
-				<db.table.affiliate>TB_OCRM_GW_SBSD_INFO</db.table.affiliate>
-				<db.table.user>TB_OCRM_GW_STF_INFO</db.table.user>
-				<db.table.department>TB_OCRM_GW_DEPTMT_INFO</db.table.department>
-				<db.sql.getUsersByName>'%'||#{name}||'%'</db.sql.getUsersByName>
-
-				<!-- mq pcf info -->
-				<mq.pcf.id>adflow</mq.pcf.id>
-				<mq.pcf.password>!ADFlow@</mq.pcf.password>
-				<mq.pcf.port>1414</mq.pcf.port>
-				<mq.pcf.channel>ADFlowPCF</mq.pcf.channel>
-				<mq.pcf.host>14.63.217.141</mq.pcf.host>
 				<!-- mq jms info -->
 				<mq.jms.id>adflow</mq.jms.id>
-				<mq.jms.hostname>14.63.217.141</mq.jms.hostname>
-				<mq.jms.port>14141</mq.jms.port>
 				<mq.jms.hostname1>14.63.217.141(14141)</mq.jms.hostname1>
 				<mq.jms.hostname2>14.63.217.141(14142)</mq.jms.hostname2>
 				<mq.jms.hostname3>14.63.217.141(14143)</mq.jms.hostname3>
@@ -636,53 +489,11 @@
 		<profile>
 			<id>production</id>
 			<properties>
-				<!-- subscribe 해야하는 토픽 -->
-				<!-- <topic>/push/#</topic> -->
-				<topic>/push/poll,/push/ack,/push/group,/push/badge</topic>
+				<!-- session clean client ssl -->
+				<mq.server.ssl>true</mq.server.ssl>
 
 				<!-- ibm mq 서버주소 -->
-				<mq.server.ssl>false</mq.server.ssl>
-
-				<!-- ibm mq 서버주소 -->
-				<mq.server.url>tcp://PUSH-MQ:1883</mq.server.url>
-
-				<!-- SMS 서버주소 -->
-				<sms.server.url>127.0.0.1</sms.server.url>
-
-				<!-- SMS 서버포트 -->
-				<sms.server.port>3000</sms.server.port>
-
-				<!-- LDAP 서버주소 -->
-				<!-- <ldap.server.url>130.10.0.32</ldap.server.url> -->
-				<ldap.server.enable>false</ldap.server.enable>
-				<ldap.server.url>130.10.0.32</ldap.server.url>
-
-				<apns.key.file>/Users/nadir93/tmp/cho_push.p12</apns.key.file>
-
-				<apns.key.password>test1234</apns.key.password>
-
-				<apns.production>false</apns.production>
-
-				<!-- 헬스체크여부 -->
-				<health.enable>true</health.enable>
-
-				<!-- healthCheck interval (second) -->
-				<health.check.interval>10</health.check.interval>
-
-				<!-- messageProcess enable/disable -->
-				<message.enable>false</message.enable>
-
-				<!-- messageProcess interval (second) -->
-				<message.process.interval>15</message.process.interval>
-
-				<!--SMS process enable/disable -->
-				<sms.enable>false</sms.enable>
-
-				<!-- SMS processing interval (second) -->
-				<sms.process.interval>30</sms.process.interval>
-
-				<!-- SMS sending channel processing interval (second) -->
-				<sendChannel.process.interval>60</sendChannel.process.interval>
+				<mq.server.url>ssl://14.63.217.141:28831,ssl://14.63.217.141:18832,ssl://14.63.217.141:28833,ssl://14.63.217.141:18834</mq.server.url>
 
 				<!-- mqtt client socket connect timeout (second) -->
 				<connection.timeout>10</connection.timeout>
@@ -690,54 +501,17 @@
 				<!-- mqtt session keep alive interval (second) -->
 				<keep.alive.interval>5</keep.alive.interval>
 
-
-
-
 				<!-- mqtt session clean -->
-				<clean.session>true</clean.session>
+				<clean.session>false</clean.session>
 
 				<!-- paho logging level -->
 				<paho.log.level>SEVERE</paho.log.level>
 
-				<!-- 유니크한 클라이언트아이디 -->
-				<clientid>${env.HOSTNAME}</clientid>
-
 				<!-- application log level 설정 -->
-				<log.level>error</log.level>
-
-				<db.driverClass>oracle.jdbc.OracleDriver</db.driverClass>
-				<db.connectionURL>jdbc:oracle:thin:@130.12.4.151:1621:DODSDB</db.connectionURL>
-				<db.username>MBO_AP</db.username>
-				<db.password>MBO99AP</db.password>
-				<db.maxActive>20</db.maxActive>
-				<db.maxIdle>10</db.maxIdle>
-				<db.maxWait>10000</db.maxWait>
-				<db.validationQuery>select 1 from dual</db.validationQuery>
-				<db.validationInterval>30000</db.validationInterval>
-				<db.testWhileIdle>true</db.testWhileIdle>
-				<db.testOnBorrow>false</db.testOnBorrow>
-
-				<db.table.affiliate>TB_OCRM_GW_SBSD_INFO</db.table.affiliate>
-				<db.table.user>TB_OCRM_GW_STF_INFO</db.table.user>
-				<db.table.department>TB_OCRM_GW_DEPTMT_INFO</db.table.department>
-				<db.sql.getUsersByName>'%'||#{name}||'%'</db.sql.getUsersByName>
-
-				<!-- mq pcf info -->
-				<mq.pcf.id>adflow</mq.pcf.id>
-				<mq.pcf.password>!ADFlow@</mq.pcf.password>
-				<mq.pcf.port>1414</mq.pcf.port>
-				<mq.pcf.channel>ADFlowPCF</mq.pcf.channel>
-				<mq.pcf.host>PUSH-MQ</mq.pcf.host>
-				<mq.pcf.maxconnections>50</mq.pcf.maxconnections>
-
-				<!-- Redis info -->
-				<jedis.expire>86400</jedis.expire>
-				<jedis.hosts>localhost</jedis.hosts>
+				<log.level>debug</log.level>
 
 				<!-- mq jms info -->
 				<mq.jms.id>adflow</mq.jms.id>
-				<mq.jms.hostname>14.63.217.141</mq.jms.hostname>
-				<mq.jms.port>14141</mq.jms.port>
 				<mq.jms.hostname1>14.63.217.141(14141)</mq.jms.hostname1>
 				<mq.jms.hostname2>14.63.217.141(14142)</mq.jms.hostname2>
 				<mq.jms.hostname3>14.63.217.141(14143)</mq.jms.hostname3>
@@ -750,8 +524,9 @@
 				<!-- <mq.jms.queue.manager>MQTT01</mq.jms.queue.manager> -->
 				<mq.jms.channel>ADFlowJMS</mq.jms.channel>
 
+
 				<!-- zookeeper -->
-				<zookeeper.url>172.27.0.101:2181,172.27.0.231:2181,172.27.56.183:2181</zookeeper.url>
+				<zookeeper.url>172.27.0.101</zookeeper.url>
 				<zookeeper.id>dev1</zookeeper.id>
 				<zookeeper.node>/dev1</zookeeper.node>
 

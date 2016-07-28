@@ -22,11 +22,11 @@
 		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
-	<servlet>
-    	<servlet-name>PCFConnectionManagerHandler</servlet-name>
-    	<servlet-class>kr.co.adflow.push.ktp.handler.PCFConnectionManagerHandler</servlet-class>
-    	<load-on-startup>2</load-on-startup>
-	</servlet>
+	<!-- <servlet> -->
+	<!-- <servlet-name>PCFConnectionManagerHandler</servlet-name> -->
+	<!-- <servlet-class>kr.co.adflow.push.ktp.handler.PCFConnectionManagerHandler</servlet-class> -->
+	<!-- <load-on-startup>2</load-on-startup> -->
+	<!-- </servlet> -->
 	
 	<servlet-mapping>
 		<servlet-name>appServlet</servlet-name>

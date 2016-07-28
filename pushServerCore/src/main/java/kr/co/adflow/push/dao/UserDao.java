@@ -13,53 +13,63 @@ import kr.co.adflow.push.domain.User;
  * @date 2014. 4. 14.
  */
 public interface UserDao {
-	
+
 	/**
 	 * Gets the.
 	 *
-	 * @param userID the user id
+	 * @param userID
+	 *            the user id
 	 * @return the user
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	User get(String userID) throws Exception;
 
 	/**
 	 * Post.
 	 *
-	 * @param user the user
+	 * @param user
+	 *            the user
 	 * @return the int
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	int post(User user) throws Exception;
 
 	/**
 	 * Put.
 	 *
-	 * @param user the user
+	 * @param user
+	 *            the user
 	 * @return the int
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	int put(User user) throws Exception;
 
-	//KTP-skip-start
-//	int putWithoutRole(User user) throws Exception;
-	//KTP-skip-end
+	// KTP-skip-start
+	// int putWithoutRole(User user) throws Exception;
+	// KTP-skip-end
 
 	/**
 	 * Delete.
 	 *
-	 * @param userID the user id
+	 * @param userID
+	 *            the user id
 	 * @return the int
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	int delete(String userID) throws Exception;
 
 	/**
 	 * Auth.
 	 *
-	 * @param user the user
+	 * @param user
+	 *            the user
 	 * @return true, if successful
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	boolean auth(User user) throws Exception;
 
@@ -67,16 +77,21 @@ public interface UserDao {
 	 * Gets the admin.
 	 *
 	 * @return the admin
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	User[] getAdmin() throws Exception;
-	
+
+
+
 	/**
 	 * Change password.
 	 *
-	 * @param user the user
+	 * @param user
+	 *            the user
 	 * @return the int
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	int changePassword(User user) throws Exception;
 }
