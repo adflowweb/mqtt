@@ -70,11 +70,6 @@ public class CDRCreateExecutor {
 	 */
 	public void createCDR() {
 
-		if (!zookeeperHandler.getLeader()) {
-			logger.debug("현재 리더가 아닙니다!");
-			return;
-		}
-		logger.debug("현재 리더 입니다!");
 		int startRow = 0;
 		this.fileNo = 0;
 		this.totalRow = 0;
@@ -102,10 +97,6 @@ public class CDRCreateExecutor {
 	 * Creates the CDR.
 	 */
 	public int createCDR(String date) throws Exception {
-		if (!zookeeperHandler.getLeader()) {
-			logger.debug("현재 리더가 아닙니다!");
-			return 0;
-		}
 
 		int startRow = 0;
 		this.fileNo = 0;
@@ -343,7 +334,9 @@ public class CDRCreateExecutor {
 					recordSb.append(RecordFomatUtil.stingFormat("", 14));
 					rRCause = "01";
 				} else {
-					recordSb.append(RecordFomatUtil.stingFormat(DateUtil.getDateTime(cDR.getPmaAckTime()), 14));
+					// recordSb.append(RecordFomatUtil.stingFormat(DateUtil.getDateTime(cDR.getPmaAckTime()),
+					// 14));
+					recordSb.append(RecordFomatUtil.stingFormat(DateUtil.getDateTime(cDR.getIssueTime()), 14));
 					rRCause = "00";
 				}
 

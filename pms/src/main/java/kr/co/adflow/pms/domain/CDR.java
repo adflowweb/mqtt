@@ -10,43 +10,47 @@ import java.util.Date;
  * The Class Message.
  */
 public class CDR {
-	
-	/** The  */
+
+	/** The */
 	private Date updateTime;
-	
-	/** The  */
+
+	/** The */
 	private Date pmaAckTime;
-	
-	/** The  */
+
+	private Date issueTime;
+
+	/** The */
 	private String issueId;
-	
-	/** The  */
+
+	/** The */
 	private String receiverTopic;
-	
-	/** The  */
+
+	/** The */
 	private int mediaType;
-	
+
 	/** The sendTerminalType */
 	private int sendTerminalType;
-	
+
 	/** The msgSize */
 	private int msgSize;
-	
+
 	/** The groupId */
 	private String groupId;
-	
+
 	/** The tokenId */
 	private String tokenId;
-	
+
 	/** The msg Type */
 	private int msgType;
 
-	
-	
 	/**
 	 * Gets the message Type.
 	 *
 	 * @return the msgType
+	 * 
+	 * 
+	 * 
+	 * 
 	 */
 	public int getMsgType() {
 		return msgType;
@@ -55,7 +59,8 @@ public class CDR {
 	/**
 	 * Sets the message Type.
 	 *
-	 * @param msgType the new message Type
+	 * @param msgType
+	 *            the new message Type
 	 */
 	public void setMsgType(int msgType) {
 		this.msgType = msgType;
@@ -73,7 +78,8 @@ public class CDR {
 	/**
 	 * Sets the token Id.
 	 *
-	 * @param tokenId the new token Id
+	 * @param tokenId
+	 *            the new token Id
 	 */
 	public void setTokenId(String tokenId) {
 		this.tokenId = tokenId;
@@ -91,7 +97,8 @@ public class CDR {
 	/**
 	 * Sets the issue id.
 	 *
-	 * @param issueId the new issue id
+	 * @param issueId
+	 *            the new issue id
 	 */
 	public void setIssueId(String issueId) {
 		this.issueId = issueId;
@@ -109,7 +116,8 @@ public class CDR {
 	/**
 	 * Sets the update time.
 	 *
-	 * @param updateTime the new update time
+	 * @param updateTime
+	 *            the new update time
 	 */
 	public void setUpdateTime(Date updateTime) {
 		this.updateTime = updateTime;
@@ -127,12 +135,12 @@ public class CDR {
 	/**
 	 * Sets the receiver topic.
 	 *
-	 * @param receiverTopic the new receiver topic
+	 * @param receiverTopic
+	 *            the new receiver topic
 	 */
 	public void setReceiverTopic(String receiverTopic) {
 		this.receiverTopic = receiverTopic;
 	}
-
 
 	/**
 	 * Gets the pma ack time.
@@ -146,7 +154,8 @@ public class CDR {
 	/**
 	 * Sets the pma ack time.
 	 *
-	 * @param pmaAckTime the new pma ack time
+	 * @param pmaAckTime
+	 *            the new pma ack time
 	 */
 	public void setPmaAckTime(Date pmaAckTime) {
 		this.pmaAckTime = pmaAckTime;
@@ -164,7 +173,8 @@ public class CDR {
 	/**
 	 * Sets the group id.
 	 *
-	 * @param groupId the new group id
+	 * @param groupId
+	 *            the new group id
 	 */
 	public void setGroupId(String groupId) {
 		this.groupId = groupId;
@@ -182,7 +192,8 @@ public class CDR {
 	/**
 	 * Sets the mediaType.
 	 *
-	 * @param mediaType the new mediaType
+	 * @param mediaType
+	 *            the new mediaType
 	 */
 	public void setMediaType(int mediaType) {
 		this.mediaType = mediaType;
@@ -200,7 +211,8 @@ public class CDR {
 	/**
 	 * Sets the sendTerminalType.
 	 *
-	 * @param sendTerminalType the new sendTerminalType
+	 * @param sendTerminalType
+	 *            the new sendTerminalType
 	 */
 	public void setSendTerminalType(int sendTerminalType) {
 		this.sendTerminalType = sendTerminalType;
@@ -218,10 +230,19 @@ public class CDR {
 	/**
 	 * Sets the msgSize.
 	 *
-	 * @param msgSize the new msgSize
+	 * @param msgSize
+	 *            the new msgSize
 	 */
 	public void setMsgSize(int msgSize) {
 		this.msgSize = msgSize;
+	}
+
+	public Date getIssueTime() {
+		return issueTime;
+	}
+
+	public void setIssueTime(Date issueTime) {
+		this.issueTime = issueTime;
 	}
 
 }
