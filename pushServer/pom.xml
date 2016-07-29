@@ -447,7 +447,7 @@
 				<mq.server.ssl>true</mq.server.ssl>
 
 				<!-- ibm mq 서버주소 -->
-				<mq.server.url>ssl://14.63.217.141:28831,ssl://14.63.217.141:18832,ssl://14.63.217.141:28833,ssl://14.63.217.141:18834</mq.server.url>
+				<mq.server.url>ssl://14.63.217.141:18831,ssl://14.63.217.141:18832,ssl://14.63.217.141:18833,ssl://14.63.217.141:18834,ssl://14.63.217.141:28831,ssl://14.63.217.141:28832,ssl://14.63.217.141:28833,ssl://14.63.217.141:28834</mq.server.url>
 
 				<!-- mqtt client socket connect timeout (second) -->
 				<connection.timeout>10</connection.timeout>
@@ -456,7 +456,7 @@
 				<keep.alive.interval>5</keep.alive.interval>
 
 				<!-- mqtt session clean -->
-				<clean.session>false</clean.session>
+				<clean.session>true</clean.session>
 
 				<!-- paho logging level -->
 				<paho.log.level>SEVERE</paho.log.level>
@@ -480,7 +480,8 @@
 
 
 				<!-- zookeeper -->
-				<zookeeper.url>172.27.0.101</zookeeper.url>
+				<zookeeper.url>172.27.0.101,172.27.56.183,172.27.0.231</zookeeper.url>
+				<!--id 변경필요 -->
 				<zookeeper.id>dev1</zookeeper.id>
 				<zookeeper.node>/dev1</zookeeper.node>
 			</properties>

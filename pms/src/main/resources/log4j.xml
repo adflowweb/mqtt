@@ -47,26 +47,21 @@
 	<!-- 3rdparty Loggers -->
 	<logger name="org.springframework.core">
 		<level value="info" />
-		<appender-ref ref="console" />
 	</logger>
 
 	<logger name="org.springframework.beans">
 		<level value="info" />
-		<appender-ref ref="console" />
 	</logger>
 
 	<logger name="org.springframework.context">
 		<level value="info" />
-		<appender-ref ref="console" />
 	</logger>
 
 	<logger name="org.springframework.web">
 		<level value="info" />
-		<appender-ref ref="console" />
 	</logger>
 	<logger name="org.apache.ibatis">
 		<level value="info" />
-		<appender-ref ref="console" />
 	</logger>
 
 	<logger name="messageTrLogger">
@@ -82,7 +77,6 @@
 	<!-- Root Logger -->
 	<root>
 		<priority value="debug" />
-		<appender-ref ref="console" />
 	</root>
 
 
