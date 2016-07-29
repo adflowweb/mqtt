@@ -82,7 +82,7 @@
 	<!-- jmsConnectionFactory -->
 	<bean id="tJmsFactory" class="com.ibm.mq.jms.MQTopicConnectionFactory">
 		<property name="connectionNameList"
-			value="#{pms['mq.jms.hostname1']},#{pms['mq.jms.hostname5']},#{pms['mq.jms.hostname2']},#{pms['mq.jms.hostname6']},#{pms['mq.jms.hostname3']},#{pms['mq.jms.hostname7']},#{pms['mq.jms.hostname4']},#{pms['mq.jms.hostname8']}," />
+			value="#{pms['mq.jms.hostname1']},#{pms['mq.jms.hostname6']},#{pms['mq.jms.hostname3']},#{pms['mq.jms.hostname8']},#{pms['mq.jms.hostname4']},#{pms['mq.jms.hostname7']},#{pms['mq.jms.hostname2']},#{pms['mq.jms.hostname5']}," />
 		<!-- <property name="connectionNameList" -->
 		<!-- value="#{pms['mq.jms.hostname5']},#{pms['mq.jms.hostname5']},#{pms['mq.jms.hostname5']},#{pms['mq.jms.hostname5']},#{pms['mq.jms.hostname5']},#{pms['mq.jms.hostname5']},#{pms['mq.jms.hostname5']},#{pms['mq.jms.hostname1']}," 
 			/> -->
