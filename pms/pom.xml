@@ -315,18 +315,7 @@
 				</executions>
 			</plugin>
 
-			<plugin>
-				<groupId>org.apache.tomcat.maven</groupId>
-				<artifactId>tomcat7-maven-plugin</artifactId>
-				<version>2.2</version>
-				<configuration>
-					<path>/v1#pms</path>
-					<url>http://127.0.0.1:8081/manager/text</url>
-					<username>admin</username>
-					<password>ktp1234!</password>
-					<warFile>target/pms-1.0.0-BUILD-SNAPSHOT.war</warFile>
-				</configuration>
-			</plugin>
+
 		</plugins>
 	</build>
 	<distributionManagement>
