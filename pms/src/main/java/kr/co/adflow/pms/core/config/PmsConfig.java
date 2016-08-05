@@ -15,13 +15,13 @@ public class PmsConfig {
 
 	/** The executor server id. */
 	@Value("#{pms['executor.server.id']}")
-	public String EXECUTOR_SERVER_ID; // = "S01";
+	public String EXECUTOR_SERVER_ID; // = "자신의 아이디";
 
 	@Value("#{pms['executor.server.id2']}")
-	public String EXECUTOR_SERVER_ID2; // = "S01";
+	public String EXECUTOR_SERVER_ID2; // = "2번서버 아이디";
 
 	@Value("#{pms['executor.server.id3']}")
-	public String EXECUTOR_SERVER_ID3; // = "S01";
+	public String EXECUTOR_SERVER_ID3; // = "구서버 아이디";
 
 	/** The executor delay time. */
 	@Value("#{pms['executor.delay.time']}")
