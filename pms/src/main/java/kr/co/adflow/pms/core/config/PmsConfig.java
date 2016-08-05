@@ -20,6 +20,9 @@ public class PmsConfig {
 	@Value("#{pms['executor.server.id2']}")
 	public String EXECUTOR_SERVER_ID2; // = "S01";
 
+	@Value("#{pms['executor.server.id3']}")
+	public String EXECUTOR_SERVER_ID3; // = "S01";
+
 	/** The executor delay time. */
 	@Value("#{pms['executor.delay.time']}")
 	public int EXECUTOR_DELAY_TIME;// = 10000;
