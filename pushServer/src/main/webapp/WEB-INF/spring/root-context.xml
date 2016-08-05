@@ -51,7 +51,7 @@
 		<!-- <property name="hostName" value="#{pcs['mq.jms.hostname']}" /> -->
 		<!-- <property name="port" value="#{pcs['mq.jms.port']}" /> -->
 		<property name="connectionNameList"
-			value="#{pcs['mq.jms.hostname1']},#{pcs['mq.jms.hostname5']},#{pcs['mq.jms.hostname2']},#{pcs['mq.jms.hostname6']},#{pcs['mq.jms.hostname3']},#{pcs['mq.jms.hostname7']},#{pcs['mq.jms.hostname4']},#{pcs['mq.jms.hostname8']}," />
+			value="#{pcs['mq.jms.hostname1']},#{pcs['mq.jms.hostname6']},#{pcs['mq.jms.hostname3']},#{pcs['mq.jms.hostname8']},#{pcs['mq.jms.hostname4']},#{pcs['mq.jms.hostname7']},#{pcs['mq.jms.hostname2']},#{pcs['mq.jms.hostname5']}," />
 		<property name="queueManager" value="*" />
 		<property name="transportType" value="1" />
 		<property name="channel" value="#{pcs['mq.jms.channel']}" />

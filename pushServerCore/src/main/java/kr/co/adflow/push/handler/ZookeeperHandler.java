@@ -1,6 +1,8 @@
 package kr.co.adflow.push.handler;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 
 import javax.annotation.PostConstruct;
@@ -9,11 +11,17 @@ import javax.annotation.PreDestroy;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
+import org.apache.curator.framework.api.ACLProvider;
 import org.apache.curator.framework.recipes.leader.LeaderLatch;
 import org.apache.curator.framework.recipes.leader.LeaderLatchListener;
 import org.apache.curator.retry.ExponentialBackoffRetry;
+import org.apache.zookeeper.ZooDefs.Perms;
+import org.apache.zookeeper.data.ACL;
+import org.apache.zookeeper.data.Id;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import com.google.common.base.Charsets;
 
 @Service
 public class ZookeeperHandler {
@@ -46,11 +54,17 @@ public class ZookeeperHandler {
 	private String zookeeperId = prop.getProperty("zookeeper.id");
 
 	@PostConstruct
-	public void curatorStart() {
+	public void curatorStart() throws Exception {
 		logger.debug("zookeeper curator 시작");
 		retryPolicy = new ExponentialBackoffRetry(1000, 3);
 		curatorFramework = CuratorFrameworkFactory.newClient(zookeeperUrl, retryPolicy);
+
+		logger.debug(zookeeperUrl);
+		logger.debug(zookeeperNode);
+		logger.debug(zookeeperId);
+
 		curatorFramework.start();
+
 		leaderLatch = new LeaderLatch(curatorFramework, zookeeperNode, zookeeperId);
 
 		leaderLatch.addListener(new LeaderLatchListener() {
@@ -83,13 +97,14 @@ public class ZookeeperHandler {
 
 	@PreDestroy
 	public void curatorClose() {
-		curatorFramework.close();
+
 		try {
 			leaderLatch.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		curatorFramework.close();
 	}
 
 	public boolean hasLeader() {

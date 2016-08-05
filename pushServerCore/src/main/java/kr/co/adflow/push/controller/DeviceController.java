@@ -32,8 +32,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class DeviceController {
 
 	/** The Constant logger. */
-	private static final Logger logger = LoggerFactory
-			.getLogger(DeviceController.class);
+	private static final Logger logger = LoggerFactory.getLogger(DeviceController.class);
 
 	/** The device service. */
 	@Resource
@@ -42,9 +41,11 @@ public class DeviceController {
 	/**
 	 * 디바이스정보 삭제하기.
 	 *
-	 * @param deviceID the device id
+	 * @param deviceID
+	 *            the device id
 	 * @return the response
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	@RequestMapping(value = "devices/{deviceID}", method = RequestMethod.DELETE)
 	@ResponseBody
@@ -67,7 +68,8 @@ public class DeviceController {
 	/**
 	 * 예외처리.
 	 *
-	 * @param e the e
+	 * @param e
+	 *            the e
 	 * @return the response
 	 */
 	@ExceptionHandler(Exception.class)

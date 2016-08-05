@@ -120,5 +120,7 @@
 		</property>
 	</bean>
 
+	<bean id="zookeeperHandler" class="kr.co.adflow.push.handler.ZookeeperHandler"></bean>
+
 	<context:component-scan base-package="kr.co.adflow" />
 </beans>

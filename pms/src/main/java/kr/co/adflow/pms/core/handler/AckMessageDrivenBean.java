@@ -154,9 +154,11 @@ public class AckMessageDrivenBean implements MessageListener {
 	 * @return the ack
 	 */
 	private Ack getAck(byte[] body) {
+		logger.debug("ack 메시지 만들기 시작");
 		Ack ack = new Ack();
 
 		String text = new String(body);
+		logger.debug("text:" + text);
 		JSONObject msgObject = new JSONObject(text);
 
 		ack.setKeyMon(this.getKeyMon(msgObject.getString("msgId")));

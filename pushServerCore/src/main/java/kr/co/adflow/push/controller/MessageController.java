@@ -9,12 +9,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import kr.co.adflow.push.domain.ktp.MessagesRes;
-import kr.co.adflow.push.domain.Message;
-import kr.co.adflow.push.domain.Response;
-import kr.co.adflow.push.domain.Result;
-import kr.co.adflow.push.service.MessageService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -25,6 +19,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import kr.co.adflow.push.domain.Message;
+import kr.co.adflow.push.domain.Response;
+import kr.co.adflow.push.domain.Result;
+import kr.co.adflow.push.domain.ktp.MessagesRes;
+import kr.co.adflow.push.service.MessageService;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -77,33 +77,37 @@ public class MessageController {
 	 * @throws Exception
 	 *             the exception
 	 */
-	@RequestMapping(value = "sendMsgTest", method = RequestMethod.GET)
-	@ResponseBody
-	public Response sendMsgTest() throws Exception {
-		Message msg = new Message();
-		msg.setSender("nadir93");
-		msg.setReceiver("/users/kicho");
-		String jsonString = "{\"notification\":{\"notificationStyle\":1,\"contentTitle\":\"교육장소공지\","
-				+ "\"contentText\":\"메시지전송테스트.\", \"ticker\":\"부산은행교육장소알림장소: 수림연수원 시간: 3월 22일 오전: 12시\","
-				+ "\"summaryText\":\"장소: 수림연수원 시간: 3월 22일 오전: " + (int) (Math.random() * 100) + "시\", \"image\":\""
-				+ "encodedStr" + "\"}," + "\"event\":{\"title\":\"부산은행교육\", \"location\":\"수림연수원\", \"desc\":\"\","
-				+ "\"year\":\"2014\", \"month\":\"2\"," + "\"day\":\"22\"}" + "}";
-		msg.setContent(jsonString);
-		msg.setQos(1);
-		// msg.setSms(true);
-		final int count = msgService.post(msg);
-		Result result = new Result();
-		result.setSuccess(true);
-		List<String> messages = new ArrayList<String>() {
-			{
-				add("updates=" + count);
-			}
-		};
-		result.setInfo(messages);
-		Response res = new Response(result);
-		logger.debug("response=" + res);
-		return res;
-	}
+	// @RequestMapping(value = "sendMsgTest", method = RequestMethod.GET)
+	// @ResponseBody
+	// public Response sendMsgTest() throws Exception {
+	// Message msg = new Message();
+	// msg.setSender("nadir93");
+	// msg.setReceiver("/users/kicho");
+	// String jsonString =
+	// "{\"notification\":{\"notificationStyle\":1,\"contentTitle\":\"교육장소공지\","
+	// + "\"contentText\":\"메시지전송테스트.\", \"ticker\":\"부산은행교육장소알림장소: 수림연수원 시간: 3월
+	// 22일 오전: 12시\","
+	// + "\"summaryText\":\"장소: 수림연수원 시간: 3월 22일 오전: " + (int) (Math.random() *
+	// 100) + "시\", \"image\":\""
+	// + "encodedStr" + "\"}," + "\"event\":{\"title\":\"부산은행교육\",
+	// \"location\":\"수림연수원\", \"desc\":\"\","
+	// + "\"year\":\"2014\", \"month\":\"2\"," + "\"day\":\"22\"}" + "}";
+	// msg.setContent(jsonString);
+	// msg.setQos(1);
+	// // msg.setSms(true);
+	// final int count = msgService.post(msg);
+	// Result result = new Result();
+	// result.setSuccess(true);
+	// List<String> messages = new ArrayList<String>() {
+	// {
+	// add("updates=" + count);
+	// }
+	// };
+	// result.setInfo(messages);
+	// Response res = new Response(result);
+	// logger.debug("response=" + res);
+	// return res;
+	// }
 
 	/**
 	 * 메시지 전송하기 테스트.
@@ -112,34 +116,38 @@ public class MessageController {
 	 * @throws Exception
 	 *             the exception
 	 */
-	@RequestMapping(value = "sendSMSMsgTest", method = RequestMethod.GET)
-	@ResponseBody
-	public Response sendSMSMsgTest() throws Exception {
-		Message msg = new Message();
-		msg.setSender("nadir93");
-		msg.setReceiver("/users/kicho");
-		String jsonString = "{\"notification\":{\"notificationStyle\":1,\"contentTitle\":\"교육장소공지\","
-				+ "\"contentText\":\"메시지전송테스트.\", \"ticker\":\"부산은행교육장소알림장소: 수림연수원 시간: 3월 22일 오전: 12시\","
-				+ "\"summaryText\":\"장소: 수림연수원 시간: 3월 22일 오전: " + (int) (Math.random() * 100) + "시\", \"image\":\""
-				+ "encodedStr" + "\"}," + "\"event\":{\"title\":\"부산은행교육\", \"location\":\"수림연수원\", \"desc\":\"\","
-				+ "\"year\":\"2014\", \"month\":\"2\"," + "\"day\":\"22\"}" + "}";
-		msg.setContent(jsonString);
-		msg.setQos(1);
-		msg.setSms(true);
-		msg.setTimeOut(3);
-		final int count = msgService.post(msg);
-		Result result = new Result();
-		result.setSuccess(true);
-		List<String> messages = new ArrayList<String>() {
-			{
-				add("updates=" + count);
-			}
-		};
-		result.setInfo(messages);
-		Response res = new Response(result);
-		logger.debug("response=" + res);
-		return res;
-	}
+	// @RequestMapping(value = "sendSMSMsgTest", method = RequestMethod.GET)
+	// @ResponseBody
+	// public Response sendSMSMsgTest() throws Exception {
+	// Message msg = new Message();
+	// msg.setSender("nadir93");
+	// msg.setReceiver("/users/kicho");
+	// String jsonString =
+	// "{\"notification\":{\"notificationStyle\":1,\"contentTitle\":\"교육장소공지\","
+	// + "\"contentText\":\"메시지전송테스트.\", \"ticker\":\"부산은행교육장소알림장소: 수림연수원 시간: 3월
+	// 22일 오전: 12시\","
+	// + "\"summaryText\":\"장소: 수림연수원 시간: 3월 22일 오전: " + (int) (Math.random() *
+	// 100) + "시\", \"image\":\""
+	// + "encodedStr" + "\"}," + "\"event\":{\"title\":\"부산은행교육\",
+	// \"location\":\"수림연수원\", \"desc\":\"\","
+	// + "\"year\":\"2014\", \"month\":\"2\"," + "\"day\":\"22\"}" + "}";
+	// msg.setContent(jsonString);
+	// msg.setQos(1);
+	// msg.setSms(true);
+	// msg.setTimeOut(3);
+	// final int count = msgService.post(msg);
+	// Result result = new Result();
+	// result.setSuccess(true);
+	// List<String> messages = new ArrayList<String>() {
+	// {
+	// add("updates=" + count);
+	// }
+	// };
+	// result.setInfo(messages);
+	// Response res = new Response(result);
+	// logger.debug("response=" + res);
+	// return res;
+	// }
 
 	/**
 	 * 메시지 수정하기.

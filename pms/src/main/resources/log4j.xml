@@ -72,7 +72,7 @@
 
 	<logger name="ackLogger">
 		<level value="deug" />
-		<appender-ref ref="ackLogFileAppender" />
+		<appender-ref ref="console" />
 	</logger>
 	<!-- Root Logger -->
 	<root>

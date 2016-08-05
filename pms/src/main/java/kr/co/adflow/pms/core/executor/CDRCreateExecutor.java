@@ -334,9 +334,16 @@ public class CDRCreateExecutor {
 					recordSb.append(RecordFomatUtil.stingFormat("", 14));
 					rRCause = "01";
 				} else {
-					// recordSb.append(RecordFomatUtil.stingFormat(DateUtil.getDateTime(cDR.getPmaAckTime()),
-					// 14));
-					recordSb.append(RecordFomatUtil.stingFormat(DateUtil.getDateTime(cDR.getIssueTime()), 14));
+					logger.debug("업데이트 시간(실제 발송시간):" + cDR.getUpdateTime());
+					logger.debug("pma akc 시간:" + cDR.getPmaAckTime());
+					if (cDR.getPmaAckTime().getTime() >= cDR.getUpdateTime().getTime()) {
+						logger.debug("ack 도착 시간이 정상");
+						recordSb.append(RecordFomatUtil.stingFormat(DateUtil.getDateTime(cDR.getPmaAckTime()), 14));
+					} else {
+						logger.debug("ack 도착 시간이 정상이 아닌경우");
+						recordSb.append(RecordFomatUtil.stingFormat(DateUtil.getDateTime(cDR.getIssueTime()), 14));
+					}
+
 					rRCause = "00";
 				}
 

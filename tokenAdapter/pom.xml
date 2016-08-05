@@ -148,15 +148,15 @@
 			<id>production</id>
 			<properties>
 				<!-- 푸시서버주소 -->
-				<server.ip>127.0.0.1</server.ip>
+				<server.ip>14.63.217.141</server.ip>
 				<!-- 푸시서버포트 -->
-				<server.port>8080</server.port>
+				<server.port>38080</server.port>
 				<!-- 어플리케이션 로깅레벨 -->
 				<log.level>error</log.level>
 				<!-- rest api version -->
 				<api.version>v1</api.version>
 				<!-- rest api key -->
-				<api.key>devServer2</api.key>
+				<api.key>KTPJAAS</api.key>
 				<!-- 인증유무 -->
 				<auth>true</auth>
 				<!-- <db.driverClass>oracle.jdbc.driver.OracleDriver</db.driverClass> 

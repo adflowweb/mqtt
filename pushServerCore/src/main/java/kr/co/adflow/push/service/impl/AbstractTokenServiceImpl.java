@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import kr.co.adflow.push.dao.DeviceDao;
@@ -203,21 +204,29 @@ abstract public class AbstractTokenServiceImpl implements TokenService {
 			// TODO:프로비저닝서버에게 삭제할 userID 전달
 			Token tokenResult = tokenDao.get(token);
 			logger.debug("삭제대상 사용자 아이디:" + tokenResult.getUserID());
-			RestTemplate proRestTemplate = new RestTemplate();
-			String proUrl = "http://14.63.217.141:38083/user/" + tokenResult.getUserID() + "?token=12345678";
-			logger.debug("요청 url:" + proUrl);
-			MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
-			headers.add("Content-Type", "application/json");
-			headers.add("accept-version", "1.0.0");
-			HttpEntity entity = new HttpEntity(headers);
-			ResponseEntity<String> response = proRestTemplate.exchange(proUrl, HttpMethod.DELETE, entity, String.class);
-			HttpStatus httpStatus = response.getStatusCode();
-			int responseCode = httpStatus.value();
-			logger.debug("응답코드:" + responseCode);
+			int responseCode = 0;
+			try {
+				RestTemplate proRestTemplate = new RestTemplate();
+				String proUrl = "http://14.63.217.141:38083/user/" + tokenResult.getUserID() + "?token=12345678";
+				logger.debug("요청 url:" + proUrl);
+				MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
+				headers.add("Content-Type", "application/json");
+				headers.add("accept-version", "1.0.0");
+				HttpEntity entity = new HttpEntity(headers);
+				ResponseEntity<String> response = proRestTemplate.exchange(proUrl, HttpMethod.DELETE, entity,
+						String.class);
+				HttpStatus httpStatus = response.getStatusCode();
+				responseCode = httpStatus.value();
+				logger.debug("응답코드:" + responseCode);
+			} catch (HttpClientErrorException e) {
+				logger.debug("Provisioning Server 로 Rest 요청중에 error 발생");
+				throw new Exception();
+			}
 			if (responseCode != 200) {
 				logger.debug("에라 발생");
 				throw new Exception();
 			}
+
 			logger.debug("토큰삭제 시작:" + token);
 			count = tokenDao.delete(token);
 			logger.debug("delete종료(updates=" + count + ")");
