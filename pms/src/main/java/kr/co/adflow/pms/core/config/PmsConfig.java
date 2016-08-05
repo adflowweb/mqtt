@@ -17,11 +17,11 @@ public class PmsConfig {
 	@Value("#{pms['executor.server.old.id']}")
 	public String EXECUTOR_SERVER_ID; // = "S01";
 
-	@Value("#{pms['executor.server.id2']}")
-	public String EXECUTOR_SERVER_ID2; // = "S01";
+	@Value("#{pms['executor.server.id']}")
+	public String EXECUTOR_SERVER_ID2; // = "new pms 1";
 
-	@Value("#{pms['executor.server.id3']}")
-	public String EXECUTOR_SERVER_ID3; // = "S01";
+	@Value("#{pms['executor.server.id2']}")
+	public String EXECUTOR_SERVER_ID3; // = "new pms 2";
 
 	/** The executor delay time. */
 	@Value("#{pms['executor.delay.time']}")

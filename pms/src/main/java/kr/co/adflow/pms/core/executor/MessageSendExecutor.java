@@ -99,6 +99,33 @@ public class MessageSendExecutor {
 
 	}
 
+	/**
+	 * Send message array.
+	 */
+	public void sendMessageArray3() {
+
+		if (!zookeeperHandler.getLeader()) {
+			logger.debug(" sendMessageArray3() 나는 리더가 아닙니다");
+			return;
+		}
+		logger.debug(" sendMessageArray3() 현재 리더 입니다!");
+		messageSendService.sendMessageArray(pmsConfig.EXECUTOR_SERVER_ID2, pmsConfig.EXECUTOR_SEND_LIMIT);
+
+	}
+
+	/**
+	 * Send reservation message array.
+	 */
+	public void sendReservationMessageArray3() {
+		if (!zookeeperHandler.getLeader()) {
+			logger.debug("sendReservationMessageArray3() 나는 리더가 아닙니다");
+			return;
+		}
+		logger.debug("sendReservationMessageArray3() 현재 리더 입니다!");
+		messageSendService.sendReservationMessageArray(pmsConfig.EXECUTOR_SERVER_ID3, pmsConfig.EXECUTOR_SEND_LIMIT);
+
+	}
+
 	// @Scheduled(cron=PmsConfig.EXECUTOR_CALLBACK_CRON)
 	/**
 	 * Send callback.
@@ -120,11 +147,25 @@ public class MessageSendExecutor {
 	public void sendCallback2() {
 
 		if (!zookeeperHandler.getLeader()) {
-			logger.debug("sendCallback() 나는 리더가 아닙니다");
+			logger.debug("sendCallback()2 나는 리더가 아닙니다");
 			return;
 		}
-		logger.debug("sendCallback() 현재 리더 입니다!");
+		logger.debug("sendCallback()2 현재 리더 입니다!");
 		messageSendService.sendCallback(pmsConfig.EXECUTOR_SERVER_ID2, pmsConfig.EXECUTOR_SEND_LIMIT);
+
+	}
+
+	/**
+	 * Send callback.
+	 */
+	public void sendCallback3() {
+
+		if (!zookeeperHandler.getLeader()) {
+			logger.debug("sendCallback()3 나는 리더가 아닙니다");
+			return;
+		}
+		logger.debug("sendCallback()3 현재 리더 입니다!");
+		messageSendService.sendCallback(pmsConfig.EXECUTOR_SERVER_ID3, pmsConfig.EXECUTOR_SEND_LIMIT);
 
 	}
 
