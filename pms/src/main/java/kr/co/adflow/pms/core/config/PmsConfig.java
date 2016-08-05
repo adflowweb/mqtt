@@ -93,7 +93,7 @@ public class PmsConfig {
 	@Value("#{pms['zookeeper.node']}")
 	public String ZOOKEEPER_NODE;
 
-	@Value("#{pms['zookeeper.id']}")
+	@Value("#{pms['zookeeper.old.id']}") //구버전의경우 올드아이디를 사용
 	public String ZOOKEEPER_ID;
 
 	// /** The mq.pcf.hostname. */
