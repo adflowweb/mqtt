@@ -31,6 +31,6 @@ public interface UserMessageService {
 	 *            the msg
 	 * @return the list
 	 */
-	// public Integer groupListCnt(String groupTopic) throws Exception;
+	public Integer groupListCnt(String groupTopic) throws Exception;
 
 }

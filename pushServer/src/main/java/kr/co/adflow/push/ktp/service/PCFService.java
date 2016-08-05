@@ -14,22 +14,26 @@ import kr.co.adflow.push.domain.ktp.Status;
  */
 public interface PCFService {
 
-	// /**
-	// * Gets the.
-	// *
-	// * @param token the token
-	// * @return the string[]
-	// * @throws Exception the exception
-	// */
-	// String[] get(String token) throws Exception;
-	//
-	// /**
-	// * Gets the status.
-	// *
-	// * @param token the token
-	// * @return the status
-	// * @throws Exception the exception
-	// */
-	// Status getStatus(String token) throws Exception;
+	/**
+	 * Gets the.
+	 *
+	 * @param token
+	 *            the token
+	 * @return the string[]
+	 * @throws Exception
+	 *             the exception
+	 */
+	String[] get(String token) throws Exception;
+
+	/**
+	 * Gets the status.
+	 *
+	 * @param token
+	 *            the token
+	 * @return the status
+	 * @throws Exception
+	 *             the exception
+	 */
+	Status getStatus(String token) throws Exception;
 
 }

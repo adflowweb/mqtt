@@ -434,6 +434,16 @@
 				<zookeeper.id>dev1</zookeeper.id>
 				<zookeeper.node>/zookeepertest</zookeeper.node>
 
+				<mq.pcf.id>adflow</mq.pcf.id>
+				<mq.pcf.password>!ADFlow@</mq.pcf.password>
+				<mq.pcf.port>14144</mq.pcf.port>
+				<mq.pcf.channel>ADFlowPCF</mq.pcf.channel>
+				<mq.pcf.host>14.63.217.141</mq.pcf.host>
+				<mq.pcf.maxconnections>50</mq.pcf.maxconnections>
+
+				<!-- Redis info -->
+				<jedis.expire>86400</jedis.expire>
+				<jedis.hosts>localhost</jedis.hosts>
 
 
 
@@ -484,6 +494,19 @@
 				<!--id 변경필요 -->
 				<zookeeper.id>dev1</zookeeper.id>
 				<zookeeper.node>/dev1</zookeeper.node>
+
+
+
+				<mq.pcf.id>adflow</mq.pcf.id>
+				<mq.pcf.password>!ADFlow@</mq.pcf.password>
+				<mq.pcf.port>14142</mq.pcf.port>
+				<mq.pcf.channel>ADFlowPCF</mq.pcf.channel>
+				<mq.pcf.host>14.63.217.141</mq.pcf.host>
+				<mq.pcf.maxconnections>50</mq.pcf.maxconnections>
+
+				<!-- Redis info -->
+				<jedis.expire>86400</jedis.expire>
+				<jedis.hosts>localhost</jedis.hosts>
 			</properties>
 		</profile>
 		<!-- Production environment @ production server -->
@@ -530,6 +553,18 @@
 				<zookeeper.url>172.27.0.101</zookeeper.url>
 				<zookeeper.id>dev1</zookeeper.id>
 				<zookeeper.node>/dev1</zookeeper.node>
+
+
+				<mq.pcf.id>adflow</mq.pcf.id>
+				<mq.pcf.password>!ADFlow@</mq.pcf.password>
+				<mq.pcf.port>14142</mq.pcf.port>
+				<mq.pcf.channel>ADFlowPCF</mq.pcf.channel>
+				<mq.pcf.host>14.63.217.141</mq.pcf.host>
+				<mq.pcf.maxconnections>50</mq.pcf.maxconnections>
+
+				<!-- Redis info -->
+				<jedis.expire>86400</jedis.expire>
+				<jedis.hosts>localhost</jedis.hosts>
 
 			</properties>
 		</profile>

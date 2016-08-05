@@ -42,7 +42,8 @@ public class CommonController extends BaseController {
 	/**
 	 * Auth user.
 	 *
-	 * @param auth the auth
+	 * @param auth
+	 *            the auth
 	 * @return the response
 	 */
 	@RequestMapping(value = "/adm/cmm/auth", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
@@ -59,23 +60,23 @@ public class CommonController extends BaseController {
 		return res;
 
 	}
-	
+
 	/**
 	 * Auth token.
 	 *
-	 * @param String the token
+	 * @param String
+	 *            the token
 	 * @return the response
 	 */
 	@RequestMapping(value = "/adm/cmm/auth", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
 	public Response authToken(@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String token) throws Exception {
 
+		// if (token == null || token.trim().length() == 0) {
+		//
+		// throw new PmsRuntimeException("invalid token:"+token);
+		// }
 
-//		if (token == null || token.trim().length() == 0) {
-//
-//			throw new PmsRuntimeException("invalid token:"+token);
-//		}
-		
 		boolean auth = commonService.authToken(token);
 
 		Result<Validation> result = new Result<Validation>();
@@ -86,23 +87,23 @@ public class CommonController extends BaseController {
 		return res;
 
 	}
-	
+
 	/**
 	 * Auth appKey.
 	 *
-	 * @param String the appKey
+	 * @param String
+	 *            the appKey
 	 * @return the response
 	 */
 	@RequestMapping(value = "/adm/cmm/authkey", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
 	public Response authKey(@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String key) throws Exception {
 
+		// if (token == null || token.trim().length() == 0) {
+		//
+		// throw new PmsRuntimeException("invalid token:"+token);
+		// }
 
-//		if (token == null || token.trim().length() == 0) {
-//
-//			throw new PmsRuntimeException("invalid token:"+token);
-//		}
-		
 		boolean auth = commonService.authKey(key);
 
 		Result<Validation> result = new Result<Validation>();
@@ -113,6 +114,5 @@ public class CommonController extends BaseController {
 		return res;
 
 	}
-	
 
 }

@@ -121,31 +121,28 @@ public class UserMessageController extends BaseController {
 	 * @return the response
 	 * @throws Exception the exception
 	 */
-	// @RequestMapping(value = "/groups/listCnt", method = RequestMethod.GET,
-	// params = "groupTopic", consumes = StaticConfig.HEADER_CONTENT_TYPE,
-	// produces = StaticConfig.HEADER_CONTENT_TYPE)
-	// @ResponseBody
-	// public Response<Result<Integer>> groupsListCnt(
-	// @RequestParam("groupTopic") String groupTopic) throws Exception {
-	//
-	// logger.debug("=== group Topic :{}", groupTopic);
-	//
-	// if (groupTopic == null || groupTopic.trim().length() == 0) {
-	// throw new RuntimeException("Group Topic is empty.");
-	// }
-	//
-	// Integer resultCnt = userMessageService.groupListCnt (groupTopic);
-	//
-	// Result<Integer> result = new Result<Integer>();
-	// result.setSuccess(true);
-	//
-	// result.setData(resultCnt);
-	// @SuppressWarnings({ "unchecked", "rawtypes" })
-	// Response<Result<Integer>> res = new Response(result);
-	//
-	// logger.debug("=== resultCnt :{}", resultCnt);
-	// return res;
-	// }
+	@RequestMapping(value = "/groups/listCnt", method = RequestMethod.GET, params = "groupTopic", consumes = StaticConfig.HEADER_CONTENT_TYPE, produces = StaticConfig.HEADER_CONTENT_TYPE)
+	@ResponseBody
+	public Response<Result<Integer>> groupsListCnt(@RequestParam("groupTopic") String groupTopic) throws Exception {
+
+		logger.debug("=== group Topic :{}", groupTopic);
+
+		if (groupTopic == null || groupTopic.trim().length() == 0) {
+			throw new RuntimeException("Group Topic is empty.");
+		}
+
+		Integer resultCnt = userMessageService.groupListCnt(groupTopic);
+
+		Result<Integer> result = new Result<Integer>();
+		result.setSuccess(true);
+
+		result.setData(resultCnt);
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		Response<Result<Integer>> res = new Response(result);
+
+		logger.debug("=== resultCnt :{}", resultCnt);
+		return res;
+	}
 
 	/**
 	 * Checks if is valid.
