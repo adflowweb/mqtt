@@ -15,7 +15,7 @@ public class PmsConfig {
 
 	/** The executor server id. */
 	@Value("#{pms['executor.server.old.id']}")
-	public String EXECUTOR_SERVER_ID; // = "S01";
+	public String EXECUTOR_SERVER_ID; // = "올드버전의 아이디를 자신의 아이디로 사용 config 공유문";
 
 	@Value("#{pms['executor.server.id']}")
 	public String EXECUTOR_SERVER_ID2; // = "new pms 1";
