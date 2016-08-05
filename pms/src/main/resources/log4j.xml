@@ -40,7 +40,7 @@
 
 	<!-- Application Loggers -->
 	<logger name="kr.co.adflow.pms">
-		<level value="deug" />
+		<level value="debug" />
 		<appender-ref ref="console" />
 	</logger>
 
@@ -65,13 +65,13 @@
 	</logger>
 
 	<logger name="messageTrLogger">
-		<level value="deug" />
+		<level value="debug" />
 		<appender-ref ref="messageTrLogFileAppender" />
 	</logger>
 
 
 	<logger name="ackLogger">
-		<level value="deug" />
+		<level value="debug" />
 		<appender-ref ref="console" />
 	</logger>
 	<!-- Root Logger -->
