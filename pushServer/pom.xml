@@ -493,7 +493,7 @@
 				<zookeeper.url>172.27.0.101,172.27.56.183,172.27.0.231</zookeeper.url>
 				<!--id 변경필요 -->
 				<zookeeper.id>dev1</zookeeper.id>
-				<zookeeper.node>/dev1</zookeeper.node>
+				<zookeeper.node>/pcsnode</zookeeper.node>
 
 
 
