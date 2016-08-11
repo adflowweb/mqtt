@@ -8,6 +8,7 @@ import kr.co.adflow.push.domain.ktp.request.DigInfo;
 import kr.co.adflow.push.domain.ktp.request.FwInfo;
 import kr.co.adflow.push.domain.ktp.request.KeepAliveTime;
 import kr.co.adflow.push.domain.ktp.request.SessionClean;
+import kr.co.adflow.push.domain.ktp.request.SystemMessage;
 import kr.co.adflow.push.domain.ktp.request.Ufmi;
 import kr.co.adflow.push.domain.ktp.request.UserID;
 import kr.co.adflow.push.domain.ktp.request.UserMessage;
@@ -68,6 +69,8 @@ public interface PlatformService {
 	 *            the message
 	 */
 	public void sendUserMessage(UserMessage message);
+
+	public void sendSystemMessage(SystemMessage systemMessage);
 
 	/**
 	 * Valid user id.

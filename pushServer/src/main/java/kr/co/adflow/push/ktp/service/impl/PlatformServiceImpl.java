@@ -18,6 +18,7 @@ import kr.co.adflow.push.domain.ktp.request.DigInfo;
 import kr.co.adflow.push.domain.ktp.request.FwInfo;
 import kr.co.adflow.push.domain.ktp.request.KeepAliveTime;
 import kr.co.adflow.push.domain.ktp.request.SessionClean;
+import kr.co.adflow.push.domain.ktp.request.SystemMessage;
 import kr.co.adflow.push.domain.ktp.request.Ufmi;
 import kr.co.adflow.push.domain.ktp.request.UserID;
 import kr.co.adflow.push.domain.ktp.request.UserMessage;
@@ -63,6 +64,9 @@ public class PlatformServiceImpl implements PlatformService {
 	private static final int CMD_USER_MESSAGE = 106;
 
 	private static final int CMD_SESSION_CLEAN = 107;
+
+	/** The Constant CMD_KEEP_ALIVE_TIME. */
+	private static final int CMD_SYSTEM_MESSAGE = 108;
 
 	/** The Constant DIG_ACCOUNT_INFO_INTENT_NAME. */
 	private static final String DIG_ACCOUNT_INFO_ACTION_NAME = "kr.co.ktpowertel.push.digAccountInfo";
@@ -421,6 +425,43 @@ public class PlatformServiceImpl implements PlatformService {
 		}
 
 		return result;
+
+	}
+
+	@Override
+	public void sendSystemMessage(SystemMessage systemMessage) {
+		// TODO Auto-generated method stub
+
+		Message message = new Message();
+		message.setId(KeyGenerator.generateMsgId());
+		message.setType(CMD_SYSTEM_MESSAGE);
+		message.setStatus(Message.STATUS_WAIT_FOR_SENDING);
+		message.setQos(DeliveryMode.PERSISTENT);
+		message.setIssue(new Date());
+		message.setServiceID(PMA_USER_MESSAGE_ACTION_NAME);
+		message.setSender(systemMessage.getSender());
+		message.setReceiver(systemMessage.getReceiver());
+		message.setContentType(CONTENT_TYPE_JSON);
+		message.setContent(systemMessage.getContent());
+
+		logger.debug("sendSystemMessage:" + message.toString());
+		try {
+			int cnt = this.postMessage(message);
+
+			// jmsTemplate.execute(keepAliveTime.getReceiver(),new
+			// DirectMsgHandler(message));
+			jmsTemplate.execute(new DirectMsgHandlerBySessionCallback(jmsTemplate, message));
+
+			message.setStatus(Message.STATUS_PUSH_SENT);
+			message.setIssue(new Date());
+			messageDao.putIssue(message);
+
+		} catch (Exception e) {
+			// TODO runtime exception 처리 필요
+			logger.error("error is {}", e);
+			throw new RuntimeException(e);
+
+		}
 
 	}
 

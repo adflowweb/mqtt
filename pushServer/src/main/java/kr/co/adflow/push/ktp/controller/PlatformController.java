@@ -16,6 +16,7 @@ import kr.co.adflow.push.domain.ktp.request.FwInfo;
 import kr.co.adflow.push.domain.ktp.request.KeepAliveTime;
 import kr.co.adflow.push.domain.ktp.request.Precheck;
 import kr.co.adflow.push.domain.ktp.request.SessionClean;
+import kr.co.adflow.push.domain.ktp.request.SystemMessage;
 import kr.co.adflow.push.domain.ktp.request.Ufmi;
 import kr.co.adflow.push.domain.ktp.request.UpdateUfmi;
 import kr.co.adflow.push.domain.ktp.request.UserID;
@@ -133,6 +134,24 @@ public class PlatformController {
 		List<String> messages = new ArrayList<String>();
 		messages.add("receiver=" + keepAliveTime.getReceiver());
 		messages.add("content=" + keepAliveTime.getContent());
+
+		result.setInfo(messages);
+		Response res = new Response(result);
+		logger.info("response={}", res);
+		return res;
+	}
+
+	@RequestMapping(value = "system/message", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
+	@ResponseBody
+	public Response systemMessage(@RequestBody SystemMessage systemMessage) throws Exception {
+
+		platformService.sendSystemMessage(systemMessage);
+
+		Result result = new Result();
+		result.setSuccess(true);
+		List<String> messages = new ArrayList<String>();
+		messages.add("receiver=" + systemMessage.getReceiver());
+		messages.add("content=" + systemMessage.getContent());
 
 		result.setInfo(messages);
 		Response res = new Response(result);
