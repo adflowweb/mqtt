@@ -442,7 +442,7 @@ public class PlatformServiceImpl implements PlatformService {
 		message.setReceiver(systemMessage.getReceiver());
 		message.setContentType(CONTENT_TYPE_JSON);
 		message.setContent("{\"hostInfo\":\"" + systemMessage.getContent() + "\"}");
-		// message.setContent(systemMessage.getContent());
+		//  message.setContent(systemMessage.getContent());
 
 		logger.debug("sendSystemMessage:" + message.toString());
 		try {
