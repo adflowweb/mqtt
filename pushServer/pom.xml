@@ -552,7 +552,7 @@
 				<!-- zookeeper -->
 				<zookeeper.url>172.27.0.101</zookeeper.url>
 				<zookeeper.id>dev1</zookeeper.id>
-				<zookeeper.node>/dev1</zookeeper.node>
+				<zookeeper.node>/pcsnode</zookeeper.node>
 
 
 				<mq.pcf.id>adflow</mq.pcf.id>
