@@ -20,7 +20,7 @@ public class PmsConfig {
 	@Value("#{pms['executor.server.id2']}")
 	public String EXECUTOR_SERVER_ID2; // = "2번서버 아이디";
 
-	@Value("#{pms['executor.server.id3']}")
+	@Value("#{pms['executor.server.old.id']}")
 	public String EXECUTOR_SERVER_ID3; // = "구서버 아이디";
 
 	/** The executor delay time. */
