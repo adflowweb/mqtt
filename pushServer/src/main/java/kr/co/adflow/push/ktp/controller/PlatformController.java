@@ -6,6 +6,16 @@ package kr.co.adflow.push.ktp.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import kr.co.adflow.push.domain.Message;
 import kr.co.adflow.push.domain.Response;
 import kr.co.adflow.push.domain.Result;
@@ -16,6 +26,7 @@ import kr.co.adflow.push.domain.ktp.request.FwInfo;
 import kr.co.adflow.push.domain.ktp.request.KeepAliveTime;
 import kr.co.adflow.push.domain.ktp.request.Precheck;
 import kr.co.adflow.push.domain.ktp.request.SessionClean;
+import kr.co.adflow.push.domain.ktp.request.SystemMessage;
 import kr.co.adflow.push.domain.ktp.request.Ufmi;
 import kr.co.adflow.push.domain.ktp.request.UpdateUfmi;
 import kr.co.adflow.push.domain.ktp.request.UserID;
@@ -24,16 +35,6 @@ import kr.co.adflow.push.exception.PushException;
 import kr.co.adflow.push.executor.TpsExceutor;
 import kr.co.adflow.push.ktp.service.PlatformService;
 import kr.co.adflow.push.service.UserService;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -133,6 +134,24 @@ public class PlatformController {
 		List<String> messages = new ArrayList<String>();
 		messages.add("receiver=" + keepAliveTime.getReceiver());
 		messages.add("content=" + keepAliveTime.getContent());
+
+		result.setInfo(messages);
+		Response res = new Response(result);
+		logger.info("response={}", res);
+		return res;
+	}
+
+	@RequestMapping(value = "system/message", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
+	@ResponseBody
+	public Response systemMessage(@RequestBody SystemMessage systemMessage) throws Exception {
+
+		platformService.sendSystemMessage(systemMessage);
+
+		Result result = new Result();
+		result.setSuccess(true);
+		List<String> messages = new ArrayList<String>();
+		messages.add("receiver=" + systemMessage.getReceiver());
+		messages.add("content=" + systemMessage.getContent());
 
 		result.setInfo(messages);
 		Response res = new Response(result);
