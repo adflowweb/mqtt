@@ -40,43 +40,44 @@
 
 	<!-- Application Loggers -->
 	<logger name="kr.co.adflow.pms">
-		<level value="debug" />
+		<level value="DEBUG" />
 		<appender-ref ref="console" />
 	</logger>
 
 	<!-- 3rdparty Loggers -->
 	<logger name="org.springframework.core">
-		<level value="info" />
+		<level value="INFO" />
 	</logger>
 
 	<logger name="org.springframework.beans">
-		<level value="info" />
+		<level value="INFO" />
 	</logger>
 
 	<logger name="org.springframework.context">
-		<level value="info" />
+		<level value="INFO" />
 	</logger>
 
 	<logger name="org.springframework.web">
-		<level value="info" />
+		<level value="INFO" />
 	</logger>
 	<logger name="org.apache.ibatis">
-		<level value="info" />
+		<level value="INFO" />
 	</logger>
 
 	<logger name="messageTrLogger">
-		<level value="debug" />
+		<level value="DEBUG" />
 		<appender-ref ref="messageTrLogFileAppender" />
 	</logger>
 
 
 	<logger name="ackLogger">
-		<level value="debug" />
+		<level value="DEBUG" />
 		<appender-ref ref="console" />
 	</logger>
 	<!-- Root Logger -->
 	<root>
-		<priority value="debug" />
+		<level value="DEBUG" />
+		<appender-ref ref="console" />
 	</root>
 
 
