@@ -43,24 +43,24 @@
 	</logger>
 
 	<!-- 3rdparty Loggers -->
-	<logger name="org.springframework.core">
-		<level value="INFO" />
-	</logger>
+	<!-- <logger name="org.springframework.core"> -->
+	<!-- <level value="INFO" /> -->
+	<!-- </logger> -->
 
-	<logger name="org.springframework.beans">
-		<level value="INFO" />
-	</logger>
+	<!-- <logger name="org.springframework.beans"> -->
+	<!-- <level value="INFO" /> -->
+	<!-- </logger> -->
 
-	<logger name="org.springframework.context">
-		<level value="INFO" />
-	</logger>
+	<!-- <logger name="org.springframework.context"> -->
+	<!-- <level value="INFO" /> -->
+	<!-- </logger> -->
 
-	<logger name="org.springframework.web">
-		<level value="INFO" />
-	</logger>
-	<logger name="org.apache.ibatis">
-		<level value="INFO" />
-	</logger>
+	<!-- <logger name="org.springframework.web"> -->
+	<!-- <level value="INFO" /> -->
+	<!-- </logger> -->
+	<!-- <logger name="org.apache.ibatis"> -->
+	<!-- <level value="INFO" /> -->
+	<!-- </logger> -->
 
 	<logger name="messageTrLogger">
 		<level value="DEBUG" />
