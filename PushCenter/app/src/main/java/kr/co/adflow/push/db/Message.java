@@ -111,16 +111,16 @@ public class Message {
     public String toString() {
         return "Message{" +
                 "msgID='" + msgID + '\'' +
-                ", serviceID='" + serviceID + '\'' +
-                ", topic='" + topic + '\'' +
-                ", payload=" + Arrays.toString(payload) +
-                ", qos=" + qos +
-                ", ack=" + ack +
-                ", broadcast=" + broadcast +
-                ", acked=" + acked +
-                ", broadcasted=" + broadcasted +
-                ", receivedate='" + receivedate + '\'' +
-                ", token='" + token + '\'' +
+                ", serviceID = '" + serviceID + '\'' +
+                ", topic = '" + topic + '\'' +
+                ", payload = " + Arrays.toString(payload) +
+                ", qos = " + qos +
+                ", ack = " + ack +
+                ", broadcast = " + broadcast +
+                ", acked = " + acked +
+                ", broadcasted = " + broadcasted +
+                ", receivedate = '" + receivedate + '\'' +
+                ", token = '" + token + '\'' +
                 '}';
     }
 }
