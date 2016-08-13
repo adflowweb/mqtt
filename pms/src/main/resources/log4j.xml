@@ -12,8 +12,7 @@
 
 	<!-- Ack 날짜별 트랜잭션로그 파일 생성 -->
 	<appender name="ackLogFileAppender" class="org.apache.log4j.DailyRollingFileAppender">
-		<!-- <param name="File" value="/cdrData/tranLog/ack.log" /> -->
-		<param name="File" value="/Users/leechanho/DEV/ktp_4/temp/ack.log" />
+		<param name="File" value="/var/lib/tomcat-pms/logs/ack.log" />
 		<param name="Append" value="true" />
 
 		<param name="DatePattern" value="'.'yyyy-MM-dd" />
@@ -24,8 +23,7 @@
 
 	<!-- Message 날짜별 트랜잭션로그 파일 생성 -->
 	<appender name="messageTrLogFileAppender" class="org.apache.log4j.DailyRollingFileAppender">
-		<!-- <param name="File" value="//cdrData/tranLog/message.log" /> -->
-		<param name="File" value="/Users/leechanho/DEV/ktp_4/temp/message.log" />
+		<param name="File" value="/var/lib/tomcat-pms/logs/message.log" />
 		<param name="Append" value="true" />
 		<!-- param name="MaxFileSize" value="100MB"/ -->
 		<!-- param name="MaxBackupIndex" value="2"></param -->
@@ -40,43 +38,44 @@
 
 	<!-- Application Loggers -->
 	<logger name="kr.co.adflow.pms">
-		<level value="debug" />
+		<level value="DEBUG" />
 		<appender-ref ref="console" />
 	</logger>
 
 	<!-- 3rdparty Loggers -->
-	<logger name="org.springframework.core">
-		<level value="info" />
-	</logger>
+	<!-- <logger name="org.springframework.core"> -->
+	<!-- <level value="INFO" /> -->
+	<!-- </logger> -->
 
-	<logger name="org.springframework.beans">
-		<level value="info" />
-	</logger>
+	<!-- <logger name="org.springframework.beans"> -->
+	<!-- <level value="INFO" /> -->
+	<!-- </logger> -->
 
-	<logger name="org.springframework.context">
-		<level value="info" />
-	</logger>
+	<!-- <logger name="org.springframework.context"> -->
+	<!-- <level value="INFO" /> -->
+	<!-- </logger> -->
 
-	<logger name="org.springframework.web">
-		<level value="info" />
-	</logger>
-	<logger name="org.apache.ibatis">
-		<level value="info" />
-	</logger>
+	<!-- <logger name="org.springframework.web"> -->
+	<!-- <level value="INFO" /> -->
+	<!-- </logger> -->
+	<!-- <logger name="org.apache.ibatis"> -->
+	<!-- <level value="INFO" /> -->
+	<!-- </logger> -->
 
 	<logger name="messageTrLogger">
-		<level value="debug" />
+		<level value="DEBUG" />
 		<appender-ref ref="messageTrLogFileAppender" />
 	</logger>
 
 
 	<logger name="ackLogger">
-		<level value="debug" />
-		<appender-ref ref="console" />
+		<level value="DEBUG" />
+		<appender-ref ref="ackLogFileAppender" />
 	</logger>
 	<!-- Root Logger -->
 	<root>
-		<priority value="debug" />
+		<level value="DEBUG" />
+		<appender-ref ref="console" />
 	</root>
 
 

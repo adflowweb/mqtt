@@ -10,6 +10,7 @@ import kr.co.adflow.push.domain.ktp.request.FwInfo;
 import kr.co.adflow.push.domain.ktp.request.KeepAliveTime;
 import kr.co.adflow.push.domain.ktp.request.Precheck;
 import kr.co.adflow.push.domain.ktp.request.SessionClean;
+import kr.co.adflow.push.domain.ktp.request.SystemMessage;
 import kr.co.adflow.push.ktp.controller.PlatformController;
 
 @Test
@@ -98,4 +99,14 @@ public class PlatfromControllerTest extends AbstractTestNGSpringContextTests {
 	// precheck.setSender("sender");
 	// controller.sendPrecheck(precheck);
 	// }
+	//
+	// @Test
+	// void sendSystemMessage() throws Exception {
+	// SystemMessage systemMessage = new SystemMessage();
+	// systemMessage.setContent("{\"123\":\"123\"}");
+	// systemMessage.setReceiver("/receiver");
+	// systemMessage.setSender("/sender");
+	// controller.systemMessage(systemMessage);
+	// }
+
 }

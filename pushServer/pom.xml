@@ -432,7 +432,7 @@
 				<!-- zookeeper -->
 				<zookeeper.url>192.168.59.103:2181</zookeeper.url>
 				<zookeeper.id>dev1</zookeeper.id>
-				<zookeeper.node>/zookeepertest</zookeeper.node>
+				<zookeeper.node>/pcsnode</zookeeper.node>
 
 
 
@@ -483,7 +483,7 @@
 				<zookeeper.url>172.27.0.101,172.27.56.183,172.27.0.231</zookeeper.url>
 				<!--id 변경필요 -->
 				<zookeeper.id>dev1</zookeeper.id>
-				<zookeeper.node>/dev1</zookeeper.node>
+				<zookeeper.node>/pcsnode</zookeeper.node>
 			</properties>
 		</profile>
 		<!-- Production environment @ production server -->
@@ -529,7 +529,7 @@
 				<!-- zookeeper -->
 				<zookeeper.url>172.27.0.101</zookeeper.url>
 				<zookeeper.id>dev1</zookeeper.id>
-				<zookeeper.node>/dev1</zookeeper.node>
+				<zookeeper.node>/pcsnode</zookeeper.node>
 
 			</properties>
 		</profile>
