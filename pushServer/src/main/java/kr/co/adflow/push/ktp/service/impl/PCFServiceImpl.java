@@ -155,6 +155,7 @@ public class PCFServiceImpl implements PCFService {
 	}
 
 	private String[] callPCF(String token) throws MQException, IOException {
+		logger.debug("step...1");
 		ConnectionManager connMan = MQEnvironment.getDefaultConnectionManager();
 		MQQueueManager qmgr = null;
 		PCFMessageAgent agent = null;
@@ -164,12 +165,13 @@ public class PCFServiceImpl implements PCFService {
 
 			qmgr = new MQQueueManager("*", connMan);
 
+			logger.debug("step...2");
 			agent = new PCFMessageAgent(qmgr);
 			PCFMessage request = new PCFMessage(MQConstants.MQCMD_INQUIRE_SUBSCRIPTION);
 			request.addParameter(MQConstants.MQCACF_SUB_NAME, token + ":*");
 
 			PCFMessage[] responses = agent.send(request);
-
+			logger.debug("step...3");
 			// System.out.println("responses.length ::" + responses.length);
 			subsList = new String[responses.length];
 			// String topic = "";
@@ -177,7 +179,9 @@ public class PCFServiceImpl implements PCFService {
 			for (int i = 0; i < responses.length; i++) {
 				subsList[i] = responses[i].getParameterValue(MQConstants.MQCA_TOPIC_STRING).toString();
 			}
+			logger.debug("step...4");
 		} catch (PCFException pcfe) {
+			logger.debug("step...5");
 			if (pcfe.getMessage().indexOf("2428") > 0) {
 				logger.error("해당 토큰관련 subscriptions 가 없습니다. -errorcode:2428");
 
@@ -186,12 +190,15 @@ public class PCFServiceImpl implements PCFService {
 			}
 
 		} catch (MQException mqe) {
+			logger.debug("step...6");
 			logger.error("MQException is ", mqe);
 			throw mqe;
 		} catch (IOException ioe) {
+			logger.debug("step...7");
 			logger.error("IOException is ", ioe);
 			throw ioe;
 		} finally {
+			logger.debug("step...8");
 			if (agent != null) {
 				try {
 					agent.disconnect();
@@ -202,6 +209,7 @@ public class PCFServiceImpl implements PCFService {
 				}
 			}
 			if (qmgr != null) {
+				logger.debug("step...9");
 				try {
 					qmgr.disconnect();
 				} catch (MQException e) {
