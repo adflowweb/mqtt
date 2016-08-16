@@ -94,6 +94,9 @@ public class PCFServiceImpl implements PCFService {
 			e.printStackTrace();
 		}
 
+		// 테스트 코드 추후삭제
+		jedis = null;
+		/////////////////
 		if (jedis != null) {
 			Boolean jedisOK = false;
 
