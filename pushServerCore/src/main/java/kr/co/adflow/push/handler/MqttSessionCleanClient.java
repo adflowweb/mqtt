@@ -73,6 +73,8 @@ public class MqttSessionCleanClient {
 	/** The Constant MQTT_PACKAGE. */
 	public static final String MQTT_PACKAGE = "org.eclipse.paho.client.mqttv3";
 
+	public static final String PROVISIONINGURL = prop.getProperty("provisioning.url");
+
 	/** The Constant SERVERURL. */
 	public static final String[] SERVERURL = prop.getProperty("mq.server.url").split(",");
 

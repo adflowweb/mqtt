@@ -445,6 +445,9 @@
 				<jedis.expire>86400</jedis.expire>
 				<jedis.hosts>localhost</jedis.hosts>
 
+				<!-- provisioning -->
+				<provisioning.url>http://14.63.217.141:38083/user</provisioning.url>
+
 
 
 			</properties>
@@ -507,6 +510,9 @@
 				<!-- Redis info -->
 				<jedis.expire>86400</jedis.expire>
 				<jedis.hosts>localhost</jedis.hosts>
+
+				<!-- provisioning -->
+				<provisioning.url>http://14.63.217.141:38083/user</provisioning.url>
 			</properties>
 		</profile>
 		<!-- Production environment @ production server -->
@@ -565,6 +571,9 @@
 				<!-- Redis info -->
 				<jedis.expire>86400</jedis.expire>
 				<jedis.hosts>localhost</jedis.hosts>
+
+				<!-- provisioning -->
+				<provisioning.url>http://14.63.217.141:38083/user</provisioning.url>
 
 			</properties>
 		</profile>

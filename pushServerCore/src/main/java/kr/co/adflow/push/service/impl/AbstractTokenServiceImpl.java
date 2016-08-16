@@ -3,6 +3,8 @@
  */
 package kr.co.adflow.push.service.impl;
 
+import java.io.IOException;
+
 import javax.annotation.Resource;
 
 import org.slf4j.LoggerFactory;
@@ -12,10 +14,12 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
 import kr.co.adflow.push.dao.DeviceDao;
@@ -25,6 +29,7 @@ import kr.co.adflow.push.domain.Device;
 import kr.co.adflow.push.domain.Token;
 import kr.co.adflow.push.domain.User;
 import kr.co.adflow.push.handler.MqttSessionCleanClient;
+import kr.co.adflow.push.handler.RestTemplateErrorHandler;
 import kr.co.adflow.push.service.TokenService;
 import kr.co.adflow.util.TokenGenerator;
 
@@ -58,6 +63,9 @@ abstract public class AbstractTokenServiceImpl implements TokenService {
 	/** The mqtt service impl. */
 	@Autowired
 	MqttSessionCleanClient mqttServiceImpl;
+
+	@Autowired
+	RestTemplateErrorHandler restTemplateErrorHandler;
 
 	/*
 	 * (non-Javadoc)
@@ -188,8 +196,11 @@ abstract public class AbstractTokenServiceImpl implements TokenService {
 	public int delete(String token) throws Exception {
 		logger.debug("delete시작(token=" + token + ")");
 
-		// 140829 - 토큰 삭제시 해당 토큰 cleansession = true 로 conneciton 후
-		// disconnection 시도 - start
+		// TODO:1.provisioning 서버에서 해당토큰이 삭제됨을 알려준다
+		this.notifyProvisioning(token);
+
+		// TODO:2.MQTT Client로 Connection 을 연결후 종료한다.(clean Session true)
+
 		String[] serverUrl = MqttSessionCleanClient.SERVERURL;
 		for (int i = 0; i < serverUrl.length; i++) {
 			mqttServiceImpl.mqttConnectionClean(token, serverUrl[i]);
@@ -201,36 +212,14 @@ abstract public class AbstractTokenServiceImpl implements TokenService {
 		logger.debug("result:" + result);
 		if (MqttSessionCleanClient.MQCONNCOUNT == result) {
 			MqttSessionCleanClient.MQCONNCOUNT = 0;
-			// TODO:프로비저닝서버에게 삭제할 userID 전달
-			Token tokenResult = tokenDao.get(token);
-			logger.debug("삭제대상 사용자 아이디:" + tokenResult.getUserID());
-			int responseCode = 0;
-			try {
-				RestTemplate proRestTemplate = new RestTemplate();
-				String proUrl = "http://14.63.217.141:38083/user/" + tokenResult.getUserID() + "?token=12345678";
-				logger.debug("요청 url:" + proUrl);
-				MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
-				headers.add("Content-Type", "application/json");
-				headers.add("accept-version", "1.0.0");
-				HttpEntity entity = new HttpEntity(headers);
-				ResponseEntity<String> response = proRestTemplate.exchange(proUrl, HttpMethod.DELETE, entity,
-						String.class);
-				HttpStatus httpStatus = response.getStatusCode();
-				responseCode = httpStatus.value();
-				logger.debug("응답코드:" + responseCode);
-			} catch (HttpClientErrorException e) {
-				logger.debug("Provisioning Server 로 Rest 요청중에 error 발생");
-				throw new Exception();
-			}
-			if (responseCode != 200) {
-				logger.debug("에라 발생");
-				throw new Exception();
-			}
 
 			logger.debug("토큰삭제 시작:" + token);
 			count = tokenDao.delete(token);
 			logger.debug("delete종료(updates=" + count + ")");
 
+		} else {
+			logger.debug("MQTT client 연결중 Exception 발생");
+			throw new Exception();
 		}
 
 		return count;
@@ -271,6 +260,47 @@ abstract public class AbstractTokenServiceImpl implements TokenService {
 		Token[] tokens = tokenDao.getMultiByUfmi(ufmi);
 
 		return tokens;
+	}
+
+	public void notifyProvisioning(String token) throws Exception {
+
+		Token tokenResult = tokenDao.get(token);
+		int responseCode = 0;
+		ResponseEntity<String> response = null;
+		ClientHttpResponse clientHttpResponse = null;
+		try {
+			RestTemplate proRestTemplate = new RestTemplate();
+			proRestTemplate.setErrorHandler(restTemplateErrorHandler);
+			clientHttpResponse = restTemplateErrorHandler.getClientHttpResponse();
+			String proUrl = MqttSessionCleanClient.PROVISIONINGURL + "/" + tokenResult.getUserID() + "?token=123456789";
+			logger.debug("요청 url:" + proUrl);
+			MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
+			headers.add("Content-Type", "application/json");
+			headers.add("accept-version", "1.0.0");
+			HttpEntity entity = new HttpEntity(headers);
+			response = proRestTemplate.exchange(proUrl, HttpMethod.DELETE, entity, String.class);
+			HttpStatus httpStatus = response.getStatusCode();
+			responseCode = httpStatus.value();
+			logger.debug("삭제요청 함 ");
+			if (responseCode == 200) {
+				logger.debug("정상응답");
+				logger.debug("Provisioning server token 삭제 완료");
+			} else if (responseCode == 404) {
+				logger.debug("해당 토큰 DATA가 Provsioning 서버에 존재하지 않음 정상삭제처리");
+			} else {
+				logger.debug("요청에라 예외발생");
+				throw new Exception();
+			}
+
+		} catch (HttpClientErrorException e) {
+			logger.debug("Provisioning Server 로 Rest 요청중에 error 발생");
+			responseCode = clientHttpResponse.getStatusCode().value();
+			logger.debug("response Code:" + responseCode);
+			logger.debug("요청 에라");
+			throw new Exception();
+
+		}
+
 	}
 
 }
