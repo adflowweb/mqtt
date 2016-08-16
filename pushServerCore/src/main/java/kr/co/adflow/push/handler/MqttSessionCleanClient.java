@@ -76,6 +76,8 @@ public class MqttSessionCleanClient {
 	/** The Constant SERVERURL. */
 	public static final String[] SERVERURL = prop.getProperty("mq.server.url").split(",");
 
+	public static final String PROVISIONINGURL = prop.getProperty("provisioning.url");
+
 	/** The Constant ssl. */
 	private static final boolean ssl = Boolean.parseBoolean(prop.getProperty("mq.server.ssl"));
 
