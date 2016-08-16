@@ -3,14 +3,15 @@ package kr.co.adflow.push;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
+
+import kr.co.adflow.push.util.DebugLog;
 
 /**
  *
  */
 public class PushPreference {
 
-    public static final String TAG = "PushPreference";
+    //public static final String TAG = "PushPreference";
 
     public static final String TOKEN = "token";
     public static final String SERVERURL = "serverURL";
@@ -29,9 +30,9 @@ public class PushPreference {
      * @param cxt
      */
     public PushPreference(Context cxt) {
-        Log.d(TAG, "PushPreference생성자시작(context=" + cxt + ")");
+        DebugLog.d("PushPreference 생성자 시작(context = " + cxt + ")");
         context = cxt;
-        Log.d(TAG, "PushPreference생성자종료)");
+        DebugLog.d("PushPreference 생성자 종료()");
     }
 
     /**
@@ -39,13 +40,13 @@ public class PushPreference {
      * @param value
      */
     public void put(String key, String value) {
-        Log.d(TAG, "put시작(key=" + key + ", value=" + value + ")");
+        DebugLog.d("put 시작(key = " + key + ", value = " + value + ")");
         SharedPreferences pref = context.getSharedPreferences(PREF_NAME,
                 Activity.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
         editor.putString(key, value);
         editor.commit();
-        Log.d(TAG, "put종료()");
+        DebugLog.d("put 종료()");
     }
 
     /**
@@ -53,13 +54,13 @@ public class PushPreference {
      * @param value
      */
     public void put(String key, boolean value) {
-        Log.d(TAG, "put시작(key=" + key + ", value=" + value + ")");
+        DebugLog.d("put 시작(key = " + key + ", value = " + value + ")");
         SharedPreferences pref = context.getSharedPreferences(PREF_NAME,
                 Activity.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
         editor.putBoolean(key, value);
         editor.commit();
-        Log.d(TAG, "put종료()");
+        DebugLog.d("put 종료()");
     }
 
     /**
@@ -67,13 +68,13 @@ public class PushPreference {
      * @param value
      */
     public void put(String key, int value) {
-        Log.d(TAG, "put시작(key=" + key + ", value=" + value + ")");
+        DebugLog.d("put 시작(key = " + key + ", value = " + value + ")");
         SharedPreferences pref = context.getSharedPreferences(PREF_NAME,
                 Activity.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
         editor.putInt(key, value);
         editor.commit();
-        Log.d(TAG, "put종료()");
+        DebugLog.d("put 종료()");
     }
 
     /**
@@ -82,15 +83,15 @@ public class PushPreference {
      * @return
      */
     public String getValue(String key, String value) {
-        Log.d(TAG, "getValue시작(key=" + key + ", value=" + value + ")");
+        DebugLog.d("getValue 시작(key = " + key + ", value = " + value + ")");
         SharedPreferences pref = context.getSharedPreferences(PREF_NAME,
                 Activity.MODE_PRIVATE);
         try {
             String val = pref.getString(key, value);
-            Log.d(TAG, "getValue종료(value=" + val + ")");
+            DebugLog.d("getValue 종료(value = " + val + ")");
             return val;
         } catch (Exception e) {
-            Log.d(TAG, "getValue종료(해당키가존재하지않습니다. return=" + value + ")");
+            DebugLog.d("getValue 종료(해당키가 존재하지 않습니다 return = " + value + ")");
             return value;
         }
     }
@@ -101,15 +102,15 @@ public class PushPreference {
      * @return
      */
     public int getValue(String key, int value) {
-        Log.d(TAG, "getValue시작(key=" + key + ", value=" + value + ")");
+        DebugLog.d("getValue 시작(key = " + key + ", value = " + value + ")");
         SharedPreferences pref = context.getSharedPreferences(PREF_NAME,
                 Activity.MODE_PRIVATE);
         try {
             int val = pref.getInt(key, value);
-            Log.d(TAG, "getValue종료(value=" + val + ")");
+            DebugLog.d("getValue 종료(value = " + val + ")");
             return val;
         } catch (Exception e) {
-            Log.d(TAG, "getValue종료(해당키가존재하지않습니다. return=" + value + ")");
+            DebugLog.d("getValue 종료(해당키가 존재하지 않습니다 return = " + value + ")");
             return value;
         }
     }
@@ -120,26 +121,26 @@ public class PushPreference {
      * @return
      */
     public boolean getValue(String key, boolean value) {
-        Log.d(TAG, "getValue시작(key=" + key + ", value=" + value + ")");
+        DebugLog.d("getValue 시작(key = " + key + ", value = " + value + ")");
         SharedPreferences pref = context.getSharedPreferences(PREF_NAME,
                 Activity.MODE_PRIVATE);
         try {
             boolean val = pref.getBoolean(key, value);
-            Log.d(TAG, "getValue종료(value=" + val + ")");
+            DebugLog.d("getValue 종료(value = " + val + ")");
             return val;
         } catch (Exception e) {
-            Log.d(TAG, "getValue종료(해당키가존재하지않습니다. return=" + value + ")");
+            DebugLog.d("getValue 종료(해당키가 존재하지 않습니다 return = " + value + ")");
             return value;
         }
     }
 
     public void remove(String key) {
-        Log.d(TAG, "remove시작(key=" + key + ")");
+        DebugLog.d("remove 시작(key = " + key + ")");
         SharedPreferences pref = context.getSharedPreferences(PREF_NAME,
                 Activity.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
         editor.remove(key);
         editor.commit();
-        Log.d(TAG, "remove종료()");
+        DebugLog.d("remove 종료()");
     }
 }

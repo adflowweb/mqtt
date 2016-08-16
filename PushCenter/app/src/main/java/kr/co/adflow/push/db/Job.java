@@ -5,12 +5,6 @@ package kr.co.adflow.push.db;
  */
 public class Job {
 
-    public static int PUBLISH = 0;
-    public static int SUBSCRIBE = 1;
-    public static int UNSUBSCRIBE = 2;
-    public static int BROADCAST = 3;
-    public static int ACK = 4;
-
     private int id;
     private int type;
     private String topic;
@@ -51,10 +45,10 @@ public class Job {
     @Override
     public String toString() {
         return "Job{" +
-                "id=" + id +
-                ", type=" + type +
-                ", topic='" + topic + '\'' +
-                ", content='" + content + '\'' +
+                "id = " + id +
+                ", type = " + type +
+                ", topic = '" + topic + '\'' +
+                ", content = '" + content + '\'' +
                 '}';
     }
 }

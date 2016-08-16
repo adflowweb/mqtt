@@ -9,6 +9,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
+import kr.co.adflow.push.PushPreference;
+import kr.co.adflow.push.service.impl.PushServiceImpl;
+
 /**
  * Created by nadir93 on 15. 5. 11..
  */
@@ -34,10 +37,10 @@ public class PushHandlerTest extends AndroidTestCase {
      */
     @Before
     public void setUp() throws Exception {
-        Log.d("PushHandlerTest", "setUp시작()");
+        Log.d("PushHandlerTest========", "setUp시작()");
         handler = new PushHandler(getContext());
         handler.keepAlive();
-        Log.d("PushHandlerTest", "setUp종료()");
+        Log.d("PushHandlerTest========", "setUp종료()");
     }
 
     /**
@@ -45,9 +48,9 @@ public class PushHandlerTest extends AndroidTestCase {
      */
     @After
     public void tearDown() throws Exception {
-        Log.d("PushHandlerTest", "tearDown시작()");
+        Log.d("PushHandlerTest========", "tearDown시작()");
         handler.stop();
-        Log.d("PushHandlerTest", "tearDown종료()");
+        Log.d("PushHandlerTest========", "tearDown종료()");
     }
 
     /**
@@ -63,8 +66,8 @@ public class PushHandlerTest extends AndroidTestCase {
 //     */
 //    @Test
 //    public void testStart() throws Exception {
-//        Log.d("PushHandlerTest", "testStart시작()");
-//        Log.d("PushHandlerTest", "testStart종료()");
+//        Log.d("PushHandlerTest========", "testStart시작()");
+//        Log.d("PushHandlerTest========", "testStart종료()");
 //    }
 //
 //    /**
@@ -80,9 +83,9 @@ public class PushHandlerTest extends AndroidTestCase {
      */
     @Test
     public void testKeepAlive() throws Exception {
-        Log.d("PushHandlerTest", "testKeepAlive시작()");
+        Log.d("PushHandlerTest========", "testKeepAlive시작()");
         handler.keepAlive();
-        Log.d("PushHandlerTest", "testKeepAlive종료()");
+        Log.d("PushHandlerTest========", "testKeepAlive종료()");
     }
 
 //    /**
@@ -116,15 +119,56 @@ public class PushHandlerTest extends AndroidTestCase {
     public void testAddAckJob() throws Exception {
         //addAckJob시작(ackJson={"msgId":"2015059795e6a7f12a414fa9ff800fb3a2979d","token":"1c7253e191334f1e9a09915","ackTime":1431332299604,"ackType":"pma"})
         //05-11 17:18:19.594  26062-27346/kr.co.adflow.push D/푸시디비헬퍼﹕ addJob시작(type=4, topic=mms/ack, content={"msgId":"2015059795e6a7f12a414fa9ff800fb3a2979d","token":"1c7253e191334f1e9a09915","ackTime":1431332299604,"ackType":"pma"})
-        Log.d("PushHandlerTest", "testAddAckJob시작()");
+        Log.d("PushHandlerTest========", "testAddAckJob시작()");
         JSONObject ack = new JSONObject();
         ack.put("msgId", "2015059795e6a7f12a414fa9ff800fb3a2979d");
         ack.put("token", "1c7253e191334f1e9a09915");
         ack.put("ackTime", "1431332299604");
         ack.put("ackType", "pma");
         handler.addAckJob(ack);
-        Log.d("PushHandlerTest", "testAddAckJob종료()");
+        Log.d("PushHandlerTest========", "testAddAckJob종료()");
     }
+
+    /**
+     * 잘못된 토큰 연결
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testInvalidToken() throws Exception {
+        Log.d("PushHandlerTest========", "testInvalidToken시작()");
+        PushPreference preference = new PushPreference(getContext());
+        //토큰저장
+        //a0b285aa4fba490793a80ee
+        //012343567890873453454545
+        preference.put(PushPreference.TOKEN, "012343567890873453454545");
+        handler.stop();
+        handler.keepAlive();
+        handler.isConnected();
+        assertTrue("mqtt세션연결이실패여야합니다", !handler.isConnected());
+        Log.d("PushHandlerTest========", "testInvalidToken종료()");
+    }
+
+    /**
+     * 잘못된 토큰 연결
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testInvalidServerAddress() throws Exception {
+        Log.d("PushHandlerTest========", "testInvalidServerAddress시작()");
+        //{"token":"a0b285aa4fba490793a80ee","mqttbroker":["ssl://14.63.217.141:18831","ssl://14.63.217.141:28831"],"created":"2016-08-09T09:13:11.465Z"}
+        PushPreference preference = new PushPreference(getContext());
+        //서버정보저장
+        preference.put(PushPreference.SERVERURL, "{\"token\":\"a0b285aa4fba490793a80ee\",\"mqttbroker\":[\"ssl://14.63.217.141:18831\",\"ssl://14.63.217.141:28831\"],\"created\":\"2016-08-09T09:13:11.465Z\"}");
+        //preference.put(PushPreference.SERVERURL, "{\"token\":\"a0b285aa4fba490793a80ee\",\"mqttbroker\":[\"ssl://14.63.217.141:38083\",\"ssl://14.63.217.141:38083\"],\"created\":\"2016-08-09T09:13:11.465Z\"}");
+        handler.stop();
+        handler.keepAlive();
+        handler.isConnected();
+        assertTrue("mqtt세션연결이실패여야합니다", !handler.isConnected());
+        Log.d("PushHandlerTest========", "testInvalidServerAddress종료()");
+    }
+
 
     /**
      * @throws Exception
@@ -133,9 +177,9 @@ public class PushHandlerTest extends AndroidTestCase {
     public void testAddSubscribeJob() throws Exception {
         //subScribe시작(토픽=mms/821029998341, qos=2)
         //subscribe종료(result={"result":{"success":true}})
-        Log.d("PushHandlerTest", "testAddSubscribeJob시작()");
+        Log.d("PushHandlerTest========", "testAddSubscribeJob시작()");
         handler.addSubscribeJob("mms/821029998341");
-        Log.d("PushHandlerTest", "testAddSubscribeJob종료()");
+        Log.d("PushHandlerTest========", "testAddSubscribeJob종료()");
     }
 
 //    /**
@@ -143,7 +187,9 @@ public class PushHandlerTest extends AndroidTestCase {
 //     */
 //    @Test
 //    public void testConnect() throws Exception {
-//
+//        Log.d("PushHandlerTest========", "testAddSubscribeJob시작()");
+//        handler.connect("mms/821029998341");
+//        Log.d("PushHandlerTest========", "testAddSubscribeJob종료()");
 //    }
 
     /**
@@ -151,9 +197,9 @@ public class PushHandlerTest extends AndroidTestCase {
      */
     @Test
     public void testSubscribe() throws Exception {
-        Log.d("PushHandlerTest", "testSubscribe시작()");
+        Log.d("PushHandlerTest========", "testSubscribe시작()");
         handler.subscribe("test", 2);
-        Log.d("PushHandlerTest", "testSubscribe종료()");
+        Log.d("PushHandlerTest========", "testSubscribe종료()");
     }
 
     /**
@@ -161,9 +207,9 @@ public class PushHandlerTest extends AndroidTestCase {
      */
     @Test
     public void testUnsubscribe() throws Exception {
-        Log.d("PushHandlerTest", "testUnsubscribe시작()");
+        Log.d("PushHandlerTest========", "testUnsubscribe시작()");
         handler.unsubscribe("test");
-        Log.d("PushHandlerTest", "testUnsubscribe종료()");
+        Log.d("PushHandlerTest========", "testUnsubscribe종료()");
     }
 
     /**
@@ -171,9 +217,9 @@ public class PushHandlerTest extends AndroidTestCase {
      */
     @Test
     public void testPublish() throws Exception {
-        Log.d("PushHandlerTest", "testPublish시작()");
+        Log.d("PushHandlerTest========", "testPublish시작()");
         handler.publish("test", "test".getBytes(), 2, false);
-        Log.d("PushHandlerTest", "testPublish종료()");
+        Log.d("PushHandlerTest========", "testPublish종료()");
     }
 
     /**
@@ -181,9 +227,9 @@ public class PushHandlerTest extends AndroidTestCase {
      */
     @Test
     public void testIsConnected() throws Exception {
-        Log.d("PushHandlerTest", "testPublish시작()");
+        Log.d("PushHandlerTest========", "testPublish시작()");
         assertTrue("mqtt연결이없습니다.", handler.isConnected());
-        Log.d("PushHandlerTest", "testPublish종료()");
+        Log.d("PushHandlerTest========", "testPublish종료()");
     }
 
     /**
@@ -191,10 +237,10 @@ public class PushHandlerTest extends AndroidTestCase {
      */
     @Test
     public void testGetLostCount() throws Exception {
-        Log.d("PushHandlerTest", "testGetLostCount시작()");
+        Log.d("PushHandlerTest========", "testGetLostCount시작()");
         int response = handler.getLostCount();
         assertTrue("연결실패횟수가0이아닙니다.", response == 0);
-        Log.d("PushHandlerTest", "testGetLostCount종료()");
+        Log.d("PushHandlerTest========", "testGetLostCount종료()");
     }
 
     /**
@@ -202,9 +248,9 @@ public class PushHandlerTest extends AndroidTestCase {
      */
     @Test
     public void testPreCheck() throws Exception {
-        Log.d("PushHandlerTest", "testPreCheck시작()");
+        Log.d("PushHandlerTest========", "testPreCheck시작()");
         handler.preCheck("test", "test");
-        Log.d("PushHandlerTest", "testPreCheck종료()");
+        Log.d("PushHandlerTest========", "testPreCheck종료()");
     }
 
     /**
@@ -214,11 +260,11 @@ public class PushHandlerTest extends AndroidTestCase {
     public void testAuth() throws Exception {
         //auth시작(url=https://push4.ktp.co.kr:8080/v1/auth, userID=+821021805840, deviceID=53a1c1596efbd9a)
         //auth종료(response={"result":{"success":true,"data":{"tokenID":"1c7253e191334f1e9a09915","userID":"+821021805840","issue":1425542032000}}})
-        Log.d("PushHandlerTest", "testAuth시작()");
-        String response = handler.auth("https://push4.ktp.co.kr:8080/v1/auth", "+821021805840", "53a1c1596efbd9a");
+        Log.d("PushHandlerTest========", "testAuth시작()");
+        String response = handler.auth("http://push4.ktp.co.kr:3000/v1/auth", "+821021805840", "53a1c1596efbd9a");
         System.out.println("response=" + response);
-        JSONAssert.assertEquals("{\"result\":{\"success\":true,\"data\":{\"tokenID\":\"1c7253e191334f1e9a09915\",\"userID\":\"+821021805840\",\"issue\":1425542032000}}}", response, true);
-        Log.d("PushHandlerTest", "testAuth종료()");
+        JSONAssert.assertEquals("{\"result\":{\"success\":true,\"data\":{\"tokenID\":\"b2fbc548fb0a4e2eb3749ab\",\"userID\":\"+821021805840\",\"issue\":1470796968000}}}", response, true);
+        Log.d("PushHandlerTest========", "testAuth종료()");
     }
 
     /**
@@ -226,11 +272,11 @@ public class PushHandlerTest extends AndroidTestCase {
      */
     @Test
     public void testGetSubscriptions() throws Exception {
-        Log.d("PushHandlerTest", "testGetSubscriptions시작()");
+        Log.d("PushHandlerTest========", "testGetSubscriptions시작()");
         String response = handler.getSubscriptions();
         System.out.println("response=" + response);
         JSONAssert.assertEquals("{\"result\":{\"success\":true}}", response, false);
-        Log.d("PushHandlerTest", "testGetSubscriptions종료()");
+        Log.d("PushHandlerTest========", "testGetSubscriptions종료()");
     }
 
     /**
@@ -238,11 +284,11 @@ public class PushHandlerTest extends AndroidTestCase {
      */
     @Test
     public void testGetGrpSubscribers() throws Exception {
-        Log.d("PushHandlerTest", "testGetGrpSubscribers시작()");
+        Log.d("PushHandlerTest========", "testGetGrpSubscribers시작()");
         String response = handler.getGrpSubscribers("mms/P1/82/50/g130");
         System.out.println("response=" + response);
         JSONAssert.assertEquals("{\"result\":{\"success\":true}}", response, false);
-        Log.d("PushHandlerTest", "testGetGrpSubscribers종료()");
+        Log.d("PushHandlerTest========", "testGetGrpSubscribers종료()");
     }
 
     /**
@@ -250,11 +296,11 @@ public class PushHandlerTest extends AndroidTestCase {
      */
     @Test
     public void testExistPMAByUserID() throws Exception {
-        Log.d("PushHandlerTest", "testExistPMAByUserID시작()");
-        String response = handler.existPMAByUserID("+821021802702");
+        Log.d("PushHandlerTest========", "testExistPMAByUserID시작()");
+        String response = handler.existPMAByUserID("+821021804709");
         System.out.println("response=" + response);
         JSONAssert.assertEquals("{\"result\":{\"success\":true,\"data\":{\"validation\":true}}}", response, true);
-        Log.d("PushHandlerTest", "testExistPMAByUserID종료()");
+        Log.d("PushHandlerTest========", "testExistPMAByUserID종료()");
     }
 
     /**
@@ -262,11 +308,11 @@ public class PushHandlerTest extends AndroidTestCase {
      */
     @Test
     public void testExistPMAByUFMI() throws Exception {
-        Log.d("PushHandlerTest", "testExistPMAByUFMI시작()");
+        Log.d("PushHandlerTest========", "testExistPMAByUFMI시작()");
         String response = handler.existPMAByUFMI("82*50*1212");
         System.out.println("response=" + response);
         JSONAssert.assertEquals("{\"result\":{\"success\":true,\"data\":{\"validation\":true}}}", response, true);
-        Log.d("PushHandlerTest", "testExistPMAByUFMI종료()");
+        Log.d("PushHandlerTest========", "testExistPMAByUFMI종료()");
     }
 
     /**
@@ -274,11 +320,11 @@ public class PushHandlerTest extends AndroidTestCase {
      */
     @Test
     public void testSendMsgWithOpts() throws Exception {
-        Log.d("PushHandlerTest", "testSendMsgWithOpts시작()");
+        Log.d("PushHandlerTest========", "testSendMsgWithOpts시작()");
         String response = handler.sendMsgWithOpts("mms/P1/82/50/p1206", "mms/P1/82/50/p1212", 2, "application/base64", "eyJzdHIiOiLqsIAiLCJyY3YiOiI4Mio1MCoxMjEyIiwic25kIjoiODIqNTAqMTIxMiJ9", 100 /*contentLength*/, 600, false);
         System.out.println("response=" + response);
         JSONAssert.assertEquals("{\"result\":{\"success\":true,\"info\":[\"receiver=mms/P1/82/50/p1212\",\"content=eyJzdHIiOiLqsIAiLCJyY3YiOiI4Mio1MCoxMjEyIiwic25kIjoiODIqNTAqMTIxMiJ9\"]}}", response, true);
-        Log.d("PushHandlerTest", "testSendMsgWithOpts종료()");
+        Log.d("PushHandlerTest========", "testSendMsgWithOpts종료()");
     }
 
     /**
@@ -288,10 +334,10 @@ public class PushHandlerTest extends AndroidTestCase {
      */
     @Test
     public void testUpdateUFMI() throws Exception {
-        Log.d("PushHandlerTest", "testUpdateUFMI시작()");
+        Log.d("PushHandlerTest========", "testUpdateUFMI시작()");
         String response = handler.updateUFMI("+821021805840", "82*50*1212");
         System.out.println("response=" + response);
         JSONAssert.assertEquals("{\"result\":{\"success\":true}}", response, true);
-        Log.d("PushHandlerTest", "testUpdateUFMI종료()");
+        Log.d("PushHandlerTest========", "testUpdateUFMI종료()");
     }
 }
