@@ -51,12 +51,9 @@ public class AckMessageDrivenBean implements MessageListener {
 	@Autowired
 	private UserMapper userMapper;
 
-	// /** The executor server id. */
-	// @Value("#{pms['executor.server.id']}")
-	// private String EXECUTOR_SERVER_ID;
-
-	@Autowired
-	private PmsConfig pmsConfig;
+	/** The executor server id. */
+	@Value("#{pms['executor.server.self.id']}")
+	private String EXECUTOR_SERVER_ID;
 
 	/*
 	 * (non-Javadoc)
@@ -144,7 +141,7 @@ public class AckMessageDrivenBean implements MessageListener {
 		ctlQ.setTableName(ack.getKeyMon());
 		ctlQ.setMsgId(ack.getMsgId());
 		ctlQ.setIssueTime(new Date());
-		ctlQ.setServerId(pmsConfig.EXECUTOR_SERVER_ID);
+		ctlQ.setServerId(EXECUTOR_SERVER_ID);
 		// ctlQ.setServerId("S01");
 
 		return ctlQ;
@@ -170,7 +167,7 @@ public class AckMessageDrivenBean implements MessageListener {
 		ack.setAckType(msgObject.getString("ackType"));
 		ack.setTokenId(msgObject.getString("token"));
 		ack.setAckTime(new Date(msgObject.getLong("ackTime")));
-		ack.setServerId(pmsConfig.EXECUTOR_SERVER_ID);
+		ack.setServerId(EXECUTOR_SERVER_ID);
 		// ack.setServerId("S01");
 
 		return ack;
