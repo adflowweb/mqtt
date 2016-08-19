@@ -24,20 +24,23 @@ public class DateUtil {
 	/**
 	 * The main method.
 	 *
-	 * @param agrs the arguments
+	 * @param agrs
+	 *            the arguments
 	 */
 	public static void main(String[] agrs) {
-		System.out.println(fromISODateString("2015-02-07T14:48:00.000Z")
-				.getTime());
-		
-		System.out.println(getDate(new Date()));
+		// System.out.println(fromISODateString("2015-02-07T14:48:00.000Z")
+		// .getTime());
+
+		// System.out.println(getDate(new Date()));
 	}
 
 	/**
 	 * After minute.
 	 *
-	 * @param minute the minute
-	 * @param millis the millis
+	 * @param minute
+	 *            the minute
+	 * @param millis
+	 *            the millis
 	 * @return the date
 	 */
 	public static Date afterMinute(int minute, long millis) {
@@ -61,7 +64,8 @@ public class DateUtil {
 	/**
 	 * Gets the yyyymm.
 	 *
-	 * @param month the month
+	 * @param month
+	 *            the month
 	 * @return the yyyymm
 	 */
 	public static String getYYYYMM(int month) {
@@ -73,11 +77,12 @@ public class DateUtil {
 
 		return DateUtil.getDate(cal.getTime(), "yyyyMM");
 	}
-	
+
 	/**
 	 * Gets the yyyymmdd.
 	 *
-	 * @param day the day
+	 * @param day
+	 *            the day
 	 * @return the yyyymmdd
 	 */
 	public static String getYYYYMMDD(int day) {
@@ -89,12 +94,12 @@ public class DateUtil {
 
 		return DateUtil.getDate(cal.getTime(), "yyyyMMdd");
 	}
-	
-	
+
 	/**
 	 * Gets the yyyymmdd.
 	 *
-	 * @param day the day
+	 * @param day
+	 *            the day
 	 * @return the yyyymmdd
 	 */
 	public static String getYYYYMMDD(String strDate, int day) {
@@ -107,7 +112,7 @@ public class DateUtil {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
 		cal.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
@@ -118,8 +123,10 @@ public class DateUtil {
 	/**
 	 * Gets the date.
 	 *
-	 * @param date the date
-	 * @param pattern the pattern
+	 * @param date
+	 *            the date
+	 * @param pattern
+	 *            the pattern
 	 * @return the date
 	 */
 	private static String getDate(Date date, String pattern) {
@@ -129,8 +136,7 @@ public class DateUtil {
 		return fmt.format(date);
 
 	}
-	
-	
+
 	public static String getDate(Date date) {
 
 		SimpleDateFormat fmt = new SimpleDateFormat(FORMAT_DATE_ISO);
@@ -138,32 +144,34 @@ public class DateUtil {
 		return fmt.format(date);
 
 	}
-	
+
 	/**
 	 * Gets the yyyymmddhhmmss.
 	 *
-	 * @param date the date
+	 * @param date
+	 *            the date
 	 * @return the yyyymmddhhmmss
 	 */
 	public static String getDateTime(Date date) {
 		return DateUtil.getDate(date, "yyyyMMddHHmmss");
 	}
-	
+
 	/**
 	 * Gets the yyyymmddhhmmss.
 	 *
-	 * @param date the date
+	 * @param date
+	 *            the date
 	 * @return the yyyymmddhhmmss
 	 */
 	public static String getDateTimeSvc(Date date) {
 		return DateUtil.getDate(date, "yyyy.MM.dd. aa hh:mm:ss");
 	}
-	
 
 	/**
 	 * From iso date string.
 	 *
-	 * @param isoDateString the iso date string
+	 * @param isoDateString
+	 *            the iso date string
 	 * @return the date
 	 */
 	public static Date fromISODateString(String isoDateString) {
@@ -171,8 +179,7 @@ public class DateUtil {
 			return null;
 		}
 
-		Calendar calendar = javax.xml.bind.DatatypeConverter
-				.parseDateTime(isoDateString);
+		Calendar calendar = javax.xml.bind.DatatypeConverter.parseDateTime(isoDateString);
 
 		return calendar.getTime();
 	}

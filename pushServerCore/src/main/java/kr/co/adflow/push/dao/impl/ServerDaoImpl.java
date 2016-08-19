@@ -236,7 +236,8 @@ public class ServerDaoImpl implements ServerDao {
 			if (fs instanceof NfsFileSystem) {
 				NfsFileSystem nfs = (NfsFileSystem) fs;
 				if (!nfs.ping()) {
-					System.out.println("getUnreachableMessage=" + nfs.getUnreachableMessage());
+					// System.out.println("getUnreachableMessage=" +
+					// nfs.getUnreachableMessage());
 					return null;
 				}
 			}

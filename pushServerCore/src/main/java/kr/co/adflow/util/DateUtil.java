@@ -27,10 +27,10 @@ public class DateUtil {
 	 * @param agrs the arguments
 	 */
 	public static void main(String[] agrs) {
-		System.out.println(fromISODateString("2015-02-07T14:48:00.000Z")
-				.getTime());
-		
-		System.out.println(getDate(new Date()));
+		// System.out.println(fromISODateString("2015-02-07T14:48:00.000Z")
+		// .getTime());
+		//
+		// System.out.println(getDate(new Date()));
 	}
 
 	/**

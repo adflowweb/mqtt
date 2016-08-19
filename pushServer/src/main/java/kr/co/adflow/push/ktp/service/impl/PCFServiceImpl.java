@@ -47,14 +47,14 @@ public class PCFServiceImpl implements PCFService {
 	@PostConstruct
 	public void initRedisPool() {
 		jedisPool = new JedisPool(new JedisPoolConfig(), prop.getProperty("jedis.hosts"));
-		System.out.println("=== JdeisPool Load OK ===");
+		// System.out.println("=== JdeisPool Load OK ===");
 
 	}
 
 	@PreDestroy
 	public void releaseRedisPool() {
 		jedisPool.destroy();
-		System.out.println("=== JdeisPool Release OK ===");
+		// System.out.println("=== JdeisPool Release OK ===");
 	}
 
 	/** The Constant logger. */

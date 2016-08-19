@@ -56,7 +56,7 @@ public class MessageDaoImpl implements MessageDao {
 	 */
 	@Override
 	public int post(Message msg) throws Exception {
-		System.out.println("post시작(msg=" + msg + ")");
+		//System.out.println("post시작(msg=" + msg + ")");
 		logger.debug("post시작(msg=" + msg + ")");
 		// db 저장
 		MessageMapper msgMapper = sqlSession.getMapper(MessageMapper.class);

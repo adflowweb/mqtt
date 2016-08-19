@@ -100,7 +100,7 @@ public class AcceptAllProvider extends Provider {
 			 * @param string the string
 			 */
 			private static void report(String string) {
-				System.out.println(string);
+				//System.out.println(string);
 			}
 		}
 
