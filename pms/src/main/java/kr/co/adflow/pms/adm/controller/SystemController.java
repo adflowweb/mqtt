@@ -757,7 +757,7 @@ public class SystemController extends BaseController {
 		// throw e;
 		// }
 
-		System.out.println("start::");
+		// System.out.println("start::");
 		re = systemService.testRun();
 		// PCFConnectionManagerHandler.PCFConnectionManager();
 		// cDRCreateExecutor.createCDR();

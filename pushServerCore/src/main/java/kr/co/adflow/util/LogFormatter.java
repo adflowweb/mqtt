@@ -18,9 +18,9 @@ public final class LogFormatter extends Formatter {
 	 */
 	@Override
 	public String format(LogRecord record) {
-		System.out.println("LogFormatter::ThreadID::"
-				+ Thread.currentThread().getId() + "::Thread::"
-				+ Thread.currentThread());
+		// System.out.println("LogFormatter::ThreadID::"
+		// + Thread.currentThread().getId() + "::Thread::"
+		// + Thread.currentThread());
 		StringBuilder sb = new StringBuilder();
 
 		// Build output the way you want

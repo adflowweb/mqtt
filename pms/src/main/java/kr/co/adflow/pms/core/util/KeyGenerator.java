@@ -15,8 +15,7 @@ import org.slf4j.LoggerFactory;
 public class KeyGenerator {
 
 	/** The Constant logger. */
-	private static final org.slf4j.Logger logger = LoggerFactory
-			.getLogger(KeyGenerator.class);
+	private static final org.slf4j.Logger logger = LoggerFactory.getLogger(KeyGenerator.class);
 
 	/**
 	 * Generate.
@@ -41,7 +40,8 @@ public class KeyGenerator {
 	/**
 	 * Generate token.
 	 *
-	 * @param str the str
+	 * @param str
+	 *            the str
 	 * @return the string
 	 */
 	public static String generateToken(String str) {
@@ -57,8 +57,7 @@ public class KeyGenerator {
 
 			sb = new StringBuffer();
 			for (int i = 0; i < mdbytes.length; i++) {
-				sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16)
-						.substring(1));
+				sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
 			}
 			logger.debug("deviceIDHexString=" + sb);
 		} catch (Exception e) {
@@ -71,8 +70,10 @@ public class KeyGenerator {
 	/**
 	 * Creates the pw.
 	 *
-	 * @param str1 the str1
-	 * @param str2 the str2
+	 * @param str1
+	 *            the str1
+	 * @param str2
+	 *            the str2
 	 * @return the string
 	 */
 	public static String createPw(String str1, String str2) {
@@ -88,7 +89,8 @@ public class KeyGenerator {
 	/**
 	 * Generate hash.
 	 *
-	 * @param str the str
+	 * @param str
+	 *            the str
 	 * @return the string
 	 */
 	public static String generateHash(String str) {
@@ -101,8 +103,7 @@ public class KeyGenerator {
 
 			sb = new StringBuffer();
 			for (int i = 0; i < mdbytes.length; i++) {
-				sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16)
-						.substring(1));
+				sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
 			}
 			logger.debug("deviceIDHexString=" + sb);
 		} catch (Exception e) {
@@ -115,10 +116,11 @@ public class KeyGenerator {
 	/**
 	 * The main method.
 	 *
-	 * @param args the arguments
+	 * @param args
+	 *            the arguments
 	 */
 	public static void main(String[] args) {
-		System.out.println(createPw("sysAdmin", "password"));
+		// System.out.println(createPw("sysAdmin", "password"));
 	}
 
 }

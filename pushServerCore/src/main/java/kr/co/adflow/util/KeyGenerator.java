@@ -40,6 +40,6 @@ public class KeyGenerator {
 	public static void main(String[] args) {
 
 		SecureRandom random = new SecureRandom();
-		System.out.println(System.currentTimeMillis());
+		// System.out.println(System.currentTimeMillis());
 	}
 }

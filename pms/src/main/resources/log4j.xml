@@ -34,6 +34,19 @@
 	</appender>
 
 
+	<!-- 날짜별 로그 -->
+	<appender name="tomcatfile" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="file" value="/var/lib/tomcat-pms/logs/tomcat.log" />
+		<param name="Append" value="true" />
+		<!--<param name="DatePattern" value="'.'yyyy-MM-dd"/> -->
+		<param name="DatePattern" value="'.'yyyy-MM-dd-HH-mm" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern"
+				value="%t> [%d{yyyy-MM-dd HH:mm:ss}] [%c{1}] [%L] [%p] %m %n" />
+		</layout>
+	</appender>
+
+
 
 
 	<!-- Application Loggers -->
