@@ -378,6 +378,73 @@ public class PCFServiceImpl implements PCFService {
 		return status;
 	}
 
+	/*
+	 * 어드민용 PCF 호출
+	 */
+
+	@Override
+	public String[] getSubscriptions(String token, String host, int port) throws Exception {
+		logger.debug("step...1");
+		logger.debug(prop.getProperty("mq.pcf.id"));
+		logger.debug(prop.getProperty("mq.pcf.password"));
+		logger.debug(prop.getProperty("mq.pcf.channel"));
+		MQEnvironment.userID = prop.getProperty("mq.pcf.id");
+		MQEnvironment.password = prop.getProperty("mq.pcf.password");
+		String pcfChannel = prop.getProperty("mq.pcf.channel");
+		String[] subsList = null;
+		PCFMessageAgent agent = null;
+
+		try {
+
+			agent = new PCFMessageAgent(host, port, pcfChannel);
+			PCFMessage request = new PCFMessage(MQConstants.MQCMD_INQUIRE_SUBSCRIPTION);
+			request.addParameter(MQConstants.MQCACF_SUB_NAME, token + ":*");
+
+			logger.debug("step...2");
+
+			PCFMessage[] responses = agent.send(request);
+			logger.debug("step...3");
+			// System.out.println("responses.length ::" + responses.length);
+			subsList = new String[responses.length];
+			// String topic = "";
+
+			for (int i = 0; i < responses.length; i++) {
+				subsList[i] = responses[i].getParameterValue(MQConstants.MQCA_TOPIC_STRING).toString();
+			}
+			logger.debug("step...4");
+		} catch (PCFException pcfe) {
+			logger.debug("step...5");
+			if (pcfe.getMessage().indexOf("2428") > 0) {
+				logger.error("해당 토큰관련 subscriptions 가 없습니다. -errorcode:2428");
+
+			} else {
+				logger.error("PCF error: " + pcfe);
+			}
+
+		} catch (MQException mqe) {
+			logger.debug("step...6");
+			logger.error("MQException is ", mqe);
+			throw mqe;
+		} catch (IOException ioe) {
+			logger.debug("step...7");
+			logger.error("IOException is ", ioe);
+			throw ioe;
+		} finally {
+			logger.debug("step...8");
+			if (agent != null) {
+				try {
+					agent.disconnect();
+				} catch (MQException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					throw e;
+				}
+			}
+
+		}
+		return subsList;
+	}
+
 	// /* (non-Javadoc)
 	// * @see
 	// kr.co.adflow.push.ktp.service.PCFService#getStatus(java.lang.String)

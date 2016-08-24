@@ -16,6 +16,7 @@ import kr.co.adflow.pms.core.controller.BaseController;
 import kr.co.adflow.pms.core.exception.PmsRuntimeException;
 import kr.co.adflow.pms.response.Response;
 import kr.co.adflow.pms.response.Result;
+import kr.co.adflow.pms.domain.Leader;
 import kr.co.adflow.pms.domain.Validation;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,6 +111,20 @@ public class CommonController extends BaseController {
 		result.setSuccess(true);
 		Validation valid = new Validation(auth);
 		result.setData(valid);
+		Response res = new Response(result);
+		return res;
+
+	}
+
+	@RequestMapping(value = "/adm/cmm/leader", method = RequestMethod.GET, produces = "application/json")
+	@ResponseBody
+	public Response getLeader() throws Exception {
+
+		Leader leader = commonService.getLeader();
+
+		Result<Leader> result = new Result<Leader>();
+		result.setSuccess(true);
+		result.setData(leader);
 		Response res = new Response(result);
 		return res;
 

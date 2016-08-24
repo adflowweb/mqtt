@@ -12,9 +12,11 @@ import kr.co.adflow.pms.adm.response.AuthRes;
 import kr.co.adflow.pms.core.config.PmsConfig;
 import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.exception.PmsRuntimeException;
+import kr.co.adflow.pms.core.handler.ZookeeperHandler;
 import kr.co.adflow.pms.core.util.DateUtil;
 import kr.co.adflow.pms.core.util.KeyGenerator;
 import kr.co.adflow.pms.domain.AppKey;
+import kr.co.adflow.pms.domain.Leader;
 import kr.co.adflow.pms.domain.Token;
 import kr.co.adflow.pms.domain.User;
 import kr.co.adflow.pms.domain.mapper.InterceptMapper;
@@ -51,6 +53,9 @@ public class CommonServiceImpl implements CommonService {
 	/** The intercept mapper. */
 	@Autowired
 	private InterceptMapper interceptMapper;
+
+	@Autowired
+	private ZookeeperHandler zookeeperHandler;
 
 	/*
 	 * (non-Javadoc)
@@ -186,6 +191,17 @@ public class CommonServiceImpl implements CommonService {
 	private String getPassword(AuthReq req) {
 
 		return KeyGenerator.createPw(req.getUserId(), req.getPassword());
+	}
+
+	@Override
+	public Leader getLeader() throws Exception {
+		// TODO Auto-generated method stub
+		Leader leader = new Leader();
+		boolean leaderCheck = zookeeperHandler.getLeader();
+		leader.setLeaderCheck(leaderCheck);
+		leader.setServerId(pmsConfig.EXECUTOR_SERVER_ID);
+
+		return leader;
 	}
 
 }

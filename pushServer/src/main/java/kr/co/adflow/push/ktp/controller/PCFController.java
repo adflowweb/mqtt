@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 // TODO: Auto-generated Javadoc
@@ -55,6 +56,44 @@ public class PCFController {
 		Result<String[]> result = new Result<String[]>();
 		result.setSuccess(true);
 		String[] subscribe = pCFService.get(token);
+		if (subscribe == null) {
+			List<String> messages = new ArrayList<String>() {
+				{
+					add("subscription not found");
+				}
+			};
+			logger.info("subscribe :: {}", subscribe);
+			subscribe = new String[0];
+			result.setData(subscribe);
+			result.setInfo(messages);
+		} else {
+			result.setData(subscribe);
+		}
+
+		Response<String[]> res = new Response<String[]>(result);
+		logger.debug("response=" + res);
+		return res;
+	}
+
+	/**
+	 * subscription List 가져오기.
+	 *
+	 * @param token
+	 *            the token
+	 * @return the response
+	 * @throws Exception
+	 *             the exception
+	 */
+	@RequestMapping(value = "/admin/subscriptions/{token:.+}", method = RequestMethod.GET)
+	@ResponseBody
+	public Response<String[]> getSubscriptions(@PathVariable String token, @RequestParam("host") String host,
+			@RequestParam("port") int port) throws Exception {
+		logger.debug("token=" + token);
+		logger.debug("port=" + port);
+		logger.debug("host=" + host);
+		Result<String[]> result = new Result<String[]>();
+		result.setSuccess(true);
+		String[] subscribe = pCFService.getSubscriptions(token, host, port);
 		if (subscribe == null) {
 			List<String> messages = new ArrayList<String>() {
 				{
