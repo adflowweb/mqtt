@@ -136,6 +136,7 @@ public class PCFServiceImpl implements PCFService {
 			if (agent != null) {
 				try {
 					agent.disconnect();
+					logger.debug("agent.disconnect()");
 				} catch (MQException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -197,6 +198,7 @@ public class PCFServiceImpl implements PCFService {
 			if (agent != null) {
 				try {
 					agent.disconnect();
+					logger.debug("agent.disconnect()");
 				} catch (MQException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
