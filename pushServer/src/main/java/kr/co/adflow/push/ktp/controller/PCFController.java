@@ -136,6 +136,21 @@ public class PCFController {
 		return res;
 	}
 
+	@RequestMapping(value = "/admin/clients/{token:.+}", method = RequestMethod.GET)
+	@ResponseBody
+	public Response<Status> getStatus(@PathVariable String token, @RequestParam("host") String host,
+			@RequestParam("port") int port) throws Exception {
+		logger.debug("token=" + token);
+		Status status = pCFService.getConnectStatus(token, host, port);
+
+		Result<Status> result = new Result<Status>();
+		result.setSuccess(true);
+		result.setData(status);
+		Response<Status> res = new Response<Status>(result);
+		logger.debug("response=" + res);
+		return res;
+	}
+
 	/**
 	 * 예외처리.
 	 *

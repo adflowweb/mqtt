@@ -38,4 +38,6 @@ public interface PCFService {
 	 */
 	Status getStatus(String token) throws Exception;
 
+	Status getConnectStatus(String token, String host, int port) throws Exception;
+
 }

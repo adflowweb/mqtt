@@ -75,6 +75,10 @@ public class PCFServiceImpl implements PCFService {
 		}
 	}
 
+	private String mqpcfid = prop.getProperty("mq.pcf.id");
+	private String mqpcfPassword = prop.getProperty("mq.pcf.password");
+	private String mqpcfChannel = prop.getProperty("mq.pcf.channel");
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -385,12 +389,12 @@ public class PCFServiceImpl implements PCFService {
 	@Override
 	public String[] getSubscriptions(String token, String host, int port) throws Exception {
 		logger.debug("step...1");
-		logger.debug(prop.getProperty("mq.pcf.id"));
-		logger.debug(prop.getProperty("mq.pcf.password"));
-		logger.debug(prop.getProperty("mq.pcf.channel"));
-		MQEnvironment.userID = prop.getProperty("mq.pcf.id");
-		MQEnvironment.password = prop.getProperty("mq.pcf.password");
-		String pcfChannel = prop.getProperty("mq.pcf.channel");
+		logger.debug(mqpcfid);
+		logger.debug(mqpcfPassword);
+		logger.debug(mqpcfChannel);
+		MQEnvironment.userID = mqpcfid;
+		MQEnvironment.password = mqpcfPassword;
+		String pcfChannel = mqpcfChannel;
 		String[] subsList = null;
 		PCFMessageAgent agent = null;
 
@@ -443,6 +447,70 @@ public class PCFServiceImpl implements PCFService {
 
 		}
 		return subsList;
+	}
+
+	// 어드민용 연결상태조회 코드
+	@Override
+	public Status getConnectStatus(String token, String host, int port) throws Exception {
+		logger.debug("get시작(token=" + token + ")");
+		Status status = new Status();
+		logger.debug("step...1");
+		logger.debug(mqpcfid);
+		logger.debug(mqpcfPassword);
+		logger.debug(mqpcfChannel);
+		MQEnvironment.userID = mqpcfid;
+		MQEnvironment.password = mqpcfPassword;
+		String pcfChannel = mqpcfChannel;
+		PCFMessageAgent agent = null;
+		try {
+
+			agent = new PCFMessageAgent(host, port, pcfChannel);
+			PCFMessage request = new PCFMessage(MQConstants.MQCMD_INQUIRE_CHANNEL_STATUS);
+			request.addParameter(MQConstants.MQCACH_CHANNEL_NAME, "*");
+			request.addParameter(MQConstants.MQIACH_CHANNEL_TYPE, MQConstants.MQCHT_MQTT);
+			request.addParameter(MQConstants.MQCACH_CLIENT_ID, token);
+
+			PCFMessage[] responses = agent.send(request);
+
+			int chStatus = ((Integer) (responses[0].getParameterValue(MQConstants.MQIACH_CHANNEL_STATUS))).intValue();
+
+			if (chStatus == 3) {
+				status.setStatus("MQTT Connected");
+			} else {
+				status.setStatus("MQTT Disconnected");
+
+			}
+
+		} catch (PCFException pcfe) {
+			if (pcfe.getMessage().indexOf("3065") > 0) {
+				logger.debug("해당 토큰관련 클라이언트가 Pending 메시지가 없을 경우 채널상태는 없음. -errorcode:3065");
+				status.setStatus("MQTT Disconnected");
+			} else {
+				logger.debug("PCF error: " + pcfe);
+				status.setStatus(pcfe.toString());
+			}
+		} catch (MQException mqe) {
+			logger.error("MQException is", mqe);
+			throw mqe;
+		} catch (IOException ioe) {
+			logger.error("IOException is", ioe);
+			throw ioe;
+		} finally {
+			if (agent != null) {
+				try {
+					agent.disconnect();
+				} catch (MQException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					throw e;
+				}
+			}
+
+		}
+
+		// logger.debug("get종료(Subscribe result=" + subsList + ")");
+		return status;
+
 	}
 
 	// /* (non-Javadoc)
