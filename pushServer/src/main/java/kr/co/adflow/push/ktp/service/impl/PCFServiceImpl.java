@@ -76,6 +76,10 @@ public class PCFServiceImpl implements PCFService {
 		}
 	}
 
+	private String mqpcfid = prop.getProperty("mq.pcf.id");
+	private String mqpcfPassword = prop.getProperty("mq.pcf.password");
+	private String mqpcfChannel = prop.getProperty("mq.pcf.channel");
+
 	/*
 	 * 어드민용 PCF 호출
 	 */
@@ -83,12 +87,12 @@ public class PCFServiceImpl implements PCFService {
 	@Override
 	public String[] getSubscriptions(String token, String host, int port) throws Exception {
 		logger.debug("step...1");
-		logger.debug(prop.getProperty("mq.pcf.id"));
-		logger.debug(prop.getProperty("mq.pcf.password"));
-		logger.debug(prop.getProperty("mq.pcf.channel"));
-		MQEnvironment.userID = prop.getProperty("mq.pcf.id");
-		MQEnvironment.password = prop.getProperty("mq.pcf.password");
-		String pcfChannel = prop.getProperty("mq.pcf.channel");
+		logger.debug(mqpcfid);
+		logger.debug(mqpcfPassword);
+		logger.debug(mqpcfChannel);
+		MQEnvironment.userID = mqpcfid;
+		MQEnvironment.password = mqpcfPassword;
+		String pcfChannel = mqpcfChannel;
 		String[] subsList = null;
 		PCFMessageAgent agent = null;
 
@@ -148,12 +152,13 @@ public class PCFServiceImpl implements PCFService {
 		logger.debug("get시작(token=" + token + ")");
 		Status status = new Status();
 		logger.debug("step...1");
-		logger.debug(prop.getProperty("mq.pcf.id"));
-		logger.debug(prop.getProperty("mq.pcf.password"));
-		logger.debug(prop.getProperty("mq.pcf.channel"));
-		MQEnvironment.userID = prop.getProperty("mq.pcf.id");
-		MQEnvironment.password = prop.getProperty("mq.pcf.password");
-		String pcfChannel = prop.getProperty("mq.pcf.channel");
+		logger.debug("step...1");
+		logger.debug(mqpcfid);
+		logger.debug(mqpcfPassword);
+		logger.debug(mqpcfChannel);
+		MQEnvironment.userID = mqpcfid;
+		MQEnvironment.password = mqpcfPassword;
+		String pcfChannel = mqpcfChannel;
 		PCFMessageAgent agent = null;
 		try {
 
