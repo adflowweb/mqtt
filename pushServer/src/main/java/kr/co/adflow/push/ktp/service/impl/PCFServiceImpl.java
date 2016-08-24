@@ -58,165 +58,230 @@ public class PCFServiceImpl implements PCFService {
 	// System.out.println("=== JdeisPool Release OK ===");
 	// }
 	//
-	// /** The Constant logger. */
-	// private static final org.slf4j.Logger logger = LoggerFactory
-	// .getLogger(PCFServiceImpl.class);
-	//
-	// /** The Constant CONFIG_PROPERTIES. */
-	// private static final String CONFIG_PROPERTIES = "/config.properties";
-	//
-	// /** The prop. */
-	// private static Properties prop = new Properties();
-	//
-	// static {
-	// try {
-	// prop.load(AbstractMessageHandler.class
-	// .getResourceAsStream(CONFIG_PROPERTIES));
-	// logger.debug("속성값=" + prop);
-	// } catch (IOException e) {
-	// e.printStackTrace();
-	// }
-	// }
+	/** The Constant logger. */
+	private static final org.slf4j.Logger logger = LoggerFactory.getLogger(PCFServiceImpl.class);
+
+	/** The Constant CONFIG_PROPERTIES. */
+	private static final String CONFIG_PROPERTIES = "/config.properties";
+
+	/** The prop. */
+	private static Properties prop = new Properties();
+
+	static {
+		try {
+			prop.load(AbstractMessageHandler.class.getResourceAsStream(CONFIG_PROPERTIES));
+			logger.debug("속성값=" + prop);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/*
+	 * 어드민용 PCF 호출
+	 */
+
+	@Override
+	public String[] getSubscriptions(String token, String host, int port) throws Exception {
+		logger.debug("step...1");
+		logger.debug(prop.getProperty("mq.pcf.id"));
+		logger.debug(prop.getProperty("mq.pcf.password"));
+		logger.debug(prop.getProperty("mq.pcf.channel"));
+		MQEnvironment.userID = prop.getProperty("mq.pcf.id");
+		MQEnvironment.password = prop.getProperty("mq.pcf.password");
+		String pcfChannel = prop.getProperty("mq.pcf.channel");
+		String[] subsList = null;
+		PCFMessageAgent agent = null;
+
+		try {
+
+			agent = new PCFMessageAgent(host, port, pcfChannel);
+			PCFMessage request = new PCFMessage(MQConstants.MQCMD_INQUIRE_SUBSCRIPTION);
+			request.addParameter(MQConstants.MQCACF_SUB_NAME, token + ":*");
+
+			logger.debug("step...2");
+
+			PCFMessage[] responses = agent.send(request);
+			logger.debug("step...3");
+			// System.out.println("responses.length ::" + responses.length);
+			subsList = new String[responses.length];
+			// String topic = "";
+
+			for (int i = 0; i < responses.length; i++) {
+				subsList[i] = responses[i].getParameterValue(MQConstants.MQCA_TOPIC_STRING).toString();
+			}
+			logger.debug("step...4");
+		} catch (PCFException pcfe) {
+			logger.debug("step...5");
+			if (pcfe.getMessage().indexOf("2428") > 0) {
+				logger.error("해당 토큰관련 subscriptions 가 없습니다. -errorcode:2428");
+
+			} else {
+				logger.error("PCF error: " + pcfe);
+			}
+
+		} catch (MQException mqe) {
+			logger.debug("step...6");
+			logger.error("MQException is ", mqe);
+			throw mqe;
+		} catch (IOException ioe) {
+			logger.debug("step...7");
+			logger.error("IOException is ", ioe);
+			throw ioe;
+		} finally {
+			logger.debug("step...8");
+			if (agent != null) {
+				try {
+					agent.disconnect();
+				} catch (MQException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					throw e;
+				}
+			}
+
+		}
+		return subsList;
+	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see kr.co.adflow.push.ktp.service.PCFService#get(java.lang.String)
 	 */
-//	@Override
-//	public String[] get(String token) throws Exception {
-//		logger.debug("== get시작(token={})", token);
-//
-//		String[] subsList = null;
-//
-//		Jedis jedis = null;
-//
-//		try {
-//			jedis = jedisPool.getResource();
-//		} catch(Exception e){
-//			
-//		}
-//
-//		if (jedis != null) {
-//			Boolean jedisOK = false;
-//
-//			try {
-//				jedisOK = jedis.exists(token);
-//
-//				if (jedisOK) {
-//
-//					String jedisData = jedis.get(token);
-//					logger.debug("Token:" + token + ", list:" + jedisData);
-//					Object obj = JSONValue.parse(jedisData);
-//					JSONArray array = (JSONArray) obj;
-//
-//					// subList = array.toArray;
-//					subsList = new String[array.size()];
-//
-//					for (int i = 0; i < array.size(); i++) {
-//						subsList[i] = (String) array.get(i);
-//					}
-//
-//				} else {
-//					subsList = callPCF(token);
-//
-//					JSONArray jsonList = new JSONArray();
-//
-//					for (int i = 0; i < subsList.length; i++) {
-//						jsonList.add(subsList[i]);
-//					}
-//
-//					jedis.set(token, JSONValue.toJSONString(jsonList));
-//					jedis.expire(token,
-//							Integer.parseInt(prop.getProperty("jedis.expire")));
-//				}
-//
-//			} catch (JedisConnectionException e) {
-//				if (null != jedis) {
-//					jedisPool.returnBrokenResource(jedis);
-//					jedis = null;
-//				}
-//
-//				subsList = callPCF(token);
-//
-//			} finally {
-//				if (null != jedis) {
-//					jedisPool.returnResource(jedis);
-//				}
-//			}
-//
-//		} else {
-//
-//			subsList = callPCF(token);
-//
-//		}
-//
-//		// logger.debug("get종료(Subscribe result=" + subsList + ")");
-//		return subsList;
-//	}
+	// @Override
+	// public String[] get(String token) throws Exception {
+	// logger.debug("== get시작(token={})", token);
+	//
+	// String[] subsList = null;
+	//
+	// Jedis jedis = null;
+	//
+	// try {
+	// jedis = jedisPool.getResource();
+	// } catch(Exception e){
+	//
+	// }
+	//
+	// if (jedis != null) {
+	// Boolean jedisOK = false;
+	//
+	// try {
+	// jedisOK = jedis.exists(token);
+	//
+	// if (jedisOK) {
+	//
+	// String jedisData = jedis.get(token);
+	// logger.debug("Token:" + token + ", list:" + jedisData);
+	// Object obj = JSONValue.parse(jedisData);
+	// JSONArray array = (JSONArray) obj;
+	//
+	// // subList = array.toArray;
+	// subsList = new String[array.size()];
+	//
+	// for (int i = 0; i < array.size(); i++) {
+	// subsList[i] = (String) array.get(i);
+	// }
+	//
+	// } else {
+	// subsList = callPCF(token);
+	//
+	// JSONArray jsonList = new JSONArray();
+	//
+	// for (int i = 0; i < subsList.length; i++) {
+	// jsonList.add(subsList[i]);
+	// }
+	//
+	// jedis.set(token, JSONValue.toJSONString(jsonList));
+	// jedis.expire(token,
+	// Integer.parseInt(prop.getProperty("jedis.expire")));
+	// }
+	//
+	// } catch (JedisConnectionException e) {
+	// if (null != jedis) {
+	// jedisPool.returnBrokenResource(jedis);
+	// jedis = null;
+	// }
+	//
+	// subsList = callPCF(token);
+	//
+	// } finally {
+	// if (null != jedis) {
+	// jedisPool.returnResource(jedis);
+	// }
+	// }
+	//
+	// } else {
+	//
+	// subsList = callPCF(token);
+	//
+	// }
+	//
+	// // logger.debug("get종료(Subscribe result=" + subsList + ")");
+	// return subsList;
+	// }
 
-//	private String[] callPCF(String token) throws MQException, IOException {
-//		ConnectionManager connMan = MQEnvironment.getDefaultConnectionManager();
-//		MQQueueManager qmgr = null;
-//		PCFMessageAgent agent = null;
-//		String[] subsList = null;
-//
-//		try {
-//
-//			qmgr = new MQQueueManager("MQTT", connMan);
-//
-//			agent = new PCFMessageAgent(qmgr);
-//			PCFMessage request = new PCFMessage(
-//					MQConstants.MQCMD_INQUIRE_SUBSCRIPTION);
-//			request.addParameter(MQConstants.MQCACF_SUB_NAME, token + ":*");
-//
-//			PCFMessage[] responses = agent.send(request);
-//
-//			// System.out.println("responses.length ::" + responses.length);
-//			subsList = new String[responses.length];
-//			// String topic = "";
-//
-//			for (int i = 0; i < responses.length; i++) {
-//				subsList[i] = responses[i].getParameterValue(
-//						MQConstants.MQCA_TOPIC_STRING).toString();
-//			}
-//		} catch (PCFException pcfe) {
-//			if (pcfe.getMessage().indexOf("2428") > 0) {
-//				logger.error("해당 토큰관련 subscriptions 가 없습니다. -errorcode:2428");
-//
-//			} else {
-//				logger.error("PCF error: " + pcfe);
-//			}
-//
-//		} catch (MQException mqe) {
-//			logger.error("MQException is ", mqe);
-//			throw mqe;
-//		} catch (IOException ioe) {
-//			logger.error("IOException is ", ioe);
-//			throw ioe;
-//		} finally {
-//			if (agent != null) {
-//				try {
-//					agent.disconnect();
-//				} catch (MQException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//					throw e;
-//				}
-//			}
-//			if (qmgr != null) {
-//				try {
-//					qmgr.disconnect();
-//				} catch (MQException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//					throw e;
-//				}
-//			}
-//
-//		}
-//		return subsList;
-//	}
+	// private String[] callPCF(String token) throws MQException, IOException {
+	// ConnectionManager connMan = MQEnvironment.getDefaultConnectionManager();
+	// MQQueueManager qmgr = null;
+	// PCFMessageAgent agent = null;
+	// String[] subsList = null;
+	//
+	// try {
+	//
+	// qmgr = new MQQueueManager("MQTT", connMan);
+	//
+	// agent = new PCFMessageAgent(qmgr);
+	// PCFMessage request = new PCFMessage(
+	// MQConstants.MQCMD_INQUIRE_SUBSCRIPTION);
+	// request.addParameter(MQConstants.MQCACF_SUB_NAME, token + ":*");
+	//
+	// PCFMessage[] responses = agent.send(request);
+	//
+	// // System.out.println("responses.length ::" + responses.length);
+	// subsList = new String[responses.length];
+	// // String topic = "";
+	//
+	// for (int i = 0; i < responses.length; i++) {
+	// subsList[i] = responses[i].getParameterValue(
+	// MQConstants.MQCA_TOPIC_STRING).toString();
+	// }
+	// } catch (PCFException pcfe) {
+	// if (pcfe.getMessage().indexOf("2428") > 0) {
+	// logger.error("해당 토큰관련 subscriptions 가 없습니다. -errorcode:2428");
+	//
+	// } else {
+	// logger.error("PCF error: " + pcfe);
+	// }
+	//
+	// } catch (MQException mqe) {
+	// logger.error("MQException is ", mqe);
+	// throw mqe;
+	// } catch (IOException ioe) {
+	// logger.error("IOException is ", ioe);
+	// throw ioe;
+	// } finally {
+	// if (agent != null) {
+	// try {
+	// agent.disconnect();
+	// } catch (MQException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// throw e;
+	// }
+	// }
+	// if (qmgr != null) {
+	// try {
+	// qmgr.disconnect();
+	// } catch (MQException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// throw e;
+	// }
+	// }
+	//
+	// }
+	// return subsList;
+	// }
 
 	// /* (non-Javadoc)
 	// * @see kr.co.adflow.push.ktp.service.PCFService#get(java.lang.String)
@@ -296,85 +361,86 @@ public class PCFServiceImpl implements PCFService {
 	 * 
 	 * @see kr.co.adflow.push.ktp.service.PCFService#getStatus(java.lang.String)
 	 */
-//	@Override
-//	public Status getStatus(String token) throws Exception {
-//		logger.debug("get시작(token=" + token + ")");
-//
-//		Status status = new Status();
-//		ConnectionManager connMan = MQEnvironment.getDefaultConnectionManager();
-//		MQQueueManager qmgr = null;
-//		PCFMessageAgent agent = null;
-//		try {
-//
-//			qmgr = new MQQueueManager("MQTT", connMan);
-//
-//			agent = new PCFMessageAgent(qmgr);
-//
-//			PCFMessage request = new PCFMessage(
-//					MQConstants.MQCMD_INQUIRE_CHANNEL_STATUS);
-//			request.addParameter(MQConstants.MQCACH_CHANNEL_NAME, "*");
-//			request.addParameter(MQConstants.MQIACH_CHANNEL_TYPE,
-//					MQConstants.MQCHT_MQTT);
-//			request.addParameter(MQConstants.MQCACH_CLIENT_ID, token);
-//
-//			PCFMessage[] responses = agent.send(request);
-//
-//			int chStatus = ((Integer) (responses[0]
-//					.getParameterValue(MQConstants.MQIACH_CHANNEL_STATUS)))
-//					.intValue();
-//
-//			if (chStatus == 3) {
-//				status.setStatus("MQTT Connected");
-//			} else {
-//				status.setStatus("MQTT Disconnected");
-//
-//			}
-//
-//			// String[] chStatusText = {"", "MQCHS_BINDING", "MQCHS_STARTING",
-//			// "MQCHS_RUNNING",
-//			// "MQCHS_STOPPING", "MQCHS_RETRYING", "MQCHS_STOPPED",
-//			// "MQCHS_REQUESTING", "MQCHS_PAUSED",
-//			// "", "", "", "", "MQCHS_INITIALIZING"};
-//			// status = chStatusText[chStatus];
-//
-//		} catch (PCFException pcfe) {
-//			if (pcfe.getMessage().indexOf("3065") > 0) {
-//				logger.debug("해당 토큰관련 클라이언트가 Pending 메시지가 없을 경우 채널상태는 없음. -errorcode:3065");
-//				status.setStatus("MQTT Disconnected");
-//			} else {
-//				logger.debug("PCF error: " + pcfe);
-//				status.setStatus(pcfe.toString());
-//			}
-//		} catch (MQException mqe) {
-//			logger.error("MQException is", mqe);
-//			throw mqe;
-//		} catch (IOException ioe) {
-//			logger.error("IOException is", ioe);
-//			throw ioe;
-//		} finally {
-//			if (agent != null) {
-//				try {
-//					agent.disconnect();
-//				} catch (MQException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//					throw e;
-//				}
-//			}
-//			if (qmgr != null) {
-//				try {
-//					qmgr.disconnect();
-//				} catch (MQException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//					throw e;
-//				}
-//			}
-//		}
-//
-//		// logger.debug("get종료(Subscribe result=" + subsList + ")");
-//		return status;
-//	}
+	// @Override
+	// public Status getStatus(String token) throws Exception {
+	// logger.debug("get시작(token=" + token + ")");
+	//
+	// Status status = new Status();
+	// ConnectionManager connMan = MQEnvironment.getDefaultConnectionManager();
+	// MQQueueManager qmgr = null;
+	// PCFMessageAgent agent = null;
+	// try {
+	//
+	// qmgr = new MQQueueManager("MQTT", connMan);
+	//
+	// agent = new PCFMessageAgent(qmgr);
+	//
+	// PCFMessage request = new PCFMessage(
+	// MQConstants.MQCMD_INQUIRE_CHANNEL_STATUS);
+	// request.addParameter(MQConstants.MQCACH_CHANNEL_NAME, "*");
+	// request.addParameter(MQConstants.MQIACH_CHANNEL_TYPE,
+	// MQConstants.MQCHT_MQTT);
+	// request.addParameter(MQConstants.MQCACH_CLIENT_ID, token);
+	//
+	// PCFMessage[] responses = agent.send(request);
+	//
+	// int chStatus = ((Integer) (responses[0]
+	// .getParameterValue(MQConstants.MQIACH_CHANNEL_STATUS)))
+	// .intValue();
+	//
+	// if (chStatus == 3) {
+	// status.setStatus("MQTT Connected");
+	// } else {
+	// status.setStatus("MQTT Disconnected");
+	//
+	// }
+	//
+	// // String[] chStatusText = {"", "MQCHS_BINDING", "MQCHS_STARTING",
+	// // "MQCHS_RUNNING",
+	// // "MQCHS_STOPPING", "MQCHS_RETRYING", "MQCHS_STOPPED",
+	// // "MQCHS_REQUESTING", "MQCHS_PAUSED",
+	// // "", "", "", "", "MQCHS_INITIALIZING"};
+	// // status = chStatusText[chStatus];
+	//
+	// } catch (PCFException pcfe) {
+	// if (pcfe.getMessage().indexOf("3065") > 0) {
+	// logger.debug("해당 토큰관련 클라이언트가 Pending 메시지가 없을 경우 채널상태는 없음.
+	// -errorcode:3065");
+	// status.setStatus("MQTT Disconnected");
+	// } else {
+	// logger.debug("PCF error: " + pcfe);
+	// status.setStatus(pcfe.toString());
+	// }
+	// } catch (MQException mqe) {
+	// logger.error("MQException is", mqe);
+	// throw mqe;
+	// } catch (IOException ioe) {
+	// logger.error("IOException is", ioe);
+	// throw ioe;
+	// } finally {
+	// if (agent != null) {
+	// try {
+	// agent.disconnect();
+	// } catch (MQException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// throw e;
+	// }
+	// }
+	// if (qmgr != null) {
+	// try {
+	// qmgr.disconnect();
+	// } catch (MQException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// throw e;
+	// }
+	// }
+	// }
+	//
+	// // logger.debug("get종료(Subscribe result=" + subsList + ")");
+	// return status;
+	// }
 
 	// /* (non-Javadoc)
 	// * @see
@@ -430,7 +496,8 @@ public class PCFServiceImpl implements PCFService {
 	//
 	// } catch (PCFException pcfe) {
 	// if (pcfe.getMessage().indexOf("3065") > 0) {
-	// logger.debug("해당 토큰관련 클라이언트가 Pending 메시지가 없을 경우 채널상태는 없음. -errorcode:3065");
+	// logger.debug("해당 토큰관련 클라이언트가 Pending 메시지가 없을 경우 채널상태는 없음.
+	// -errorcode:3065");
 	// status.setStatus("MQTT Disconnected");
 	// } else {
 	// logger.debug("PCF error: " + pcfe);

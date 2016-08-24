@@ -433,6 +433,9 @@
 				<zookeeper.url>192.168.59.103:2181</zookeeper.url>
 				<zookeeper.id>dev1</zookeeper.id>
 				<zookeeper.node>/pcsnode</zookeeper.node>
+				<mq.pcf.id>adflow</mq.pcf.id>
+				<mq.pcf.password>!ADFlow@</mq.pcf.password>
+				<mq.pcf.channel>ADFlowPCF</mq.pcf.channel>
 
 				<!-- provisioning -->
 				<provisioning.url>http://14.63.217.141:38083/user</provisioning.url>
@@ -487,6 +490,9 @@
 				<zookeeper.node>/pcsnode</zookeeper.node>
 				<!-- provisioning -->
 				<provisioning.url>http://14.63.217.141:38083/user</provisioning.url>
+				<mq.pcf.id>adflow</mq.pcf.id>
+				<mq.pcf.password>!ADFlow@</mq.pcf.password>
+				<mq.pcf.channel>ADFlowPCF</mq.pcf.channel>
 
 			</properties>
 		</profile>
@@ -536,6 +542,9 @@
 				<zookeeper.node>/pcsnode</zookeeper.node>
 				<!-- provisioning -->
 				<provisioning.url>http://14.63.217.141:38083/user</provisioning.url>
+				<mq.pcf.id>adflow</mq.pcf.id>
+				<mq.pcf.password>!ADFlow@</mq.pcf.password>
+				<mq.pcf.channel>ADFlowPCF</mq.pcf.channel>
 
 			</properties>
 		</profile>
