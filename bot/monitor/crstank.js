@@ -9,7 +9,7 @@ var loglevel = 'debug';
 var util = require('util');
 var Logger = require('bunyan'),
     log = new Logger.createLogger({
-        name: 'crstank',
+        name: 'monitor/crstank',
         level: loglevel,
         serializers: {
             req: Logger.stdSerializers.req

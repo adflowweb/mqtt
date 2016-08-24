@@ -65,7 +65,7 @@ module.exports = function(robot) {
                 "fallback": "명령어 리스트",
                 "fields": [{
                     "title": "명령어 리스트",
-                    "value": "`sys` `call` `mon` `pcsapi` `redis` `tdd` `forever` `tail` `log`",
+                    "value": "`sys` `call` `mon` `redis` `tdd` `forever` `tail` `log`",
                     "short": false
                 }],
                 "mrkdwn_in": ["text", "pretext", "fields"],

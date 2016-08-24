@@ -10,7 +10,7 @@ var Logger = require('bunyan'),
 
 var provisioning = require('./monitor/provisioning.js');
 var crstank = require('./monitor/crstank.js');
-var redis = require('./monitor/redis.js');
+var mqttbroker = require('./monitor/mqttbroker.js');
 
 /**
  * [exports description]
@@ -19,8 +19,8 @@ var redis = require('./monitor/redis.js');
  */
 module.exports = function(robot) {
 
-    robot.respond(/mon redis(.*)/i, function(msg) {
-        redis.process(msg);
+    robot.respond(/mon mb(.*)/i, function(msg) {
+        mqttbroker.process(msg);
     })
 
     robot.respond(/mon pv(.*)/i, function(msg) {
@@ -50,11 +50,11 @@ module.exports = function(robot) {
                     "short": false
                 }, {
                     "title": "사용법",
-                    "value": "mon { `pv` | `pcs` | `pms` | `redis` | `tank` }",
+                    "value": "mon { `pv` | `pcs` | `pms` | `mb` | `tank` }",
                     "short": false
-                }, {
+                },{
                     "title": "약어설명",
-                    "value": "`pv` : provisioning",
+                    "value": "`pv` : provisioning\n`mb` : mqttbroker",
                     "short": false
                 }, {
                     "title": "사용예",
