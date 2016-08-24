@@ -34,4 +34,6 @@ public interface PCFService {
 
 	String[] getSubscriptions(String token, String host, int port) throws Exception;
 
+	Status getConnectStatus(String token, String host, int port) throws Exception;
+
 }

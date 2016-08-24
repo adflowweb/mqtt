@@ -68,6 +68,7 @@ public class PCFController {
 		logger.debug("response=" + res);
 		return res;
 	}
+
 	//
 	// /**
 	// * subscription List 가져오기.
@@ -104,27 +105,30 @@ public class PCFController {
 	// return res;
 	// }
 	//
-	// /**
-	// * MQTT Client 연결상태 가져오기.
-	// *
-	// * @param token the token
-	// * @return the status
-	// * @throws Exception the exception
-	// */
-	// @RequestMapping(value = "clients/{token:.+}", method = RequestMethod.GET)
-	// @ResponseBody
-	// public Response<Status> getStatus(@PathVariable String token)
-	// throws Exception {
-	// logger.debug("token=" + token);
-	// Status status = pCFService.getStatus(token);
-	//
-	// Result<Status> result = new Result<Status>();
-	// result.setSuccess(true);
-	// result.setData(status);
-	// Response<Status> res = new Response<Status>(result);
-	// logger.debug("response=" + res);
-	// return res;
-	// }
+	/**
+	 * MQTT Client 연결상태 가져오기.
+	 *
+	 * @param token
+	 *            the token
+	 * @return the status
+	 * @throws Exception
+	 *             the exception
+	 */
+	@RequestMapping(value = "/admin/clients/{token:.+}", method = RequestMethod.GET)
+	@ResponseBody
+	public Response<Status> getStatus(@PathVariable String token, @RequestParam("host") String host,
+			@RequestParam("port") int port) throws Exception {
+		logger.debug("token=" + token);
+		Status status = pCFService.getConnectStatus(token,host,port);
+
+		Result<Status> result = new Result<Status>();
+		result.setSuccess(true);
+		result.setData(status);
+		Response<Status> res = new Response<Status>(result);
+		logger.debug("response=" + res);
+		return res;
+	}
+
 	//
 	// /**
 	// * 예외처리.
