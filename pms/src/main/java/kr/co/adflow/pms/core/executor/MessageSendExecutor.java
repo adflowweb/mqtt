@@ -47,14 +47,14 @@ public class MessageSendExecutor {
 	/**
 	 * Send message array.
 	 */
-	public void sendMessageArray() {
+	public void sendMessageArray1() {
 
 		if (!zookeeperHandler.getLeader()) {
-			logger.debug(" sendMessageArray() 나는 리더가 아닙니다");
+			logger.debug(pmsConfig.EXECUTOR_SERVER_ID1 + " sendMessageArray1()  나는 리더가 아닙니다");
 			return;
 		}
-		logger.debug(" sendMessageArray() 현재 리더 입니다!");
-		messageSendService.sendMessageArray(pmsConfig.EXECUTOR_SERVER_ID, pmsConfig.EXECUTOR_SEND_LIMIT);
+		logger.debug(pmsConfig.EXECUTOR_SERVER_ID1 + " sendMessageArray1() 현재 리더 입니다!");
+		messageSendService.sendMessageArray(pmsConfig.EXECUTOR_SERVER_ID1, pmsConfig.EXECUTOR_SEND_LIMIT);
 
 	}
 
@@ -62,13 +62,13 @@ public class MessageSendExecutor {
 	/**
 	 * Send reservation message array.
 	 */
-	public void sendReservationMessageArray() {
+	public void sendReservationMessageArray1() {
 		if (!zookeeperHandler.getLeader()) {
-			logger.debug("sendReservationMessageArray() 나는 리더가 아닙니다");
+			logger.debug(pmsConfig.EXECUTOR_SERVER_ID1 + "sendReservationMessageArray1() 나는 리더가 아닙니다");
 			return;
 		}
-		logger.debug("sendReservationMessageArray() 현재 리더 입니다!");
-		messageSendService.sendReservationMessageArray(pmsConfig.EXECUTOR_SERVER_ID, pmsConfig.EXECUTOR_SEND_LIMIT);
+		logger.debug(pmsConfig.EXECUTOR_SERVER_ID1 + "sendReservationMessageArray1() 현재 리더 입니다!");
+		messageSendService.sendReservationMessageArray(pmsConfig.EXECUTOR_SERVER_ID1, pmsConfig.EXECUTOR_SEND_LIMIT);
 
 	}
 
@@ -78,10 +78,10 @@ public class MessageSendExecutor {
 	public void sendMessageArray2() {
 
 		if (!zookeeperHandler.getLeader()) {
-			logger.debug(" sendMessageArray2() 나는 리더가 아닙니다");
+			logger.debug(pmsConfig.EXECUTOR_SERVER_ID1 + " sendMessageArray2() 나는 리더가 아닙니다");
 			return;
 		}
-		logger.debug(" sendMessageArray2() 현재 리더 입니다!");
+		logger.debug(pmsConfig.EXECUTOR_SERVER_ID1 + " sendMessageArray2() 현재 리더 입니다!");
 		messageSendService.sendMessageArray(pmsConfig.EXECUTOR_SERVER_ID2, pmsConfig.EXECUTOR_SEND_LIMIT);
 
 	}
@@ -91,10 +91,10 @@ public class MessageSendExecutor {
 	 */
 	public void sendReservationMessageArray2() {
 		if (!zookeeperHandler.getLeader()) {
-			logger.debug("sendReservationMessageArray2() 나는 리더가 아닙니다");
+			logger.debug(pmsConfig.EXECUTOR_SERVER_ID1 + "sendReservationMessageArray2() 나는 리더가 아닙니다");
 			return;
 		}
-		logger.debug("sendReservationMessageArray2() 현재 리더 입니다!");
+		logger.debug(pmsConfig.EXECUTOR_SERVER_ID1 + "sendReservationMessageArray2() 현재 리더 입니다!");
 		messageSendService.sendReservationMessageArray(pmsConfig.EXECUTOR_SERVER_ID2, pmsConfig.EXECUTOR_SEND_LIMIT);
 
 	}
@@ -105,11 +105,11 @@ public class MessageSendExecutor {
 	public void sendMessageArray3() {
 
 		if (!zookeeperHandler.getLeader()) {
-			logger.debug(" sendMessageArray3() 나는 리더가 아닙니다");
+			logger.debug(pmsConfig.EXECUTOR_SERVER_ID1 + " sendMessageArray3() 나는 리더가 아닙니다");
 			return;
 		}
-		logger.debug(" sendMessageArray3() 현재 리더 입니다!");
-		messageSendService.sendMessageArray(pmsConfig.EXECUTOR_SERVER_ID3, pmsConfig.EXECUTOR_SEND_LIMIT);
+		logger.debug(pmsConfig.EXECUTOR_SERVER_ID1 + " sendMessageArray3() 현재 리더 입니다!");
+		messageSendService.sendMessageArray(pmsConfig.EXECUTOR_SERVER_OLD_PMS_ID, pmsConfig.EXECUTOR_SEND_LIMIT);
 
 	}
 
@@ -118,11 +118,12 @@ public class MessageSendExecutor {
 	 */
 	public void sendReservationMessageArray3() {
 		if (!zookeeperHandler.getLeader()) {
-			logger.debug("sendReservationMessageArray3() 나는 리더가 아닙니다");
+			logger.debug(pmsConfig.EXECUTOR_SERVER_ID1 + "sendReservationMessageArray3() 나는 리더가 아닙니다");
 			return;
 		}
-		logger.debug("sendReservationMessageArray3() 현재 리더 입니다!");
-		messageSendService.sendReservationMessageArray(pmsConfig.EXECUTOR_SERVER_ID3, pmsConfig.EXECUTOR_SEND_LIMIT);
+		logger.debug(pmsConfig.EXECUTOR_SERVER_ID1 + "sendReservationMessageArray3() 현재 리더 입니다!");
+		messageSendService.sendReservationMessageArray(pmsConfig.EXECUTOR_SERVER_OLD_PMS_ID,
+				pmsConfig.EXECUTOR_SEND_LIMIT);
 
 	}
 
@@ -130,14 +131,14 @@ public class MessageSendExecutor {
 	/**
 	 * Send callback.
 	 */
-	public void sendCallback() {
+	public void sendCallback1() {
 
 		if (!zookeeperHandler.getLeader()) {
-			logger.debug("sendCallback() 나는 리더가 아닙니다");
+			logger.debug(pmsConfig.EXECUTOR_SERVER_ID1 + "sendCallback() 나는 리더가 아닙니다");
 			return;
 		}
-		logger.debug("sendCallback() 현재 리더 입니다!");
-		messageSendService.sendCallback(pmsConfig.EXECUTOR_SERVER_ID, pmsConfig.EXECUTOR_SEND_LIMIT);
+		logger.debug(pmsConfig.EXECUTOR_SERVER_ID1 + "sendCallback() 현재 리더 입니다!");
+		messageSendService.sendCallback(pmsConfig.EXECUTOR_SERVER_ID1, pmsConfig.EXECUTOR_SEND_LIMIT);
 
 	}
 
@@ -147,10 +148,10 @@ public class MessageSendExecutor {
 	public void sendCallback2() {
 
 		if (!zookeeperHandler.getLeader()) {
-			logger.debug("sendCallback()2 나는 리더가 아닙니다");
+			logger.debug(pmsConfig.EXECUTOR_SERVER_ID1 + "sendCallback()2 나는 리더가 아닙니다");
 			return;
 		}
-		logger.debug("sendCallback()2 현재 리더 입니다!");
+		logger.debug(pmsConfig.EXECUTOR_SERVER_ID1 + "sendCallback()2 현재 리더 입니다!");
 		messageSendService.sendCallback(pmsConfig.EXECUTOR_SERVER_ID2, pmsConfig.EXECUTOR_SEND_LIMIT);
 
 	}
@@ -161,11 +162,11 @@ public class MessageSendExecutor {
 	public void sendCallback3() {
 
 		if (!zookeeperHandler.getLeader()) {
-			logger.debug("sendCallback()3 나는 리더가 아닙니다");
+			logger.debug(pmsConfig.EXECUTOR_SERVER_ID1 + "sendCallback()3 나는 리더가 아닙니다");
 			return;
 		}
-		logger.debug("sendCallback()3 현재 리더 입니다!");
-		messageSendService.sendCallback(pmsConfig.EXECUTOR_SERVER_ID3, pmsConfig.EXECUTOR_SEND_LIMIT);
+		logger.debug(pmsConfig.EXECUTOR_SERVER_ID1 + "sendCallback()3 현재 리더 입니다!");
+		messageSendService.sendCallback(pmsConfig.EXECUTOR_SERVER_OLD_PMS_ID, pmsConfig.EXECUTOR_SEND_LIMIT);
 
 	}
 

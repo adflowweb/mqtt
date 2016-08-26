@@ -454,7 +454,7 @@ public class UserMessageServiceImpl implements UserMessageService {
 		// } else if (mod == 2) {
 		// result = pmsConfig.EXECUTOR_SERVER_ID3;
 		// }
-		result = pmsConfig.EXECUTOR_SERVER_ID;
+		result = pmsConfig.EXECUTOR_SERVER_ID1;
 		logger.debug("=== result::{}", result);
 		return result;
 	}
