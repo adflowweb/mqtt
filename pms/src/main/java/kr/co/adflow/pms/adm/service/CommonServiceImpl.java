@@ -199,7 +199,7 @@ public class CommonServiceImpl implements CommonService {
 		Leader leader = new Leader();
 		boolean leaderCheck = zookeeperHandler.getLeader();
 		leader.setLeaderCheck(leaderCheck);
-		leader.setServerId(pmsConfig.EXECUTOR_SERVER_ID);
+		leader.setServerId(pmsConfig.EXECUTOR_SERVER_OLD_PMS_ID);
 
 		return leader;
 	}

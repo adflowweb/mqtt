@@ -64,23 +64,23 @@
 
 
 	<task:scheduled-tasks scheduler="myScheduler">
-		<task:scheduled ref="messageSendExecutor" method="sendMessageArray"
+		<task:scheduled ref="messageSendExecutor" method="sendMessageArrayOld"
 			fixed-delay="#{pms['executor.delay.time']}" />
-		<task:scheduled ref="messageSendExecutor" method="sendReservationMessageArray"
+		<task:scheduled ref="messageSendExecutor" method="sendReservationMessageArrayOld"
 			fixed-delay="#{pms['executor.delay.time']}" />
+		<task:scheduled ref="messageSendExecutor" method="sendMessageArray1"
+			fixed-delay="#{pms['executor.delay.time2']}" />
+		<task:scheduled ref="messageSendExecutor" method="sendReservationMessageArray1"
+			fixed-delay="#{pms['executor.delay.time2']}" />
 		<task:scheduled ref="messageSendExecutor" method="sendMessageArray2"
-			fixed-delay="#{pms['executor.delay.time2']}" />
+			fixed-delay="#{pms['executor.delay.time3']}" />
 		<task:scheduled ref="messageSendExecutor" method="sendReservationMessageArray2"
-			fixed-delay="#{pms['executor.delay.time2']}" />
-		<task:scheduled ref="messageSendExecutor" method="sendMessageArray3"
 			fixed-delay="#{pms['executor.delay.time3']}" />
-		<task:scheduled ref="messageSendExecutor" method="sendReservationMessageArray3"
-			fixed-delay="#{pms['executor.delay.time3']}" />
-		<task:scheduled ref="messageSendExecutor" method="sendCallback"
+		<task:scheduled ref="messageSendExecutor" method="sendCallbackOld"
+			fixed-delay="#{pms['executor.delay.time']}" />
+		<task:scheduled ref="messageSendExecutor" method="sendCallback1"
 			fixed-delay="#{pms['executor.delay.time']}" />
 		<task:scheduled ref="messageSendExecutor" method="sendCallback2"
-			fixed-delay="#{pms['executor.delay.time']}" />
-		<task:scheduled ref="messageSendExecutor" method="sendCallback3"
 			fixed-delay="#{pms['executor.delay.time']}" />
 		<task:scheduled ref="tableCreateExecutor" method="createTable"
 			cron="#{pms['executor.createtable.cron']}" />

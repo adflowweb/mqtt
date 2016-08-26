@@ -14,14 +14,14 @@ import org.springframework.stereotype.Component;
 public class PmsConfig {
 
 	/** The executor server id. */
-	@Value("#{pms['executor.server.old.id']}")
-	public String EXECUTOR_SERVER_ID; // = "올드버전의 아이디를 자신의 아이디로 사용 config 공유문";
+	@Value("#{pms['executor.server.old.pms.id']}")
+	public String EXECUTOR_SERVER_OLD_PMS_ID; // = "올드버전의 아이디를 자신의 아이디로 사용 config 공유문";
 
-	@Value("#{pms['executor.server.other.id']}")
-	public String EXECUTOR_SERVER_ID2; // = "new pms 1";
+	@Value("#{pms['executor.server.id1']}")
+	public String EXECUTOR_SERVER_ID1; // = "new pms 1";
 
-	@Value("#{pms['executor.server.self.id']}")
-	public String EXECUTOR_SERVER_ID3; // = "new pms 2";
+	@Value("#{pms['executor.server.id2']}")
+	public String EXECUTOR_SERVER_ID2; // = "new pms 2";
 
 	/** The executor delay time. */
 	@Value("#{pms['executor.delay.time']}")
