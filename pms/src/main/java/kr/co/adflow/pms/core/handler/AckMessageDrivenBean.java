@@ -52,7 +52,8 @@ public class AckMessageDrivenBean implements MessageListener {
 	private UserMapper userMapper;
 
 	/** The executor server id. */
-	@Value("#{pms['executor.server.old.pms.id]}")
+
+	@Value("#{pms['executor.server.old.pms.id']}")
 	private String EXECUTOR_SERVER_OLD_PMS_ID;
 
 	/*
