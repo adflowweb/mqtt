@@ -177,6 +177,12 @@ public class MessageSendExecutor {
 	 */
 	public void createTable() {
 
+		if (!zookeeperHandler.getLeader()) {
+			logger.debug(pmsConfig.EXECUTOR_SERVER_ID1 + "createTable() 나는 리더가 아닙니다");
+			return;
+		}
+		logger.debug(pmsConfig.EXECUTOR_SERVER_ID1 + "createTable() 현재 리더 입니다!");
+
 		String name = DateUtil.getYYYYMM(1);
 
 		// logger.info("createTable1");
