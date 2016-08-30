@@ -70,7 +70,9 @@ public interface PlatformService {
 	 */
 	public void sendUserMessage(UserMessage message);
 
-	public void sendSystemMessage(SystemMessage systemMessage);
+	public void logTraceMessage(SystemMessage systemMessage);
+
+	public void chnChangeMessage(SystemMessage systemMessage);
 
 	/**
 	 * Valid user id.
