@@ -67,8 +67,7 @@ public class PCFConnectionManagerHandler extends HttpServlet {
 
 			MQEnvironment.setDefaultConnectionManager(connMan);
 
-			// System.out.println("=== PCFConnectionManagerHandler Load OK
-			// ===");
+			System.out.println("=== PCFConnectionManagerHandler Load OK===");
 
 		} catch (Exception mqe) {
 			System.err.println(mqe);

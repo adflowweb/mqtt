@@ -92,68 +92,64 @@ public class PCFServiceImpl implements PCFService {
 
 		Jedis jedis = null;
 
-		// try {
-		// jedis = jedisPool.getResource();
-		// } catch (Exception e) {
-		// e.printStackTrace();
-		// }
+		try {
+			jedis = jedisPool.getResource();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-		// 테스트 코드 추후삭제
+		if (jedis != null) {
+			Boolean jedisOK = false;
 
-		/////////////////
-		// if (jedis != null) {
-		// Boolean jedisOK = false;
-		//
-		// try {
-		// jedisOK = jedis.exists(token);
-		//
-		// if (jedisOK) {
-		//
-		// String jedisData = jedis.get(token);
-		// logger.debug("Token:" + token + ", list:" + jedisData);
-		// Object obj = JSONValue.parse(jedisData);
-		// JSONArray array = (JSONArray) obj;
-		//
-		// // subList = array.toArray;
-		// subsList = new String[array.size()];
-		//
-		// for (int i = 0; i < array.size(); i++) {
-		// subsList[i] = (String) array.get(i);
-		// }
-		//
-		// } else {
-		// subsList = callPCF(token);
-		//
-		// JSONArray jsonList = new JSONArray();
-		//
-		// for (int i = 0; i < subsList.length; i++) {
-		// jsonList.add(subsList[i]);
-		// }
-		//
-		// jedis.set(token, JSONValue.toJSONString(jsonList));
-		// jedis.expire(token,
-		// Integer.parseInt(prop.getProperty("jedis.expire")));
-		// }
-		//
-		// } catch (JedisConnectionException e) {
-		// if (null != jedis) {
-		// jedisPool.returnBrokenResource(jedis);
-		// jedis = null;
-		// }
-		//
-		// subsList = callPCF(token);
-		//
-		// } finally {
-		// if (null != jedis) {
-		// jedisPool.returnResource(jedis);
-		// }
-		// }
-		//
-		// } else {
+			try {
+				jedisOK = jedis.exists(token);
 
-		subsList = callPCF(token);
+				if (jedisOK) {
 
-		// }
+					String jedisData = jedis.get(token);
+					logger.debug("Token:" + token + ", list:" + jedisData);
+					Object obj = JSONValue.parse(jedisData);
+					JSONArray array = (JSONArray) obj;
+
+					// subList = array.toArray;
+					subsList = new String[array.size()];
+
+					for (int i = 0; i < array.size(); i++) {
+						subsList[i] = (String) array.get(i);
+					}
+
+				} else {
+					subsList = callPCF(token);
+
+					JSONArray jsonList = new JSONArray();
+
+					for (int i = 0; i < subsList.length; i++) {
+						jsonList.add(subsList[i]);
+					}
+
+					jedis.set(token, JSONValue.toJSONString(jsonList));
+					jedis.expire(token, Integer.parseInt(prop.getProperty("jedis.expire")));
+				}
+
+			} catch (JedisConnectionException e) {
+				if (null != jedis) {
+					jedisPool.returnBrokenResource(jedis);
+					jedis = null;
+				}
+
+				subsList = callPCF(token);
+
+			} finally {
+				if (null != jedis) {
+					jedisPool.returnResource(jedis);
+				}
+			}
+
+		} else {
+
+			subsList = callPCF(token);
+
+		}
 
 		// logger.debug("get종료(Subscribe result=" + subsList + ")");
 		return subsList;
