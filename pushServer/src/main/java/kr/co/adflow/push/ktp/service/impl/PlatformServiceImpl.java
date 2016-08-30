@@ -480,7 +480,7 @@ public class PlatformServiceImpl implements PlatformService {
 		message.setSender(systemMessage.getSender());
 		message.setReceiver(systemMessage.getReceiver());
 		message.setContentType(CONTENT_TYPE_JSON);
-		message.setContent("{\"hostInfo\":\"" + systemMessage.getContent() + "\"}");
+		message.setContent("{\"mqttCluster\":\"" + systemMessage.getContent() + "\"}");
 		// message.setContent(systemMessage.getContent());
 
 		logger.debug("sendSystemMessage:" + message.toString());
