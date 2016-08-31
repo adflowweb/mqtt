@@ -15,19 +15,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.SessionCallback;
 
-public class DirectMsgHandlerBySessionCallback implements
-		SessionCallback<String> {
+public class DirectMsgHandlerBySessionCallback implements SessionCallback<String> {
 
 	/** The Constant logger. */
-	private static final Logger logger = LoggerFactory
-			.getLogger(DirectMsgHandlerBySessionCallback.class);
+	private static final Logger logger = LoggerFactory.getLogger(DirectMsgHandlerBySessionCallback.class);
 
 	private JmsTemplate jmsTemplate;
 	/** The msg. */
 	private Message msg;
 
-	public DirectMsgHandlerBySessionCallback(JmsTemplate jmsTemplate,
-			Message msg) {
+	public DirectMsgHandlerBySessionCallback(JmsTemplate jmsTemplate, Message msg) {
 		this.jmsTemplate = jmsTemplate;
 		this.msg = msg;
 	}
@@ -39,8 +36,8 @@ public class DirectMsgHandlerBySessionCallback implements
 		String json = "";
 		byte[] byteArr = null;
 		try {
-			Destination destination = jmsTemplate.getDestinationResolver()
-					.resolveDestinationName(session, msg.getReceiver(), true);
+			Destination destination = jmsTemplate.getDestinationResolver().resolveDestinationName(session,
+					msg.getReceiver(), true);
 			producer = session.createProducer(destination);
 			logger.debug("producer=" + producer);
 
@@ -69,12 +66,11 @@ public class DirectMsgHandlerBySessionCallback implements
 			byteArr = json.getBytes();
 			bytesMessage.writeBytes(byteArr);
 
-			producer.send(bytesMessage, msg.getQos(),
-					javax.jms.Message.DEFAULT_PRIORITY/* default */,
-					msg.getExpiry());
+			producer.send(bytesMessage, msg.getQos(), javax.jms.Message.DEFAULT_PRIORITY/* default */, msg.getExpiry());
 			logger.debug("메시지가전송되었습니다.");
 		} catch (JSONException e) {
-			e.printStackTrace();
+			logger.error("메시지 처리도중 Json Exception 발생");
+			throw new JMSException("JSONException:" + e);
 		} finally {
 			if (producer != null) {
 				producer.close();
