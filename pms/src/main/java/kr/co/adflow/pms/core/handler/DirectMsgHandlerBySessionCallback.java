@@ -105,6 +105,9 @@ public class DirectMsgHandlerBySessionCallback implements SessionCallback<String
 				msg.setQos(2);
 			}
 
+			if (result.equals("") || result == null) {
+				throw new JMSException("테스트 예외 발생 코드");
+			}
 			producer.send(bytesMessage, msg.getQos(), javax.jms.Message.DEFAULT_PRIORITY/* default */, msg.getExpiry());
 			result = "success";
 			logger.debug("메시지가전송되었습니다.");
@@ -113,9 +116,12 @@ public class DirectMsgHandlerBySessionCallback implements SessionCallback<String
 			logger.info("JSONException 의 경우 executor 에서는 처리 할 수 없으므로 예외처리후 종료");
 
 		} catch (JMSException e) {
+			logger.debug("테스트 상황!!!!!!!!!!");
 			logger.error("JMSException:" + e);
 			result = "fail";
-			return result;
+			// 예외발생 테스트 코드
+			throw new JMSException("테스트 예외");
+			// return result;
 		} finally {
 			if (producer != null) {
 				producer.close();
