@@ -19,7 +19,7 @@
 	<!-- location="file:${user.home}/pms/config.properties" /> -->
 	<!--테스트 -->
 	<util:properties id="pms"
-		location="file:/usr/share/tomcat-pms/pms/config.properties" />
+		location="file:/usr/share/ktp-tomcat/pms/config.properties" />
 
 	<!-- ds Pms -->
 	<bean id="dataSourcePms" class="org.springframework.jndi.JndiObjectFactoryBean"
