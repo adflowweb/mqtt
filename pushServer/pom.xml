@@ -504,7 +504,8 @@
 				<mq.server.ssl>true</mq.server.ssl>
 
 				<!-- ibm mq 서버주소 -->
-				<mq.server.url>ssl://14.63.217.141:18831,ssl://14.63.217.141:18832,ssl://14.63.217.141:18833,ssl://14.63.217.141:18834,ssl://14.63.217.141:28831,ssl://14.63.217.141:28832,ssl://14.63.217.141:28833,ssl://14.63.217.141:28834</mq.server.url>
+				<mq.server.url>ssl:/PUSH-MQ:8883,ssl://PUSH-MQ:8884,ssl://PUSH-MQ:8833,ssl://PUSH-MQ:8884,ssl://PUSH-MQ:8883,ssl://PUSH-MQ:8834,ssl://PUSH-MQ:8883,ssl://PUSH-MQ:8834</mq.server.url>
+
 
 				<!-- mqtt client socket connect timeout (second) -->
 				<connection.timeout>10</connection.timeout>
@@ -523,21 +524,21 @@
 
 				<!-- mq jms info -->
 				<mq.jms.id>adflow</mq.jms.id>
-				<mq.jms.hostname1>14.63.217.141(14141)</mq.jms.hostname1>
-				<mq.jms.hostname2>14.63.217.141(14142)</mq.jms.hostname2>
-				<mq.jms.hostname3>14.63.217.141(14143)</mq.jms.hostname3>
-				<mq.jms.hostname4>14.63.217.141(14144)</mq.jms.hostname4>
-				<mq.jms.hostname5>14.63.217.141(24141)</mq.jms.hostname5>
-				<mq.jms.hostname6>14.63.217.141(24142)</mq.jms.hostname6>
-				<mq.jms.hostname7>14.63.217.141(24143)</mq.jms.hostname7>
-				<mq.jms.hostname8>14.63.217.141(24144)</mq.jms.hostname8>
+				<mq.jms.hostname1>PUSH-MQ(1414)</mq.jms.hostname1>
+				<mq.jms.hostname2>PUSH-MQ(1414)</mq.jms.hostname2>
+				<mq.jms.hostname3>PUSH-MQ(1414)</mq.jms.hostname3>
+				<mq.jms.hostname4>PUSH-MQ(1414)</mq.jms.hostname4>
+				<mq.jms.hostname5>PUSH-MQ(1414)</mq.jms.hostname5>
+				<mq.jms.hostname6>PUSH-MQ(1414)</mq.jms.hostname6>
+				<mq.jms.hostname7>PUSH-MQ(1414)</mq.jms.hostname7>
+				<mq.jms.hostname8>PUSH-MQ(1414)</mq.jms.hostname8>
 				<mq.jms.password>!ADFlow@</mq.jms.password>
 				<!-- <mq.jms.queue.manager>MQTT01</mq.jms.queue.manager> -->
 				<mq.jms.channel>ADFlowJMS</mq.jms.channel>
 
 
 				<!-- zookeeper -->
-				<zookeeper.url>172.27.0.101</zookeeper.url>
+				<zookeeper.url>PUSH-PCS,PUSH-PMS,PUSH-DMS-ZK</zookeeper.url>
 				<zookeeper.id>dev1</zookeeper.id>
 				<zookeeper.node>/pcsnode</zookeeper.node>
 				<!-- provisioning -->
