@@ -12,7 +12,7 @@
 
 	<!-- Ack 날짜별 트랜잭션로그 파일 생성 -->
 	<appender name="ackLogFileAppender" class="org.apache.log4j.DailyRollingFileAppender">
-		<param name="File" value="/var/lib/tomcat-pms/logs/ack.log" />
+		<param name="File" value="/var/lib/ktp-tomcat-pms/logs/ack.log" />
 		<param name="Append" value="true" />
 
 		<param name="DatePattern" value="'.'yyyy-MM-dd" />
@@ -23,7 +23,7 @@
 
 	<!-- Message 날짜별 트랜잭션로그 파일 생성 -->
 	<appender name="messageTrLogFileAppender" class="org.apache.log4j.DailyRollingFileAppender">
-		<param name="File" value="/var/lib/tomcat-pms/logs/message.log" />
+		<param name="File" value="/var/lib/ktp-tomcat-pms/logs/message.log" />
 		<param name="Append" value="true" />
 		<!-- param name="MaxFileSize" value="100MB"/ -->
 		<!-- param name="MaxBackupIndex" value="2"></param -->
