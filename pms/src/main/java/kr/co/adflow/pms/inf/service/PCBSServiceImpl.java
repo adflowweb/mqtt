@@ -3,6 +3,7 @@
  */
 package kr.co.adflow.pms.inf.service;
 
+import kr.co.adflow.pms.core.config.PmsConfig;
 import kr.co.adflow.pms.core.config.StaticConfig;
 import kr.co.adflow.pms.core.exception.PmsRuntimeException;
 import kr.co.adflow.pms.core.util.KeyGenerator;
@@ -28,21 +29,28 @@ public class PCBSServiceImpl implements PCBSService {
 	/** The user mapper. */
 	@Autowired
 	private UserMapper userMapper;
-	
+
 	/** The token mapper. */
 	@Autowired
 	private TokenMapper tokenMapper;
-	
+
 	/** The intercept mapper. */
 	@Autowired
 	private InterceptMapper interceptMapper;
 
-	/* (non-Javadoc)
-	 * @see kr.co.adflow.pms.inf.service.PCBSService#addUser(kr.co.adflow.pms.inf.request.UserReq, java.lang.String)
+	@Autowired
+	private PmsConfig pmsConfig;
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * kr.co.adflow.pms.inf.service.PCBSService#addUser(kr.co.adflow.pms.inf.
+	 * request.UserReq, java.lang.String)
 	 */
 	@Override
 	public String addUser(UserReq userReq, String issueId) {
-		
+
 		User user = userMapper.select(userReq.getUserId());
 		if (user == null || user.getUserId() == null || user.getUserId().trim().length() == 0) {
 			// Add User
@@ -57,8 +65,8 @@ public class PCBSServiceImpl implements PCBSService {
 			user.setUfmi(userReq.getUfmi());
 			user.setSaId(userReq.getSaId());
 			user.setDefaultQos(2);
-			user.setDefaultExpiry(600000);
-//			user.setGroupTopics(userReq.getGroupTopics());
+			user.setDefaultExpiry(pmsConfig.MESSAGE_HEADER_EXPIRY_DEFAULT);
+			// user.setGroupTopics(userReq.getGroupTopics());
 
 			Token token = new Token();
 			token.setUserId(userReq.getUserId());
@@ -72,9 +80,9 @@ public class PCBSServiceImpl implements PCBSService {
 			tokenMapper.insertToken(token);
 			user.setStatus(userReq.getStatus());
 			userMapper.updateUserStatus(user);
-			
+
 		} else {
-			//Update user
+			// Update user
 			user.setPassword(this.getPassword(userReq));
 			user.setRole(StaticConfig.USER_ROLE_SERVICE);
 			user.setIpFilters(StaticConfig.INTERCEPTER_IP_FILTER);
@@ -83,8 +91,8 @@ public class PCBSServiceImpl implements PCBSService {
 			user.setIssueId(issueId);
 			user.setUfmi(userReq.getUfmi());
 			user.setSaId(userReq.getSaId());
-//			user.setGroupTopics(userReq.getGroupTopics());
-			
+			// user.setGroupTopics(userReq.getGroupTopics());
+
 			user.setAction("updateUser");
 			userMapper.logUserHistory(user);
 			userMapper.updateUser(user);
@@ -97,7 +105,8 @@ public class PCBSServiceImpl implements PCBSService {
 	/**
 	 * Gets the password.
 	 *
-	 * @param req the req
+	 * @param req
+	 *            the req
 	 * @return the password
 	 */
 	private String getPassword(UserReq req) {
@@ -108,7 +117,8 @@ public class PCBSServiceImpl implements PCBSService {
 	/**
 	 * Gets the token id.
 	 *
-	 * @param req the req
+	 * @param req
+	 *            the req
 	 * @return the token id
 	 */
 	private String getTokenId(UserReq req) {
@@ -116,16 +126,23 @@ public class PCBSServiceImpl implements PCBSService {
 		return KeyGenerator.generateToken(req.getUserId());
 	}
 
-	/* (non-Javadoc)
-	 * @see kr.co.adflow.pms.inf.service.PCBSService#retrieveUser(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * kr.co.adflow.pms.inf.service.PCBSService#retrieveUser(java.lang.String)
 	 */
 	@Override
 	public User retrieveUser(String userId) {
 		return userMapper.select(userId);
 	}
 
-	/* (non-Javadoc)
-	 * @see kr.co.adflow.pms.inf.service.PCBSService#updateUser(kr.co.adflow.pms.inf.request.UserUpdateReq, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * kr.co.adflow.pms.inf.service.PCBSService#updateUser(kr.co.adflow.pms.inf.
+	 * request.UserUpdateReq, java.lang.String)
 	 */
 	@Override
 	public int updateUser(UserUpdateReq userReq, String appKey) {
@@ -147,8 +164,12 @@ public class PCBSServiceImpl implements PCBSService {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see kr.co.adflow.pms.inf.service.PCBSService#deleteUser(java.lang.String, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * kr.co.adflow.pms.inf.service.PCBSService#deleteUser(java.lang.String,
+	 * java.lang.String)
 	 */
 	@Override
 	public int deleteUser(String userId, String appKey) {
@@ -163,13 +184,17 @@ public class PCBSServiceImpl implements PCBSService {
 		return userMapper.deleteUser(userId);
 	}
 
-	/* (non-Javadoc)
-	 * @see kr.co.adflow.pms.inf.service.PCBSService#modifyPassword(kr.co.adflow.pms.inf.request.PasswordReq, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * kr.co.adflow.pms.inf.service.PCBSService#modifyPassword(kr.co.adflow.pms.
+	 * inf.request.PasswordReq, java.lang.String)
 	 */
 	@Override
-	public int modifyPassword(PasswordReq req, String appKey) throws Exception{
+	public int modifyPassword(PasswordReq req, String appKey) throws Exception {
 		if (!req.getNewPassword().trim().equals(req.getRePassword().trim())) {
-//			throw new RuntimeException("패스워드 변경 실패1");
+			// throw new RuntimeException("패스워드 변경 실패1");
 			throw new PmsRuntimeException("패스워드 변경 실패1");
 		}
 
@@ -183,7 +208,7 @@ public class PCBSServiceImpl implements PCBSService {
 
 		User user = userMapper.selectAuth(paramUser);
 		if (user == null) {
-//			throw new RuntimeException("패스워드 변경 실패2");
+			// throw new RuntimeException("패스워드 변경 실패2");
 			throw new PmsRuntimeException("user not valid");
 		}
 
@@ -196,7 +221,7 @@ public class PCBSServiceImpl implements PCBSService {
 		if (cnt > 0) {
 			cnt = userMapper.updatePassword(paramUser);
 		} else {
-//			throw new RuntimeException("패스워드 변경 실패3");
+			// throw new RuntimeException("패스워드 변경 실패3");
 			throw new PmsRuntimeException("패스워드 변경 실패3");
 		}
 
@@ -206,8 +231,10 @@ public class PCBSServiceImpl implements PCBSService {
 	/**
 	 * Gets the password.
 	 *
-	 * @param userId the user id
-	 * @param password the password
+	 * @param userId
+	 *            the user id
+	 * @param password
+	 *            the password
 	 * @return the password
 	 */
 	private String getPassword(String userId, String password) {
