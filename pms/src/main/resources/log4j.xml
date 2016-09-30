@@ -52,7 +52,7 @@
 	<!-- Application Loggers -->
 	<logger name="kr.co.adflow.pms">
 		<level value="DEBUG" />
-		<appender-ref ref="console" />
+		<appender-ref ref="tomcatfile" />
 	</logger>
 
 	<!-- 3rdparty Loggers -->
