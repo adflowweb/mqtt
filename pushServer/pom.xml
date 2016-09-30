@@ -504,7 +504,7 @@
 				<mq.server.ssl>true</mq.server.ssl>
 
 				<!-- ibm mq 서버주소 -->
-				<mq.server.url>ssl:/PUSH-MQ:8883,ssl://PUSH-MQ:8884,ssl://PUSH-MQ:8833,ssl://PUSH-MQ:8884,ssl://PUSH-MQ:8883,ssl://PUSH-MQ:8834,ssl://PUSH-MQ:8883,ssl://PUSH-MQ:8834</mq.server.url>
+				<mq.server.url>ssl://PUSH-MQ:18831,ssl://PUSH-MQ:18832,ssl://PUSH-MQ:18833,ssl://PUSH-MQ:18834,ssl://PUSH-MQ2:18831,ssl://PUSH-MQ2:18832,ssl://PUSH-MQ2:18833,ssl://PUSH-MQ2:18834</mq.server.url>
 
 
 				<!-- mqtt client socket connect timeout (second) -->
@@ -524,14 +524,14 @@
 
 				<!-- mq jms info -->
 				<mq.jms.id>adflow</mq.jms.id>
-				<mq.jms.hostname1>PUSH-MQ(1414)</mq.jms.hostname1>
-				<mq.jms.hostname2>PUSH-MQ(1414)</mq.jms.hostname2>
-				<mq.jms.hostname3>PUSH-MQ(1414)</mq.jms.hostname3>
-				<mq.jms.hostname4>PUSH-MQ(1414)</mq.jms.hostname4>
-				<mq.jms.hostname5>PUSH-MQ(1414)</mq.jms.hostname5>
-				<mq.jms.hostname6>PUSH-MQ(1414)</mq.jms.hostname6>
-				<mq.jms.hostname7>PUSH-MQ(1414)</mq.jms.hostname7>
-				<mq.jms.hostname8>PUSH-MQ(1414)</mq.jms.hostname8>
+				<mq.jms.hostname1>PUSH-MQ(14141)</mq.jms.hostname1>
+				<mq.jms.hostname2>PUSH-MQ(14142)</mq.jms.hostname2>
+				<mq.jms.hostname3>PUSH-MQ(14143)</mq.jms.hostname3>
+				<mq.jms.hostname4>PUSH-MQ(14144)</mq.jms.hostname4>
+				<mq.jms.hostname5>PUSH-MQ2(14141)</mq.jms.hostname5>
+				<mq.jms.hostname6>PUSH-MQ2(14142)</mq.jms.hostname6>
+				<mq.jms.hostname7>PUSH-MQ2(14143)</mq.jms.hostname7>
+				<mq.jms.hostname8>PUSH-MQ2(14144)</mq.jms.hostname8>
 				<mq.jms.password>!ADFlow@</mq.jms.password>
 				<!-- <mq.jms.queue.manager>MQTT01</mq.jms.queue.manager> -->
 				<mq.jms.channel>ADFlowJMS</mq.jms.channel>
@@ -539,10 +539,10 @@
 
 				<!-- zookeeper -->
 				<zookeeper.url>PUSH-PCS,PUSH-PMS,PUSH-DMS-ZK</zookeeper.url>
-				<zookeeper.id>dev1</zookeeper.id>
+				<zookeeper.id>pcs_01</zookeeper.id>
 				<zookeeper.node>/pcsnode</zookeeper.node>
 				<!-- provisioning -->
-				<provisioning.url>http://14.63.217.141:38083/user</provisioning.url>
+				<provisioning.url>http://PUSH-PCS:8083/user</provisioning.url>
 				<mq.pcf.id>adflow</mq.pcf.id>
 				<mq.pcf.password>!ADFlow@</mq.pcf.password>
 				<mq.pcf.channel>ADFlowPCF</mq.pcf.channel>
