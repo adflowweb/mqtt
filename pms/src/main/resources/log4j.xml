@@ -38,7 +38,7 @@
 		<param name="file" value="/var/log/tomcat/tomcat.log" />
 		<param name="Append" value="true" />
 		<!--<param name="DatePattern" value="'.'yyyy-MM-dd"/> -->
-		<param name="DatePattern" value="'.'yyyy-MM-dd-HH-mm" />
+		<param name="DatePattern" value="'.'yyyy-MM-dd" />
 		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern"
 				value="%t> [%d{yyyy-MM-dd HH:mm:ss}] [%c{1}] [%L] [%p] %m %n" />
