@@ -264,6 +264,40 @@
 
 
 
+	<!-- 기존 ACK 큐 -->
+	<bean id="qJmsFactory05" class="com.ibm.mq.jms.MQQueueConnectionFactory">
+		<property name="connectionNameList"
+			value="#{pms['mq.jms.hostname.legacy']},#{pms['mq.jms.hostname.legacy']}," />
+		<property name="queueManager" value="*" />
+		<property name="transportType" value="1" />
+		<property name="channel" value="#{pms['mq.jms.channel']}" />
+	</bean>
+
+	<bean id="qJmsCredentialsConnectionFactory05"
+		class="org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter">
+		<property name="targetConnectionFactory" ref="qJmsFactory05" />
+		<property name="username" value="#{pms['mq.jms.username']}" />
+		<property name="password" value="#{pms['mq.jms.password']}" />
+	</bean>
+
+	<bean id="qJmsConnectionFactory05"
+		class="org.springframework.jms.connection.CachingConnectionFactory">
+		<property name="targetConnectionFactory" ref="qJmsCredentialsConnectionFactory05" />
+		<property name="sessionCacheSize" value="#{pms['mq.jms.session.cache.size']}" />
+
+	</bean>
+
+
+	<bean id="qJmsContainer05"
+		class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+		<property name="connectionFactory" ref="qJmsConnectionFactory05" />
+		<property name="destination" ref="qJmsDestination" />
+		<property name="messageListener" ref="ackMessageDrivenBean" />
+	</bean>
+
+
+
+
 
 	<!-- ack message driven bean -->
 	<bean id="ackMessageDrivenBean" class="kr.co.adflow.pms.core.handler.AckMessageDrivenBean"></bean>
