@@ -15,8 +15,11 @@
 
 	<!-- Root Context: defines shared resources visible to all other web components -->
 
+	<!-- <util:properties id="pms" -->
+	<!-- location="file:${user.home}/pms/config.properties" /> -->
+	<!--테스트 -->
 	<util:properties id="pms"
-		location="file:${user.home}/pms/config.properties" />
+		location="file:/usr/share/ktp-tomcat/pms/config.properties" />
 
 	<!-- ds Pms -->
 	<bean id="dataSourcePms" class="org.springframework.jndi.JndiObjectFactoryBean"

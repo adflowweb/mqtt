@@ -78,7 +78,7 @@ public class SessionCleanHandler implements Runnable {
 		logger.info("SessonClean처리유무=" + sessionclean);
 		if (sessionclean) {
 			SessonCleanLooper = Executors.newScheduledThreadPool(1);
-			SessonCleanLooper.scheduleWithFixedDelay(this, 0, 10, TimeUnit.SECONDS);
+			SessonCleanLooper.scheduleWithFixedDelay(this, 0, sessioncleanInterval, TimeUnit.MINUTES);
 			logger.debug("session clean change..10!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 			logger.info("SessonCleanLooper가시작되었습니다.");
 

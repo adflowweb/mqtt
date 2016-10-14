@@ -97,6 +97,7 @@ public class CDRCreateExecutor {
 	 * Creates the CDR.
 	 */
 	public int createCDR(String date) throws Exception {
+		logger.debug("cdr 생성시작 ");
 
 		int startRow = 0;
 		this.fileNo = 0;
@@ -123,6 +124,7 @@ public class CDRCreateExecutor {
 	 * Creates the CDR file.
 	 */
 	public int createCDRFile(CDRParams cDRParams) {
+		logger.debug("createCDRFile 시작");
 
 		this.fw = null;
 		logger.info("start ::{}", cDRParams.getStartDate());
@@ -151,6 +153,7 @@ public class CDRCreateExecutor {
 			if (cDRTotCnt == null) {
 				cDRTotCnt = 0;
 			}
+			logger.debug("cdrtotalCnt:" + cDRTotCnt);
 
 			if (cDRTotCnt > 0) {
 				boolean cDRFileNext = true;
@@ -201,6 +204,7 @@ public class CDRCreateExecutor {
 
 	// tail PRINT
 	public void tailPrint() throws IOException {
+		logger.debug("tailPrint Start");
 		String tailRecordType = "T";
 		String tailCDRCount;
 		String tailNull = RecordFomatUtil.stingFormat("", 69);
@@ -220,11 +224,12 @@ public class CDRCreateExecutor {
 			logger.error("Tail file write Error::");
 			throw e;
 		}
-
+		logger.debug("tailPrint End");
 	}
 
 	// header PRINT
 	public void headerPrint() throws IOException {
+		logger.debug("CDR Header Print 시작");
 
 		File file = null;
 		File directory = null;
@@ -238,17 +243,18 @@ public class CDRCreateExecutor {
 		fileName.append(this.fileDate);
 		fileName.append(RecordFomatUtil.intFormat(this.fileNo, 3));
 		fileName.append(".DAT");
-
+		logger.debug("CDR Header Print step..1");
 		directory = new File(pmsConfig.CDR_FILE_PATH + this.fileDate);
 		if (!directory.isDirectory()) {
 			directory.mkdir();
 			logger.debug("{} directory mkdir Ok", directory.getName());
 		}
+		logger.debug("CDR Header Print step..2");
 
 		file = new File(directory.getPath() + "/" + fileName.toString());
 
 		this.fw = new FileWriter(file);
-
+		logger.debug("CDR Header Print step..3");
 		String headerRecordType = "H";
 		String headerNull = RecordFomatUtil.stingFormat("", 82);
 		StringBuffer recordSb;
@@ -257,10 +263,11 @@ public class CDRCreateExecutor {
 		recordSb.append(headerRecordType);
 		recordSb.append(headerNull);
 		recordSb.append("\n");
-
+		logger.debug("CDR Header Print step..4");
 		// logger.info("CDR : [{}]:header", recordSb.toString());
 		try {
 			this.fw.write(recordSb.toString());
+			logger.debug("CDR Header Print step..5");
 		} catch (IOException e) {
 			logger.error("Header file write Error::");
 			throw e;
@@ -272,18 +279,19 @@ public class CDRCreateExecutor {
 		} else {
 			fileNo++;
 		}
-
+		logger.debug("CDR Header Print End..");
 	}
 
 	// CDR PRINT
 	public void cDRPrint(CDRParams cDRParams) throws IOException {
+		logger.debug("CDR Print 시작 ");
 
 		StringBuffer recordSb;
 
 		try {
 
 			List<CDR> list = cDRMapper.getCDRList2(cDRParams);
-
+			logger.debug("CDR Print step 1");
 			// CDR PRINT
 			String messageTopic1 = "";
 			String messageTopic2 = "";
@@ -293,8 +301,10 @@ public class CDRCreateExecutor {
 			String rRCause = "01";
 			int tempIndex;
 			boolean groupYes = false;
+
 			for (CDR cDR : list) {
 				// stringBuffer clear
+				logger.debug("CDR Print step 2..in for");
 				recordSb = new StringBuffer();
 
 				if (cDR.getMsgType() == 10) {
@@ -311,7 +321,7 @@ public class CDRCreateExecutor {
 				} else {
 					groupYes = true;
 				}
-
+				logger.debug("CDR Print step 3..in for");
 				// Record Type
 				recordSb.append("C");
 
@@ -329,6 +339,7 @@ public class CDRCreateExecutor {
 					recordSb.append(RecordFomatUtil.stingFormat(DateUtil.getDateTime(cDR.getUpdateTime()), 14));
 				}
 
+				logger.debug("CDR Print step 4..in for");
 				// Time of Received Request
 				if (cDR.getPmaAckTime() == null) {
 					recordSb.append(RecordFomatUtil.stingFormat("", 14));
@@ -347,6 +358,7 @@ public class CDRCreateExecutor {
 					rRCause = "00";
 				}
 
+				logger.debug("CDR Print step 5..in for");
 				// Caller NO
 				if (cDR.getMsgType() == 106) {
 					// user message
@@ -378,6 +390,7 @@ public class CDRCreateExecutor {
 					// }
 				}
 
+				logger.debug("CDR Print step 6..in for");
 				// Called NO - Group Msg NO : ReceiverTopic, Group Msg Yes :
 				// ReceiverUfmi
 				calledNo = pushMapper.getUfmi(cDR.getTokenId());
@@ -421,6 +434,7 @@ public class CDRCreateExecutor {
 				}
 				recordSb.append(RecordFomatUtil.intFormat(cDR.getMsgSize(), 11));
 
+				logger.debug("CDR Print step 7..in for");
 				if (groupYes) {
 					// 그룹메세지에서 자신은 skip
 					if (callerNo.equals(calledNo)) {
@@ -464,12 +478,14 @@ public class CDRCreateExecutor {
 				// logger.info("CDR : [{}]:{}", recordSb.toString(),tempI);
 
 				if (totalRow >= pmsConfig.CDR_FILE_MAX_ROW) {
+					logger.debug("CDR Print step 8..in for");
 					this.tailPrint();
 					this.headerPrint();
 					this.fw.write(recordSb.toString());
 					totalRow = 1;
 
 				} else {
+					logger.debug("CDR Print step 9..in for");
 					this.fw.write(recordSb.toString());
 					totalRow++;
 				}

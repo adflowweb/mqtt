@@ -16,6 +16,7 @@ import kr.co.adflow.pms.core.controller.BaseController;
 import kr.co.adflow.pms.core.exception.PmsRuntimeException;
 import kr.co.adflow.pms.response.Response;
 import kr.co.adflow.pms.response.Result;
+import kr.co.adflow.pms.domain.Leader;
 import kr.co.adflow.pms.domain.Validation;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,8 @@ public class CommonController extends BaseController {
 	/**
 	 * Auth user.
 	 *
-	 * @param auth the auth
+	 * @param auth
+	 *            the auth
 	 * @return the response
 	 */
 	@RequestMapping(value = "/adm/cmm/auth", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
@@ -59,23 +61,23 @@ public class CommonController extends BaseController {
 		return res;
 
 	}
-	
+
 	/**
 	 * Auth token.
 	 *
-	 * @param String the token
+	 * @param String
+	 *            the token
 	 * @return the response
 	 */
 	@RequestMapping(value = "/adm/cmm/auth", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
 	public Response authToken(@RequestHeader(StaticConfig.HEADER_APPLICATION_TOKEN) String token) throws Exception {
 
+		// if (token == null || token.trim().length() == 0) {
+		//
+		// throw new PmsRuntimeException("invalid token:"+token);
+		// }
 
-//		if (token == null || token.trim().length() == 0) {
-//
-//			throw new PmsRuntimeException("invalid token:"+token);
-//		}
-		
 		boolean auth = commonService.authToken(token);
 
 		Result<Validation> result = new Result<Validation>();
@@ -86,23 +88,23 @@ public class CommonController extends BaseController {
 		return res;
 
 	}
-	
+
 	/**
 	 * Auth appKey.
 	 *
-	 * @param String the appKey
+	 * @param String
+	 *            the appKey
 	 * @return the response
 	 */
 	@RequestMapping(value = "/adm/cmm/authkey", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
 	public Response authKey(@RequestHeader(StaticConfig.HEADER_APPLICATION_KEY) String key) throws Exception {
 
+		// if (token == null || token.trim().length() == 0) {
+		//
+		// throw new PmsRuntimeException("invalid token:"+token);
+		// }
 
-//		if (token == null || token.trim().length() == 0) {
-//
-//			throw new PmsRuntimeException("invalid token:"+token);
-//		}
-		
 		boolean auth = commonService.authKey(key);
 
 		Result<Validation> result = new Result<Validation>();
@@ -113,6 +115,19 @@ public class CommonController extends BaseController {
 		return res;
 
 	}
-	
+
+	@RequestMapping(value = "/adm/cmm/leader", method = RequestMethod.GET, produces = "application/json")
+	@ResponseBody
+	public Response getLeader() throws Exception {
+
+		Leader leader = commonService.getLeader();
+
+		Result<Leader> result = new Result<Leader>();
+		result.setSuccess(true);
+		result.setData(leader);
+		Response res = new Response(result);
+		return res;
+
+	}
 
 }

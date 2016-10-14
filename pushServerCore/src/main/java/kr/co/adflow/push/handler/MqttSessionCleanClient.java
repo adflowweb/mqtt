@@ -290,6 +290,7 @@ public class MqttSessionCleanClient {
 			}
 			MQCONNCOUNT++;
 		} catch (MqttException e) {
+			logger.debug(e.getMessage());
 			logger.debug("연결에라");
 
 		} finally {

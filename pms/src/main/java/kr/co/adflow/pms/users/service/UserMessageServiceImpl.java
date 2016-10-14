@@ -12,7 +12,7 @@ import javax.resource.spi.ConnectionManager;
 
 import kr.co.adflow.pms.core.config.PmsConfig;
 import kr.co.adflow.pms.core.config.StaticConfig;
-import kr.co.adflow.pms.core.handler.DirectMsgHandlerBySessionCallback;
+import kr.co.adflow.pms.core.handler.UserMsgHandlerBySessionCallback;
 import kr.co.adflow.pms.core.handler.PCFConnectionManagerHandler;
 import kr.co.adflow.pms.core.util.CheckUtil;
 import kr.co.adflow.pms.core.util.DateUtil;
@@ -219,7 +219,7 @@ public class UserMessageServiceImpl implements UserMessageService {
 						+ msg.getIssueTime() + ",getPmaAckTime::" + msg.getPmaAckTime() + ",getReservationTime::"
 						+ msg.getReservationTime() + ",getUpdateTime::" + msg.getUpdateTime());
 		// JMS message send
-		jmsTemplate.execute(new DirectMsgHandlerBySessionCallback(jmsTemplate, msg));
+		jmsTemplate.execute(new UserMsgHandlerBySessionCallback(jmsTemplate, msg));
 
 		// message tran log
 		try {
@@ -454,7 +454,7 @@ public class UserMessageServiceImpl implements UserMessageService {
 		// } else if (mod == 2) {
 		// result = pmsConfig.EXECUTOR_SERVER_ID3;
 		// }
-		result = pmsConfig.EXECUTOR_SERVER_ID;
+		result = pmsConfig.EXECUTOR_SERVER_ID1;
 		logger.debug("=== result::{}", result);
 		return result;
 	}

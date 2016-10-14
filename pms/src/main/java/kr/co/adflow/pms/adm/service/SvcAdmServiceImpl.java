@@ -89,7 +89,7 @@ public class SvcAdmServiceImpl implements SvcAdmService {
 		Message msg = new Message();
 		msg.setKeyMon(DateUtil.getYYYYMM());
 
-		msg.setServerId(pmsConfig.EXECUTOR_SERVER_ID);
+		msg.setServerId(pmsConfig.EXECUTOR_SERVER_ID1);
 
 		if (message.getMsgType() == 0) {
 			msg.setMsgType(pmsConfig.MESSAGE_HEADER_TYPE_DEFAULT);

@@ -381,7 +381,7 @@ public class PushMessageServiceImpl implements PushMessageService {
 		// result = pmsConfig.EXECUTOR_SERVER_ID6;
 		// }
 
-		result = pmsConfig.EXECUTOR_SERVER_ID;
+		result = pmsConfig.EXECUTOR_SERVER_ID1;
 		return result;
 	}
 

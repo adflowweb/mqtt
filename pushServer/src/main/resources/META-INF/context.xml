@@ -3,7 +3,7 @@
 	<Resource type="javax.sql.DataSource" name="jdbc/push"
 		factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
 		driverClassName="com.mysql.jdbc.Driver"
-		url="jdbc:mysql://14.63.217.141:13306/push?useUnicode=true&amp;characterEncoding=utf8"
+		url="jdbc:mysql://PUSH-DMS:3306/push?useUnicode=true&amp;characterEncoding=utf8"
 		username="adflow" password="!ADFlow@" maxActive="20" maxIdle="10"
 		maxWait="10000" validationQuery="SELECT 1" validationInterval="30000"
 		testWhileIdle="true" />

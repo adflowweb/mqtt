@@ -141,11 +141,29 @@ public class PlatformController {
 		return res;
 	}
 
-	@RequestMapping(value = "system/message", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = "logtrace/message", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
 	@ResponseBody
-	public Response systemMessage(@RequestBody SystemMessage systemMessage) throws Exception {
+	public Response logTraceMessage(@RequestBody SystemMessage systemMessage) throws Exception {
 
-		platformService.sendSystemMessage(systemMessage);
+		platformService.logTraceMessage(systemMessage);
+
+		Result result = new Result();
+		result.setSuccess(true);
+		List<String> messages = new ArrayList<String>();
+		messages.add("receiver=" + systemMessage.getReceiver());
+		messages.add("content=" + systemMessage.getContent());
+
+		result.setInfo(messages);
+		Response res = new Response(result);
+		logger.info("response={}", res);
+		return res;
+	}
+
+	@RequestMapping(value = "chnchange/message", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
+	@ResponseBody
+	public Response chnnelChangeMessage(@RequestBody SystemMessage systemMessage) throws Exception {
+
+		platformService.chnChangeMessage(systemMessage);
 
 		Result result = new Result();
 		result.setSuccess(true);

@@ -15,16 +15,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.SessionCallback;
 
-public class DirectMsgHandlerBySessionCallback implements SessionCallback<String> {
+public class UserMsgHandlerBySessionCallback implements SessionCallback<String> {
 
 	/** The Constant logger. */
-	private static final Logger logger = LoggerFactory.getLogger(DirectMsgHandlerBySessionCallback.class);
+	private static final Logger logger = LoggerFactory.getLogger(UserMsgHandlerBySessionCallback.class);
 
 	private JmsTemplate jmsTemplate;
 	/** The msg. */
 	private Message msg;
 
-	public DirectMsgHandlerBySessionCallback(JmsTemplate jmsTemplate, Message msg) {
+	public UserMsgHandlerBySessionCallback(JmsTemplate jmsTemplate, Message msg) {
 		this.jmsTemplate = jmsTemplate;
 		this.msg = msg;
 	}
@@ -32,7 +32,7 @@ public class DirectMsgHandlerBySessionCallback implements SessionCallback<String
 	@Override
 	public String doInJms(Session session) throws JMSException {
 		MessageProducer producer = null;
-		String result = "";
+
 		logger.debug("=== msg::{}",
 				"getContentType::" + msg.getContentType() + ",getExpiry::" + msg.getExpiry() + ",getQos::"
 						+ msg.getQos() + ",getReceiver::" + msg.getReceiver() + ",getIssueId::" + msg.getIssueId()
@@ -107,22 +107,19 @@ public class DirectMsgHandlerBySessionCallback implements SessionCallback<String
 
 			producer.send(bytesMessage, msg.getQos(), javax.jms.Message.DEFAULT_PRIORITY/* default */, msg.getExpiry());
 			logger.debug("메시지가전송되었습니다.");
-			result = "success";
 		} catch (JSONException e) {
 			logger.error("메시지 처리도중 Json Exception 발생");
-			logger.info("JSONException 의 경우 executor 에서는 처리 할 수 없으므로 예외처리후 종료");
+			throw new JMSException("JSONException:" + e);
 
 		} catch (JMSException e) {
-			logger.error("JMSException:" + e);
-			result = "fail";
-			return result;
+			throw e;
 		} finally {
 			if (producer != null) {
 				producer.close();
 				logger.debug("메시지프로듀서가제거되었습니다.");
 			}
 		}
-		return result;
+		return "";
 	}
 
 }
