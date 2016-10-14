@@ -49,8 +49,8 @@ public class PingSender implements MqttPingSender {
                 + ")");
 
         //keepAlive 시간과 상관없이 알람주기(60초)마다 알람은 일어나야함.
-        if (delayInMilliseconds > PushHandler.ALARM_INTERVAL * 1000) {
-            delayInMilliseconds = PushHandler.ALARM_INTERVAL * 1000;
+        if (delayInMilliseconds > BuildConfig.ALARM_INTERVAL * 1000) {
+            delayInMilliseconds = BuildConfig.ALARM_INTERVAL * 1000;
         }
 
         DebugLog.d("다음 알람은 " + (delayInMilliseconds / 1000) + "초 후 입니다");
@@ -68,7 +68,7 @@ public class PingSender implements MqttPingSender {
         PendingIntent pending = PendingIntent.getBroadcast(context, 0, i,
                 PendingIntent.FLAG_UPDATE_CURRENT);
         service.setRepeating(AlarmManager.RTC_WAKEUP, nextAlarmInMilliseconds,
-                PushHandler.ALARM_INTERVAL * 1000, pending);
+                BuildConfig.ALARM_INTERVAL * 1000, pending);
         DebugLog.d("알람이 설정되었습니다");
         DebugLog.d("schedule 종료()");
     }

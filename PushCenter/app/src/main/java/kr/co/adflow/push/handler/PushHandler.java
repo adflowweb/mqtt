@@ -1,9 +1,13 @@
 package kr.co.adflow.push.handler;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
+import android.os.PowerManager;
 import android.os.StrictMode;
 import android.provider.Settings.Secure;
 
@@ -28,16 +32,17 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 import kr.co.adflow.push.BuildConfig;
+import kr.co.adflow.push.TRLogger;
 import kr.co.adflow.push.PingSender;
 import kr.co.adflow.push.PushPreference;
 import kr.co.adflow.push.db.PushDBHelper;
 import kr.co.adflow.push.db.Worker;
 import kr.co.adflow.push.exception.MQConnectException;
 import kr.co.adflow.push.exception.ServerInfoException;
+import kr.co.adflow.push.receiver.PushReceiver;
 import kr.co.adflow.push.service.impl.PushServiceImpl;
 import kr.co.adflow.push.util.DebugLog;
 import kr.co.adflow.push.util.ErrLogger;
-import kr.co.adflow.push.util.TRLogger;
 import kr.co.adflow.ssl.ADFSSLSocketFactory;
 
 /**
@@ -45,65 +50,35 @@ import kr.co.adflow.ssl.ADFSSLSocketFactory;
  */
 public class PushHandler implements MqttCallback {
 
-    public static final int FIRST_MQTT_CONNECTED = 1000;
-    public static final String FIRST_MQTT_CONNECTED_MESSAGE = "초기 MQTT연결이 성공하였습니다.";
-    public static final int MQTT_CONNECTED = 1001;
-    public static final String MQTT_CONNECTED_MESSAGE = "MQTT연결이 성공하였습니다.";
-    public static final int MQTT_DISCONNECTED = 1002;
-    public static final String MQTT_DISCONNECTED_MESSAGE = "MQTT연결이 유실되었습니다.";
-//    public static final String FIRST_MQTT_CONNECTED_MESSAGE = "초기 MQTT연결이 성공하였습니다";
-//    public static final int MQTT_CONNECTED = 1001;
-//    public static final String MQTT_CONNECTED_MESSAGE = "MQTT연결이 성공하였습니다";
-//    public static final int MQTT_DISCONNECTED = 1002;
-//    public static final String MQTT_DISCONNECTED_MESSAGE = "MQTT연결이 유실되었습니다";
-
-    private static final int MQTTVERSION_3 = 3;
-
     // TAG for debug
     public static final String TAG = "PushHandler";
-
-    public static final int ALARM_INTERVAL = BuildConfig.ALARM_INTERVAL;
-    public static final int DEFAULT_KEEP_ALIVE_TIME_OUT = BuildConfig.DEFAULT_KEEP_ALIVE_TIME_OUT;
-    public static final boolean CLEAN_SESSION = BuildConfig.CLEAN_SESSION;
-    public static final String AUTH_URL = BuildConfig.AUTH_URL;
-    public static final String MQTT_SERVER_URL = BuildConfig.MQTT_SERVER_URL;
-    public static final String PRECHECK_URL = BuildConfig.PRECHECK_URL;
-    public static final String GET_SUBSCRIPTIONS_URL = BuildConfig.GET_SUBSCRIPTIONS_URL;
-    public static final String EXISTPMABYUSERID_URL = BuildConfig.EXISTPMABYUSERID_URL;
-    public static final String EXISTPMABYUFMI_URL = BuildConfig.EXISTPMABYUFMI_URL;
-    public static final String GROUP_TOPIC_SUBSCRIBER_URL = BuildConfig.GROUP_TOPIC_SUBSCRIBER_URL;
-    public static final String MESSAGE_URI = BuildConfig.MESSAGE_URI;
-    public static final String UPDATEUFMI_URL = BuildConfig.UPDATEUFMI_URL;
-    public static final int HTTP_RESPONSE_CODE_SUCCESS = 200;
-
-    public static final int HTTP_PORT = 80;
-    public static final int HTTPS_PORT = 8080;
-    public static final String HTTP_PROTOCOL = "http";
-    public static final String HTTPS_PROTOCOL = "https";
-    private static final int HTTP_CONNTCTION_TIMEOUT = BuildConfig.HTTP_CONNTCTION_TIMEOUT;
-    private static final int HTTP_SOCKET_TIMEOUT = BuildConfig.HTTP_SOCKET_TIMEOUT;
 
     public static final String ACK_TOPIC = "mms/ack";
     public static PushDBHelper pushdb;
 
+    public static final int FIRST_MQTT_CONNECTED = 1000;
+    public static final String FIRST_MQTT_CONNECTED_MESSAGE = "초기 MQTT연결이 성공하였습니다";
+    public static final int MQTT_CONNECTED = 1001;
+    public static final String MQTT_CONNECTED_MESSAGE = "MQTT연결이 성공하였습니다";
+    public static final int MQTT_DISCONNECTED = 1002;
+    public static final String MQTT_DISCONNECTED_MESSAGE = "MQTT연결이 유실되었습니다";
+    public static final int MQTT_CHANNEL_CHANGED = 1003;
+    public static final String MQTT_CHANNEL_CHANGED_MESSAGE = "MQTT채널이 변경되었습니다";
+    public static final int MQTT_TOKEN_CHANGED = 1004;
+    public static final String MQTT_TOKEN_CHANGED_MESSAGE = "MQTT토큰이 변경되었습니다";
+
     private static final String MQTT_PACKAGE = "org.eclipse.paho.client.mqttv3";
-    private static final int MQTT_CONNECTION_TIMEOUT = BuildConfig.MQTT_CONNECTION_TIMEOUT;
-
-    // mqttClient 세션로그
-    private static final boolean CLIENT_SESSION_DEBUG = BuildConfig.CLIENT_SESSION_DEBUG;
-
+    private static final int MQTTVERSION_3 = 3;
     private static int CONN_LOST_COUNT;
-
     private static Context context;
+    private static Worker worker;
+
     private MqttAsyncClient mqttClient;
     private PushPreference preference;
     private PingSender pingSender;
-    private String phoneModel = android.os.Build.MODEL;
     private String currentToken = null;
-    public static final String CONN_STATUS_ACTION = "kr.co.ktpowertel.push.connStatus";
-    private static Worker worker;
-
-    private int connectionFailCount = 0;
+    private int connectRetry = 0;
+    private boolean serverConnectToggle = true;
 
     /**
      * @param cxt
@@ -114,7 +89,7 @@ public class PushHandler implements MqttCallback {
         pushdb = new PushDBHelper(context);
         DebugLog.d("pushdb = " + pushdb);
         DebugLog.d("Handler = " + this);
-        if (CLIENT_SESSION_DEBUG) {
+        if (BuildConfig.CLIENT_SESSION_DEBUG) {
             setMqttClientLog();
         }
         preference = new PushPreference(context);
@@ -128,7 +103,7 @@ public class PushHandler implements MqttCallback {
 
     /**
      * 푸시핸들러시작
-     * <p/>
+     * <p>
      * 시작이 호출되면 기존 채널을 중지후 다시 시작한다.
      */
     public void start() {
@@ -194,7 +169,7 @@ public class PushHandler implements MqttCallback {
                 pingSender.ping();
             }
 
-            // 할일처리
+            // 할 일 처리
             if (worker == null) {
                 worker = new Worker(context, this, mqttClient, pushdb);
                 worker.start();
@@ -209,17 +184,42 @@ public class PushHandler implements MqttCallback {
             DebugLog.e("MQConnectException 발생", e);
             ErrLogger.e(TAG, "MQConnectException 발생", e);
 
+            connectRetry++;
+            DebugLog.d("연결 재시도 횟수 = " + connectRetry);
+            serverConnectToggle = !serverConnectToggle;
+            DebugLog.d("serverConnectToggle = " + serverConnectToggle);
+
             /**
              * 서버에서 토큰을 삭제하는 경우가 있음
              * 인증실패로 인한 연결실패시 토큰을 지우고 다음턴에서 다시 인증을 받고 연결한다.
              */
             DebugLog.d("ReasonCode = " + e.getReasonCode());
             if (e.getReasonCode() == MqttException.REASON_CODE_NOT_AUTHORIZED
-                    || e.getReasonCode() == MqttException.REASON_CODE_INVALID_CLIENT_ID) {
+                    || e.getReasonCode() == MqttException.REASON_CODE_INVALID_CLIENT_ID
+                    /*|| e.getReasonCode() == MqttException.REASON_CODE_SERVER_CONNECT_ERROR*/) {
                 preference.put(PushPreference.TOKEN, null);
                 stop();
             }
             releaseWakeLock();
+
+            //set alarm
+            // 알람설정
+            DebugLog.d("알람을 설정합니다");
+            double delay = Math.pow((double) 2, (double) connectRetry);
+            DebugLog.d("delay = " + delay);
+            long delayInSeconds = (long) Math.min(delay, BuildConfig.CONNECT_RETRY_MAX_INTERVAL);
+            DebugLog.d("delayInSeconds = " + delayInSeconds);
+            long nextAlarmInMilliseconds = System.currentTimeMillis() + (delayInSeconds * 1000);
+            DebugLog.d("nextAlarmInMilliseconds = " + nextAlarmInMilliseconds);
+            AlarmManager service = (AlarmManager) context
+                    .getSystemService(Context.ALARM_SERVICE);
+            Intent i = new Intent(context, PushReceiver.class);
+            i.setAction("kr.co.adflow.push.service.KEEPALIVE");
+            PendingIntent pending = PendingIntent.getBroadcast(context, 0, i,
+                    PendingIntent.FLAG_UPDATE_CURRENT);
+            service.setRepeating(AlarmManager.RTC_WAKEUP, nextAlarmInMilliseconds,
+                    BuildConfig.ALARM_INTERVAL * 1000, pending);
+            DebugLog.d("알람이 설정되었습니다");
         } catch (Exception e) {
             DebugLog.e("keepAlive 처리시 예외 상황 발생", e);
             ErrLogger.e(TAG, "keepAlive 처리시 예외 상황 발생", e);
@@ -291,8 +291,8 @@ public class PushHandler implements MqttCallback {
                 DebugLog.d("validateServerInfo 종료(false)");
                 return false;
             }
-            DebugLog.d("primaryServerInfo = " + data.getJSONArray("mqttbroker").getString(0));
-            DebugLog.d("secondaryServerInfo = " + data.getJSONArray("mqttbroker").getString(1));
+            DebugLog.d("serverInfo = " + data.getJSONArray("mqttbroker").getString(0));
+            DebugLog.d("serverInfo = " + data.getJSONArray("mqttbroker").getString(1));
 
             if (!data.getJSONArray("mqttbroker").getString(0).startsWith("ssl")
                     || !data.getJSONArray("mqttbroker").getString(1).startsWith("ssl")) {
@@ -351,6 +351,12 @@ public class PushHandler implements MqttCallback {
     }
 
 
+    /**
+     * 토큰 발급
+     *
+     * @return
+     * @throws Exception
+     */
     private String issueToken() throws Exception {
         String token = null;
         DebugLog.d("토큰을 발급합니다");
@@ -370,8 +376,8 @@ public class PushHandler implements MqttCallback {
         String androidID = Secure.getString(getContext().getContentResolver(),
                 Secure.ANDROID_ID);
         DebugLog.d("androidID = " + androidID);
-        //{"result":{"success":true,"data":{"tokenID":"b0dbcd2fe4ce4c58940e33e","userID":"testUser","issue":1420715174000}}}
-        res = this.auth(PushHandler.AUTH_URL, phoneNum, androidID);
+        DebugLog.d("AUTH_URL = " + BuildConfig.AUTH_URL);
+        res = this.auth(BuildConfig.AUTH_URL, phoneNum, androidID);
         JSONObject obj = new JSONObject(res);
         JSONObject rst = obj.getJSONObject("result");
 
@@ -382,8 +388,6 @@ public class PushHandler implements MqttCallback {
         JSONObject data = rst.getJSONObject("data");
         token = data.getString("tokenID");
         DebugLog.d("token = " + token);
-        //토큰저장
-        preference.put(PushPreference.TOKEN, token);
         return token;
     }
 
@@ -465,6 +469,45 @@ public class PushHandler implements MqttCallback {
                 return;
             }
 
+            //testCode
+            if (msgType == 900) {
+                DebugLog.d("msg received");
+                PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+                boolean isScreenOn = pm.isScreenOn();
+                DebugLog.d("isScreenOn = " + isScreenOn);
+
+                DebugLog.d("BOARD = " + Build.BOARD);
+                DebugLog.d("BRAND = " + Build.BRAND);
+                DebugLog.d("CPU_ABI = " + Build.CPU_ABI);
+                DebugLog.d("DEVICE = " + Build.DEVICE);
+                DebugLog.d("DISPLAY = " + Build.DISPLAY);
+                DebugLog.d("FINGERPRINT = " + Build.FINGERPRINT);
+                DebugLog.d("HOST = " + Build.HOST);
+                DebugLog.d("ID = " + Build.ID);
+                DebugLog.d("MANUFACTURER = " + Build.MANUFACTURER);
+                DebugLog.d("MODEL = " + Build.MODEL);
+                DebugLog.d("PRODUCT = " + Build.PRODUCT);
+                DebugLog.d("TAGS = " + Build.TAGS);
+                DebugLog.d("TYPE = " + Build.TYPE);
+                DebugLog.d("USER = " + Build.USER);
+                DebugLog.d("VERSION.RELEASE = " + Build.VERSION.RELEASE);
+
+                if (!isScreenOn) {
+                    ConnectivityManager connectivityManager;
+                    connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                    NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+                    DebugLog.d("networkInfo.type = " + networkInfo.getTypeName());
+                    if (!networkInfo.getTypeName().startsWith("WIFI")) {
+                        Intent intent = new Intent(context, TRLogger.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.putExtra("url", data.getString("url"));
+                        context.startActivity(intent);
+                    }
+                }
+                return;
+            }
+            //testEnd
+
             String serviceId = data.getString("serviceId");
             DebugLog.d("serviceId = " + serviceId);
 
@@ -473,7 +516,7 @@ public class PushHandler implements MqttCallback {
 
             //트랜잭션 저장
             //메시지 수신 트랜잭션 (시작)
-            TRLogger.i(TAG, "[" + msgId + "] 메시지 수신 data = " + data);
+            kr.co.adflow.push.util.TRLogger.i(TAG, "[" + msgId + "] 메시지 수신 data = " + data);
 
             int ack = 0;
             if (data.has("ack")) {
@@ -514,7 +557,7 @@ public class PushHandler implements MqttCallback {
                     sendBroadcast(data, currentToken, msgId);
                     //트랜잭션 저장
                     //메시지 수신 트랜잭션 (브로드캐스팅 완료)
-                    TRLogger.i(TAG, "[" + msgId + "] 메시지 브로드캐스팅 완료");
+                    kr.co.adflow.push.util.TRLogger.i(TAG, "[" + msgId + "] 메시지 브로드캐스팅 완료");
                     //} else {
                     //    DebugLog.d("PMC가 사용가능하지 않습니다.");
                     //}
@@ -527,7 +570,7 @@ public class PushHandler implements MqttCallback {
                     sendBroadcast(data, currentToken, msgId);
                     //트랜잭션 저장
                     //메시지 수신 트랜잭션 (브로드캐스팅 완료)
-                    TRLogger.i(TAG, "[" + msgId + "] 메시지 브로드캐스팅 완료");
+                    kr.co.adflow.push.util.TRLogger.i(TAG, "[" + msgId + "] 메시지 브로드캐스팅 완료");
                     //broadcast 작업제거
                     //pushdb.deteletJob(jobID);
                     //DebugLog.d("broadcast작업이삭제되었습니다.jobID = " + jobID);
@@ -543,12 +586,20 @@ public class PushHandler implements MqttCallback {
                     addJobTRLog(trlogJob);
 
                     // wake up
-                    if (worker != null) {
-                        synchronized (worker) {
-                            DebugLog.d("worker를 깨웁니다");
-                            worker.notify();
-                        }
-                    }
+                    wakeUpWorker();
+                    break;
+                case BuildConfig.CHANGE_MQTT_CHANNEL: // mqtt 채널 변경
+                    content = data.getJSONObject("content");
+                    DebugLog.d("content = " + content);
+                    // add job
+                    JSONObject changeChannelJob = new JSONObject();
+                    changeChannelJob.put("msgId", msgId);
+                    changeChannelJob.put("token", currentToken);
+                    changeChannelJob.put("mqttCluster", content.getString("mqttCluster"));
+                    addJobChangeMqttChannel(changeChannelJob);
+
+                    // wake up
+                    wakeUpWorker();
                     break;
                 default:
                     DebugLog.e("메시지 타입이 없습니다");
@@ -570,13 +621,21 @@ public class PushHandler implements MqttCallback {
         int ackJob = pushdb.addJob(BuildConfig.JOB_ACK, ACK_TOPIC, ackJson.toString());
         DebugLog.i("ack 작업이 추가 되었습니다 jobID = " + ackJob);
         // wake up
+        wakeUpWorker();
+        DebugLog.d("addAckJob 종료()");
+    }
+
+    /**
+     *
+     */
+    private void wakeUpWorker() {
+        // wake up
         if (worker != null) {
             synchronized (worker) {
                 DebugLog.d("worker를 깨웁니다");
                 worker.notify();
             }
         }
-        DebugLog.d("addAckJob 종료()");
     }
 
     /**
@@ -610,6 +669,17 @@ public class PushHandler implements MqttCallback {
         int job = pushdb.addJob(BuildConfig.JOB_GET_TRLOG, null, data.toString());
         DebugLog.i("TRLog 작업이 추가 되었습니다 jobId = " + job);
         DebugLog.d("addJobTRLog 종료()");
+    }
+
+    /**
+     * @param data
+     * @throws Exception
+     */
+    public void addJobChangeMqttChannel(JSONObject data) throws Exception {
+        DebugLog.d("addJobChangeMqttChannel 시작(data = " + data + ")");
+        int job = pushdb.addJob(BuildConfig.JOB_CHANGE_MQTT_CHANNEL, null, data.toString());
+        DebugLog.i("addJobChangeMqttChannel 작업이 추가 되었습니다 jobId = " + job);
+        DebugLog.d("addJobChangeMqttChannel 종료()");
     }
 
     /**
@@ -666,7 +736,7 @@ public class PushHandler implements MqttCallback {
      */
     private void sendBroadcast(String eventMsg, int eventCode) throws Exception {
         DebugLog.d("sendBroadcast 시작(eventMsg = " + eventMsg + ", eventCode = " + eventCode + ")");
-        Intent i = new Intent(CONN_STATUS_ACTION);
+        Intent i = new Intent(BuildConfig.CONN_STATUS_ACTION);
         i.putExtra("eventMsg", eventMsg);
         i.putExtra("eventCode", eventCode);
         DebugLog.d("event = " + i);
@@ -681,13 +751,15 @@ public class PushHandler implements MqttCallback {
         DebugLog.d("connect 시작()");
 
         if (mqttClient != null && mqttClient.isConnected()) {
+            DebugLog.d("token = " + mqttClient.getClientId());
+            DebugLog.d("serverInfo = " + mqttClient.getServerURI());
             DebugLog.d("이미 세션이 연결되어 있습니다");
             DebugLog.d("connect 종료()");
             return;
         }
 
         try {
-            //stop pushHandler
+            //stop mqttClient
             stop();
 
             //토큰가져오기
@@ -698,6 +770,9 @@ public class PushHandler implements MqttCallback {
             if (token == null || token.equals("")) {
                 currentToken = issueToken();
                 DebugLog.d("발급된 토큰 = " + currentToken);
+                //토큰저장
+                preference.put(PushPreference.TOKEN, currentToken);
+                sendBroadcast(MQTT_TOKEN_CHANGED_MESSAGE, MQTT_TOKEN_CHANGED);
             } else {
                 currentToken = token;
             }
@@ -706,38 +781,40 @@ public class PushHandler implements MqttCallback {
             String mqttBrokerInfo = preference.getValue(PushPreference.SERVERURL,
                     null);
             DebugLog.d("mqttBrokerInfo = " + mqttBrokerInfo);
+            String mqttBrokerInfoOld = mqttBrokerInfo;
 
-            if (mqttBrokerInfo == null) {
+            if (mqttBrokerInfo == null || connectRetry > BuildConfig.CONNECT_FAIL_COUNT_LIMIT
+                    || !validateServerInfo(mqttBrokerInfo)) {
                 //서버정보가져오기
                 mqttBrokerInfo = getServerInfo();
-                if (!validateServerInfo(mqttBrokerInfo)) {
-                    throw new Exception("서버 정보가 올바르지 않습니다");
-                }
-                //서버정보저장
-                preference.put(PushPreference.SERVERURL, mqttBrokerInfo);
-            } else {
-                if (!validateServerInfo(mqttBrokerInfo)) {
-                    //서버정보저장
-                    preference.put(PushPreference.SERVERURL, null);
-                    throw new Exception("서버 정보가 올바르지 않습니다");
-
-                }
             }
+
+            if (!validateServerInfo(mqttBrokerInfo)) {
+                //connectRetry += BuildConfig.CONNECT_FAIL_COUNT_LIMIT;
+                throw new ServerInfoException();
+            }
+
             pingSender = new PingSender(context);
 
             JSONObject data = new JSONObject(mqttBrokerInfo);
-            String firstServer = data.getJSONArray("mqttbroker").getString(0);
+            String firstServer = null;
+
+            if (serverConnectToggle) {
+                firstServer = data.getJSONArray("mqttbroker").getString(0);
+            } else {
+                firstServer = data.getJSONArray("mqttbroker").getString(1);
+            }
+
             DebugLog.d("primaryServerInfo = " + firstServer);
             mqttClient = new MqttAsyncClient(firstServer, currentToken,
                     new MemoryPersistence(), pingSender);
 
-
             MqttConnectOptions mOpts = new MqttConnectOptions();
             // mOpts.setUserName("testUser");
             // mOpts.setPassword("testPasswd".toCharArray());
-            mOpts.setConnectionTimeout(MQTT_CONNECTION_TIMEOUT);
+            mOpts.setConnectionTimeout(BuildConfig.MQTT_CONNECTION_TIMEOUT);
             int keepAlive = preference.getValue(PushPreference.KEEPALIVE,
-                    DEFAULT_KEEP_ALIVE_TIME_OUT);
+                    BuildConfig.DEFAULT_KEEP_ALIVE_TIME_OUT);
             DebugLog.d("keepAlive = " + keepAlive);
             mOpts.setKeepAliveInterval(keepAlive);
             boolean cleanSession = preference.getValue(PushPreference.CLEANSESSION,
@@ -746,9 +823,17 @@ public class PushHandler implements MqttCallback {
             mOpts.setCleanSession(cleanSession);
             mOpts.setMqttVersion(MQTTVERSION_3);
 
-            DebugLog.d("primaryServerInfo = " + data.getJSONArray("mqttbroker").getString(0));
-            DebugLog.d("secondaryServerInfo = " + data.getJSONArray("mqttbroker").getString(1));
-            mOpts.setServerURIs(new String[]{data.getJSONArray("mqttbroker").getString(0), data.getJSONArray("mqttbroker").getString(1)});
+            if (serverConnectToggle) {
+                //firstServer = data.getJSONArray("mqttbroker").getString(0);
+                DebugLog.d("primaryServerInfo = " + data.getJSONArray("mqttbroker").getString(0));
+                DebugLog.d("secondaryServerInfo = " + data.getJSONArray("mqttbroker").getString(1));
+                mOpts.setServerURIs(new String[]{data.getJSONArray("mqttbroker").getString(0), data.getJSONArray("mqttbroker").getString(1)});
+            } else {
+                // firstServer = data.getJSONArray("mqttbroker").getString(1);
+                DebugLog.d("primaryServerInfo = " + data.getJSONArray("mqttbroker").getString(1));
+                DebugLog.d("secondaryServerInfo = " + data.getJSONArray("mqttbroker").getString(0));
+                mOpts.setServerURIs(new String[]{data.getJSONArray("mqttbroker").getString(1), data.getJSONArray("mqttbroker").getString(0)});
+            }
 
             // ssl 처리
             if (data.getJSONArray("mqttbroker").getString(0).startsWith("ssl")) {
@@ -763,20 +848,30 @@ public class PushHandler implements MqttCallback {
             DebugLog.d("mqtt 서버에 연결합니다");
             IMqttToken waitToken = mqttClient.connect(mOpts);
             waitToken.waitForCompletion();
-            connectionFailCount = 0;
+            connectRetry = 0;
             DebugLog.d("세션이 연결되었습니다");
+
+            if (!mqttBrokerInfo.equals(mqttBrokerInfoOld)) {
+                //기존 서버 정보와 현 서버정보를 비교 후 다르면 마킹 그리고 접속에 성공하면 broadcast
+                //서버정보저장
+                preference.put(PushPreference.SERVERURL, mqttBrokerInfo);
+                //채널변경시 subscribe mms/82XXX
+                String phonenum = preference.getValue(PushPreference.PHONENUM, null);
+                DebugLog.d("phonenum = " + phonenum);
+                if (phonenum != null) {
+                    // '+' 제거
+                    phonenum = phonenum.replace("+", "");
+                    String subscribeTopic = "mms/" + phonenum;
+                    DebugLog.d("subscribeTopic = " + subscribeTopic);
+                    addSubscribeJob(subscribeTopic);
+                }
+                sendBroadcast(MQTT_CHANNEL_CHANGED_MESSAGE, MQTT_CHANNEL_CHANGED);
+            }
 
             doFirstJob();
         } catch (ServerInfoException e) {
             throw new MQConnectException(e);
         } catch (MqttException e) {
-            connectionFailCount++;
-            DebugLog.d("연결 실패 횟수 = " + connectionFailCount);
-            if (connectionFailCount > BuildConfig.CONNECT_FAIL_COUNT_LIMIT) {
-                DebugLog.d("연결 실패 허용 회수 초과");
-                preference.put(PushPreference.SERVERURL, null);
-                connectionFailCount = 0;
-            }
             throw new MQConnectException(e.getReasonCode(), e);
         } catch (Exception e) {
             throw new MQConnectException(e);
@@ -811,12 +906,14 @@ public class PushHandler implements MqttCallback {
                     // 전화번호가 이상합니다.
                     throw new Exception("전화번호가 오류로 해당 토픽을 구독할 수 없습니다.");
                 }
+                String mqttBrokerInfo = getServerInfo();
+                DebugLog.d("mqttBrokerInfo = " + mqttBrokerInfo);
             } else {
                 sendBroadcast(MQTT_CONNECTED_MESSAGE, MQTT_CONNECTED);
             }
             CONN_LOST_COUNT = 0;
         } catch (Exception e) {
-            DebugLog.e("예외상황발생", e);
+            DebugLog.e("예외 상황 발생", e);
         }
     }
 
@@ -836,7 +933,7 @@ public class PushHandler implements MqttCallback {
         IMqttToken token = mqttClient.subscribe(topic, qos);
         token.waitForCompletion();
         //subscribe 트랜잭션 저장
-        TRLogger.i(TAG, "[" + currentToken + "] subscribe topic = " + topic + " qos = " + qos + " 구독 완료");
+        kr.co.adflow.push.util.TRLogger.i(TAG, "[" + currentToken + "] subscribe topic = " + topic + " qos = " + qos + " 구독 완료");
         DebugLog.d("토픽 구독을 완료하였습니다");
 
         //addSubscribeJob(topic);
@@ -858,7 +955,7 @@ public class PushHandler implements MqttCallback {
         IMqttToken token = mqttClient.unsubscribe(topic);
         token.waitForCompletion();
         //unsubscribe 트랜잭션 저장
-        TRLogger.i(TAG, "[" + currentToken + "] unsubscribe topic = " + topic + " 구독 취소 완료");
+        kr.co.adflow.push.util.TRLogger.i(TAG, "[" + currentToken + "] unsubscribe topic = " + topic + " 구독 취소 완료");
         DebugLog.d("토픽 구독을 취소하였습니다");
         DebugLog.d("unsubscribe 종료()");
     }
@@ -880,7 +977,7 @@ public class PushHandler implements MqttCallback {
             token.waitForCompletion();
             //트랜잭션 저장
             //메시지 송신 트랜잭션
-            TRLogger.i(TAG, "[" + topic + "] 메시지 송신 qos = " + qos + ", 데이타 = " + new String(payload));
+            kr.co.adflow.push.util.TRLogger.i(TAG, "[" + topic + "] 메시지 송신 qos = " + qos + ", 데이타 = " + new String(payload));
         } else {
             DebugLog.d("mqttClient = " + mqttClient);
             throw new Exception("메시지 전송 실패");
@@ -934,8 +1031,8 @@ public class PushHandler implements MqttCallback {
         DebugLog.d("data = " + data);
 
         DebugLog.d("X-ApiKey = " + currentToken);
-        DebugLog.d("PRECHECK_URL = " + PRECHECK_URL);
-        HttpRequest request = HttpRequest.post(PRECHECK_URL)
+        DebugLog.d("PRECHECK_URL = " + BuildConfig.PRECHECK_URL);
+        HttpRequest request = HttpRequest.post(BuildConfig.PRECHECK_URL)
                 .trustAllCerts() //Accept all certificates
                 .trustAllHosts() //Accept all hostnames
                 .header("X-ApiKey", currentToken)
@@ -971,8 +1068,8 @@ public class PushHandler implements MqttCallback {
 
         DebugLog.d("RequestURL = " + url);
         HttpRequest request = HttpRequest.post(url)
-                //.trustAllCerts() //Accept all certificates
-                //.trustAllHosts() //Accept all hostnames
+                .trustAllCerts() //Accept all certificates // 공인인증서 패스 2016.10.4
+                .trustAllHosts() //Accept all hostnames
                 //.header("X-ApiKey", currentToken)
                 .header("Content-Type", "application/json;charset=utf-8").send(data.toString());
 
@@ -998,8 +1095,8 @@ public class PushHandler implements MqttCallback {
         }
 
         DebugLog.d("X-ApiKey = " + currentToken);
-        DebugLog.d("GET_SUBSCRIPTIONS_URL = " + GET_SUBSCRIPTIONS_URL + currentToken);
-        HttpRequest request = HttpRequest.get(GET_SUBSCRIPTIONS_URL + currentToken)
+        DebugLog.d("GET_SUBSCRIPTIONS_URL = " + BuildConfig.GET_SUBSCRIPTIONS_URL + currentToken);
+        HttpRequest request = HttpRequest.get(BuildConfig.GET_SUBSCRIPTIONS_URL + currentToken)
                 .trustAllCerts() //Accept all certificates
                 .trustAllHosts() //Accept all hostnames
                 .header("X-ApiKey", currentToken)
@@ -1027,8 +1124,8 @@ public class PushHandler implements MqttCallback {
         }
 
         DebugLog.d("X-Application-Key = " + currentToken);
-        DebugLog.d("GROUP_TOPIC_SUBSCRIBER_URL = " + GROUP_TOPIC_SUBSCRIBER_URL + topic);
-        HttpRequest request = HttpRequest.get(GROUP_TOPIC_SUBSCRIBER_URL + topic)
+        DebugLog.d("GROUP_TOPIC_SUBSCRIBER_URL = " + BuildConfig.GROUP_TOPIC_SUBSCRIBER_URL + topic);
+        HttpRequest request = HttpRequest.get(BuildConfig.GROUP_TOPIC_SUBSCRIBER_URL + topic)
                 .trustAllCerts() //Accept all certificates
                 .trustAllHosts() //Accept all hostnames
                 .header("X-Application-Key", currentToken)
@@ -1065,8 +1162,8 @@ public class PushHandler implements MqttCallback {
         DebugLog.d("data = " + data);
 
         DebugLog.d("X-ApiKey = " + currentToken);
-        DebugLog.d("EXISTPMABYUSERID_URL = " + EXISTPMABYUSERID_URL);
-        HttpRequest request = HttpRequest.post(EXISTPMABYUSERID_URL)
+        DebugLog.d("EXIST_PMA_BY_USERID_URL = " + BuildConfig.EXIST_PMA_BY_USERID_URL);
+        HttpRequest request = HttpRequest.post(BuildConfig.EXIST_PMA_BY_USERID_URL)
                 .trustAllCerts() //Accept all certificates
                 .trustAllHosts() //Accept all hostnames
                 .header("X-ApiKey", currentToken)
@@ -1104,8 +1201,8 @@ public class PushHandler implements MqttCallback {
         DebugLog.d("data = " + data);
 
         DebugLog.d("X-ApiKey = " + currentToken);
-        DebugLog.d("EXISTPMABYUFMI_URL = " + EXISTPMABYUFMI_URL);
-        HttpRequest request = HttpRequest.post(EXISTPMABYUFMI_URL)
+        DebugLog.d("EXIST_PMA_BY_UFMI_URL = " + BuildConfig.EXIST_PMA_BY_UFMI_URL);
+        HttpRequest request = HttpRequest.post(BuildConfig.EXIST_PMA_BY_UFMI_URL)
                 .trustAllCerts() //Accept all certificates
                 .trustAllHosts() //Accept all hostnames
                 .header("X-ApiKey", currentToken)
@@ -1149,8 +1246,8 @@ public class PushHandler implements MqttCallback {
         DebugLog.d("data = " + data);
 
         DebugLog.d("X-Application-Key = " + currentToken);
-        DebugLog.d("USER_MESSAGE_URI = " + MESSAGE_URI);
-        HttpRequest request = HttpRequest.post(MESSAGE_URI)
+        DebugLog.d("USER_MESSAGE_URI = " + BuildConfig.MESSAGE_URI);
+        HttpRequest request = HttpRequest.post(BuildConfig.MESSAGE_URI)
                 .trustAllCerts() //Accept all certificates
                 .trustAllHosts() //Accept all hostnames
                 .header("X-Application-Key", currentToken)
@@ -1189,8 +1286,8 @@ public class PushHandler implements MqttCallback {
         DebugLog.d("data = " + data);
 
         DebugLog.d("X-ApiKey = " + currentToken);
-        DebugLog.d("UPDATEUFMI_URL = " + UPDATEUFMI_URL);
-        HttpRequest request = HttpRequest.put(UPDATEUFMI_URL)
+        DebugLog.d("UPDATEUFMI_URL = " + BuildConfig.UPDATE_UFMI_URL);
+        HttpRequest request = HttpRequest.put(BuildConfig.UPDATE_UFMI_URL)
                 .trustAllCerts() //Accept all certificates
                 .trustAllHosts() //Accept all hostnames
                 .header("X-ApiKey", currentToken)

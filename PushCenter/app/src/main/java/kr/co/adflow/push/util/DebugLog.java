@@ -33,7 +33,7 @@ public class DebugLog {
         // TODO: 15. 11. 11.
         //System.out.println("isDebuggable=" + BuildConfig.DEBUG);
         // TODO: 앱 배포시 false 로 변경 해야함
-        return true/*BuildConfig.DEBUG*/;
+        return /*BuildConfig.DEBUG*/ true;
     }
 
     private static String createLog(String log) {

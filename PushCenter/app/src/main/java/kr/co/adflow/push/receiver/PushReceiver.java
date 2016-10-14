@@ -11,6 +11,7 @@ import android.os.PowerManager.WakeLock;
 import android.telephony.TelephonyManager;
 //import android.util.Log;
 
+import kr.co.adflow.push.BuildConfig;
 import kr.co.adflow.push.PushPreference;
 import kr.co.adflow.push.handler.PushHandler;
 import kr.co.adflow.push.service.impl.PushServiceImpl;
@@ -58,50 +59,70 @@ public class PushReceiver extends BroadcastReceiver {
             if (intent.getAction().equals(
                     "android.intent.action.BOOT_COMPLETED")) {
                 DebugLog.d("부팅 완료 작업을 시작합니다");
+                //부팅 메시지
+                TRLogger.i(TAG, "부팅 완료 작업을 시작합니다");
 
                 PushPreference preference = new PushPreference(context);
                 //부팅후 첫커넥션 표시
                 preference.put(PushPreference.FIRSTCONNECTION, true);
                 String oldPhoneNum = preference.getValue(PushPreference.PHONENUM, "");
                 DebugLog.d("저장된 전화번호 = " + oldPhoneNum);
+                //부팅 메시지
+                TRLogger.i(TAG, "저장된 전화번호 = " + oldPhoneNum);
 
                 //유심변경 체크
                 TelephonyManager tMgr = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
                 String newPhoneNumber = tMgr.getLine1Number();
                 DebugLog.d("전화번호 = " + newPhoneNumber);
+                //부팅 메시지
+                TRLogger.i(TAG, "전화번호 = " + newPhoneNumber);
 
                 if (newPhoneNumber == null || newPhoneNumber.equals("")) {
                     DebugLog.d("USIM이 없습니다");
+                    //부팅 메시지
+                    TRLogger.i(TAG, "USIM이 없습니다");
                     preference.put(PushPreference.PHONENUM, newPhoneNumber);
                     //remove token
                     preference.remove(PushPreference.TOKEN);
                     DebugLog.d("토큰을 삭제했습니다");
+                    //부팅 메시지
+                    TRLogger.i(TAG,"토큰을 삭제했습니다");
                     //sendBroadcast
                     sendBroadcast(context, USIM_NOT_FOUND_MESSAGE, USIM_NOT_FOUND, null);
                 } else if (oldPhoneNum == null || oldPhoneNum.equals("")) {
                     DebugLog.d("이전 부팅때 저장된 전화번호가 없습니다");
+                    //부팅 메시지
+                    TRLogger.i(TAG, "이전 부팅때 저장된 전화번호가 없습니다");
                     preference.put(PushPreference.PHONENUM, newPhoneNumber);
                     //remove token
                     preference.remove(PushPreference.TOKEN);
                     DebugLog.d("토큰을 삭제했습니다");
+                    //부팅 메시지
+                    TRLogger.i(TAG, "토큰을 삭제했습니다");
                     //sendBroadcast
                     sendBroadcast(context, USIM_CHANGED_MESSAGE, USIM_CHANGED, "{\"oldPhone\":\"" + oldPhoneNum + "\",\"newPhone\":\"" + newPhoneNumber + "\"}");
                 } else if (oldPhoneNum.equals(newPhoneNumber)) {
                     //같은유심
                     DebugLog.d("이전 부팅 전화번호와 같습니다");
+                    //부팅 메시지
+                    TRLogger.i(TAG, "이전 부팅 전화번호와 같습니다");
                 } else {
                     //유심변경
                     DebugLog.d("이전 부팅 전화번호와 다릅니다");
+                    //부팅 메시지
+                    TRLogger.i(TAG, "이전 부팅 전화번호와 다릅니다");
                     preference.put(PushPreference.PHONENUM, newPhoneNumber);
                     //remove token
                     preference.remove(PushPreference.TOKEN);
                     DebugLog.d("토큰을 삭제했습니다");
+                    //부팅 메시지
+                    TRLogger.i(TAG, "토큰을 삭제했습니다");
                     //sendBroadcast
                     sendBroadcast(context, USIM_CHANGED_MESSAGE, USIM_CHANGED, "{\"oldPhone\":\"" + oldPhoneNum + "\",\"newPhone\":\"" + newPhoneNumber + "\"}");
                 }
 
                 //set cleanSession
-                preference.put(PushPreference.CLEANSESSION, PushHandler.CLEAN_SESSION);
+                preference.put(PushPreference.CLEANSESSION, BuildConfig.CLEAN_SESSION);
 
                 //알람설정
                 DebugLog.d("keepAlive 알람을 설정합니다");
@@ -113,7 +134,7 @@ public class PushReceiver extends BroadcastReceiver {
                         i, PendingIntent.FLAG_UPDATE_CURRENT);
                 service.setRepeating(AlarmManager.RTC_WAKEUP,
                         System.currentTimeMillis() + 1000,
-                        1000 * PushHandler.ALARM_INTERVAL, pending);
+                        1000 /** PushHandler.ALARM_INTERVAL*/, pending);
                 DebugLog.d("keepAlive 알람이 설정되었습니다");
                 TRLogger.i(TAG, "부팅 작업 완료");
                 DebugLog.d("부팅 완료 작업을 종료합니다");

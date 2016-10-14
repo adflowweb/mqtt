@@ -16,6 +16,7 @@ import org.json.JSONObject;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 
+import kr.co.adflow.push.BuildConfig;
 import kr.co.adflow.push.IPushService;
 import kr.co.adflow.push.PushPreference;
 import kr.co.adflow.push.exception.MsgSizeLimitException;
@@ -877,7 +878,7 @@ public class PushServiceImpl extends Service implements PushService {
                 PendingIntent.FLAG_UPDATE_CURRENT);
         service.setRepeating(AlarmManager.RTC_WAKEUP,
                 System.currentTimeMillis() + 1000,
-                1000 * PushHandler.ALARM_INTERVAL, pending);
+                1000 * BuildConfig.ALARM_INTERVAL, pending);
         DebugLog.d("알람이 설정 되었습니다");
         // 푸시핸들러 시작
         pushHandler.start();

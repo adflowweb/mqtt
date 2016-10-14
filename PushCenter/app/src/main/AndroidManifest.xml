@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="kr.co.adflow.push"
     android:versionCode="11"
@@ -15,34 +16,28 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
-
-        <activity
-            android:name="kr.co.adflow.push.service.MainActivity"
-            android:label="@string/app_name"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            </intent-filter>
-        </activity>
-
-
         <service
-            android:name="kr.co.adflow.push.service.impl.PushServiceImpl"
+            android:name=".service.impl.PushServiceImpl"
             android:enabled="true"
             android:exported="true">
-            <!--android:process=":remote"-->
+
+            <!-- android:process=":remote" -->
             <intent-filter>
-                <action android:name="kr.co.adflow.push.service.PushService"></action>
+                <action android:name="kr.co.adflow.push.service.PushService" />
             </intent-filter>
         </service>
         <!-- <service android:name="kr.co.adflow.push.service.impl.PushServiceImpl" /> -->
-        <receiver android:name="kr.co.adflow.push.receiver.PushReceiver">
+        <receiver android:name=".receiver.PushReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <!-- <action android:name="com.bns.pw.action.REG_STATE" /> -->
             </intent-filter>
         </receiver>
+        <!--android:theme="@android:style/Theme.NoDisplay"-->
+        <!-- android:theme="@android:style/Theme.Translucent.NoTitleBar" -->
+        <activity
+            android:name=".TRLogger"
+            android:theme="@android:style/Theme.NoDisplay"></activity>
     </application>
 
 </manifest>

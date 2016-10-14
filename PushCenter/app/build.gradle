@@ -8,50 +8,118 @@ android {
         applicationId "kr.co.adflow.push"
         minSdkVersion 15
         targetSdkVersion 18
-        versionCode 1026
-        versionName "1.1.5"
+        versionCode 1028
+        versionName "1.1.7"
     }
     buildTypes {
 
         debug {
+            //mqtt option
             buildConfigField "String", "JOB_LIMIT_COUNT", "\"600\""
             buildConfigField "int", "ALARM_INTERVAL", "60"
             buildConfigField "int", "DEFAULT_KEEP_ALIVE_TIME_OUT", "240"
-            buildConfigField "boolean", "CLEAN_SESSION", "false"
             buildConfigField "int", "MQTT_CONNECTION_TIMEOUT", "10" // second
             buildConfigField "int", "HTTP_CONNTCTION_TIMEOUT", "10000" // 10초
             buildConfigField "int", "HTTP_SOCKET_TIMEOUT", "10000" // 10초
+            buildConfigField "int", "CONNECT_FAIL_COUNT_LIMIT", "10" // 10
+            buildConfigField "int", "CONNECT_RETRY_MAX_INTERVAL", "3600" // 3600초
+            buildConfigField "boolean", "CLEAN_SESSION", "false"
             buildConfigField "boolean", "CLIENT_SESSION_DEBUG", "false"
 
-            buildConfigField "String", "AUTH_URL", "\"https://push4.ktp.co.kr:8080/v1/auth\""
-            buildConfigField "String", "MQTT_SERVER_URL", "\"tcp://push4.ktp.co.kr\""
-            buildConfigField "String", "PRECHECK_URL", "\"https://push4.ktp.co.kr:8080/v1/precheck\""
-            buildConfigField "String", "GET_SUBSCRIPTIONS_URL", "\"https://push4.ktp.co.kr:8080/v1/subscriptions/\""
-            buildConfigField "String", "EXISTPMABYUSERID_URL", "\"https://push4.ktp.co.kr:8080/v1/users/userID/validation\""
-            buildConfigField "String", "EXISTPMABYUFMI_URL", "\"https://push4.ktp.co.kr:8080/v1/users/ufmi/validation\""
-            buildConfigField "String", "MESSAGE_URI", "\"https://push4.ktp.co.kr:8081/v1/pms/users/message\""
-            buildConfigField "String", "UPDATEUFMI_URL", "\"https://push4.ktp.co.kr:8080/v1/users/ufmi\""
-            buildConfigField "String", "GROUP_TOPIC_SUBSCRIBER_URL", "\"https://push4.ktp.co.kr:8081/v1/pms/users/groups/listCnt?groupTopic=\""
+            //URL
+            buildConfigField "String", "AUTH_URL", "\"http://push4.ktp.co.kr:3000/v1/auth\""
+            buildConfigField "String", "PRECHECK_URL", "\"http://push4.ktp.co.kr:3000/v1/precheck\""
+            buildConfigField "String", "GET_SUBSCRIPTIONS_URL", "\"http://push4.ktp.co.kr:3000/v1/subscriptions/\""
+            buildConfigField "String", "EXIST_PMA_BY_USERID_URL", "\"http://push4.ktp.co.kr:3000/v1/users/userID/validation\""
+            buildConfigField "String", "EXIST_PMA_BY_UFMI_URL", "\"http://push4.ktp.co.kr:3000/v1/users/ufmi/validation\""
+            buildConfigField "String", "MESSAGE_URI", "\"http://push4.ktp.co.kr:3000/v1/pms/users/message\""
+            buildConfigField "String", "UPDATE_UFMI_URL", "\"http://push4.ktp.co.kr:3000/v1/users/ufmi\""
+            buildConfigField "String", "GROUP_TOPIC_SUBSCRIBER_URL", "\"http://push4.ktp.co.kr:3000/v1/pms/users/groups/listCnt?groupTopic=\""
+            buildConfigField "String", "GET_PROVISIONING_URL", "\"http://14.63.217.141:38083/connect/\""
+            buildConfigField "String", "CLEANUP_MQTT_SESSION_URL", "\"http://14.63.217.141:38083/session/\""
+            buildConfigField "String", "GET_TRLOG_URL", "\"/cts/v1/users/trlog/\""
+
+            //JOB
+            buildConfigField "int", "JOB_PUBLISH", "0"
+            buildConfigField "int", "JOB_SUBSCRIBE", "1"
+            buildConfigField "int", "JOB_UNSUBSCRIBE", "2"
+            buildConfigField "int", "JOB_BROADCAST", "3"
+            buildConfigField "int", "JOB_ACK", "4"
+            buildConfigField "int", "JOB_GET_TRLOG", "5"
+            buildConfigField "int", "JOB_AUTO_SUBSCRIBE", "6"
+            buildConfigField "int", "JOB_CHANGE_MQTT_CHANNEL", "7"
+
+            //broadcast option
+            buildConfigField "String", "BROADCAST_LIMIT_COUNT", "\"600\""
+            buildConfigField "String", "CONN_STATUS_ACTION", "\"kr.co.ktpowertel.push.connStatus\""
+
+            //message
+            buildConfigField "int", "CONTROL_MESSAGE", "10" // 10
+            buildConfigField "int", "SET_KEEP_ALIVE_MESSAGE", "102" // 102
+            buildConfigField "int", "FIRMWARE_UPDATE_MESSAGE", "104" // 104
+            buildConfigField "int", "DIG_ACCOUNT_INFO_MESSAGE", "105" // 105
+            buildConfigField "int", "USER_MESSAGE", "106" // 106
+            buildConfigField "int", "GET_TRLOG_MESSAGE", "108" // 108
+            buildConfigField "int", "CHANGE_MQTT_CHANNEL", "109" // 109
+            buildConfigField "int", "MESSAGE_EXPIRE", "30" // 30일
+
+            //http option
+            buildConfigField "int", "HTTTP_CONNECT_TIMEOUT", "5000"
+            buildConfigField "int", "HTTTP_READ_TIMEOUT", "5000"
         }
         release {
+            //mqtt option
             buildConfigField "String", "JOB_LIMIT_COUNT", "\"600\""
             buildConfigField "int", "ALARM_INTERVAL", "60"
             buildConfigField "int", "DEFAULT_KEEP_ALIVE_TIME_OUT", "240"
-            buildConfigField "boolean", "CLEAN_SESSION", "false"
             buildConfigField "int", "MQTT_CONNECTION_TIMEOUT", "10" // second
             buildConfigField "int", "HTTP_CONNTCTION_TIMEOUT", "10000" // 10초
             buildConfigField "int", "HTTP_SOCKET_TIMEOUT", "10000" // 10초
+            buildConfigField "int", "CONNECT_FAIL_COUNT_LIMIT", "10" // 10
+            buildConfigField "int", "CONNECT_RETRY_MAX_INTERVAL", "3600" // 3600초
+            buildConfigField "boolean", "CLEAN_SESSION", "false"
             buildConfigField "boolean", "CLIENT_SESSION_DEBUG", "false"
 
-            buildConfigField "String", "AUTH_URL", "\"https://push2.ktp.co.kr:8080/v1/auth\""
-            buildConfigField "String", "MQTT_SERVER_URL", "\"ssl://push1.ktp.co.kr\""
-            buildConfigField "String", "PRECHECK_URL", "\"https://push2.ktp.co.kr:8080/v1/precheck\""
-            buildConfigField "String", "GET_SUBSCRIPTIONS_URL", "\"https://push2.ktp.co.kr:8080/v1/subscriptions/\""
-            buildConfigField "String", "EXISTPMABYUSERID_URL", "\"https://push2.ktp.co.kr:8080/v1/users/userID/validation\""
-            buildConfigField "String", "EXISTPMABYUFMI_URL", "\"https://push2.ktp.co.kr:8080/v1/users/ufmi/validation\""
-            buildConfigField "String", "MESSAGE_URI", "\"https://push3.ktp.co.kr:8080/v1/pms/users/message\""
-            buildConfigField "String", "UPDATEUFMI_URL", "\"https://push2.ktp.co.kr:8080/v1/users/ufmi\""
-            buildConfigField "String", "GROUP_TOPIC_SUBSCRIBER_URL", "\"https://push3.ktp.co.kr:8080/v1/pms/users/groups/listCnt?groupTopic=\""
+            //URL
+            buildConfigField "String", "AUTH_URL", "\"https://211.188.11.90:8081/v1/auth\""
+            buildConfigField "String", "PRECHECK_URL", "\"https://211.188.11.90:8081/v1/precheck\""
+            buildConfigField "String", "GET_SUBSCRIPTIONS_URL", "\"https://211.188.11.90:8081/v1/subscriptions/\""
+            buildConfigField "String", "EXIST_PMA_BY_USERID_URL", "\"https://211.188.11.90:8081/v1/users/userID/validation\""
+            buildConfigField "String", "EXIST_PMA_BY_UFMI_URL", "\"https://211.188.11.90:8081/v1/users/ufmi/validation\""
+            buildConfigField "String", "MESSAGE_URI", "\"https://211.188.11.90:8082/v1/pms/users/message\""
+            buildConfigField "String", "UPDATE_UFMI_URL", "\"https://211.188.11.90:8081/v1/users/ufmi\""
+            buildConfigField "String", "GROUP_TOPIC_SUBSCRIBER_URL", "\"http://push4.ktp.co.kr:3000/v1/pms/users/groups/listCnt?groupTopic=\""
+            buildConfigField "String", "GET_PROVISIONING_URL", "\"http://211.188.11.90:8083/connect/\""
+            buildConfigField "String", "CLEANUP_MQTT_SESSION_URL", "\"http://211.188.11.90:8083/session/\""
+            buildConfigField "String", "GET_TRLOG_URL", "\"/cts/v1/users/trlog/\""
+
+            //JOB
+            buildConfigField "int", "JOB_PUBLISH", "0"
+            buildConfigField "int", "JOB_SUBSCRIBE", "1"
+            buildConfigField "int", "JOB_UNSUBSCRIBE", "2"
+            buildConfigField "int", "JOB_BROADCAST", "3"
+            buildConfigField "int", "JOB_ACK", "4"
+            buildConfigField "int", "JOB_GET_TRLOG", "5"
+            buildConfigField "int", "JOB_AUTO_SUBSCRIBE", "6"
+            buildConfigField "int", "JOB_CHANGE_MQTT_CHANNEL", "7"
+
+            //broadcast option
+            buildConfigField "String", "BROADCAST_LIMIT_COUNT", "\"600\""
+            buildConfigField "String", "CONN_STATUS_ACTION", "\"kr.co.ktpowertel.push.connStatus\""
+
+            //message
+            buildConfigField "int", "CONTROL_MESSAGE", "10" // 10
+            buildConfigField "int", "SET_KEEP_ALIVE_MESSAGE", "102" // 102
+            buildConfigField "int", "FIRMWARE_UPDATE_MESSAGE", "104" // 104
+            buildConfigField "int", "DIG_ACCOUNT_INFO_MESSAGE", "105" // 105
+            buildConfigField "int", "USER_MESSAGE", "106" // 106
+            buildConfigField "int", "GET_TRLOG_MESSAGE", "108" // 108
+            buildConfigField "int", "CHANGE_MQTT_CHANNEL", "109" // 109
+            buildConfigField "int", "MESSAGE_EXPIRE", "30" // 30일
+
+            //http option
+            buildConfigField "int", "HTTTP_CONNECT_TIMEOUT", "5000"
+            buildConfigField "int", "HTTTP_READ_TIMEOUT", "5000"
 
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -72,4 +140,7 @@ dependencies {
 //    testCompile "org.mockito:mockito-core:1.9.5"
 
 //    compile "org.testng:testng:6.5.2"
+//    androidTestCompile 'com.android.support:support-annotations:24.1.1'
+//    androidTestCompile 'com.android.support.test:runner:0.5'
+//    androidTestCompile 'com.android.support.test:rules:0.5'
 }
