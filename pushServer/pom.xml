@@ -532,7 +532,7 @@
 				<keep.alive.interval>5</keep.alive.interval>
 
 				<!-- mqtt session clean -->
-				<clean.session>false</clean.session>
+				<clean.session>true</clean.session>
 
 				<!-- paho logging level -->
 				<paho.log.level>SEVERE</paho.log.level>
