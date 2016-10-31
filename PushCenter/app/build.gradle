@@ -81,16 +81,16 @@ android {
             buildConfigField "boolean", "CLIENT_SESSION_DEBUG", "false"
 
             //URL
-            buildConfigField "String", "AUTH_URL", "\"https://211.188.11.90:8081/v1/auth\""
-            buildConfigField "String", "PRECHECK_URL", "\"https://211.188.11.90:8081/v1/precheck\""
-            buildConfigField "String", "GET_SUBSCRIPTIONS_URL", "\"https://211.188.11.90:8081/v1/subscriptions/\""
-            buildConfigField "String", "EXIST_PMA_BY_USERID_URL", "\"https://211.188.11.90:8081/v1/users/userID/validation\""
-            buildConfigField "String", "EXIST_PMA_BY_UFMI_URL", "\"https://211.188.11.90:8081/v1/users/ufmi/validation\""
-            buildConfigField "String", "MESSAGE_URI", "\"https://211.188.11.90:8082/v1/pms/users/message\""
-            buildConfigField "String", "UPDATE_UFMI_URL", "\"https://211.188.11.90:8081/v1/users/ufmi\""
-            buildConfigField "String", "GROUP_TOPIC_SUBSCRIBER_URL", "\"http://push4.ktp.co.kr:3000/v1/pms/users/groups/listCnt?groupTopic=\""
-            buildConfigField "String", "GET_PROVISIONING_URL", "\"http://211.188.11.90:8083/connect/\""
-            buildConfigField "String", "CLEANUP_MQTT_SESSION_URL", "\"http://211.188.11.90:8083/session/\""
+            buildConfigField "String", "AUTH_URL", "\"https://push-l4.ktp.co.kr:8081/v1/auth\""
+            buildConfigField "String", "PRECHECK_URL", "\"https://push-l4.ktp.co.kr:8081/v1/precheck\""
+            buildConfigField "String", "GET_SUBSCRIPTIONS_URL", "\"https://push-l4.ktp.co.kr:8081/v1/subscriptions/\""
+            buildConfigField "String", "EXIST_PMA_BY_USERID_URL", "\"https://push-l4.ktp.co.kr:8081/v1/users/userID/validation\""
+            buildConfigField "String", "EXIST_PMA_BY_UFMI_URL", "\"https://push-l4.ktp.co.kr:8081/v1/users/ufmi/validation\""
+            buildConfigField "String", "MESSAGE_URI", "\"https://push-l4.ktp.co.kr:8082/v1/pms/users/message\""
+            buildConfigField "String", "UPDATE_UFMI_URL", "\"https://push-l4.ktp.co.kr:8081/v1/users/ufmi\""
+            buildConfigField "String", "GROUP_TOPIC_SUBSCRIBER_URL", "\"https://push3.ktp.co.kr:8080/v1/pms/users/groups/listCnt?groupTopic=\""
+            buildConfigField "String", "GET_PROVISIONING_URL", "\"http://push-l4.ktp.co.kr:8083/connect/\""
+            buildConfigField "String", "CLEANUP_MQTT_SESSION_URL", "\"http://push-l4.ktp.co.kr:8083/session/\""
             buildConfigField "String", "GET_TRLOG_URL", "\"/cts/v1/users/trlog/\""
 
             //JOB
