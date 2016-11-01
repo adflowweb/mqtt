@@ -1,0 +1,1 @@
+curl -XPUT -d '{"mqttbroker":"mqttbroker:clusterA", "token":"64ee0b0bb72643829ea1e79"}' -H "Content-Type: application/json" -H "Accept-Version: 1.0.0" push-l4.ktp.co.kr:8083/user/+821021808463 | bunyan -o short
