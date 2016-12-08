@@ -8,7 +8,7 @@
 		maxWait="10000" validationQuery="SELECT 1" validationInterval="30000"
 		testWhileIdle="true" />
 </Context>
-
+ 
 <!-- <?xml version="1.0" encoding="UTF-8"?>
 <Context docBase="pushServer" path="/v1" reloadable="true">
         <Resource type="javax.sql.DataSource" name="jdbc/push"
