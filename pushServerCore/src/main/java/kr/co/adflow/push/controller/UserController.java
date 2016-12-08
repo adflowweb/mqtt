@@ -261,6 +261,7 @@ public class UserController {
 		// == kicho(20150410) : user "" or null check add - start02
 
 		logger.debug("유저=" + user);
+		System.out.println("유저=" + user);
 		Result<Token> result = new Result<Token>();
 		result.setSuccess(true);
 
