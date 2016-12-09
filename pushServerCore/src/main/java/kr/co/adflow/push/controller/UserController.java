@@ -236,7 +236,7 @@ public class UserController {
 	 * @throws Exception
 	 *             the exception
 	 */
-	@RequestMapping(value = "auth2", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = "auth", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
 	public Response<Token> auth(@RequestBody User user, HttpServletRequest request) throws Exception {
 
