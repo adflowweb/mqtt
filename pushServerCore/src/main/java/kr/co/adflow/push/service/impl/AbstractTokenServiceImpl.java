@@ -156,20 +156,30 @@ abstract public class AbstractTokenServiceImpl implements TokenService {
 		// token.setDeviceID(user.getDeviceID());
 		// KTP-skip-end
 
-		Token rst = tokenDao.getLatest(token);
-
+		
+		Token rst = null;
 		// 발급시간에 따른 토큰 재발급로직... 추가해야함
-
-		if (rst != null) {
-			// 존재하면 발급시간 업데이트
-		} else {
-			// 없으면 인서트
+		
+		if(user.isIssueNewToken()){
 			// generate tokenID
 			String tokenID = TokenGenerator.generate();
-			logger.debug("tokenID=" + tokenID);
+			logger.debug("new tokenID=" + tokenID);
 			token.setTokenID(tokenID);
 
 			rst = tokenDao.post(token);
+		}else{
+			rst = tokenDao.getLatest(token);
+			if (rst != null) {
+				// 존재하면 발급시간 업데이트
+			} else {
+				// 없으면 인서트
+				// generate tokenID
+				String tokenID = TokenGenerator.generate();
+				logger.debug("tokenID=" + tokenID);
+				token.setTokenID(tokenID);
+
+				rst = tokenDao.post(token);
+			}
 		}
 
 		logger.debug("post종료(token=" + rst + ")");
