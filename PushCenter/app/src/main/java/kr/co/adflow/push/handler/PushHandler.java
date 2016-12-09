@@ -103,7 +103,7 @@ public class PushHandler implements MqttCallback {
 
     /**
      * 푸시핸들러시작
-     * <p>
+     * <p/>
      * 시작이 호출되면 기존 채널을 중지후 다시 시작한다.
      */
     public void start() {
@@ -181,6 +181,7 @@ public class PushHandler implements MqttCallback {
                 }
             }
         } catch (MQConnectException e) {
+            e.printStackTrace();
             DebugLog.e("MQConnectException 발생", e);
             ErrLogger.e(TAG, "MQConnectException 발생", e);
 
@@ -358,6 +359,7 @@ public class PushHandler implements MqttCallback {
      * @throws Exception
      */
     private String issueToken() throws Exception {
+        DebugLog.d("issueToken 시작()");
         String token = null;
         DebugLog.d("토큰을 발급합니다");
         String phoneNum = preference.getValue(PushPreference.PHONENUM, null);
@@ -388,6 +390,7 @@ public class PushHandler implements MqttCallback {
         JSONObject data = rst.getJSONObject("data");
         token = data.getString("tokenID");
         DebugLog.d("token = " + token);
+        DebugLog.d("issueToken 종료(token = " + token + ")");
         return token;
     }
 
@@ -574,6 +577,26 @@ public class PushHandler implements MqttCallback {
                     //broadcast 작업제거
                     //pushdb.deteletJob(jobID);
                     //DebugLog.d("broadcast작업이삭제되었습니다.jobID = " + jobID);
+                    break;
+                case BuildConfig.SUBSCRIBE: //subscribe
+                    content = data.getJSONObject("content");
+                    DebugLog.d("content = " + content);
+                    String subscribeTopic = content.getString("topic");
+                    DebugLog.d("subscribeTopic = " + subscribeTopic);
+                    addSubscribeJob(subscribeTopic);
+
+                    // wake up
+                    wakeUpWorker();
+                    break;
+                case BuildConfig.UNSUBSCRIBE: //unsubscribe
+                    content = data.getJSONObject("content");
+                    DebugLog.d("content = " + content);
+                    String unsubscribeTopic = content.getString("topic");
+                    DebugLog.d("unsubscribeTopic = " + unsubscribeTopic);
+                    addUnsubscribeJob(unsubscribeTopic);
+
+                    // wake up
+                    wakeUpWorker();
                     break;
                 case BuildConfig.GET_TRLOG_MESSAGE: //get TRLog
                     content = data.getJSONObject("content");
@@ -773,6 +796,8 @@ public class PushHandler implements MqttCallback {
                 //토큰저장
                 preference.put(PushPreference.TOKEN, currentToken);
                 sendBroadcast(MQTT_TOKEN_CHANGED_MESSAGE, MQTT_TOKEN_CHANGED);
+                // put issue new token
+                preference.put(PushPreference.ISSUE_NEW_TOKEN, false);
             } else {
                 currentToken = token;
             }
@@ -1065,12 +1090,19 @@ public class PushHandler implements MqttCallback {
         JSONObject data = new JSONObject();
         data.put("userID", userID);
         data.put("deviceID", deviceID);
+        // add issue_new_token 2016.12.
+        boolean issueNewToken = preference.getValue(PushPreference.ISSUE_NEW_TOKEN, false);
+        DebugLog.d("issueNewToken = " + issueNewToken);
+
+        if(issueNewToken){
+            data.put("issueNewToken", issueNewToken);
+        }
 
         DebugLog.d("RequestURL = " + url);
         HttpRequest request = HttpRequest.post(url)
                 .trustAllCerts() //Accept all certificates // 공인인증서 패스 2016.10.4
                 .trustAllHosts() //Accept all hostnames
-                //.header("X-ApiKey", currentToken)
+                        //.header("X-ApiKey", currentToken)
                 .header("Content-Type", "application/json;charset=utf-8").send(data.toString());
 
         DebugLog.d("responseCode = " + request.code());

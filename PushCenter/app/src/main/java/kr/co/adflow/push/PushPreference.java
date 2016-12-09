@@ -21,6 +21,7 @@ public class PushPreference {
     public static final String PHONENUM = "phoneNumber";
     public static final String FIRSTCONNECTION = "firstConnection";
     public static final String REGISTERED_PMC = "registerdPMC";
+    public static final String ISSUE_NEW_TOKEN = "issueNewToken";
 
     private final String PREF_NAME = "kr.co.adflow.push";
 
