@@ -17,36 +17,38 @@ public class User {
 
 	/** The user id. */
 	private String userID;
-	
+
 	/** The name. */
 	private String name;
-	
+
 	/** The title. */
 	private String title;
-	
+
 	/** The dept. */
 	private String dept;
-	
+
 	/** The email. */
 	private String email;
-	
+
 	/** The phone. */
 	private String phone;
-	
+
 	/** The password. */
 	private String password;
-	
+
 	/** The device id. */
 	private String deviceID;
-	
+
 	/** The apns token. */
 	private String apnsToken;
-	
+
 	/** The role. */
 	private String role;
-	
+
 	/** The ufmi. */
 	private String ufmi;
+
+	private boolean issueNewToken;
 
 	/**
 	 * Instantiates a new user.
@@ -66,7 +68,8 @@ public class User {
 	/**
 	 * Sets the user id.
 	 *
-	 * @param userID the new user id
+	 * @param userID
+	 *            the new user id
 	 */
 	public void setUserID(String userID) {
 		this.userID = userID;
@@ -84,7 +87,8 @@ public class User {
 	/**
 	 * Sets the name.
 	 *
-	 * @param name the new name
+	 * @param name
+	 *            the new name
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -102,7 +106,8 @@ public class User {
 	/**
 	 * Sets the title.
 	 *
-	 * @param title the new title
+	 * @param title
+	 *            the new title
 	 */
 	public void setTitle(String title) {
 		this.title = title;
@@ -120,7 +125,8 @@ public class User {
 	/**
 	 * Sets the dept.
 	 *
-	 * @param dept the new dept
+	 * @param dept
+	 *            the new dept
 	 */
 	public void setDept(String dept) {
 		this.dept = dept;
@@ -138,7 +144,8 @@ public class User {
 	/**
 	 * Sets the email.
 	 *
-	 * @param email the new email
+	 * @param email
+	 *            the new email
 	 */
 	public void setEmail(String email) {
 		this.email = email;
@@ -156,7 +163,8 @@ public class User {
 	/**
 	 * Sets the phone.
 	 *
-	 * @param phone the new phone
+	 * @param phone
+	 *            the new phone
 	 */
 	public void setPhone(String phone) {
 		this.phone = phone;
@@ -174,7 +182,8 @@ public class User {
 	/**
 	 * Sets the password.
 	 *
-	 * @param password the new password
+	 * @param password
+	 *            the new password
 	 */
 	public void setPassword(String password) {
 		this.password = password;
@@ -192,7 +201,8 @@ public class User {
 	/**
 	 * Sets the device id.
 	 *
-	 * @param deviceID the new device id
+	 * @param deviceID
+	 *            the new device id
 	 */
 	public void setDeviceID(String deviceID) {
 		this.deviceID = deviceID;
@@ -210,7 +220,8 @@ public class User {
 	/**
 	 * Sets the apns token.
 	 *
-	 * @param apnsToken the new apns token
+	 * @param apnsToken
+	 *            the new apns token
 	 */
 	public void setApnsToken(String apnsToken) {
 		this.apnsToken = apnsToken;
@@ -228,21 +239,19 @@ public class User {
 	/**
 	 * Sets the role.
 	 *
-	 * @param role the new role
+	 * @param role
+	 *            the new role
 	 */
 	public void setRole(String role) {
 		this.role = role;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "User [userID=" + userID + ", name=" + name + ", title=" + title
-				+ ", dept=" + dept + ", email=" + email + ", phone=" + phone
-				+ ", password=" + password + ", deviceID=" + deviceID
-				+ ", apnsToken=" + apnsToken + ", role=" + role + "]";
+	public boolean isIssueNewToken() {
+		return issueNewToken;
+	}
+
+	public void setIssueNewToken(boolean issueNewToken) {
+		this.issueNewToken = issueNewToken;
 	}
 
 	/**
@@ -257,10 +266,17 @@ public class User {
 	/**
 	 * Sets the ufmi.
 	 *
-	 * @param ufmi the new ufmi
+	 * @param ufmi
+	 *            the new ufmi
 	 */
 	public void setUfmi(String ufmi) {
 		this.ufmi = ufmi;
 	}
 
+	@Override
+	public String toString() {
+		return "User [userID=" + userID + ", name=" + name + ", title=" + title + ", dept=" + dept + ", email=" + email
+				+ ", phone=" + phone + ", password=" + password + ", deviceID=" + deviceID + ", apnsToken=" + apnsToken
+				+ ", role=" + role + ", ufmi=" + ufmi + ", issueNewToken=" + issueNewToken + "]";
+	}
 }
