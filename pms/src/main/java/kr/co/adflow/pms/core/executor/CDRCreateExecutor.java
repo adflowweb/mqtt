@@ -101,6 +101,11 @@ public class CDRCreateExecutor {
 	 * Creates the CDR.
 	 */
 	public int createCDR(String date) throws Exception {
+		if(!zookeeperHandler.getLeader()){
+			logger.debug(pmsConfig.EXECUTOR_SERVER_ID1 + "createCDR() 나는 리더가 아닙니다.");
+			return;
+		}
+		logger.debug(pmsConfig.EXECUTOR_SERVER_ID1 + "createCDR() 나는 리더 입니다.");
 		logger.debug("cdr 생성시작 ");
 
 		int startRow = 0;
