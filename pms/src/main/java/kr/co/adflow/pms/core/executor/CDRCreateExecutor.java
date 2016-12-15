@@ -69,7 +69,11 @@ public class CDRCreateExecutor {
 	 * Creates the CDR.
 	 */
 	public void createCDR() {
-
+		if(!zookeeperHandler.getLeader()){
+			logger.debug(pmsConfig.EXECUTOR_SERVER_ID1 + "createCDR() 나는 리더가 아닙니다.");
+			return;
+		}
+		logger.debug(pmsConfig.EXECUTOR_SERVER_ID1 + "createCDR() 나는 리더 입니다.");
 		int startRow = 0;
 		this.fileNo = 0;
 		this.totalRow = 0;
