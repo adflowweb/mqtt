@@ -23,15 +23,14 @@ import kr.co.adflow.push.util.TRLogger;
  */
 public class PushReceiver extends BroadcastReceiver {
 
-    // Debug TAG
-    private static final String TAG = "PushReceiver";
-    private static final int wakeLockHoldTime = 10000; // 웨이크락홀드타임 10초
-
     public static final int USIM_NOT_FOUND = 2001;
     public static final String USIM_NOT_FOUND_MESSAGE = "USIM이 없습니다";
     public static final int USIM_CHANGED = 2002;
     public static final String USIM_CHANGED_MESSAGE = "USIM이 변경되었습니다";
     public static final String KR_CO_KTPOWERTEL_PUSH_CONN_STATUS = "kr.co.ktpowertel.push.connStatus";
+    // Debug TAG
+    private static final String TAG = "PushReceiver";
+    private static final int wakeLockHoldTime = 10000; // 웨이크락홀드타임 10초
 
     public PushReceiver() {
         super();
@@ -86,7 +85,7 @@ public class PushReceiver extends BroadcastReceiver {
                     preference.remove(PushPreference.TOKEN);
                     DebugLog.d("토큰을 삭제했습니다");
                     //부팅 메시지
-                    TRLogger.i(TAG,"토큰을 삭제했습니다");
+                    TRLogger.i(TAG, "토큰을 삭제했습니다");
                     //sendBroadcast
                     sendBroadcast(context, USIM_NOT_FOUND_MESSAGE, USIM_NOT_FOUND, null);
                 } else if (oldPhoneNum == null || oldPhoneNum.equals("")) {
@@ -115,6 +114,17 @@ public class PushReceiver extends BroadcastReceiver {
                     //remove token
                     preference.remove(PushPreference.TOKEN);
                     DebugLog.d("토큰을 삭제했습니다");
+
+                    // TODO: 2016. 12. 1.
+                    // 유심 변경 시나리오 추가
+                    // remove server url info
+                    preference.remove(PushPreference.SERVERURL);
+                    DebugLog.d("서버접속 정보를 삭제했습니다");
+                    // mark 강제적 신규 토큰 발급
+                    preference.put(PushPreference.ISSUE_NEW_TOKEN, true);
+                    DebugLog.d("강제적 토큰발급을 설정합니다");
+                    //END
+
                     //부팅 메시지
                     TRLogger.i(TAG, "토큰을 삭제했습니다");
                     //sendBroadcast

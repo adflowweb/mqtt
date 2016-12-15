@@ -8,8 +8,8 @@ android {
         applicationId "kr.co.adflow.push"
         minSdkVersion 15
         targetSdkVersion 18
-        versionCode 1028
-        versionName "1.1.7"
+        versionCode 1029
+        versionName "1.1.8"
     }
     buildTypes {
 
@@ -61,6 +61,8 @@ android {
             buildConfigField "int", "USER_MESSAGE", "106" // 106
             buildConfigField "int", "GET_TRLOG_MESSAGE", "108" // 108
             buildConfigField "int", "CHANGE_MQTT_CHANNEL", "109" // 109
+            buildConfigField "int", "SUBSCRIBE", "20" // 20
+            buildConfigField "int", "UNSUBSCRIBE", "30" // 30
             buildConfigField "int", "MESSAGE_EXPIRE", "30" // 30일
 
             //http option
@@ -115,6 +117,8 @@ android {
             buildConfigField "int", "USER_MESSAGE", "106" // 106
             buildConfigField "int", "GET_TRLOG_MESSAGE", "108" // 108
             buildConfigField "int", "CHANGE_MQTT_CHANNEL", "109" // 109
+            buildConfigField "int", "SUBSCRIBE", "20" // 20
+            buildConfigField "int", "UNSUBSCRIBE", "30" // 30
             buildConfigField "int", "MESSAGE_EXPIRE", "30" // 30일
 
             //http option
