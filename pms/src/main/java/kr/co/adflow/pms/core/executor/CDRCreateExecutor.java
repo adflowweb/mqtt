@@ -72,7 +72,9 @@ public class CDRCreateExecutor {
 		if(!zookeeperHandler.getLeader()){
 			logger.debug(pmsConfig.EXECUTOR_SERVER_ID1 + "createCDR() 나는 리더가 아닙니다.");
 			return;
-		}
+		} else{
+			
+		
 		logger.debug(pmsConfig.EXECUTOR_SERVER_ID1 + "createCDR() 나는 리더 입니다.");
 		int startRow = 0;
 		this.fileNo = 0;
@@ -94,7 +96,7 @@ public class CDRCreateExecutor {
 		cDRParams.setLengthRow(0);
 
 		this.createCDRFile(cDRParams);
-
+		}
 	}
 
 	/**
@@ -103,8 +105,10 @@ public class CDRCreateExecutor {
 	public int createCDR(String date) throws Exception {
 		if(!zookeeperHandler.getLeader()){
 			logger.debug(pmsConfig.EXECUTOR_SERVER_ID1 + "createCDR() 나는 리더가 아닙니다.");
-			return;
-		}
+			return 0;
+		} else{
+			
+		
 		logger.debug(pmsConfig.EXECUTOR_SERVER_ID1 + "createCDR() 나는 리더 입니다.");
 		logger.debug("cdr 생성시작 ");
 
@@ -127,6 +131,7 @@ public class CDRCreateExecutor {
 		cDRParams.setLengthRow(0);
 
 		return this.createCDRFile(cDRParams);
+		}
 	}
 
 	/**
