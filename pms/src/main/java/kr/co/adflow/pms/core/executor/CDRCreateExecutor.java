@@ -74,7 +74,7 @@ public class CDRCreateExecutor {
 			return;
 		} else{
 			
-		
+		  
 		logger.debug(pmsConfig.EXECUTOR_SERVER_ID1 + "createCDR() 나는 리더 입니다.");
 		int startRow = 0;
 		this.fileNo = 0;
